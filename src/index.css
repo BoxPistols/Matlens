@@ -150,6 +150,19 @@ body{
 .md-preview tr:nth-child(even) td{background:var(--bg-raised)}
 .md-preview hr{border:none;border-top:1px solid var(--border-faint);margin:9px 0}
 
+/* Prism.js — dark syntax highlight (guide code blocks) */
+code[class*="language-"],pre[class*="language-"]{text-shadow:none}
+.token.comment,.token.prolog,.token.doctype,.token.cdata{color:#6a737d}
+.token.punctuation{color:#8b949e}
+.token.property,.token.tag,.token.boolean,.token.number,.token.constant,.token.symbol{color:#79c0ff}
+.token.selector,.token.attr-name,.token.string,.token.char,.token.builtin{color:#a5d6ff}
+.token.operator,.token.entity,.token.url{color:#d2a8ff}
+.token.atrule,.token.attr-value,.token.keyword{color:#ff7b72}
+.token.function,.token.class-name{color:#d2a8ff}
+.token.regex,.token.important,.token.variable{color:#ffa657}
+.token.string,.token.template-string{color:#7ee787}
+.token.template-punctuation{color:#8b949e}
+
 /* sidebar transition */
 .sidebar-nav{width:216px;transition:width .22s cubic-bezier(.4,0,.2,1)}
 .sidebar-nav.collapsed{width:48px}
