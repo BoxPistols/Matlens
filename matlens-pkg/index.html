@@ -461,9 +461,13 @@ function useEmbedding(db) {
   return { status, embeddings, search, addToIndex, embCount: Object.keys(embeddings).length };
 }
 
-/** useVoice — Web Speech API */
-function useVoice(onCommand) {
-  const [voiceState, setVoiceState] = useState('idle'); // idle | listening | processing | speaking
+/** useVoice — Web Speech API (disabled: stub) */
+function useVoice() {
+  return { voiceState:'idle', transcript:'', isHandsfree:false, ttsRate:1, setTtsRate:()=>{}, ttsPitch:1, setTtsPitch:()=>{}, voices:[], selectedVoice:0, setSelectedVoice:()=>{}, speak:()=>{}, stopSpeaking:()=>{}, toggleListening:()=>{}, toggleHandsfree:()=>{}, clearTranscript:()=>{}, isSRAvailable:false };
+}
+/*-- VOICE DISABLED --
+function useVoice_real(onCommand) {
+  const [voiceState, setVoiceState] = useState('idle');
   const [transcript, setTranscript] = useState('');
   const [isHandsfree, setIsHandsfree] = useState(false);
   const [ttsRate, setTtsRate] = useState(1.0);
@@ -529,6 +533,7 @@ function useVoice(onCommand) {
 
   return { voiceState, transcript, isHandsfree, ttsRate, setTtsRate, ttsPitch, setTtsPitch, voices, selectedVoice, setSelectedVoice, speak, stopSpeaking, toggleListening, toggleHandsfree, clearTranscript, isSRAvailable };
 }
+-- VOICE DISABLED --*/
 
 /* =====================================================
    === SECTION 10: TYPESCRIPT-STYLE TYPE DEFINITIONS
@@ -1325,7 +1330,7 @@ const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, em
       </button>
       </Tooltip>
 
-      {/* Voice toggle */}
+      {/* Voice toggle -- VOICE DISABLED
       <Tooltip label="音声入力 / ハンズフリーモード" placement="bottom">
       <button
         onClick={onToggleVoice}
@@ -1335,6 +1340,7 @@ const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, em
         <Icon name="mic" size={15} />
       </button>
       </Tooltip>
+      */}
 
       {/* Avatar */}
       <Tooltip label="ログインユーザー: 木村 研一" placement="bottom">
@@ -1357,7 +1363,7 @@ const NAV_ITEMS = [
   { id:'vsearch', label:'ベクトル検索',     icon:'vecSearch', badgeLabel:'VSS', badgeVariant:'vec', cls:'vec-nav' },
   { id:'rag',     label:'RAG チャット',     icon:'rag',     badgeLabel:'RAG',  badgeVariant:'ai',  cls:'ai-nav' },
   { id:'sim',     label:'類似材料探索',     icon:'similar' },
-  { id:'voice',   label:'音声・ハンズフリー',icon:'mic' },
+  // { id:'voice',   label:'音声・ハンズフリー',icon:'mic' }, // VOICE DISABLED
   { section: '開発ツール' },
   { id:'api',     label:'API デバッグ',     icon:'scan',    badgeLabel:'Mock', badgeVariant:'vec' },
   { id:'tests',   label:'テストスイート',   icon:'check',   badgeLabel:'Unit', badgeVariant:'green' },
@@ -1463,100 +1469,19 @@ const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embStatus, 
   );
 };
 
-/** VoicePanel organism */
+/*-- VOICE DISABLED --
 const VoicePanel = ({ visible, voice, onClose }) => {
   const { voiceState, transcript, isHandsfree, ttsRate, setTtsRate, ttsPitch, setTtsPitch, voices, selectedVoice, setSelectedVoice, toggleListening, toggleHandsfree, stopSpeaking, clearTranscript, isSRAvailable } = voice;
-
   const stateLabel = { idle:'待機中', listening:'認識中', processing:'AI処理中', speaking:'読み上げ中' }[voiceState] || '待機中';
   const barCount = 20;
-
-  // 波形アニメーション用タイムスタンプ
   const [tick, setTick] = useState(0);
-  useEffect(() => {
-    if (voiceState === 'idle') return;
-    const id = setInterval(() => setTick(t => t + 1), 80);
-    return () => clearInterval(id);
-  }, [voiceState]);
-
-  const handleClose = () => {
-    clearTranscript?.();
-    onClose?.();
-  };
-
+  useEffect(() => { if (voiceState === 'idle') return; const id = setInterval(() => setTick(t => t + 1), 80); return () => clearInterval(id); }, [voiceState]);
+  const handleClose = () => { clearTranscript?.(); onClose?.(); };
   if (!visible) return null;
-  return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[3000] flex items-center gap-3 px-4 py-3 bg-surface border border-[var(--border-default)] rounded-xl min-w-[460px] max-w-[92vw]" style={{ boxShadow: 'var(--shadow-lg)', animation: 'slideUp .25s ease' }}>
-      <style>{`@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(10px) } to { opacity:1; transform:translateX(-50%) translateY(0) } }`}</style>
-
-      {/* Mic button */}
-      <Tooltip label={voiceState === 'listening' ? '音声認識を停止' : 'マイクをONにして話す'} placement="top">
-      <button
-        onClick={toggleListening}
-        disabled={!isSRAvailable}
-        aria-label={voiceState === 'listening' ? '音声認識を停止' : '音声認識を開始'}
-        className={`w-10 h-10 rounded-full flex items-center justify-center border-[1.5px] flex-shrink-0 transition-all duration-200 disabled:opacity-40
-          ${voiceState === 'listening' ? 'bg-err border-err text-white' : voiceState === 'speaking' ? 'bg-vec border-vec text-white' : 'bg-raised border-[var(--border-default)] text-text-md hover:bg-hover'}`}
-        style={voiceState === 'listening' ? { animation: 'mic-pulse 1s ease-in-out infinite' } : voiceState === 'speaking' ? { animation: 'speak-wave .8s ease-in-out infinite alternate' } : {}}
-      >
-        <Icon name={voiceState === 'speaking' ? 'speaker' : voiceState === 'listening' ? 'stop' : 'mic'} size={16} />
-      </button>
-      </Tooltip>
-
-      {/* Waveform */}
-      <div className="flex items-center gap-0.5 h-7 flex-1 min-w-0 overflow-hidden" aria-hidden="true">
-        {Array.from({ length: barCount }, (_, i) => (
-          <div key={i} className="w-0.5 rounded-sm flex-shrink-0 transition-all duration-75"
-            style={{ height: voiceState === 'idle' ? '4px' : `${4 + Math.abs(Math.sin(tick/4 + i*.4)) * 20}px`, background: voiceState === 'listening' ? 'var(--err)' : voiceState === 'speaking' ? 'var(--vec)' : 'var(--border-default)' }} />
-        ))}
-      </div>
-
-      {/* Status */}
-      <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-        <span className="text-[11px] font-bold text-text-lo tracking-[.04em] uppercase">{stateLabel}</span>
-        <span className={`text-[13px] truncate ${transcript ? 'text-accent font-semibold not-italic' : 'text-text-md italic'}`}>
-          {transcript || 'マイクボタンで音声入力を開始'}
-        </span>
-      </div>
-
-      {/* TTS controls */}
-      <div className="flex items-center gap-2 text-[12px] text-text-md flex-shrink-0">
-        <span>速度</span>
-        <input type="range" min=".7" max="1.8" step=".1" value={ttsRate} onChange={e => setTtsRate(parseFloat(e.target.value))} className="w-16 accent-accent" aria-label="読み上げ速度" />
-        <span className="w-7 font-mono">{ttsRate.toFixed(1)}×</span>
-        {voices.length > 0 && (
-          <Select value={selectedVoice} onChange={e => setSelectedVoice(parseInt(e.target.value))} className="text-[11px] py-0.5 max-w-[80px]" aria-label="音声選択">
-            {voices.map((v, i) => <option key={i} value={i}>{v.name.slice(0,12)}</option>)}
-          </Select>
-        )}
-      </div>
-
-      {/* Handsfree toggle */}
-      <Tooltip label={isHandsfree ? 'ハンズフリーOFF (自動ループ停止)' : 'ハンズフリーON (音声認識→AI→読み上げを自動ループ)'} placement="top">
-      <button
-        onClick={toggleHandsfree}
-        aria-pressed={isHandsfree}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 whitespace-nowrap font-ui ${isHandsfree ? 'bg-[var(--ok-dim)] border-ok text-ok' : 'bg-raised border-[var(--border-default)] text-text-md hover:bg-hover'}`}
-      >
-        <span className={`w-1.5 h-1.5 rounded-full ${isHandsfree ? 'bg-ok animate-pulse' : 'bg-text-lo'}`} />
-        自動ループ
-      </button>
-      </Tooltip>
-
-      {/* Stop TTS */}
-      {voiceState === 'speaking' && (
-        <button onClick={stopSpeaking} className="flex items-center justify-center w-7 h-7 rounded-full bg-raised border border-[var(--border-default)] text-text-lo hover:text-err hover:border-err transition-all" aria-label="読み上げ停止">
-          <Icon name="stop" size={12} />
-        </button>
-      )}
-      {/* 閉じる */}
-      <Tooltip label="音声パネルを閉じる" placement="top">
-      <button onClick={handleClose} className="flex items-center justify-center w-7 h-7 rounded-full bg-raised border border-[var(--border-default)] text-text-lo hover:text-text-hi hover:bg-hover transition-all ml-1 flex-shrink-0" aria-label="閉じる">
-        <Icon name="close" size={12} />
-      </button>
-      </Tooltip>
-    </div>
-  );
+  return (...);
 };
+-- VOICE DISABLED --*/
+const VoicePanel = () => null;
 
 /* =====================================================
    === SECTION 8: PAGE COMPONENTS (organisms) ===
@@ -2268,13 +2193,9 @@ ${ctxText}`;
     const reply = await claude.call(q, sys);
     setMessages(prev => [...prev, { role: 'ai', text: reply, sources: topDocs }]);
     setSending(false);
-    // デモモードや短すぎる応答は読み上げない
-    const speakText = reply
-      .replace(/\*\*/g,'').replace(/#+\s/g,'').replace(/`/g,'')
-      .replace(/<[^>]*>/g,'').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();
-    if (voice && speakText.length > 20 && !speakText.includes('デモモード') && !speakText.includes('APIキー')) {
-      voice.speak(speakText.slice(0, 400));
-    }
+    // VOICE DISABLED — auto-speak on RAG reply
+    // const speakText = reply.replace(/\*\*/g,'').replace(/#+\s/g,'').replace(/`/g,'').replace(/<[^>]*>/g,'').replace(/\n+/g,' ').replace(/\s+/g,' ').trim();
+    // if (voice && speakText.length > 20 && !speakText.includes('デモモード') && !speakText.includes('APIキー')) { voice.speak(speakText.slice(0, 400)); }
     // AIメッセージ追加後にスクロール
     requestAnimationFrame(() => {
       setTimeout(() => {
@@ -2328,7 +2249,7 @@ ${ctxText}`;
                 </div>
                 <div className={`max-w-[78%] flex flex-col gap-1.5 ${m.role==='user' ? 'items-end' : ''}`}>
                   <div className={`px-3 py-2 rounded-lg text-[13px] leading-relaxed ${m.role==='ai' ? 'bg-raised border border-[var(--border-faint)]' : 'bg-accent text-white'}`}>
-                    {m.role === 'ai' ? <MarkdownBubble text={m.text} onSpeak={voice?.speak} /> : m.text}
+                    {m.role === 'ai' ? <MarkdownBubble text={m.text} /> : m.text}
                   </div>
                   {m.sources && m.sources.length > 0 && (
                     <div className="px-3 py-2 bg-vec-dim border border-[var(--border-default)] rounded-md text-[12px] w-full">
@@ -2347,11 +2268,13 @@ ${ctxText}`;
             )}
           </div>
           <div className="px-3 py-2.5 border-t border-[var(--border-faint)] flex gap-2 items-end">
+            {/* VOICE DISABLED
             <Tooltip label="音声でメッセージを入力する" placement="top">
             <button className="flex items-center justify-center w-9 h-9 border border-[var(--border-default)] rounded-md bg-raised text-text-md hover:bg-hover transition-colors flex-shrink-0" onClick={() => voice?.toggleListening()} aria-label="音声入力">
               <Icon name="mic" size={15} />
             </button>
             </Tooltip>
+            */}
             <textarea value={input} onChange={e=>setInput(e.target.value)}
               onKeyDown={e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }}
               placeholder="質問を入力... (Enter 送信、Shift+Enter 改行)"
@@ -2611,7 +2534,7 @@ const SimilarPage = ({ db, embedding, claude }) => {
   );
 };
 
-/** VoicePage */
+/*-- VOICE DISABLED --
 const VoicePage = ({ voice }) => {
   const { voiceState, transcript, isHandsfree, ttsRate, setTtsRate, ttsPitch, setTtsPitch, voices, selectedVoice, setSelectedVoice, toggleListening, toggleHandsfree, stopSpeaking, isSRAvailable } = voice;
   const [log, setLog] = useState([{ type:'sys', ico:'info', text:'音声入力を開始するとここにログが表示されます' }]);
@@ -2722,6 +2645,8 @@ const VoicePage = ({ voice }) => {
     </div>
   );
 };
+-- VOICE DISABLED --*/
+const VoicePage = () => <div className="p-8 text-text-lo text-center">音声モードは現在無効です</div>;
 
 /** HelpPage */
 const HELP_TERMS = [
@@ -3604,7 +3529,7 @@ function App() {
   const [detailId, setDetailId] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [voicePanelVisible, setVoicePanelVisible] = useState(false);
+  // const [voicePanelVisible, setVoicePanelVisible] = useState(false); // VOICE DISABLED
 
   const { theme, setTheme } = useTheme();
   const embedding = useEmbedding(db);
@@ -3616,21 +3541,9 @@ function App() {
   // Mock API install
   useEffect(() => { installMockAPI(() => db, dispatch); }, []);
 
-  // Voice command routing
-  const handleVoiceCommand = useCallback((text) => {
-    const t = text;
-    if (/ハンズフリー(開始|オン)/i.test(t)) { voice.enableHandsfree?.(); return; }
-    if (/ハンズフリー(停止|オフ)/i.test(t)) { voice.disableHandsfree?.(); return; }
-    if (/読み上げ(停止|止)/i.test(t)) { voice.stopSpeaking(); return; }
-    if (/ダッシュボード/i.test(t)) { setPage('dash'); voice.speak('ダッシュボードを表示します'); return; }
-    if (/(一覧|リスト)/i.test(t)) { setPage('list'); voice.speak('材料データ一覧を表示します'); return; }
-    if (/登録(画面|フォーム)/i.test(t)) { setPage('new'); voice.speak('登録フォームを開きます'); return; }
-    const sm = t.match(/^(検索|さがして)\s*(.+)/i);
-    if (sm) { setPage('vsearch'); voice.speak(`「${sm[2]}」で検索します`); return; }
-    // default → RAG (handled in VoicePage / RAGChatPage via context)
-  }, []);
-
-  const voice = useVoice(handleVoiceCommand);
+  // Voice command routing -- VOICE DISABLED
+  // const handleVoiceCommand = useCallback((text) => { ... }, []);
+  const voice = useVoice();
 
   const addToast = useCallback((msg, type = 'ok') => {
     const id = Date.now();
@@ -3673,7 +3586,7 @@ function App() {
         <Topbar
           theme={theme} setTheme={setTheme}
           onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
-          onToggleVoice={() => setVoicePanelVisible(v=>!v)}
+          // onToggleVoice={() => setVoicePanelVisible(v=>!v)} // VOICE DISABLED
           embStatus={embedding.status} embCount={embedding.embCount}
         />
         <div className="flex flex-1 overflow-hidden">
@@ -3689,7 +3602,7 @@ function App() {
           </main>
         </div>
       </div>
-      <VoicePanel visible={voicePanelVisible} voice={voice} onClose={() => setVoicePanelVisible(false)} />
+      {/* <VoicePanel visible={voicePanelVisible} voice={voice} onClose={() => setVoicePanelVisible(false)} /> VOICE DISABLED */}
       <SettingsPanel rateLimit={rateLimit} ai={ai} visible={settingsVisible} onClose={() => setSettingsVisible(false)} />
       {/* AI設定フローティングボタン */}
       <button onClick={() => setSettingsVisible(v => !v)}
