@@ -26,6 +26,7 @@ import { AboutPage } from './pages/AboutPage';
 import { ApiDebugPage } from './pages/ApiDebugPage';
 import { UxDesignPage } from './pages/UxDesignPage';
 import { TestSuitePage } from './pages/TestSuitePage';
+import { CatalogPage } from './pages/CatalogPage';
 
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
@@ -69,6 +70,7 @@ export function App() {
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
       case 'rag':     return <RAGChatPage {...commonProps} />;
       case 'sim':     return <SimilarPage {...commonProps} />;
+      case 'catalog': return <CatalogPage db={db} onNav={navTo} onDetail={showDetail} />;
       case 'voice':   return <VoicePage />;
       case 'api':     return <ApiDebugPage db={db} dispatch={dispatch} />;
       case 'tests':   return <TestSuitePage />;

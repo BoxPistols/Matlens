@@ -15,24 +15,25 @@ export const RATE_LIMITS: Record<string, number> = {
 export const OWN_KEY_STORAGE = 'matlens_own_openai_key';
 
 export const NAV_ITEMS: NavItem[] = [
-  { section: 'メイン' },
+  { section: '概要' },
   { id:'dash',    label:'ダッシュボード',    icon:'dashboard' },
   { id:'list',    label:'材料データ一覧',    icon:'list',    badge: true },
-  { section: 'データ管理' },
+  { id:'catalog', label:'材料カタログ',      icon:'embed',   badgeLabel:'3D', badgeVariant:'vec' },
+  { section: 'データ入力' },
   { id:'new',     label:'新規登録',         icon:'plus' },
-  { section: 'AI / ベクトル' },
-  { id:'vsearch', label:'ベクトル検索',     icon:'vecSearch', badgeLabel:'VSS', badgeVariant:'vec', cls:'vec-nav' },
-  { id:'rag',     label:'RAG チャット',     icon:'rag',     badgeLabel:'RAG',  badgeVariant:'ai',  cls:'ai-nav' },
-  { id:'sim',     label:'類似材料探索',     icon:'similar' },
-  { section: '開発ツール' },
-  { id:'api',     label:'API デバッグ',     icon:'scan',    badgeLabel:'Mock', badgeVariant:'vec' },
-  { id:'tests',   label:'テストスイート',   icon:'check',   badgeLabel:'Unit', badgeVariant:'green' },
-  { section: 'ドキュメント' },
-  { id:'uxdesign',label:'UX設計ガイド',     icon:'filter' },
+  { section: 'AI 分析・検索' },
+  { id:'vsearch', label:'意味検索',         icon:'vecSearch', badgeLabel:'AI', badgeVariant:'vec', cls:'vec-nav' },
+  { id:'rag',     label:'AI チャット',      icon:'rag',     badgeLabel:'AI',  badgeVariant:'ai',  cls:'ai-nav' },
+  { id:'sim',     label:'類似材料を比較',   icon:'similar' },
+  { section: 'ヘルプ・情報' },
   { id:'help',    label:'ヘルプ・用語集',   icon:'help' },
   { id:'about',   label:'技術スタック',     icon:'about' },
+  { section: '開発者向け' },
+  { id:'api',     label:'API テスト',       icon:'scan',    badgeLabel:'Dev', badgeVariant:'vec' },
+  { id:'tests',   label:'テストスイート',   icon:'check',   badgeLabel:'Dev', badgeVariant:'green' },
+  { id:'uxdesign',label:'UX設計ノート',     icon:'info' },
   { section: '設定' },
-  { id:'settings',label:'マスタ管理',       icon:'settings' },
+  { id:'settings',label:'カテゴリ・バッチ管理', icon:'settings' },
 ];
 
 export const HELP_TERMS: { id: string; term: string; en: string; cat: string; catLabel: string; catVariant: string; body: string; related: string }[] = [
