@@ -20,16 +20,7 @@ export const DataDisclaimer = ({ compact = false }: { compact?: boolean }) => {
       <Icon name="warning" size={15} className="text-warn flex-shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <div className="font-bold text-warn mb-1">サンプルデータについて</div>
-        <p className="text-text-md leading-relaxed mb-2">{DATA_DISCLAIMER.ja}</p>
-        <div className="flex gap-2 flex-wrap">
-          {DATA_DISCLAIMER.sources.map(s => (
-            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-[var(--border-faint)] text-[11px] text-accent hover:bg-hover transition-colors font-ui">
-              {s.name}
-              <Icon name="chevronRight" size={9} />
-            </a>
-          ))}
-        </div>
+        <p className="text-text-md leading-relaxed">{DATA_DISCLAIMER.ja}</p>
       </div>
       <button onClick={() => setDismissed(true)} className="text-text-lo hover:text-text-hi flex-shrink-0" aria-label="閉じる">
         <Icon name="close" size={12} />

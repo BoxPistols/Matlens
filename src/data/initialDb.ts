@@ -8,26 +8,16 @@ import type { Material } from '../types';
  * 設定していますが、特定のロット・熱処理条件・試験規格に
  * 基づく実測値ではありません。
  *
- * 設計・研究に使用する場合は、必ず以下の一次ソースで検証してください:
- * - NIMS 物質・材料データベース (MatNavi) https://mits.nims.go.jp/
- * - JIS規格検索 (JSA Webdesk) https://webdesk.jsa.or.jp/
- * - ASM International https://www.asminternational.org/
- * - MatWeb https://www.matweb.com/search/SearchSubcat.aspx
- * - 各材料メーカーのデータシート
+ * 設計・研究に使用する場合は、JIS規格書・メーカーデータシート等の
+ * 一次ソースを必ず参照してください。
  *
  * 特にセラミクス・複合材料は製造条件で値が大きく変動するため、
  * 単一の代表値として扱うことは不適切です。
  */
 
 export const DATA_DISCLAIMER = {
-  ja: 'このデータはデモ用サンプルです。設計・研究には一次ソース（JIS規格書, ASM Handbook, MatWeb, メーカーデータシート）で検証してください。',
-  en: 'Sample data for demonstration only. Verify with primary sources (JIS standards, ASM Handbook, MatWeb, manufacturer datasheets) before use in design or research.',
-  sources: [
-    { name: 'NIMS 物質・材料DB (MatNavi)', url: 'https://mits.nims.go.jp/' },
-    { name: 'JIS規格検索 (JSA Webdesk)', url: 'https://webdesk.jsa.or.jp/' },
-    { name: 'ASM International', url: 'https://www.asminternational.org/' },
-    { name: 'MatWeb (材料物性検索)', url: 'https://www.matweb.com/search/SearchSubcat.aspx' },
-  ],
+  ja: 'このデータはデモンストレーション用のサンプルです。実際の設計・研究には、JIS規格書・メーカーデータシート等の一次ソースを必ず参照してください。',
+  en: 'Sample data for demonstration only. Verify with primary sources before use in design or research.',
 };
 
 export const INITIAL_DB: Material[] = [
