@@ -44,7 +44,7 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
         <div className="mt-2 text-[12px]">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${embedding.status==='ready' ? 'bg-[var(--ok-dim)] text-ok' : 'bg-raised text-text-lo'}`}>
             <Icon name="embed" size={11} />
-            {embedding.status==='ready' ? `${embedding.embCount}件 インデックス済み` : embedding.status==='indexing' ? '索引構築中...' : '初期化中...'}
+            {embedding.status==='ready' ? `${embedding.embCount}件 検索可能（${embedding.engine}）` : '初期化中...'}
           </span>
         </div>
       </VecCard>
