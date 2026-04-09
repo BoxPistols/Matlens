@@ -4,6 +4,7 @@ import { Icon } from '../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../components/atoms';
 import { Modal, AIInsightCard, VecCard } from '../components/molecules';
 import { MaterialVisual } from '../components/MaterialVisual';
+import { DataDisclaimer } from '../components/DataDisclaimer';
 import { AppCtx } from '../context/AppContext';
 import type { Material, AIHook, EmbeddingHook, AppContextValue, MaterialWithScore } from '../types';
 
@@ -133,7 +134,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
 
         <div className="flex flex-col gap-3">
           <AIInsightCard loading={aiLoading} chips={[
-            { label: 'RAGチャットで詳しく', onClick: () => onNav('rag') },
+            { label: 'AIチャットで詳しく', onClick: () => onNav(`rag:${r.name}（${r.comp}）の特徴、用途、類似材料との違いを詳しく教えてください`) },
             { label: '類似材料を探す', onClick: () => onNav('sim') },
           ]}>
             {!aiLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderAiHtml() }} />}

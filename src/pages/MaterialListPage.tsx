@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useContext } from 'react';
 import { Icon } from '../components/Icon';
+import { DataDisclaimer } from '../components/DataDisclaimer';
 import { Tooltip } from '../components/Tooltip';
 import { Button, Badge, Card, Input, Select, Checkbox } from '../components/atoms';
 import { Modal, SearchBox, FilterChip, ExportModal } from '../components/molecules';
@@ -85,6 +86,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
         <p>このデータを削除します。この操作は元に戻せません。</p>
       </Modal>
 
+      <DataDisclaimer />
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight">材料データ一覧</h1>
