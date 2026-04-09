@@ -40,11 +40,11 @@ const Swatch = ({ token, label, theme }: { token: string; label: string; theme: 
           border: '1px solid var(--border-default)',
         }}
       />
-      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-hi)' }}>{label}</span>
-      <code style={{ fontSize: 9, color: 'var(--text-lo)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all', textAlign: 'center' }}>
+      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-hi)' }}>{label}</span>
+      <code style={{ fontSize: 12, color: 'var(--text-lo)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all', textAlign: 'center' }}>
         {token}
       </code>
-      <span style={{ fontSize: 9, color: 'var(--text-lo)', fontFamily: 'var(--font-mono)' }}>{hex}</span>
+      <span style={{ fontSize: 12, color: 'var(--text-lo)', fontFamily: 'var(--font-mono)' }}>{hex}</span>
     </div>
   );
 };

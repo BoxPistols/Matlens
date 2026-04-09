@@ -13,23 +13,23 @@ import { Sidebar } from './components/Sidebar';
 import { SupportPanel } from './components/SupportPanel';
 import { ToastHub } from './components/molecules';
 import { Typing } from './components/atoms';
-import { DashboardPage } from './pages/DashboardPage';
-import { MaterialListPage } from './pages/MaterialListPage';
-import { MaterialFormPage } from './pages/MaterialFormPage';
-import { VectorSearchPage } from './pages/VectorSearchPage';
-import { RAGChatPage } from './pages/RAGChatPage';
-import { DetailPage } from './pages/DetailPage';
-import { SimilarPage } from './pages/SimilarPage';
-import { VoicePage } from './pages/VoicePage';
-import { HelpPage } from './pages/HelpPage';
-import { MasterSettingsPage } from './pages/MasterSettingsPage';
-import { AboutPage } from './pages/AboutPage';
-import { ApiDebugPage } from './pages/ApiDebugPage';
-import { UxDesignPage } from './pages/UxDesignPage';
-import { TestSuitePage } from './pages/TestSuitePage';
+import { DashboardPage } from './pages/Dashboard';
+import { MaterialListPage } from './pages/MaterialList';
+import { MaterialFormPage } from './pages/MaterialForm';
+import { VectorSearchPage } from './pages/VectorSearch';
+import { RAGChatPage } from './pages/RAGChat';
+import { DetailPage } from './pages/Detail';
+import { SimilarPage } from './pages/Similar';
+import { VoicePage } from './pages/Voice';
+import { HelpPage } from './pages/Help';
+import { MasterSettingsPage } from './pages/MasterSettings';
+import { AboutPage } from './pages/About';
+import { ApiDebugPage } from './pages/ApiDebug';
+import { UxDesignPage } from './pages/UxDesign';
+import { TestSuitePage } from './pages/TestSuite';
 
 // Lazy load Three.js heavy page to avoid blocking app startup
-const CatalogPage = lazy(() => import('./pages/CatalogPage').then(m => ({ default: m.CatalogPage })));
+const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => ({ default: m.CatalogPage })));
 
 const LazyFallback = () => (
   <div className="flex items-center justify-center h-64 text-text-lo">
