@@ -1,0 +1,1 @@
+export { SimilarPage } from './SimilarPage';

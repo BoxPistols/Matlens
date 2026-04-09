@@ -71,10 +71,10 @@ export interface NavItem {
 
 export interface EmbeddingHook {
   status: string;
-  embeddings: Record<string, number[]>;
   search: (query: string, topK?: number) => Promise<MaterialWithScore[]>;
   addToIndex: (record: Material) => Promise<void>;
   embCount: number;
+  engine: string;
 }
 
 export interface AIHook {

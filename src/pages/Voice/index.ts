@@ -1,0 +1,1 @@
+export { VoicePage } from './VoicePage';

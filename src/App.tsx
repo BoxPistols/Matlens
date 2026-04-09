@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useCallback } from 'react';
+import { useState, useEffect, useReducer, useCallback, lazy, Suspense } from 'react';
 import type { Toast, AppContextValue } from './types';
 import { AppCtx, dbReducer } from './context/AppContext';
 import { INITIAL_DB } from './data/initialDb';
@@ -12,21 +12,30 @@ import { Topbar } from './components/Topbar';
 import { Sidebar } from './components/Sidebar';
 import { SupportPanel } from './components/SupportPanel';
 import { ToastHub } from './components/molecules';
-import { DashboardPage } from './pages/DashboardPage';
-import { MaterialListPage } from './pages/MaterialListPage';
-import { MaterialFormPage } from './pages/MaterialFormPage';
-import { VectorSearchPage } from './pages/VectorSearchPage';
-import { RAGChatPage } from './pages/RAGChatPage';
-import { DetailPage } from './pages/DetailPage';
-import { SimilarPage } from './pages/SimilarPage';
-import { VoicePage } from './pages/VoicePage';
-import { HelpPage } from './pages/HelpPage';
-import { MasterSettingsPage } from './pages/MasterSettingsPage';
-import { AboutPage } from './pages/AboutPage';
-import { ApiDebugPage } from './pages/ApiDebugPage';
-import { UxDesignPage } from './pages/UxDesignPage';
-import { TestSuitePage } from './pages/TestSuitePage';
-import { CatalogPage } from './pages/CatalogPage';
+import { Typing } from './components/atoms';
+import { DashboardPage } from './pages/Dashboard';
+import { MaterialListPage } from './pages/MaterialList';
+import { MaterialFormPage } from './pages/MaterialForm';
+import { VectorSearchPage } from './pages/VectorSearch';
+import { RAGChatPage } from './pages/RAGChat';
+import { DetailPage } from './pages/Detail';
+import { SimilarPage } from './pages/Similar';
+import { VoicePage } from './pages/Voice';
+import { HelpPage } from './pages/Help';
+import { MasterSettingsPage } from './pages/MasterSettings';
+import { AboutPage } from './pages/About';
+import { ApiDebugPage } from './pages/ApiDebug';
+import { UxDesignPage } from './pages/UxDesign';
+import { TestSuitePage } from './pages/TestSuite';
+
+// Lazy load Three.js heavy page to avoid blocking app startup
+const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => ({ default: m.CatalogPage })));
+
+const LazyFallback = () => (
+  <div className="flex items-center justify-center h-64 text-text-lo">
+    <Typing /> <span className="ml-2 text-[13px]">3D カタログを読み込み中...</span>
+  </div>
+);
 
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
@@ -41,6 +50,7 @@ export function App() {
   const claude = ai;
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [globalQuery, setGlobalQuery] = useState('');
+  const [ragInitialQuery, setRagInitialQuery] = useState('');
 
   useEffect(() => { installMockAPI(() => db, dispatch); }, []);
 
@@ -54,6 +64,8 @@ export function App() {
 
   const navTo = (p: string) => {
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
+    if (p.startsWith('detail_')) { setDetailId(p.slice(7)); setPage('detail'); return; }
+    if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
   const showDetail = (id: string) => { setDetailId(id); setPage('detail'); };
@@ -68,9 +80,9 @@ export function App() {
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;
       case 'detail':  return <DetailPage {...commonProps} recordId={detailId!} onBack={() => setPage('list')} onEdit={() => navTo('edit_'+detailId)} />;
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
-      case 'rag':     return <RAGChatPage {...commonProps} />;
+      case 'rag':     return <RAGChatPage {...commonProps} initialQuery={ragInitialQuery} clearInitialQuery={() => setRagInitialQuery('')} />;
       case 'sim':     return <SimilarPage {...commonProps} />;
-      case 'catalog': return <CatalogPage db={db} onNav={navTo} onDetail={showDetail} />;
+      case 'catalog': return <Suspense fallback={<LazyFallback />}><CatalogPage db={db} onNav={navTo} onDetail={showDetail} /></Suspense>;
       case 'voice':   return <VoicePage />;
       case 'api':     return <ApiDebugPage db={db} dispatch={dispatch} />;
       case 'tests':   return <TestSuitePage />;
@@ -89,8 +101,9 @@ export function App() {
         <Topbar
           theme={theme} setTheme={setTheme}
           onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
-          embStatus={embedding.status} embCount={embedding.embCount}
+          embStatus={embedding.status} embCount={embedding.embCount} embEngine={embedding.engine}
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}
+          db={db} onDetail={showDetail}
         />
         <div className="flex flex-1 overflow-hidden">
           <Sidebar
