@@ -26,35 +26,34 @@ export const UxDesignPage = () => {
             <div key={t} className="flex gap-2.5 py-2 border-b border-[var(--border-faint)] last:border-b-0"><Icon name="check" size={13} className="text-ok flex-shrink-0 mt-0.5"/><div><div className="text-[13px] font-bold text-text-hi">{t}</div><div className="text-[12px] text-text-md mt-0.5">{d}</div></div></div>
           ))}
         </SectionCard>
-        <SectionCard title="\u30B5\u30A4\u30C8\u30DE\u30C3\u30D7">
+        <SectionCard title="サイトマップ（現行）">
           <pre className="font-mono text-[11px] bg-sunken p-3 rounded border border-[var(--border-faint)] leading-[1.9]">{`Matlens
-\u251C\u2500\u2500 \u30C0\u30C3\u30B7\u30E5\u30DC\u30FC\u30C9
-\u2502   \u251C\u2500\u2500 KPI \u00D7 4
-\u2502   \u251C\u2500\u2500 AI \u30A4\u30F3\u30B5\u30A4\u30C8
-\u2502   \u2514\u2500\u2500 Chart.js \u30B0\u30E9\u30D5 \u00D7 4
-\u251C\u2500\u2500 \u6750\u6599\u30C7\u30FC\u30BF
-\u2502   \u251C\u2500\u2500 \u4E00\u89A7 (\u8907\u5408\u30D5\u30A3\u30EB\u30BF)
-\u2502   \u251C\u2500\u2500 \u8A73\u7D30
-\u2502   \u251C\u2500\u2500 \u65B0\u898F\u767B\u9332
-\u2502   \u2514\u2500\u2500 \u7DE8\u96C6
-\u251C\u2500\u2500 AI / \u30D9\u30AF\u30C8\u30EB
-\u2502   \u251C\u2500\u2500 \u30D9\u30AF\u30C8\u30EB\u691C\u7D22 VSS
-\u2502   \u251C\u2500\u2500 RAG \u30C1\u30E3\u30C3\u30C8
-\u2502   \u2514\u2500\u2500 \u985E\u4F3C\u6750\u6599\u63A2\u7D22
-\u251C\u2500\u2500 \u958B\u767A\u30C4\u30FC\u30EB
-\u2502   \u251C\u2500\u2500 API \u30C7\u30D0\u30C3\u30B0
-\u2502   \u2514\u2500\u2500 \u30C6\u30B9\u30C8\u30B9\u30A4\u30FC\u30C8
-\u2514\u2500\u2500 \u30C9\u30AD\u30E5\u30E1\u30F3\u30C8
-    \u251C\u2500\u2500 UX \u8A2D\u8A08\u30AC\u30A4\u30C9 \u2190 \u73FE\u5728\u5730
-    \u251C\u2500\u2500 \u30D8\u30EB\u30D7\u30FB\u7528\u8A9E\u96C6
-    \u2514\u2500\u2500 \u6280\u8853\u30B9\u30BF\u30C3\u30AF`}</pre>
+├── 概要
+│   ├── ダッシュボード (KPI + AI分析 + Chart.js)
+│   ├── 材料データ一覧 (テーブル/カード/コンパクト切替)
+│   └── 材料カタログ (CSSビジュアル + グリッド)
+├── データ入力
+│   └── 新規登録 / 編集フォーム
+├── AI 分析・検索
+│   ├── 意味検索 (TF.js Embedding)
+│   ├── AI チャット (RAG)
+│   └── 類似材料を比較
+├── ヘルプ・情報
+│   ├── ヘルプ・用語集
+│   └── 技術スタック ← 現在地
+├── 開発者向け
+│   ├── API テスト (Mock REST)
+│   ├── テストスイート (Vitest)
+│   └── UX設計ノート
+└── 設定
+    └── カテゴリ・バッチ管理`}</pre>
         </SectionCard>
       </div>
     </>,
     'nav-design': <>
       <div className="grid gap-3" style={{gridTemplateColumns:'1fr 1fr'}}>
         <SectionCard title="\u30CA\u30D3\u30B2\u30FC\u30B7\u30E7\u30F3\u8A2D\u8A08\u539F\u5247">
-          {[['\u73FE\u5728\u5730\u306E\u660E\u793A','\u30A2\u30AF\u30C6\u30A3\u30D6\u30A2\u30A4\u30C6\u30E0\u3092\u5DE6\u30DC\u30FC\u30C0\u30FC+\u80CC\u666F\u8272\u3067\u5F37\u8ABF\u3002\u8A73\u7D30\u753B\u9762\u3067\u306Fbreadcrumb\u3002'],['\u6298\u308A\u7573\u307F\u306B\u3088\u308B\u7A7A\u9593\u78BA\u4FDD','\u30B5\u30A4\u30C9\u30D0\u30FC\u30C8\u30B0\u30EB\u3067\u4F5C\u696D\u9818\u57DF\u3092\u6700\u5927\u5316\u3002\u30A2\u30A4\u30B3\u30F3+\u30C4\u30FC\u30EB\u30C1\u30C3\u30D7\u3067\u6298\u308A\u7573\u307F\u6642\u3082\u64CD\u4F5C\u53EF\u80FD\u3002'],['\u591A\u52D5\u7DDA\u8A2D\u8A08','\u3088\u304F\u4F7F\u3046\u64CD\u4F5C\u306F\u30D8\u30C3\u30C0\u30FC\u306E\u30A2\u30AF\u30B7\u30E7\u30F3\u30DC\u30BF\u30F3\u3067\u3082\u5230\u9054\u3067\u304D\u308B\u3002\u30B7\u30E7\u30FC\u30C8\u30AB\u30C3\u30C8\u52D5\u7DDA\u306E\u78BA\u4FDD\u3002'],['\u30B9\u30B3\u30FC\u30D7\u306E\u660E\u793A','\u30BB\u30AF\u30B7\u30E7\u30F3\u5206\u3051\uFF08\u30E1\u30A4\u30F3/AI/\u958B\u767A/\u30C9\u30AD\u30E5\u30E1\u30F3\u30C8\uFF09\u3067\u6A5F\u80FD\u306E\u6587\u8108\u3092\u4F1D\u3048\u308B\u3002']].map(([t,d])=>(
+          {[['現在地の明示','アクティブアイテムを左ボーダー+背景色で強調。詳細画面ではbreadcrumb + prev/next ナビ。'],['折り畳みによる空間確保','サイドバートグルで作業領域を最大化。アイコン+ツールチップで折り畳み時も操作可能。'],['グローバル検索','トップバー中央に検索バー。Enter で材料一覧にフィルタ適用して遷移。IME対応済み。'],['セクション分け','概要/データ入力/AI分析/ヘルプ/開発者向け/設定の6セクションで機能の文脈を伝える。']].map(([t,d])=>(
             <div key={t} className="bg-raised border border-[var(--border-faint)] rounded p-3 mb-2 last:mb-0"><div className="text-[13px] font-bold text-text-hi mb-1">{t}</div><div className="text-[12px] text-text-md">{d}</div></div>
           ))}
         </SectionCard>
