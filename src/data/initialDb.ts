@@ -1,5 +1,34 @@
 import type { Material } from '../types';
 
+/**
+ * DISCLAIMER / 免責事項
+ *
+ * このデータはデモンストレーション用のサンプルデータです。
+ * 値は ASM Handbook, JIS規格, MatWeb 等の公開情報を参考に
+ * 設定していますが、特定のロット・熱処理条件・試験規格に
+ * 基づく実測値ではありません。
+ *
+ * 設計・研究に使用する場合は、必ず以下の一次ソースで検証してください:
+ * - JIS規格書 (日本規格協会) https://www.jsa.or.jp/
+ * - ASM International https://www.asminternational.org/
+ * - MatWeb https://www.matweb.com/
+ * - 各材料メーカーのデータシート
+ *
+ * 特にセラミクス・複合材料は製造条件で値が大きく変動するため、
+ * 単一の代表値として扱うことは不適切です。
+ */
+
+export const DATA_DISCLAIMER = {
+  ja: 'このデータはデモ用サンプルです。設計・研究には一次ソース（JIS規格書, ASM Handbook, MatWeb, メーカーデータシート）で検証してください。',
+  en: 'Sample data for demonstration only. Verify with primary sources (JIS standards, ASM Handbook, MatWeb, manufacturer datasheets) before use in design or research.',
+  sources: [
+    { name: 'JIS規格 (日本規格協会)', url: 'https://www.jsa.or.jp/' },
+    { name: 'ASM International', url: 'https://www.asminternational.org/' },
+    { name: 'MatWeb Material Property Data', url: 'https://www.matweb.com/' },
+    { name: 'NIMS Materials Database (MatNavi)', url: 'https://mits.nims.go.jp/' },
+  ],
+};
+
 export const INITIAL_DB: Material[] = [
   // === 金属合金 — 鉄鋼 ===
   {id:'MAT-0301',name:'SS400 一般構造用圧延鋼',cat:'金属合金',hv:155,ts:400,el:206,pf:245,el2:21,dn:7.85,comp:'Fe-0.27C-1.5Mn (max)',batch:'B-040',date:'2026-04-08',author:'田中 実',status:'承認済',ai:false,memo:'最も汎用的な構造用鋼材'},
@@ -77,7 +106,7 @@ export const INITIAL_DB: Material[] = [
   {id:'MAT-0361',name:'アラミド繊維/エポキシ複合材',cat:'複合材料',hv:40,ts:500,el:30,pf:null,el2:2.5,dn:1.38,comp:'Kevlar 49 / Epoxy',batch:'B-026',date:'2026-03-08',author:'鈴木 誠',status:'承認済',ai:false,memo:'防弾ベスト・ヘルメット'},
   {id:'MAT-0362',name:'SiC/SiC CMC',cat:'複合材料',hv:2800,ts:350,el:200,pf:null,el2:0.2,dn:2.70,comp:'SiC fiber / SiC matrix',batch:'B-026',date:'2026-03-07',author:'山田 研',status:'レビュー待',ai:true,memo:'航空エンジンタービン翼'},
   {id:'MAT-0363',name:'C/C コンポジット',cat:'複合材料',hv:100,ts:250,el:30,pf:null,el2:1.0,dn:1.65,comp:'Carbon fiber / Carbon matrix',batch:'B-026',date:'2026-03-07',author:'田中 実',status:'承認済',ai:false,memo:'ブレーキディスク。2000°C耐熱'},
-  {id:'MAT-0364',name:'WC-Co サーメット',cat:'複合材料',hv:1800,ts:1500,el:500,pf:null,el2:0,dn:12.50,comp:'TiC-TiN/Ni-Co binder',batch:'B-025',date:'2026-03-06',author:'鈴木 誠',status:'承認済',ai:true,memo:'高速仕上げ切削用工具'},
+  {id:'MAT-0364',name:'TiC/TiN サーメット',cat:'複合材料',hv:1600,ts:1200,el:400,pf:null,el2:0,dn:6.50,comp:'TiC-TiN 70% / Ni-Co binder 30%',batch:'B-025',date:'2026-03-06',author:'鈴木 誠',status:'承認済',ai:true,memo:'高速仕上げ切削用工具。WC-Coより軽量'},
   {id:'MAT-0365',name:'Al-SiC MMC',cat:'複合材料',hv:150,ts:450,el:120,pf:350,el2:5,dn:2.90,comp:'Al6061 + SiC 20vol%',batch:'B-025',date:'2026-03-06',author:'山田 研',status:'承認済',ai:false,memo:'高剛性軽量。電子パッケージ基板'},
   {id:'MAT-0366',name:'サンドイッチパネル (Al/ハニカム)',cat:'複合材料',hv:80,ts:200,el:45,pf:null,el2:3,dn:0.30,comp:'Al 5052 skin / Al honeycomb core',batch:'B-025',date:'2026-03-05',author:'田中 実',status:'承認済',ai:false,memo:'航空機内装・建築パネル'},
   {id:'MAT-0367',name:'GLARE ガラスアルミ積層材',cat:'複合材料',hv:95,ts:450,el:55,pf:null,el2:4,dn:2.45,comp:'Al 2024 + S2-glass/epoxy',batch:'B-025',date:'2026-03-05',author:'鈴木 誠',status:'承認済',ai:false,memo:'A380 上部胴体。耐疲労'},

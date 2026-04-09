@@ -50,6 +50,7 @@ export function App() {
   const claude = ai;
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [globalQuery, setGlobalQuery] = useState('');
+  const [ragInitialQuery, setRagInitialQuery] = useState('');
 
   useEffect(() => { installMockAPI(() => db, dispatch); }, []);
 
@@ -63,6 +64,7 @@ export function App() {
 
   const navTo = (p: string) => {
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
+    if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
   const showDetail = (id: string) => { setDetailId(id); setPage('detail'); };
@@ -77,7 +79,7 @@ export function App() {
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;
       case 'detail':  return <DetailPage {...commonProps} recordId={detailId!} onBack={() => setPage('list')} onEdit={() => navTo('edit_'+detailId)} />;
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
-      case 'rag':     return <RAGChatPage {...commonProps} />;
+      case 'rag':     return <RAGChatPage {...commonProps} initialQuery={ragInitialQuery} clearInitialQuery={() => setRagInitialQuery('')} />;
       case 'sim':     return <SimilarPage {...commonProps} />;
       case 'catalog': return <Suspense fallback={<LazyFallback />}><CatalogPage db={db} onNav={navTo} onDetail={showDetail} /></Suspense>;
       case 'voice':   return <VoicePage />;

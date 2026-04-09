@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from '../components/Icon';
 import { Button, Badge, Card, Input, Typing } from '../components/atoms';
 import { MarkdownBubble, VecCard } from '../components/molecules';
@@ -8,9 +8,11 @@ interface RAGChatPageProps {
   db: Material[];
   embedding: EmbeddingHook;
   claude: AIHook;
+  initialQuery?: string;
+  clearInitialQuery?: () => void;
 }
 
-export const RAGChatPage = ({ db, embedding, claude }: RAGChatPageProps) => {
+export const RAGChatPage = ({ db, embedding, claude, initialQuery, clearInitialQuery }: RAGChatPageProps) => {
   const [messages, setMessages] = useState<{ role: string; text: string; sources?: MaterialWithScore[] }[]>([
     { role: 'ai', text: 'Matlens の材料データベースについてなんでも聞いてください。ベクトル検索で関連データを取得し、根拠のある回答を提供します。' }
   ]);
@@ -47,6 +49,14 @@ ${ctxText}`;
       }, 50);
     });
   };
+
+  // Auto-send initial query from detail page context
+  useEffect(() => {
+    if (initialQuery && !sending) {
+      send(initialQuery);
+      clearInitialQuery?.();
+    }
+  }, []);
 
   return (
     <div className="flex flex-col flex-1 min-h-0 gap-3">

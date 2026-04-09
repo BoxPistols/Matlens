@@ -3,6 +3,7 @@ import { Icon } from '../components/Icon';
 import { Button, Badge, Card, Select } from '../components/atoms';
 import { SearchBox } from '../components/molecules';
 import { MaterialVisual } from '../components/MaterialVisual';
+import { DataDisclaimer } from '../components/DataDisclaimer';
 import type { Material } from '../types';
 
 interface CatalogPageProps {
@@ -39,13 +40,14 @@ export const CatalogPage = ({ db, onNav, onDetail }: CatalogPageProps) => {
 
   return (
     <div className="flex flex-col gap-4">
+      <DataDisclaimer compact />
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">
-            材料カタログ <Badge variant="vec">3D</Badge>
+            材料カタログ
           </h1>
           <p className="text-[12px] text-text-lo mt-0.5">
-            {filtered.length}種の材料を3Dビジュアルで閲覧 — 物性値に応じて質感・形状が変化します
+            {filtered.length}種の材料を一覧表示
           </p>
         </div>
       </div>
