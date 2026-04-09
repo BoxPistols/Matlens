@@ -1355,25 +1355,24 @@ const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, em
 
 /** Sidebar organism */
 const NAV_ITEMS = [
-  { section: 'メイン' },
-  { id:'dash',    label:'ダッシュボード',    icon:'dashboard' },
-  { id:'list',    label:'材料データ一覧',    icon:'list',    badge: true },
-  { section: 'データ管理' },
-  { id:'new',     label:'新規登録',         icon:'plus' },
-  { section: 'AI / ベクトル' },
-  { id:'vsearch', label:'ベクトル検索',     icon:'vecSearch', badgeLabel:'VSS', badgeVariant:'vec', cls:'vec-nav' },
-  { id:'rag',     label:'RAG チャット',     icon:'rag',     badgeLabel:'RAG',  badgeVariant:'ai',  cls:'ai-nav' },
-  { id:'sim',     label:'類似材料探索',     icon:'similar' },
-  // { id:'voice',   label:'音声・ハンズフリー',icon:'mic' }, // VOICE DISABLED
-  { section: '開発ツール' },
-  { id:'api',     label:'API デバッグ',     icon:'scan',    badgeLabel:'Mock', badgeVariant:'vec' },
-  { id:'tests',   label:'テストスイート',   icon:'check',   badgeLabel:'Unit', badgeVariant:'green' },
-  { section: 'ドキュメント' },
-  { id:'uxdesign',label:'UX設計ガイド',     icon:'filter' },
-  { id:'help',    label:'ヘルプ・用語集',   icon:'help' },
-  { id:'about',   label:'技術スタック',     icon:'about' },
+  { section: '概要' },
+  { id:'dash',    label:'ダッシュボード',    icon:'dashboard', desc:'全体の状況を確認' },
+  { id:'list',    label:'材料データ一覧',    icon:'list',    badge: true, desc:'登録データの検索・管理' },
+  { section: 'データ入力' },
+  { id:'new',     label:'新規登録',         icon:'plus', desc:'新しい材料データを登録' },
+  { section: 'AI 分析・検索' },
+  { id:'vsearch', label:'意味検索',         icon:'vecSearch', badgeLabel:'AI', badgeVariant:'vec', cls:'vec-nav', desc:'自然文で類似材料を探す' },
+  { id:'rag',     label:'AI チャット',      icon:'rag',     badgeLabel:'AI',  badgeVariant:'ai',  cls:'ai-nav', desc:'データを元にAIが回答' },
+  { id:'sim',     label:'類似材料を比較',   icon:'similar', desc:'材料間の類似度を分析' },
+  { section: 'ヘルプ・情報' },
+  { id:'help',    label:'ヘルプ・用語集',   icon:'help', desc:'使い方と専門用語の解説' },
+  { id:'about',   label:'技術スタック',     icon:'about', desc:'使用技術の一覧' },
+  { section: '開発者向け' },
+  { id:'api',     label:'API テスト',       icon:'scan',    badgeLabel:'Dev', badgeVariant:'vec', desc:'REST APIの動作確認' },
+  { id:'tests',   label:'テストスイート',   icon:'check',   badgeLabel:'Dev', badgeVariant:'green', desc:'自動テストの実行' },
+  { id:'uxdesign',label:'UX設計ノート',     icon:'info', desc:'デザイン方針の記録' },
   { section: '設定' },
-  { id:'settings',label:'マスタ管理',       icon:'settings' },
+  { id:'settings',label:'カテゴリ・バッチ管理', icon:'settings', desc:'マスタデータの編集' },
 ];
 
 const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embStatus, embCount }) => {
@@ -1566,7 +1565,7 @@ const DashboardPage = ({ db, onNav, claude, voice }) => {
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight">ダッシュボード</h1>
-          <p className="text-[12px] text-text-lo mt-0.5">2026年4月 · 概況サマリー</p>
+          <p className="text-[12px] text-text-lo mt-0.5">登録状況・承認進捗・異常値を一覧で確認</p>
         </div>
         <div className="flex gap-2 items-center">
           <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />レポート</Button>
@@ -1807,7 +1806,14 @@ const MaterialListPage = ({ db, dispatch, onNav, onDetail, search, globalQuery, 
             </thead>
             <tbody>
               {slice.length === 0 ? (
-                <tr><td colSpan={10} className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></td></tr>
+                <tr><td colSpan={10} className="text-center py-12 text-text-lo">
+                  <Icon name="search" size={28} className="mx-auto mb-3 opacity-25" />
+                  <div className="text-[14px] font-semibold mb-1">該当するデータが見つかりません</div>
+                  <div className="text-[12px] mb-3">検索条件やフィルタを変更してみてください</div>
+                  <button onClick={() => { setQ(''); setFilterCat(''); setFilterSt(''); setFilterBatch(''); }} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-[12px] bg-accent-dim text-accent border border-accent hover:bg-accent hover:text-white transition-all font-ui">
+                    <Icon name="close" size={10} />フィルタをリセット
+                  </button>
+                </td></tr>
               ) : slice.map(r => (
                 <tr key={r.id}
                   className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`}
@@ -2076,16 +2082,19 @@ const VectorSearchPage = ({ db, embedding, claude }) => {
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">
-            ベクトル検索 <Badge variant="vec">VSS</Badge>
+            意味検索 <Badge variant="vec">AI</Badge>
           </h1>
-          <p className="text-[12px] text-text-lo mt-0.5">自然言語の説明で意味的に近い材料を検索します</p>
+          <p className="text-[12px] text-text-lo mt-0.5">「高温に強い軽量合金」のような自然文で、意味的に近い材料を探せます</p>
         </div>
       </div>
 
       <VecCard>
-        各材料テキスト（名称・組成・特性）を <strong className="text-text-hi">TF.js Universal Sentence Encoder</strong> で 512次元ベクトルに変換。
-        クエリとの <strong className="text-text-hi">コサイン類似度</strong> を計算してランキング表示します。
-        キーワード検索では拾えない「意味的に近い材料」を発見できます。
+        <strong className="text-text-hi">使い方:</strong> 探したい材料の特徴を普通の文章で入力してください。
+        キーワードが完全一致しなくても、意味が近い材料を AI が見つけ出します。
+        <details className="mt-2">
+          <summary className="text-[11px] text-vec cursor-pointer hover:underline">技術的な仕組みを見る</summary>
+          <div className="mt-1 text-[11px] text-text-lo">TF.js Universal Sentence Encoder で各材料テキストを512次元ベクトルに変換し、コサイン類似度でランキングします。</div>
+        </details>
         <div className="mt-2 text-[12px]">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${embedding.status==='ready' ? 'bg-[var(--ok-dim)] text-ok' : 'bg-raised text-text-lo'}`}>
             <Icon name="embed" size={11} />
@@ -2214,9 +2223,9 @@ ${ctxText}`;
       <div className="flex items-start gap-3 flex-shrink-0">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">
-            RAG チャット <Badge variant="ai">RAG</Badge>
+            AI チャット <Badge variant="ai">AI</Badge>
           </h1>
-          <p className="text-[12px] text-text-lo mt-0.5">材料DBをコンテキストにしたAI質問応答</p>
+          <p className="text-[12px] text-text-lo mt-0.5">登録済みの材料データを元に、AIが質問に回答します</p>
         </div>
       </div>
 
@@ -3461,9 +3470,9 @@ const SUPPORT_TABS = [
 const FAQ_ITEMS = [
   { q: 'データはどこに保存されますか？', a: '現在はブラウザのメモリ上に保持されます。ページをリロードするとサンプルデータにリセットされます。CSV/JSON でエクスポート可能です。' },
   { q: 'ベクトル検索とは何ですか？', a: 'TensorFlow.js の Universal Sentence Encoder でテキストをベクトル化し、意味的に類似した材料をコサイン類似度で検索します。ブラウザ内で完結します。' },
-  { q: 'AI 機能は無料ですか？', a: 'GPT-5.4 nano と Gemini 2.5 Flash は 1日30回まで無料です。自分の OpenAI API キーを設定すると GPT-5.4 mini が無制限で使えます。' },
+  { q: 'AI 機能は無料ですか？', a: 'はい。GPT-5.4 nano と Gemini 2.5 Flash は1日30回まで無料で使えます。より高性能な GPT-5.4 mini を使いたい場合は、右下のサポート → AI設定から自分のOpenAI APIキーを設定してください（無制限になります）。' },
   { q: '4つのテーマの違いは？', a: 'Light（標準）、Dark（暗色）、Engineering（端末風）、CAE（解析風）の4種。トップバーで切替できます。' },
-  { q: 'オフラインで使えますか？', a: 'CDN の読み込みにインターネット接続が必要です。初回読み込み後はブラウザキャッシュで一部動作しますが、AI 機能は接続が必要です。' },
+  { q: 'オフラインで使えますか？', a: '初回表示にはインターネット接続が必要です（CDN読み込み）。一度読み込めばデータ閲覧・登録入力は動作しますが、AI チャット・意味検索はインターネット接続が必須です。' },
 ];
 
 const SupportPanel = ({ ai, visible, onClose, onNav }) => {
@@ -3506,8 +3515,8 @@ const SupportPanel = ({ ai, visible, onClose, onNav }) => {
               {[
                 { icon: 'dashboard', label: 'ダッシュボード', desc: 'KPI・グラフで全体を把握', page: 'dash' },
                 { icon: 'list',      label: '材料データ一覧', desc: '登録・フィルタ・一括操作', page: 'list' },
-                { icon: 'vecSearch', label: 'ベクトル検索',   desc: 'AIで意味的に類似材料を検索', page: 'vsearch' },
-                { icon: 'rag',       label: 'RAG チャット',  desc: 'データを元にAIが回答', page: 'rag' },
+                { icon: 'vecSearch', label: '意味検索',       desc: '自然文で類似材料を探す', page: 'vsearch' },
+                { icon: 'rag',       label: 'AI チャット',   desc: 'データを元にAIが回答', page: 'rag' },
                 { icon: 'similar',   label: '類似材料探索',   desc: '材料間の類似度を比較', page: 'sim' },
               ].map(item => (
                 <button key={item.page} onClick={() => { onNav(item.page); onClose(); }}
