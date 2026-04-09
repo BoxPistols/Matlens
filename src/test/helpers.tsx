@@ -16,7 +16,7 @@ const mockClaude = {
   call: vi.fn().mockResolvedValue('AI応答テスト'),
   provider: 'openai-nano',
   setProvider: vi.fn(),
-  providerDef: { id: 'openai-nano' as const, label: 'GPT-5.4 nano', model: 'gpt-4.1-nano', free: true },
+  providerDef: { id: 'openai-nano' as const, label: 'GPT-5.4 nano', model: 'gpt-5.4-nano', free: true },
   providers: [],
   hasOwnKey: false,
   ownKey: '',

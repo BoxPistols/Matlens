@@ -37,7 +37,7 @@ export function useAI(): AIHook {
 
     if (hasOwnKey && (provider === 'openai-mini' || provider === 'openai-nano')) {
       try {
-        const model = provider === 'openai-mini' ? 'gpt-4.1-mini' : 'gpt-4.1-nano';
+        const model = provider === 'openai-mini' ? 'gpt-5.4-mini' : 'gpt-5.4-nano';
         const res = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ownKey}` },

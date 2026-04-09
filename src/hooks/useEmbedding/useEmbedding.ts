@@ -49,8 +49,14 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
   const search = useCallback(async (query: string, topK: number = 5): Promise<MaterialWithScore[]> => {
     if (!modelRef.current) {
       const q = query.toLowerCase();
+      const words = q.split(/\s+/).filter(w => w.length > 0);
       return db
-        .map(r => ({ ...r, score: [...q.split(' ')].filter(w => w.length > 1 && `${r.name} ${r.comp} ${r.memo}`.toLowerCase().includes(w)).length / q.split(' ').length * 0.8 + Math.random() * 0.05 }))
+        .map(r => {
+          const text = `${r.name} ${r.cat} ${r.comp} ${r.memo}`.toLowerCase();
+          const matchCount = words.filter(w => text.includes(w)).length;
+          const baseScore = words.length > 0 ? matchCount / words.length * 0.7 : 0;
+          return { ...r, score: baseScore + Math.random() * 0.25 };
+        })
         .sort((a,b) => b.score - a.score).slice(0, topK);
     }
     const t = await modelRef.current.embed([query]);

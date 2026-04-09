@@ -16,7 +16,30 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps)
   const [tab, setTab] = useState('help');
   const [keyInput, setKeyInput] = useState(ai.ownKey ? '••••••••' : '');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'ok' | 'error'>('idle');
+  const [testMessage, setTestMessage] = useState('');
   const { addToast } = useContext(AppCtx) as AppContextValue;
+
+  const runConnectionTest = async () => {
+    setTestStatus('testing');
+    setTestMessage('');
+    try {
+      const result = await ai.call('接続テスト：「OK」とだけ返してください。');
+      if (result.includes('ローカル開発モード') || result.includes('デモ応答')) {
+        setTestStatus('error');
+        setTestMessage('APIキーが未設定です。.env.local にキーを追加するか、上のフォームからキーを設定してください。');
+      } else if (result.includes('エラー') || result.includes('error')) {
+        setTestStatus('error');
+        setTestMessage(result);
+      } else {
+        setTestStatus('ok');
+        setTestMessage(`${ai.providerDef.label} — 接続成功`);
+      }
+    } catch {
+      setTestStatus('error');
+      setTestMessage('接続に失敗しました');
+    }
+  };
   if (!visible) return null;
 
   const { rateInfo, hasOwnKey } = ai;
@@ -113,6 +136,18 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps)
               </div>
               <p className="text-[11px] text-text-lo mt-1">キーはlocalStorage保存。共用PCでは削除推奨。</p>
             </FormGroup>
+            <Divider />
+            <div>
+              <Button variant="default" size="sm" onClick={runConnectionTest} disabled={testStatus === 'testing'} className="w-full">
+                <Icon name={testStatus === 'testing' ? 'refresh' : testStatus === 'ok' ? 'check' : testStatus === 'error' ? 'warning' : 'scan'} size={12} />
+                {testStatus === 'testing' ? 'テスト中...' : '接続テスト（現状確認）'}
+              </Button>
+              {testStatus !== 'idle' && testStatus !== 'testing' && (
+                <div className={`mt-1.5 text-[11px] px-2 py-1.5 rounded border ${testStatus === 'ok' ? 'bg-[var(--ok-dim)] border-[var(--ok)] text-ok' : 'bg-[var(--err-dim)] border-[var(--err)] text-err'}`}>
+                  {testMessage}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

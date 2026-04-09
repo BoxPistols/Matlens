@@ -2,14 +2,8 @@
 // Reads OPENAI_API_KEY / GEMINI_API_KEY from .env.local via Vite's loadEnv
 
 export function devApiProxy() {
-  let envVars = {};
-
   return {
     name: 'dev-api-proxy',
-    configResolved(config) {
-      // Vite loads .env.local automatically into config.env (VITE_ prefixed)
-      // but we need unprefixed vars, so read from process.env (dotenv loaded by Vite)
-    },
     configureServer(server) {
       server.middlewares.use('/api/ai', async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
@@ -85,7 +79,7 @@ export function devApiProxy() {
               res.end(JSON.stringify({ error: 'OPENAI_API_KEY が .env.local に設定されていません' }));
               return;
             }
-            const model = provider === 'openai-mini' ? 'gpt-4.1-mini' : 'gpt-4.1-nano';
+            const model = provider === 'openai-mini' ? 'gpt-5.4-mini' : 'gpt-5.4-nano';
             const resp = await fetch('https://api.openai.com/v1/chat/completions', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },

@@ -16,6 +16,17 @@ interface MaterialListPageProps {
   search: (q: string, topK?: number) => Promise<MaterialWithScore[]>;
 }
 
+const Hl = ({ text, query }: { text: string; query: string }) => {
+  if (!query) return <>{text}</>;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+  if (parts.length === 1) return <>{text}</>;
+  return <>{parts.map((p, i) => p.toLowerCase() === query.toLowerCase()
+    ? <mark key={i} className="bg-[var(--accent-dim)] text-[var(--accent)] font-semibold rounded-sm px-0.5">{p}</mark>
+    : p
+  )}</>;
+};
+
 export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: MaterialListPageProps) => {
   const [q, setQ] = useState('');
   const [filterCat, setFilterCat] = useState('');
@@ -193,12 +204,12 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <tr><td colSpan={10} className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></td></tr>
                 ) : slice.map(r => (
                   <tr key={r.id} className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`} onClick={e => { if((e.target as HTMLElement).tagName==='BUTTON'||(e.target as HTMLElement).tagName==='INPUT') return; onDetail(r.id); }}>
-                    <td className="" onClick={e=>e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={()=>toggleSelect(r.id)} /></label></td>
-                    <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] text-text-lo">{r.id}</span></td>
-                    <td className="px-3.5 py-2.5"><span className="font-semibold">{r.name}</span></td>
+                    <td onClick={e=>e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={()=>toggleSelect(r.id)} /></label></td>
+                    <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] text-text-lo"><Hl text={r.id} query={q} /></span></td>
+                    <td className="px-3.5 py-2.5"><span className="font-semibold"><Hl text={r.name} query={q} /></span></td>
                     <td className="px-3.5 py-2.5"><Badge variant="gray">{r.cat}</Badge></td>
                     <td className="px-3.5 py-2.5 font-mono">{r.hv.toLocaleString()}</td>
-                    <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] block truncate text-text-md">{r.comp}</span></td>
+                    <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] block truncate text-text-md"><Hl text={r.comp} query={q} /></span></td>
                     <td className="px-3.5 py-2.5 text-[12px] text-text-lo">{r.date}</td>
                     <td className="px-3.5 py-2.5"><Badge>{r.status}</Badge></td>
                     <td className="px-3.5 py-2.5 text-center">{r.ai && <Badge variant="ai">検出</Badge>}</td>
@@ -228,8 +239,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={80} />
                 </div>
                 <div className="p-3 flex flex-col gap-1 flex-1">
-                  <div className="text-[10px] font-mono text-text-lo">{r.id}</div>
-                  <div className="text-[13px] font-bold text-text-hi group-hover:text-accent transition-colors leading-tight">{r.name}</div>
+                  <div className="text-[10px] font-mono text-text-lo"><Hl text={r.id} query={q} /></div>
+                  <div className="text-[13px] font-bold text-text-hi group-hover:text-accent transition-colors leading-tight"><Hl text={r.name} query={q} /></div>
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                     <Badge variant="gray">{r.cat}</Badge>
                     <Badge>{r.status}</Badge>
@@ -255,8 +266,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
               <button key={r.id} onClick={() => onDetail(r.id)}
                 className="group flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-faint)] last:border-b-0 hover:bg-hover transition-colors text-left">
                 <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={36} className="flex-shrink-0" />
-                <span className="font-mono text-[11px] text-text-lo w-16 flex-shrink-0">{r.id}</span>
-                <span className="text-[13px] font-semibold text-text-hi group-hover:text-accent flex-1 truncate">{r.name}</span>
+                <span className="font-mono text-[11px] text-text-lo w-16 flex-shrink-0"><Hl text={r.id} query={q} /></span>
+                <span className="text-[13px] font-semibold text-text-hi group-hover:text-accent flex-1 truncate"><Hl text={r.name} query={q} /></span>
                 <Badge variant="gray">{r.cat}</Badge>
                 <span className="font-mono text-[12px] text-text-md w-16 text-right flex-shrink-0">{r.hv.toLocaleString()} HV</span>
                 <Badge>{r.status}</Badge>
