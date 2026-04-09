@@ -161,8 +161,8 @@ export const Textarea = ({ className = '', ...props }: TextareaProps) => (
   />
 );
 
-export const Checkbox = ({ ...props }) => (
-  <input type="checkbox" className="w-3.5 h-3.5 cursor-pointer accent-accent" {...props} />
+export const Checkbox = ({ className = '', ...props }: React.InputHTMLAttributes<HTMLInputElement>) => (
+  <input type="checkbox" className={`matlens-checkbox w-4 h-4 cursor-pointer ${className}`} {...props} />
 );
 
 export const UnitInput = ({ unit, className = '', inputProps = {} }: UnitInputProps) => (
