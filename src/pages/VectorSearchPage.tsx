@@ -2,11 +2,18 @@ import { useState } from 'react';
 import { Icon } from '../components/Icon';
 import { Button, Badge, Card, Input, Select, Typing } from '../components/atoms';
 import { VecCard } from '../components/molecules';
+import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../types';
 
-export const VectorSearchPage = ({ db, embedding, claude }) => {
+interface VectorSearchPageProps {
+  db: Material[];
+  embedding: EmbeddingHook;
+  claude: AIHook;
+}
+
+export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProps) => {
   const [query, setQuery] = useState('');
   const [topK, setTopK] = useState(5);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<MaterialWithScore[]>([]);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
 

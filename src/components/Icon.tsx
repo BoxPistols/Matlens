@@ -1,4 +1,19 @@
-const ICONS = {
+export type IconName =
+  | 'dashboard' | 'list' | 'plus' | 'search' | 'vecSearch' | 'rag'
+  | 'similar' | 'mic' | 'help' | 'about' | 'settings'
+  | 'chevronLeft' | 'chevronRight' | 'chevronDown' | 'close' | 'check'
+  | 'edit' | 'trash' | 'download' | 'upload' | 'copy' | 'speaker'
+  | 'stop' | 'refresh' | 'play' | 'spark' | 'embed' | 'warning'
+  | 'info' | 'filter' | 'sort' | 'pdf' | 'json' | 'csv' | 'report'
+  | 'ai' | 'scan';
+
+interface IconProps {
+  name: IconName;
+  size?: number;
+  className?: string;
+}
+
+const ICONS: Record<IconName, React.ReactNode> = {
   dashboard: <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="3" height="6" rx="1"/></svg>,
   list:       <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="2" rx="1"/><rect x="1" y="7" width="14" height="2" rx="1"/><rect x="1" y="12" width="14" height="2" rx="1"/></svg>,
   plus:       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zm1 9H7V9H5V7h2V5h2v2h2v2H9v2z"/></svg>,
@@ -38,7 +53,7 @@ const ICONS = {
   scan:       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M1 5V2h3M12 2h3v3M15 11v3h-3M4 14H1v-3"/><path d="M3 8h10" strokeDasharray="2 1.5"/></svg>,
 };
 
-export const Icon = ({ name, size = 16, className = '' }) => (
+export const Icon = ({ name, size = 16, className = '' }: IconProps) => (
   <span
     role="img"
     aria-hidden="true"

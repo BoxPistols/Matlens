@@ -1,13 +1,70 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { marked } from 'marked';
-import { Icon } from './Icon';
+import { Icon, IconName } from './Icon';
 import { Tooltip } from './Tooltip';
 import { Button, Badge, Card, Input, SectionCard } from './atoms';
 import { AppCtx } from '../context/AppContext';
+import { Material, AppContextValue } from '../types';
 
-export const Modal = ({ open, onClose, title, children, footer, width = 'max-w-lg' }) => {
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  width?: string;
+}
+
+interface AIInsightCardProps {
+  children?: React.ReactNode;
+  chips?: { label: string; onClick: () => void; }[];
+  loading?: boolean;
+}
+
+interface VecCardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface KpiCardProps {
+  label: string;
+  value: string | number;
+  delta?: string;
+  deltaUp?: boolean;
+  color?: string;
+}
+
+interface SearchBoxProps {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  className?: string;
+}
+
+interface FilterChipProps {
+  label: string;
+  onRemove: () => void;
+}
+
+interface MarkdownBubbleProps {
+  text: string;
+  onSpeak?: (text: string) => void;
+}
+
+interface ExportModalProps {
+  open: boolean;
+  onClose: () => void;
+  db: Material[];
+  filtered: Material[];
+}
+
+interface TypingProps {
+  color?: string;
+}
+
+export const Modal = ({ open, onClose, title, children, footer, width = 'max-w-lg' }: ModalProps) => {
   useEffect(() => {
-    const handler = (e) => { if (e.key === 'Escape') onClose(); };
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     if (open) document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [open, onClose]);
@@ -31,7 +88,7 @@ export const Modal = ({ open, onClose, title, children, footer, width = 'max-w-l
 };
 
 export const ToastHub = () => {
-  const { toasts } = useContext(AppCtx);
+  const { toasts } = useContext(AppCtx) as AppContextValue;
   return (
     <div className="fixed bottom-5 right-5 z-[2000] flex flex-col gap-2 pointer-events-none">
       {toasts.map(t => (
@@ -45,7 +102,7 @@ export const ToastHub = () => {
   );
 };
 
-export const AIInsightCard = ({ children, chips, loading }) => (
+export const AIInsightCard = ({ children, chips, loading }: AIInsightCardProps) => (
   <div className="relative overflow-hidden rounded-lg border border-[var(--border-default)] p-4 mb-4" style={{ background: 'var(--ai-dim)' }}>
     <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg,transparent,var(--ai-mid),transparent)', backgroundSize: '200%', animation: 'scan 3s ease-in-out infinite' }} />
     <div className="flex items-center gap-2 mb-2">
@@ -67,7 +124,7 @@ export const AIInsightCard = ({ children, chips, loading }) => (
   </div>
 );
 
-const Typing = ({ color = 'var(--ai-col)' }) => (
+const Typing = ({ color = 'var(--ai-col)' }: TypingProps) => (
   <div className="flex items-center gap-1 py-0.5">
     {[0,1,2].map(i => (
       <span key={i} className="w-1 h-1 rounded-full inline-block" style={{ background: color, opacity: .4, animation: `dot 1.3s ease-in-out ${i * .2}s infinite` }} />
@@ -76,7 +133,7 @@ const Typing = ({ color = 'var(--ai-col)' }) => (
   </div>
 );
 
-export const VecCard = ({ children, className = '' }) => (
+export const VecCard = ({ children, className = '' }: VecCardProps) => (
   <div className={`border border-[var(--border-default)] rounded-lg p-4 ${className}`} style={{ background: 'var(--vec-dim)' }}>
     <div className="flex items-center gap-2 mb-2.5">
       <Icon name="embed" size={13} className="text-vec" />
@@ -86,7 +143,7 @@ export const VecCard = ({ children, className = '' }) => (
   </div>
 );
 
-export const KpiCard = ({ label, value, delta, deltaUp, color }) => (
+export const KpiCard = ({ label, value, delta, deltaUp, color }: KpiCardProps) => (
   <div className="bg-raised border border-[var(--border-faint)] rounded-md p-3.5">
     <div className="text-[11px] font-semibold text-text-lo tracking-[.04em] uppercase mb-1">{label}</div>
     <div className="text-2xl font-bold tracking-tight leading-none" style={color ? { color } : {}}>{value}</div>
@@ -94,21 +151,21 @@ export const KpiCard = ({ label, value, delta, deltaUp, color }) => (
   </div>
 );
 
-export const SearchBox = ({ value, onChange, placeholder = '検索...', className = '' }) => (
+export const SearchBox = ({ value, onChange, placeholder = '検索...', className = '' }: SearchBoxProps) => (
   <div className={`relative flex-1 ${className}`}>
     <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-lo pointer-events-none"><Icon name="search" size={14} /></span>
     <Input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} className="pl-8" />
   </div>
 );
 
-export const FilterChip = ({ label, onRemove }) => (
+export const FilterChip = ({ label, onRemove }: FilterChipProps) => (
   <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[12px] bg-accent-dim text-accent border border-[var(--border-default)]">
     {label}
     <button onClick={onRemove} className="opacity-60 hover:opacity-100 ml-0.5" aria-label={`${label} を削除`}><Icon name="close" size={10} /></button>
   </span>
 );
 
-export const MarkdownBubble = ({ text, onSpeak }) => {
+export const MarkdownBubble = ({ text, onSpeak }: MarkdownBubbleProps) => {
   const [copied, setCopied] = useState(false);
   const html = useMemo(() => {
     try {
@@ -152,7 +209,7 @@ export const MarkdownBubble = ({ text, onSpeak }) => {
   );
 };
 
-export const ExportModal = ({ open, onClose, db, filtered }) => {
+export const ExportModal = ({ open, onClose, db, filtered }: ExportModalProps) => {
   const exportCSV = () => {
     const h = ['ID','名称','カテゴリ','硬度HV','引張MPa','弾性GPa','組成','バッチ','登録日','ステータス','備考'];
     const rows = filtered.map(r => [r.id,`"${r.name}"`,r.cat,r.hv,r.ts,r.el,`"${r.comp}"`,r.batch,r.date,r.status,`"${r.memo||''}"`]);
@@ -168,6 +225,7 @@ export const ExportModal = ({ open, onClose, db, filtered }) => {
   const exportPDF = () => {
     const rows = db.map(r => `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.cat}</td><td>${r.hv}</td><td>${r.ts}</td><td>${r.status}</td></tr>`).join('');
     const win = window.open('','_blank');
+    if (!win) return;
     win.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Matlens レポート</title><style>body{font-family:sans-serif;font-size:11px;padding:20px}h1{font-size:16px;margin-bottom:4px}.meta{color:#666;font-size:11px;margin-bottom:16px}table{width:100%;border-collapse:collapse}th{background:#1e3050;color:#fff;padding:6px 8px;text-align:left;font-size:10px}td{padding:5px 8px;border-bottom:1px solid #e0e0e0;font-size:10px}tr:nth-child(even) td{background:#f7f7f5}</style></head><body><h1>Matlens 材料データレポート</h1><div class="meta">出力: ${new Date().toLocaleString('ja-JP')} ／ 総件数: ${db.length}件</div><table><thead><tr><th>ID</th><th>名称</th><th>カテゴリ</th><th>硬度HV</th><th>引張MPa</th><th>ステータス</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
     win.document.close(); setTimeout(() => win.print(), 400); onClose();
   };
@@ -182,7 +240,7 @@ export const ExportModal = ({ open, onClose, db, filtered }) => {
       <div className="grid grid-cols-2 gap-2.5">
         {items.map(item => (
           <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-2 p-4 bg-raised border border-[var(--border-default)] rounded-md cursor-pointer hover:border-accent hover:bg-accent-dim transition-all duration-150 text-center font-ui">
-            <Icon name={item.icon} size={22} className="text-accent" />
+            <Icon name={item.icon as IconName} size={22} className="text-accent" />
             <div>
               <div className="text-[13px] font-bold text-text-hi">{item.label}</div>
               <div className="text-[12px] text-text-lo mt-0.5">{item.desc}</div>

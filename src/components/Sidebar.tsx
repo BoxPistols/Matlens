@@ -1,9 +1,19 @@
-import { Icon } from './Icon';
+import { Icon, IconName } from './Icon';
 import { Tooltip } from './Tooltip';
 import { Badge, Typing } from './atoms';
 import { NAV_ITEMS } from '../data/constants';
 
-export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embStatus, embCount }) => {
+interface SidebarProps {
+  currentPage: string;
+  onNav: (page: string) => void;
+  collapsed: boolean;
+  onToggle: () => void;
+  dbCount: number;
+  embStatus: string;
+  embCount: number;
+}
+
+export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embStatus, embCount }: SidebarProps) => {
   return (
     <nav className={`sidebar-nav flex-shrink-0 flex flex-col border-r border-[var(--border-faint)] overflow-y-auto overflow-x-hidden transition-all duration-[220ms] ${collapsed ? 'collapsed' : ''}`} style={{ background: 'var(--sidebar-bg)' }} aria-label="メインナビゲーション">
       <div className={`flex items-center border-b border-[var(--border-faint)] h-[42px] flex-shrink-0 ${collapsed ? 'justify-center px-0' : 'px-3 gap-2'}`}>
@@ -27,8 +37,8 @@ export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embS
         const activeBase = item.cls === 'vec-nav' ? 'bg-vec-dim text-vec border-vec' : item.cls === 'ai-nav' ? 'bg-ai-dim text-ai border-ai' : 'bg-accent-dim text-accent border-accent';
         return (
           <Tooltip key={item.id} label={collapsed ? item.label : undefined} placement="right">
-            <button onClick={() => !item.disabled && onNav(item.id)} aria-current={isActive ? 'page' : undefined} disabled={item.disabled} className={`w-full flex items-center gap-2.5 py-2 text-left transition-all duration-100 disabled:opacity-40 disabled:cursor-not-allowed select-none border-l-2 ${collapsed ? 'justify-center px-0' : 'px-3.5'} ${isActive ? activeBase + ' font-semibold' : 'text-text-md hover:bg-hover hover:text-text-hi border-transparent'}`}>
-              <Icon name={item.icon} size={15} className="flex-shrink-0 opacity-80" />
+            <button onClick={() => !item.disabled && onNav(item.id!)} aria-current={isActive ? 'page' : undefined} disabled={item.disabled} className={`w-full flex items-center gap-2.5 py-2 text-left transition-all duration-100 disabled:opacity-40 disabled:cursor-not-allowed select-none border-l-2 ${collapsed ? 'justify-center px-0' : 'px-3.5'} ${isActive ? activeBase + ' font-semibold' : 'text-text-md hover:bg-hover hover:text-text-hi border-transparent'}`}>
+              <Icon name={item.icon as IconName} size={15} className="flex-shrink-0 opacity-80" />
               {!collapsed && (
                 <>
                   <span className="text-[13px] leading-none whitespace-nowrap overflow-hidden text-ellipsis text-left flex-1">{item.label}</span>

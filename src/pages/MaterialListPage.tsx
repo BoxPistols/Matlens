@@ -4,8 +4,17 @@ import { Tooltip } from '../components/Tooltip';
 import { Button, Badge, Card, Input, Select, Checkbox } from '../components/atoms';
 import { Modal, SearchBox, FilterChip, ExportModal } from '../components/molecules';
 import { AppCtx } from '../context/AppContext';
+import type { Material, AppContextValue, MaterialWithScore } from '../types';
 
-export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
+interface MaterialListPageProps {
+  db: Material[];
+  dispatch: React.Dispatch<any>;
+  onNav: (page: string) => void;
+  onDetail: (id: string) => void;
+  search: (q: string, topK?: number) => Promise<MaterialWithScore[]>;
+}
+
+export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: MaterialListPageProps) => {
   const [q, setQ] = useState('');
   const [filterCat, setFilterCat] = useState('');
   const [filterSt, setFilterSt] = useState('');
@@ -16,11 +25,11 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
   const [sortKey, setSortKey] = useState('id-desc');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [selected, setSelected] = useState(new Set());
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [advOpen, setAdvOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
-  const { addToast } = useContext(AppCtx);
+  const { addToast } = useContext(AppCtx) as AppContextValue;
 
   const filtered = useMemo(() => {
     let rows = db.filter(r => {
@@ -52,8 +61,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
   const totalPages = Math.ceil(filtered.length / pageSize);
   const slice = filtered.slice((page-1)*pageSize, page*pageSize);
 
-  const toggleSelect = (id) => setSelected(prev => { const s=new Set(prev); s.has(id)?s.delete(id):s.add(id); return s; });
-  const toggleAll = (checked) => setSelected(checked ? new Set(slice.map(r=>r.id)) : new Set());
+  const toggleSelect = (id: string) => setSelected(prev => { const s=new Set(prev); s.has(id)?s.delete(id):s.add(id); return s; });
+  const toggleAll = (checked: boolean) => setSelected(checked ? new Set(slice.map(r=>r.id)) : new Set());
 
   const activeTags = [
     q && { label:`"${q}"`, clear:()=>setQ('') },
@@ -62,7 +71,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
     filterBatch && { label:`B:${filterBatch}`, clear:()=>setFilterBatch('') },
     (hvMin||hvMax) && { label:`HV:${hvMin||'*'}〜${hvMax||'*'}`, clear:()=>{setHvMin('');setHvMax('');} },
     aiOnly && { label:'AI検出のみ', clear:()=>setAiOnly(false) },
-  ].filter(Boolean);
+  ].filter(Boolean) as { label: string; clear: () => void }[];
 
   return (
     <div className="flex flex-col gap-4">
@@ -70,7 +79,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="削除の確認" footer={
         <>
           <Button variant="default" onClick={() => setDeleteTarget(null)}>キャンセル</Button>
-          <Button variant="danger" onClick={() => { dispatch({type:'DELETE',id:deleteTarget}); setDeleteTarget(null); addToast('削除しました'); }}>削除する</Button>
+          <Button variant="danger" onClick={() => { dispatch({type:'DELETE',id:deleteTarget!}); setDeleteTarget(null); addToast('削除しました'); }}>削除する</Button>
         </>
       }>
         <p>このデータを削除します。この操作は元に戻せません。</p>
@@ -116,7 +125,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
               <input type="number" value={hvMax} onChange={e=>setHvMax(e.target.value)} placeholder="最大" className="w-16 px-2 py-1 border border-[var(--border-default)] rounded text-[12px] bg-raised text-text-hi outline-none focus:border-[var(--accent-mid)]" />
             </div>
             <label className="flex items-center gap-1.5 text-[12px] text-text-md cursor-pointer">
-              <Checkbox checked={aiOnly} onChange={e=>setAiOnly(e.target.checked)} />AI検出のみ
+              <Checkbox checked={aiOnly} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setAiOnly(e.target.checked)} />AI検出のみ
             </label>
           </div>
         )}
@@ -157,7 +166,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
             <thead>
               <tr className="bg-raised">
                 <th className="p-2.5 text-left border-b border-[var(--border-faint)]">
-                  <Checkbox checked={slice.length>0&&slice.every(r=>selected.has(r.id))} onChange={e=>toggleAll(e.target.checked)} aria-label="全選択" />
+                  <Checkbox checked={slice.length>0&&slice.every(r=>selected.has(r.id))} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>toggleAll(e.target.checked)} aria-label="全選択" />
                 </th>
                 {[['ID','font-mono'],['材料名称',''],['カテゴリ',''],['硬度 HV',''],['組成',''],['登録日',''],['ステータス',''],['AI','text-center'],['操作','text-center']].map(([l,cls])=>(
                   <th key={l} className={`px-3.5 py-2.5 text-left text-[11px] font-bold text-text-lo tracking-[.05em] uppercase border-b border-[var(--border-faint)] ${cls}`}>{l}</th>
@@ -168,7 +177,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
               {slice.length === 0 ? (
                 <tr><td colSpan={10} className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></td></tr>
               ) : slice.map(r => (
-                <tr key={r.id} className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`} onClick={e => { if(e.target.tagName==='BUTTON'||e.target.tagName==='INPUT') return; onDetail(r.id); }}>
+                <tr key={r.id} className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`} onClick={e => { if((e.target as HTMLElement).tagName==='BUTTON'||(e.target as HTMLElement).tagName==='INPUT') return; onDetail(r.id); }}>
                   <td className="p-2.5" onClick={e=>e.stopPropagation()}><Checkbox checked={selected.has(r.id)} onChange={()=>toggleSelect(r.id)} /></td>
                   <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] text-text-lo">{r.id}</span></td>
                   <td className="px-3.5 py-2.5"><span className="font-semibold">{r.name}</span></td>

@@ -1,4 +1,6 @@
-export const INITIAL_DB = [
+import type { Material } from '../types';
+
+export const INITIAL_DB: Material[] = [
   {id:'MAT-0247',name:'Ti-6Al-4V チタン合金',cat:'金属合金',hv:330,ts:950,el:114,pf:880,el2:14,dn:4.43,comp:'Ti-6Al-4V (wt%)',batch:'B-038',date:'2026-04-08',author:'山田 研',status:'登録済',ai:true,memo:'高強度・低密度。航空宇宙用途向け試験サンプル。'},
   {id:'MAT-0246',name:'Al2O3 アルミナ基板',cat:'セラミクス',hv:1800,ts:280,el:380,pf:null,el2:0,dn:3.97,comp:'Al2O3 99.5% (wt%)',batch:'B-038',date:'2026-04-07',author:'田中 実',status:'承認済',ai:false,memo:''},
   {id:'MAT-0245',name:'PEEK 熱可塑性樹脂',cat:'ポリマー',hv:88,ts:100,el:3.6,pf:91,el2:50,dn:1.32,comp:'Polyether ether ketone',batch:'B-038',date:'2026-04-06',author:'田中 実',status:'承認済',ai:false,memo:'高耐熱エンジニアリングプラスチック'},
@@ -16,6 +18,6 @@ export const INITIAL_DB = [
   {id:'MAT-0233',name:'Al-7075 超々ジュラルミン',cat:'金属合金',hv:175,ts:572,el:72,pf:503,el2:11,dn:2.81,comp:'Al-5.6Zn-2.5Mg-1.6Cu-0.23Cr',batch:'B-034',date:'2026-03-19',author:'山田 研',status:'承認済',ai:false,memo:'T6処理後。航空機構造材'},
 ];
 
-export let nextId = 248;
-export function getNextId() { return `MAT-0${nextId}`; }
-export function incrementNextId() { nextId++; }
+export let nextId: number = 248;
+export function getNextId(): string { return `MAT-0${nextId}`; }
+export function incrementNextId(): void { nextId++; }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import React from 'react';
-import { Icon } from '../components/Icon';
+import { Icon, IconName } from '../components/Icon';
 import { Badge, Card, SectionCard, FormGroup } from '../components/atoms';
 import { AIInsightCard, VecCard } from '../components/molecules';
 
@@ -146,7 +146,7 @@ export const UxDesignPage = () => {
       <SectionCard title="BtoB\u696D\u52D9\u30B7\u30B9\u30C6\u30E0\u8A2D\u8A08\u306E\u56FA\u6709\u539F\u5247">
         <div className="grid gap-3" style={{gridTemplateColumns:'1fr 1fr 1fr'}}>
           {[['\u60C5\u5831\u5BC6\u5EA6','BtoB\u306F\u9AD8\u5BC6\u5EA6\u304C\u6B63\u7FA9\u30021\u753B\u9762\u3067\u591A\u304F\u306E\u30C7\u30FC\u30BF\u3092\u898B\u6E21\u305B\u308B\u3053\u3068\u3092\u512A\u5148\u3002\u4F59\u767D\u306FBtoC\u307B\u3069\u53D6\u3089\u306A\u3044\u3002','about'],['\u64CD\u4F5C\u52B9\u7387','\u7E70\u308A\u8FD4\u3057\u64CD\u4F5C\uFF08\u4E00\u62EC\u51E6\u7406\u30FB\u30B7\u30E7\u30FC\u30C8\u30AB\u30C3\u30C8\uFF09\u3092\u91CD\u8996\u3002\u719F\u7DF4\u8005\u306E\u751F\u7523\u6027\u3092\u6700\u5927\u5316\u3002','filter'],['\u30A8\u30E9\u30FC\u8010\u6027','\u30C7\u30FC\u30BF\u640D\u5931\u30FB\u8AA4\u64CD\u4F5C\u306E\u5F71\u97FF\u304C\u5927\u304D\u3044\u3002\u524A\u9664\u78BA\u8A8D\u30FB\u4E0B\u66F8\u304D\u30FB\u5909\u66F4\u5C65\u6B74\u3092\u5FC5\u305A\u8A2D\u8A08\u3002','warning'],['\u6A29\u9650\u7BA1\u7406','\u95B2\u89A7\u30FB\u7DE8\u96C6\u30FB\u627F\u8A8D\u306E\u30ED\u30FC\u30EB\u5206\u96E2\u3002\u30B9\u30C6\u30FC\u30BF\u30B9\u30EF\u30FC\u30AF\u30D5\u30ED\u30FC\u8A2D\u8A08\u3002','check'],['\u30D0\u30EB\u30AF\u64CD\u4F5C','\u8907\u6570\u30EC\u30B3\u30FC\u30C9\u3078\u306E\u4E00\u62EC\u64CD\u4F5C\uFF08\u627F\u8A8D\u30FB\u524A\u9664\u30FBCSV\u51FA\u529B\uFF09\u306FBtoB\u5FC5\u9808\u6A5F\u80FD\u3002','list'],['\u76E3\u67FB\u30ED\u30B0','\u3044\u3064\u30FB\u8AB0\u304C\u30FB\u4F55\u3092\u5909\u66F4\u3057\u305F\u304B\u306E\u8A3C\u8DE1\u3002\u30B3\u30F3\u30D7\u30E9\u30A4\u30A2\u30F3\u30B9\u8981\u4EF6\u3078\u306E\u5BFE\u5FDC\u3002','info']].map(([t,d,ico])=>(
-            <div key={t} className="bg-raised border border-[var(--border-faint)] rounded p-3"><div className="flex items-center gap-2 mb-1.5"><Icon name={ico} size={13} className="text-accent"/><div className="text-[13px] font-bold text-text-hi">{t}</div></div><div className="text-[12px] text-text-md">{d}</div></div>
+            <div key={t} className="bg-raised border border-[var(--border-faint)] rounded p-3"><div className="flex items-center gap-2 mb-1.5"><Icon name={ico as IconName} size={13} className="text-accent"/><div className="text-[13px] font-bold text-text-hi">{t}</div></div><div className="text-[12px] text-text-md">{d}</div></div>
           ))}
         </div>
       </SectionCard>
@@ -187,11 +187,11 @@ export const UxDesignPage = () => {
         <div className="flex flex-col gap-0.5">
           {SECTIONS.map(s=>(
             <button key={s.id} onClick={()=>setSection(s.id)} className={`flex items-center gap-2 px-3 py-2 rounded text-[13px] text-left transition-colors font-ui border-l-2 ${section===s.id?'bg-accent-dim text-accent border-accent font-semibold':'text-text-md border-transparent hover:bg-hover'}`}>
-              <Icon name={s.icon} size={12} className="flex-shrink-0 opacity-70"/><span className="leading-tight">{s.title}</span>
+              <Icon name={s.icon as IconName} size={12} className="flex-shrink-0 opacity-70"/><span className="leading-tight">{s.title}</span>
             </button>
           ))}
         </div>
-        <div className="flex flex-col gap-3">{CONTENT[section]}</div>
+        <div className="flex flex-col gap-3">{(CONTENT as Record<string, React.ReactNode>)[section]}</div>
       </div>
     </div>
   );
