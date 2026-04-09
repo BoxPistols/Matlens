@@ -8,19 +8,21 @@ interface TopbarProps {
   onToggleSidebar: () => void;
   embStatus: string;
   embCount: number;
+  embEngine?: string;
   onGlobalSearch: (q: string) => void;
   globalQuery: string;
   setGlobalQuery: (q: string) => void;
 }
 
-export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, onGlobalSearch, globalQuery, setGlobalQuery }: TopbarProps) => {
+export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery }: TopbarProps) => {
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
     { id: 'eng',   label: 'Engineering' },
     { id: 'cae',   label: 'CAE' },
   ];
-  const vecStatusLabel = { idle:'初期化中', loading:'モデル読込中', indexing:'索引構築中', ready:`${embCount}件`, fallback:'キーワード検索' }[embStatus] || '—';
+  const engineSuffix = embEngine && embEngine !== 'Keyword' ? ` (${embEngine})` : '';
+  const vecStatusLabel = { idle:'初期化中', loading:'モデル読込中', indexing:'索引構築中', ready:`${embCount}件${engineSuffix}`, fallback:'キーワード検索' }[embStatus] || '—';
 
   return (
     <header className="flex-shrink-0 flex items-center gap-3 px-5 h-[52px] border-b border-[rgba(255,255,255,.06)]" style={{ background: 'var(--topbar-bg)' }} role="banner">

@@ -101,7 +101,7 @@ export function App() {
         <Topbar
           theme={theme} setTheme={setTheme}
           onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
-          embStatus={embedding.status} embCount={embedding.embCount}
+          embStatus={embedding.status} embCount={embedding.embCount} embEngine={embedding.engine}
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}
         />
         <div className="flex flex-1 overflow-hidden">
