@@ -1,132 +1,180 @@
-import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
-import * as THREE from 'three';
+import { useMemo } from 'react';
 
-// Material properties → visual parameters mapping
-function getVisualParams(cat: string, hv: number, ts: number, el: number) {
-  const hvNorm = Math.min(hv / 3000, 1);   // hardness 0-3000
-  const tsNorm = Math.min(ts / 2000, 1);   // tensile 0-2000
-  const elNorm = Math.min(el / 400, 1);    // elastic 0-400
+// ============================================================
+// Material-specific visual database
+// Real-world color/texture references for each material type
+// ============================================================
 
+interface MatVisualDef {
+  bg: string;          // Main background gradient
+  overlay?: string;    // Secondary overlay effect
+  shape?: string;      // border-radius style
+  symbol?: string;     // Representative symbol/emoji
+  grain?: number;      // Noise grain opacity
+  borderHue?: string;  // Border accent color
+}
+
+// Material name → specific visual appearance based on real-world look
+const MATERIAL_VISUALS: Record<string, MatVisualDef> = {
+  // === Steels — silver/dark grey metallic ===
+  'SS400':    { bg: 'linear-gradient(145deg, #8a8d92, #b0b3b8, #6e7075)', symbol: '🔩', grain: 0.06, borderHue: '#9a9da2' },
+  'S45C':     { bg: 'linear-gradient(135deg, #7a7d82, #a0a3a8, #656770)', symbol: '⚙️', grain: 0.07, borderHue: '#8a8d92' },
+  'SCM435':   { bg: 'linear-gradient(150deg, #5a5d62, #888b90, #4a4d52)', symbol: '🔧', grain: 0.05, borderHue: '#707378' },
+  'SKD11':    { bg: 'linear-gradient(140deg, #404348, #606368, #2e3035)', symbol: '🗡️', grain: 0.04, borderHue: '#505358' },
+  'SKH51':    { bg: 'linear-gradient(135deg, #484b50, #6a6d72, #383b40)', symbol: '🔪', grain: 0.03, borderHue: '#585b60' },
+  'SUJ2':     { bg: 'linear-gradient(155deg, #555860, #7a7d85, #454850)', symbol: '⚽', grain: 0.04, borderHue: '#656870' },
+
+  // === Stainless steels — bright silver, slight blue tint ===
+  'SUS304':   { bg: 'linear-gradient(140deg, #b8bcc5, #d0d4dd, #9a9ea8)', symbol: '🍳', grain: 0.03, borderHue: '#c0c4cc' },
+  'SUS316L':  { bg: 'linear-gradient(135deg, #bcc0ca, #d4d8e2, #a0a4ae)', symbol: '🏥', grain: 0.03, borderHue: '#c4c8d0' },
+  'SUS430':   { bg: 'linear-gradient(145deg, #a8acb5, #c8ccd5, #8a8e98)', symbol: '🔑', grain: 0.04, borderHue: '#b0b4bc' },
+  'SUS630':   { bg: 'linear-gradient(130deg, #9098a5, #b8c0cd, #7880a0)', symbol: '✈️', grain: 0.03, borderHue: '#a0a8b5' },
+  'SUS329':   { bg: 'linear-gradient(150deg, #a0a8b8, #c0c8d8, #8890a0)', symbol: '⚓', grain: 0.03, borderHue: '#b0b8c8' },
+
+  // === Aluminum — light silver, warm undertone ===
+  'A1050':    { bg: 'linear-gradient(135deg, #d8dce0, #eef0f2, #c0c4c8)', symbol: '⚡', grain: 0.02, borderHue: '#d0d4d8' },
+  'A2024':    { bg: 'linear-gradient(140deg, #c8ccd2, #e0e4e8, #b0b4ba)', symbol: '✈️', grain: 0.03, borderHue: '#c0c4ca' },
+  'A5052':    { bg: 'linear-gradient(130deg, #ccd0d6, #e4e8ec, #b4b8be)', symbol: '🚢', grain: 0.03, borderHue: '#c4c8ce' },
+  'A6061':    { bg: 'linear-gradient(145deg, #c4c8d0, #dce0e8, #acb0b8)', symbol: '🚲', grain: 0.03, borderHue: '#bcc0c8' },
+  'A7075':    { bg: 'linear-gradient(135deg, #b0b4bc, #ccd0d8, #989ca4)', symbol: '🛩️', grain: 0.04, borderHue: '#b8bcc4' },
+
+  // === Titanium — dark silver, slight warm tone ===
+  'Ti':       { bg: 'linear-gradient(140deg, #8a8e96, #b0b4bc, #6a6e76)', symbol: '🦴', grain: 0.04, borderHue: '#9a9ea6' },
+  'Ti-6Al':   { bg: 'linear-gradient(135deg, #7a808a, #a0a6b0, #5a606a)', symbol: '🚀', grain: 0.04, borderHue: '#8a90a0' },
+
+  // === Copper — warm orange/red/gold ===
+  'C1020':    { bg: 'linear-gradient(140deg, #c87040, #e8a060, #b06030)', symbol: '🔌', grain: 0.03, borderHue: '#d08050' },
+  'C2600':    { bg: 'linear-gradient(135deg, #c8a040, #e8c860, #b09030)', symbol: '🎺', grain: 0.04, borderHue: '#d0b050' },
+  'C5210':    { bg: 'linear-gradient(145deg, #a08050, #c0a070, #806040)', symbol: '🔋', grain: 0.04, borderHue: '#b09060' },
+  'BeCu':     { bg: 'linear-gradient(130deg, #b09060, #d0b080, #907040)', symbol: '🔧', grain: 0.03, borderHue: '#c0a070' },
+
+  // === Nickel superalloys — dark metallic, slight green/grey ===
+  'Inconel':  { bg: 'linear-gradient(140deg, #6a7078, #8a9098, #505860)', symbol: '🔥', grain: 0.04, borderHue: '#7a8088' },
+  'Hastelloy':{ bg: 'linear-gradient(135deg, #607068, #809088, #506058)', symbol: '☢️', grain: 0.05, borderHue: '#708078' },
+  'Monel':    { bg: 'linear-gradient(150deg, #7a8080, #9aa0a0, #5a6060)', symbol: '🌊', grain: 0.04, borderHue: '#8a9090' },
+
+  // === Special metals ===
+  'AZ31':     { bg: 'linear-gradient(135deg, #c0c8d0, #e0e8f0, #a0a8b0)', symbol: '🪶', grain: 0.03, borderHue: '#c8d0d8' },
+  'WC':       { bg: 'linear-gradient(140deg, #383c40, #585c60, #282c30)', symbol: '💎', grain: 0.03, borderHue: '#484c50' },
+  'W ':       { bg: 'linear-gradient(135deg, #505458, #707478, #404448)', symbol: '☢️', grain: 0.04, borderHue: '#606468' },
+  'Kovar':    { bg: 'linear-gradient(145deg, #6a6e72, #8a8e92, #4a4e52)', symbol: '💡', grain: 0.04, borderHue: '#7a7e82' },
+
+  // === Ceramics — pale/white/earthy/colored ===
+  'Al2O3':    { bg: 'linear-gradient(135deg, #f0ece0, #faf8f0, #e0dcd0)', symbol: '🏺', grain: 0.02, borderHue: '#e8e4d8', shape: 'rounded-sm' },
+  'ZrO2':     { bg: 'linear-gradient(140deg, #f8f4f0, #fffef8, #eae6e0)', symbol: '🦷', grain: 0.02, borderHue: '#f0ece6', shape: 'rounded-sm' },
+  'Si3N4':    { bg: 'linear-gradient(130deg, #505860, #707880, #3a4248)', symbol: '🏎️', grain: 0.05, borderHue: '#606870', shape: 'rounded-sm' },
+  'SiC':      { bg: 'linear-gradient(145deg, #2a3038, #4a5058, #1a2028)', symbol: '💠', grain: 0.04, borderHue: '#3a4048', shape: 'rounded-sm' },
+  'BN':       { bg: 'linear-gradient(135deg, #f0f0f0, #ffffff, #e0e0e0)', symbol: '🧈', grain: 0.01, borderHue: '#e8e8e8', shape: 'rounded-sm' },
+  'cBN':      { bg: 'linear-gradient(140deg, #e8c050, #f8e070, #d0a830)', symbol: '💎', grain: 0.03, borderHue: '#e0c860', shape: 'rounded-sm' },
+  'PZT':      { bg: 'linear-gradient(135deg, #c0b8a0, #e0d8c0, #a09880)', symbol: '⚡', grain: 0.04, borderHue: '#d0c8b0', shape: 'rounded-sm' },
+  'HA':       { bg: 'linear-gradient(145deg, #f4f0e8, #fcfaf4, #e8e4dc)', symbol: '🦴', grain: 0.02, borderHue: '#f0ece4', shape: 'rounded-sm' },
+  'MgO':      { bg: 'linear-gradient(130deg, #f0ece4, #faf6f0, #e0dcd4)', symbol: '🔥', grain: 0.02, borderHue: '#e8e4dc', shape: 'rounded-sm' },
+  'BaTiO3':   { bg: 'linear-gradient(135deg, #d8d0b8, #f0e8d0, #c0b8a0)', symbol: '📱', grain: 0.03, borderHue: '#e0d8c0', shape: 'rounded-sm' },
+  'コーディエライト': { bg: 'linear-gradient(140deg, #e8e0d0, #f8f0e0, #d0c8b8)', symbol: '🚗', grain: 0.03, borderHue: '#e0d8c8', shape: 'rounded-sm' },
+  'AlN':      { bg: 'linear-gradient(135deg, #e0dcd0, #f0ece0, #d0ccc0)', symbol: '🖥️', grain: 0.02, borderHue: '#e8e4d8', shape: 'rounded-sm' },
+
+  // === Polymers — vibrant, saturated ===
+  'PE':       { bg: 'linear-gradient(135deg, #e8e8e8, #f8f8f8, #d0d0d0)', symbol: '🛍️', grain: 0.01, borderHue: '#e0e0e0', shape: 'rounded-full' },
+  'PP':       { bg: 'linear-gradient(140deg, #dce8f0, #ecf4fc, #c4d4e0)', symbol: '🚗', grain: 0.01, borderHue: '#d4e0ec', shape: 'rounded-full' },
+  'PET':      { bg: 'linear-gradient(135deg, #c0e0e8, #d8f0f8, #a8d0d8)', symbol: '🍶', grain: 0.01, borderHue: '#b8d8e0', shape: 'rounded-full' },
+  'PA66':     { bg: 'linear-gradient(145deg, #e8dcc8, #f8f0e0, #d0c4b0)', symbol: '⚙️', grain: 0.02, borderHue: '#e0d4c0', shape: 'rounded-full' },
+  'POM':      { bg: 'linear-gradient(130deg, #f0ece0, #faf8f0, #e0dcd0)', symbol: '⚙️', grain: 0.02, borderHue: '#e8e4d8', shape: 'rounded-full' },
+  'ABS':      { bg: 'linear-gradient(135deg, #f0e8d0, #faf4e4, #e0d8c0)', symbol: '🖨️', grain: 0.02, borderHue: '#e8e0d0', shape: 'rounded-full' },
+  'PC':       { bg: 'linear-gradient(140deg, #d0e0f0, #e0f0ff, #b8d0e8)', symbol: '🛡️', grain: 0.01, borderHue: '#c8d8f0', shape: 'rounded-full' },
+  'PMMA':     { bg: 'linear-gradient(135deg, #d8e8f8, #e8f4ff, #c0d8f0)', symbol: '👓', grain: 0.01, borderHue: '#d0e0f8', shape: 'rounded-full' },
+  'PEEK':     { bg: 'linear-gradient(145deg, #a09078, #c0b098, #807060)', symbol: '🏭', grain: 0.03, borderHue: '#b0a088', shape: 'rounded-full' },
+  'PPS':      { bg: 'linear-gradient(130deg, #605040, #806860, #483830)', symbol: '🔌', grain: 0.04, borderHue: '#706050', shape: 'rounded-full' },
+  'PI':       { bg: 'linear-gradient(135deg, #d08020, #f0a040, #b06010)', symbol: '📋', grain: 0.03, borderHue: '#e09030', shape: 'rounded-full' },
+  'PTFE':     { bg: 'linear-gradient(140deg, #f0f0f0, #ffffff, #e8e8e8)', symbol: '🍳', grain: 0.01, borderHue: '#f0f0f0', shape: 'rounded-full' },
+  'シリコーン':  { bg: 'linear-gradient(135deg, #d0c8c0, #e8e0d8, #b8b0a8)', symbol: '🧴', grain: 0.02, borderHue: '#d8d0c8', shape: 'rounded-full' },
+  'エポキシ':   { bg: 'linear-gradient(145deg, #c8b040, #e0c860, #b09830)', symbol: '🧪', grain: 0.03, borderHue: '#d0b848', shape: 'rounded-full' },
+
+  // === Composites — layered/textured ===
+  'CFRP':     { bg: 'repeating-linear-gradient(45deg, #1a1e22 0px, #1a1e22 2px, #282c30 2px, #282c30 4px)', symbol: '🏎️', grain: 0.06, borderHue: '#2a2e32' },
+  'GFRP':     { bg: 'repeating-linear-gradient(45deg, #c8d0b8 0px, #c8d0b8 2px, #d8e0c8 2px, #d8e0c8 4px)', symbol: '🚤', grain: 0.04, borderHue: '#c0c8b0' },
+  'アラミド':   { bg: 'repeating-linear-gradient(30deg, #c8b840 0px, #c8b840 2px, #d8c850 2px, #d8c850 4px)', symbol: '🛡️', grain: 0.05, borderHue: '#d0c048' },
+  'SiC/SiC':  { bg: 'repeating-linear-gradient(60deg, #2a3038 0px, #2a3038 3px, #3a4048 3px, #3a4048 6px)', symbol: '🔥', grain: 0.05, borderHue: '#3a4248' },
+  'C/C':      { bg: 'repeating-linear-gradient(45deg, #181c20 0px, #181c20 2px, #282c30 2px, #282c30 4px)', symbol: '🛞', grain: 0.06, borderHue: '#202428' },
+  'サーメット':  { bg: 'linear-gradient(135deg, #505860, #707880, #404850)', symbol: '🔪', grain: 0.04, borderHue: '#606870' },
+  'Al-SiC':   { bg: 'linear-gradient(140deg, #a0a8b0, #c0c8d0, #808890)', symbol: '🖥️', grain: 0.04, borderHue: '#b0b8c0' },
+  'サンドイッチ': { bg: 'repeating-linear-gradient(0deg, #c8ccd0 0px, #c8ccd0 6px, #e0e4e8 6px, #e0e4e8 12px, #c8ccd0 12px, #c8ccd0 18px)', symbol: '✈️', grain: 0.03, borderHue: '#d0d4d8' },
+  'GLARE':    { bg: 'repeating-linear-gradient(0deg, #b0b8c0 0px, #b0b8c0 3px, #d0d8e0 3px, #d0d8e0 6px)', symbol: '✈️', grain: 0.03, borderHue: '#c0c8d0' },
+  'FRM':      { bg: 'repeating-linear-gradient(60deg, #6a7078 0px, #6a7078 2px, #8a9098 2px, #8a9098 4px)', symbol: '🚀', grain: 0.04, borderHue: '#7a8088' },
+};
+
+// Match material name to visual definition (partial match)
+function findVisual(name: string): MatVisualDef | null {
+  for (const [key, def] of Object.entries(MATERIAL_VISUALS)) {
+    if (name.includes(key)) return def;
+  }
+  return null;
+}
+
+// Fallback: generate from category + properties
+function fallbackVisual(cat: string, hv: number): MatVisualDef {
+  const hvN = Math.min(hv / 3000, 1);
   switch (cat) {
     case '金属合金':
-      return {
-        color: new THREE.Color().setHSL(0.58 - hvNorm * 0.15, 0.3 + tsNorm * 0.4, 0.55 + hvNorm * 0.2),
-        metalness: 0.85 + hvNorm * 0.15,
-        roughness: 0.08 + (1 - hvNorm) * 0.25,
-        clearcoat: 0.8,
-        envIntensity: 1.5,
-        geometry: 'sphere' as const,
-      };
+      return { bg: `linear-gradient(135deg, hsl(215,15%,${50 + hvN * 20}%), hsl(220,20%,${60 + hvN * 15}%), hsl(210,15%,${40 + hvN * 15}%))`, symbol: '⬡', grain: 0.05, borderHue: `hsl(215,15%,${55 + hvN * 15}%)` };
     case 'セラミクス':
-      return {
-        color: new THREE.Color().setHSL(0.08 + hvNorm * 0.05, 0.15 + tsNorm * 0.2, 0.7 + hvNorm * 0.15),
-        metalness: 0.05,
-        roughness: 0.35 + (1 - hvNorm) * 0.4,
-        clearcoat: 0.3,
-        envIntensity: 0.8,
-        geometry: 'cube' as const,
-      };
+      return { bg: `linear-gradient(135deg, hsl(35,15%,${75 + hvN * 10}%), hsl(30,20%,${85 + hvN * 5}%), hsl(40,15%,${65 + hvN * 10}%))`, symbol: '◆', grain: 0.03, borderHue: `hsl(35,15%,${70 + hvN * 10}%)`, shape: 'rounded-sm' };
     case 'ポリマー':
-      return {
-        color: new THREE.Color().setHSL(0.35 + elNorm * 0.25, 0.5 + tsNorm * 0.3, 0.55),
-        metalness: 0.0,
-        roughness: 0.15 + elNorm * 0.3,
-        clearcoat: 0.6,
-        envIntensity: 1.0,
-        geometry: 'torus' as const,
-        transmission: 0.3 + (1 - elNorm) * 0.4,
-      };
+      return { bg: `linear-gradient(135deg, hsl(200,30%,80%), hsl(210,35%,88%), hsl(195,25%,72%))`, symbol: '●', grain: 0.02, borderHue: 'hsl(200,30%,78%)', shape: 'rounded-full' };
     case '複合材料':
-      return {
-        color: new THREE.Color().setHSL(0.55, 0.4 + tsNorm * 0.3, 0.45 + hvNorm * 0.2),
-        metalness: 0.3 + hvNorm * 0.3,
-        roughness: 0.2 + (1 - tsNorm) * 0.3,
-        clearcoat: 0.5,
-        envIntensity: 1.2,
-        geometry: 'icosa' as const,
-      };
+      return { bg: `repeating-linear-gradient(45deg, hsl(215,15%,35%) 0px, hsl(215,15%,35%) 2px, hsl(215,15%,45%) 2px, hsl(215,15%,45%) 4px)`, symbol: '⬢', grain: 0.05, borderHue: 'hsl(215,15%,40%)' };
     default:
-      return {
-        color: new THREE.Color(0.6, 0.6, 0.65),
-        metalness: 0.5,
-        roughness: 0.3,
-        clearcoat: 0.4,
-        envIntensity: 1.0,
-        geometry: 'sphere' as const,
-      };
+      return { bg: 'linear-gradient(135deg, #888, #aaa, #777)', symbol: '◎', grain: 0.03, borderHue: '#999' };
   }
 }
 
-function MaterialMesh({ cat, hv, ts, el, animate = true }: {
-  cat: string; hv: number; ts: number; el: number; animate?: boolean;
-}) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const params = useMemo(() => getVisualParams(cat, hv, ts, el), [cat, hv, ts, el]);
-
-  useFrame((_, delta) => {
-    if (meshRef.current && animate) {
-      meshRef.current.rotation.y += delta * 0.3;
-      meshRef.current.rotation.x += delta * 0.1;
-    }
-  });
-
-  const geometry = useMemo(() => {
-    switch (params.geometry) {
-      case 'cube':   return <boxGeometry args={[1.3, 1.3, 1.3]} />;
-      case 'torus':  return <torusGeometry args={[0.7, 0.3, 32, 64]} />;
-      case 'icosa':  return <icosahedronGeometry args={[0.85, 1]} />;
-      default:       return <sphereGeometry args={[0.85, 64, 64]} />;
-    }
-  }, [params.geometry]);
-
-  return (
-    <Float speed={animate ? 1.5 : 0} rotationIntensity={animate ? 0.3 : 0} floatIntensity={animate ? 0.5 : 0}>
-      <mesh ref={meshRef} castShadow>
-        {geometry}
-        <meshPhysicalMaterial
-          color={params.color}
-          metalness={params.metalness}
-          roughness={params.roughness}
-          clearcoat={params.clearcoat}
-          clearcoatRoughness={0.1}
-          envMapIntensity={params.envIntensity}
-          {...('transmission' in params ? { transmission: params.transmission, thickness: 0.5 } : {})}
-        />
-      </mesh>
-    </Float>
-  );
-}
+const GRAIN_SVG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
 interface MaterialVisualProps {
+  name: string;
   cat: string;
   hv: number;
-  ts: number;
-  el: number;
+  ts?: number;
+  el?: number;
+  dn?: number;
   size?: number;
-  animate?: boolean;
   className?: string;
+  showLabel?: boolean;
 }
 
-export const MaterialVisual = ({ cat, hv, ts, el, size = 160, animate = true, className = '' }: MaterialVisualProps) => (
-  <div className={`rounded-lg overflow-hidden ${className}`} style={{ width: size, height: size, background: 'var(--bg-sunken)' }}>
-    <Canvas
-      camera={{ position: [0, 0, 2.8], fov: 40 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true }}
-      style={{ background: 'transparent' }}
-    >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} intensity={1.5} castShadow />
-      <directionalLight position={[-4, -2, 3]} intensity={0.6} color="#8888ff" />
-      <directionalLight position={[0, -5, 0]} intensity={0.3} color="#444466" />
-      <MaterialMesh cat={cat} hv={hv} ts={ts} el={el} animate={animate} />
-    </Canvas>
-  </div>
-);
+export const MaterialVisual = ({ name, cat, hv, size = 160, className = '', showLabel = false }: MaterialVisualProps) => {
+  const visual = useMemo(() => findVisual(name) || fallbackVisual(cat, hv), [name, cat, hv]);
+  const borderRadius = visual.shape === 'rounded-full' ? size / 2 : visual.shape === 'rounded-sm' ? 4 : 8;
 
-// Compact thumbnail version for lists
-export const MaterialThumbnail = ({ cat, hv, ts, el, className = '' }: Omit<MaterialVisualProps, 'size' | 'animate'>) => (
-  <MaterialVisual cat={cat} hv={hv} ts={ts} el={el} size={48} animate={false} className={`rounded-md ${className}`} />
+  return (
+    <div className={`relative overflow-hidden flex items-center justify-center ${className}`}
+      style={{
+        width: size, height: size,
+        borderRadius,
+        background: visual.bg,
+        border: `1px solid ${visual.borderHue || '#888'}`,
+      }}
+    >
+      {/* Grain texture */}
+      <div className="absolute inset-0" style={{ backgroundImage: GRAIN_SVG, backgroundSize: '128px 128px', opacity: visual.grain || 0.03, mixBlendMode: 'overlay' }} />
+
+      {/* Reflection highlight */}
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.15) 0%, transparent 55%)' }} />
+
+      {/* Symbol */}
+      <span style={{ fontSize: size * 0.3, lineHeight: 1, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))' }}>
+        {visual.symbol || '◎'}
+      </span>
+
+      {/* Label overlay */}
+      {showLabel && (
+        <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 text-center" style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.5))' }}>
+          <div className="text-white text-[10px] font-bold truncate" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>{name}</div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const MaterialThumbnail = ({ name, cat, hv, className = '' }: Omit<MaterialVisualProps, 'size'>) => (
+  <MaterialVisual name={name} cat={cat} hv={hv} size={48} className={className} />
 );

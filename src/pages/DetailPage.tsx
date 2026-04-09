@@ -3,6 +3,7 @@ import { marked } from 'marked';
 import { Icon } from '../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../components/atoms';
 import { Modal, AIInsightCard, VecCard } from '../components/molecules';
+import { MaterialVisual } from '../components/MaterialVisual';
 import { AppCtx } from '../context/AppContext';
 import type { Material, AIHook, EmbeddingHook, AppContextValue, MaterialWithScore } from '../types';
 
@@ -65,9 +66,12 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
       </div>
 
       <Card className="p-5">
-        <div className="flex items-start gap-3 mb-4">
-          <span className="font-mono text-[11px] bg-raised px-2 py-1 rounded text-text-lo flex-shrink-0 mt-1">{r.id}</span>
-          <div className="flex-1">
+        <div className="flex items-start gap-4 mb-4">
+          <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={100} className="flex-shrink-0" showLabel={false} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-mono text-[11px] bg-raised px-2 py-1 rounded text-text-lo flex-shrink-0">{r.id}</span>
+            </div>
             <h1 className="text-[19px] font-bold tracking-tight">{r.name}</h1>
             <div className="flex items-center gap-2 flex-wrap mt-2">
               <Badge variant="gray">{r.cat}</Badge>
