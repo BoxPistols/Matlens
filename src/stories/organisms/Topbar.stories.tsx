@@ -10,30 +10,22 @@ const meta = {
     theme: 'light',
     setTheme: fn(),
     onToggleSidebar: fn(),
-    embStatus: 'idle',
-    embCount: 0,
+    embStatus: 'ready',
+    embCount: 15,
     onGlobalSearch: fn(),
     globalQuery: '',
     setGlobalQuery: fn(),
   },
-  parameters: {
-    layout: 'fullscreen',
+  argTypes: {
+    theme: { control: 'select', options: ['light', 'dark', 'eng', 'cae'] },
+    embStatus: { control: 'select', options: ['idle', 'loading', 'indexing', 'ready', 'fallback'] },
+    embCount: { control: { type: 'range', min: 0, max: 100 } },
+    globalQuery: { control: 'text' },
   },
+  parameters: { layout: 'fullscreen' },
 } satisfies Meta<typeof Topbar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const DarkTheme: Story = {
-  args: { theme: 'dark' },
-};
-
-export const EmbeddingReady: Story = {
-  args: { embStatus: 'ready', embCount: 15 },
-};
-
-export const EmbeddingLoading: Story = {
-  args: { embStatus: 'loading' },
-};
+export const Playground: Story = {};

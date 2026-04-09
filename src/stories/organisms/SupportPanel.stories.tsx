@@ -21,30 +21,16 @@ const mockAI: AIHook = {
   rateInfo: { remaining: 18, limit: 30 },
 };
 
-const mockCtx: AppContextValue = {
-  db: [],
-  dispatch: fn(),
-  addToast: fn(),
-  toasts: [],
-  theme: 'light',
-};
-
 const meta = {
   title: 'Organisms/SupportPanel',
   component: SupportPanel,
   tags: ['autodocs'],
-  args: {
-    ai: mockAI,
-    visible: true,
-    onClose: fn(),
-    onNav: fn(),
-  },
+  args: { ai: mockAI, visible: true, onClose: fn(), onNav: fn() },
+  argTypes: { visible: { control: 'boolean' } },
   decorators: [
     (Story) => (
-      <AppCtx.Provider value={mockCtx}>
-        <div style={{ position: 'relative', height: '600px' }}>
-          <Story />
-        </div>
+      <AppCtx.Provider value={{ db: [], dispatch: fn(), addToast: fn(), toasts: [], theme: 'light' } as AppContextValue}>
+        <div style={{ position: 'relative', height: 600 }}><Story /></div>
       </AppCtx.Provider>
     ),
   ],
@@ -53,18 +39,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Visible: Story = {};
-
-export const Hidden: Story = {
-  args: { visible: false },
-};
-
-export const WithOwnKey: Story = {
-  args: {
-    ai: {
-      ...mockAI,
-      hasOwnKey: true,
-      ownKey: 'sk-test-key-12345',
-    },
-  },
-};
+export const Playground: Story = {};

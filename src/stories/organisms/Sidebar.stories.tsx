@@ -11,35 +11,20 @@ const meta = {
     onNav: fn(),
     collapsed: false,
     onToggle: fn(),
-    dbCount: 42,
+    dbCount: 15,
     embStatus: 'ready',
-    embCount: 42,
+    embCount: 15,
   },
-  parameters: {
-    layout: 'fullscreen',
+  argTypes: {
+    currentPage: { control: 'select', options: ['dash','list','new','vsearch','rag','sim','api','tests','uxdesign','help','about','settings'] },
+    collapsed: { control: 'boolean' },
+    embStatus: { control: 'select', options: ['idle', 'loading', 'indexing', 'ready', 'fallback'] },
   },
-  decorators: [
-    (Story) => (
-      <div style={{ height: '100vh', display: 'flex' }}>
-        <Story />
-      </div>
-    ),
-  ],
+  parameters: { layout: 'fullscreen' },
+  decorators: [(Story) => <div style={{ height: '100vh', display: 'flex' }}><Story /></div>],
 } satisfies Meta<typeof Sidebar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
-
-export const Collapsed: Story = {
-  args: { collapsed: true },
-};
-
-export const VectorSearchActive: Story = {
-  args: { currentPage: 'vsearch' },
-};
-
-export const RAGActive: Story = {
-  args: { currentPage: 'rag' },
-};
+export const Playground: Story = {};
