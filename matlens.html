@@ -669,9 +669,9 @@ function installMockAPI(getDb, dispatch) {
 ===================================================== */
 /** @type {Provider[]} */
 const PROVIDERS = [
-  { id: 'openai-nano',  label: 'GPT-4.1 nano',    model: 'gpt-4.1-nano',     requiresKey: false, free: true },
-  { id: 'gemini-flash', label: 'Gemini 2.5 Flash', model: 'gemini-2.5-flash', requiresKey: false, free: true },
-  { id: 'openai-mini',  label: 'GPT-4.1 mini',     model: 'gpt-4.1-mini',     requiresKey: true,  free: false },
+  { id: 'openai-nano',  label: 'GPT-4.1 nano',    model: 'gpt-4.1-nano',     free: true },
+  { id: 'gemini-flash', label: 'Gemini 2.5 Flash', model: 'gemini-2.5-flash', free: true },
+  { id: 'openai-mini',  label: 'GPT-4.1 mini',     model: 'gpt-4.1-mini',     free: false },
 ];
 
 const VALID_INVITE_CODES = new Set(['MATLENS2026', 'MATLENS-DEMO', 'RESEARCH2026']);
@@ -730,39 +730,21 @@ function useAI(rateLimit) {
   const providerDef = PROVIDERS.find(p => p.id === provider) || PROVIDERS[0];
 
   const call = useCallback(async (prompt, system) => {
-    const sys = system || 'あなたは材料科学の専門家AIアシスタントです。Matlens に組み込まれています。Markdown形式で簡潔・実用的な日本語で回答してください。';
     if (!rateLimit.canCall) {
       const { limit } = rateLimit.rl;
-      return `**利用上限に達しました**\n\n本日の利用回数上限（${limit === Infinity ? '無制限' : limit + '回/日'}）に達しました。\n\n**解決方法:**\n- 招待コードをお持ちの方: 右下の設定から入力してください（30回/日）\n- 自前のAPIキーを設定してください（無制限）\n- 明日リセットされます`;
+      return `**利用上限に達しました**\n\n本日の利用回数上限（${limit === Infinity ? '無制限' : limit + '回/日'}）に達しました。\n\n明日リセットされます。`;
     }
     rateLimit.consume();
-    const { session } = rateLimit;
-    const hasOwnOpenai = !!session.openaiKey;
-    const hasOwnGemini = !!session.geminiKey;
-    const effectiveProvider = hasOwnOpenai ? 'openai-mini' : (hasOwnGemini ? 'gemini-flash' : provider);
-    const pDef = PROVIDERS.find(p => p.id === effectiveProvider) || providerDef;
+    const effectiveProvider = provider === 'gemini-flash' ? 'gemini' : provider;
     try {
-      if (pDef.id === 'gemini-flash') {
-        const apiKey = session.geminiKey || 'DEMO';
-        if (apiKey === 'DEMO') return `（Gemini 2.5 Flash デモモード）\n\nAPIキーを設定後に実際の回答が有効になります。\n\n**プロンプト:** ${prompt.slice(0, 80)}...`;
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${pDef.model}:generateContent?key=${apiKey}`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: `${sys}\n\n${prompt}` }] }], generationConfig: { maxOutputTokens: 1000 } })
-        });
-        const d = await res.json();
-        if (d.error) return `Gemini エラー: ${d.error.message}`;
-        return d.candidates?.[0]?.content?.parts?.[0]?.text || 'Gemini 応答エラー';
-      } else {
-        const apiKey = session.openaiKey || 'DEMO';
-        if (apiKey === 'DEMO') return `（${pDef.label} デモモード）\n\nAPIキーを設定後にリアルタイム応答が有効になります。\n\n**プロンプト:** ${prompt.slice(0, 80)}...`;
-        const res = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-          body: JSON.stringify({ model: pDef.model, max_tokens: 1000, messages: [{ role: 'system', content: sys }, { role: 'user', content: prompt }] })
-        });
-        const d = await res.json();
-        if (d.error) return `OpenAI エラー: ${d.error.message}`;
-        return d.choices?.[0]?.message?.content || '応答を取得できませんでした。';
-      }
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: effectiveProvider, prompt, system })
+      });
+      const d = await res.json();
+      if (d.error) return `APIエラー: ${d.error}`;
+      return d.text || '応答を取得できませんでした。';
     } catch (e) { return `API接続エラー: ${e.message}`; }
   }, [provider, rateLimit]);
 
