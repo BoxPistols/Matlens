@@ -1577,9 +1577,9 @@ const DashboardPage = ({ db, onNav, claude, voice }) => {
 
       {/* AI Insight */}
       <AIInsightCard loading={insightLoading} chips={[
-        { label:'今月の傾向', onClick: () => onNav('rag') },
-        { label:'レビュー優先度', onClick: () => onNav('rag') },
-        { label:'AIアラート詳細', onClick: () => onNav('rag') },
+        { label:'材料一覧を確認', onClick: () => onNav('list') },
+        { label:'レビュー待ちを確認', onClick: () => onNav('list') },
+        { label:'AIに詳しく聞く', onClick: () => onNav('rag') },
       ]}>
         {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: typeof marked !== 'undefined' ? marked.parse(insight) : insight }} />}
       </AIInsightCard>
