@@ -105,8 +105,8 @@ export const ApiDebugPage = ({ db, dispatch }) => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-start gap-3">
+    <div className="flex flex-col gap-4 flex-1 min-h-0">
+      <div className="flex items-start gap-3 flex-shrink-0">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">API \u30C7\u30D0\u30C3\u30B0\u30B3\u30F3\u30BD\u30FC\u30EB <Badge variant="vec">Mock</Badge></h1>
           <p className="text-[12px] text-text-lo mt-0.5">fetch interceptor \u306B\u3088\u308B Mock REST API \u2014 \u672C\u756A\u3067\u306F Python FastAPI + Amazon Aurora \u306B\u5207\u308A\u66FF\u3048</p>
@@ -126,7 +126,7 @@ export const ApiDebugPage = ({ db, dispatch }) => {
       {tab==='logs' && (
         <div className="grid gap-3" style={{gridTemplateColumns:selected?'1fr 1fr':'1fr'}}>
           <Card className="overflow-hidden">
-            <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
+            <div className="overflow-x-auto overflow-y-auto flex-1">
               <table className="w-full text-[12px]">
                 <thead className="sticky top-0 bg-raised z-10 border-b border-[var(--border-faint)]">
                   <tr>{['\u6642\u523B','Method','\u30D1\u30B9','Status','\u30EC\u30A4\u30C6\u30F3\u30B7'].map(h=><th key={h} className="px-3 py-2 text-left text-[11px] font-bold text-text-lo uppercase tracking-[.04em]">{h}</th>)}</tr>

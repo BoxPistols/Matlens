@@ -97,7 +97,7 @@ export function App() {
             dbCount={db.length}
             embStatus={embedding.status} embCount={embedding.embCount}
           />
-          <main id="main" className="flex-1 overflow-y-auto p-6" role="main" aria-label="メインコンテンツ">
+          <main id="main" className="flex-1 overflow-y-auto p-6 flex flex-col min-h-0" role="main" aria-label="メインコンテンツ">
             {renderPage()}
           </main>
         </div>
