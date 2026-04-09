@@ -9,9 +9,10 @@ import type { Material } from '../types';
  * 基づく実測値ではありません。
  *
  * 設計・研究に使用する場合は、必ず以下の一次ソースで検証してください:
- * - JIS規格書 (日本規格協会) https://www.jsa.or.jp/
+ * - NIMS 物質・材料データベース (MatNavi) https://mits.nims.go.jp/
+ * - JIS規格検索 (JSA Webdesk) https://webdesk.jsa.or.jp/
  * - ASM International https://www.asminternational.org/
- * - MatWeb https://www.matweb.com/
+ * - MatWeb https://www.matweb.com/search/SearchSubcat.aspx
  * - 各材料メーカーのデータシート
  *
  * 特にセラミクス・複合材料は製造条件で値が大きく変動するため、
@@ -22,10 +23,10 @@ export const DATA_DISCLAIMER = {
   ja: 'このデータはデモ用サンプルです。設計・研究には一次ソース（JIS規格書, ASM Handbook, MatWeb, メーカーデータシート）で検証してください。',
   en: 'Sample data for demonstration only. Verify with primary sources (JIS standards, ASM Handbook, MatWeb, manufacturer datasheets) before use in design or research.',
   sources: [
-    { name: 'JIS規格 (日本規格協会)', url: 'https://www.jsa.or.jp/' },
+    { name: 'NIMS 物質・材料DB (MatNavi)', url: 'https://mits.nims.go.jp/' },
+    { name: 'JIS規格検索 (JSA Webdesk)', url: 'https://webdesk.jsa.or.jp/' },
     { name: 'ASM International', url: 'https://www.asminternational.org/' },
-    { name: 'MatWeb Material Property Data', url: 'https://www.matweb.com/' },
-    { name: 'NIMS Materials Database (MatNavi)', url: 'https://mits.nims.go.jp/' },
+    { name: 'MatWeb (材料物性検索)', url: 'https://www.matweb.com/search/SearchSubcat.aspx' },
   ],
 };
 
