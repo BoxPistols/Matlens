@@ -51,7 +51,7 @@ export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embS
         );
       })}
       <div className="mt-auto p-3 border-t border-[var(--border-faint)]">
-        <Tooltip label={embStatus === 'ready' ? `Embedding ${embCount}件インデックス済み` : embStatus === 'fallback' ? 'キーワード検索モードで動作中' : embStatus === 'indexing' ? 'ベクトルインデックスを構築中...' : 'TF.js Universal Sentence Encoderを読み込み中...'} placement="right">
+        <Tooltip label={embStatus === 'ready' ? `Embedding ${embCount}件インデックス済み` : embStatus === 'fallback' ? 'キーワード検索モードで動作中' : embStatus === 'indexing' ? 'ベクトルインデックスを構築中...' : '検索エンジンを初期化中...'} placement="right">
           <div className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] font-semibold cursor-default ${embStatus === 'ready' ? 'bg-vec-dim text-vec' : 'bg-raised text-text-lo'} ${collapsed ? 'justify-center px-0' : ''}`}>
             <Icon name="embed" size={12} className="flex-shrink-0" />
             {!collapsed && <span className="truncate text-left">{embStatus === 'ready' ? `${embCount}件 Ready` : embStatus === 'fallback' ? 'キーワード検索' : '初期化中...'}</span>}

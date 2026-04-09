@@ -26,15 +26,7 @@ export function devApiProxy() {
           return;
         }
 
-        // Parse body
-        const body = await new Promise((resolve) => {
-          let data = '';
-          req.on('data', (chunk) => { data += chunk; });
-          req.on('end', () => {
-            try { resolve(JSON.parse(data)); } catch { resolve({}); }
-          });
-        });
-
+        const body = await parseBody(req);
         const { provider, prompt, system } = body;
         if (!prompt) {
           res.statusCode = 400;
@@ -107,6 +99,51 @@ export function devApiProxy() {
           res.end(JSON.stringify({ error: `API接続エラー: ${e.message}` }));
         }
       });
+
+      // /api/search — vector search proxy
+      server.middlewares.use('/api/search', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        if (req.method === 'OPTIONS') { res.statusCode = 200; res.end(); return; }
+        if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'Method not allowed' })); return; }
+
+        const body = await parseBody(req);
+        const { query, k = 6, category, db } = body;
+        if (!query) { res.statusCode = 400; res.end(JSON.stringify({ error: 'query is required' })); return; }
+
+        // Keyword fallback for local dev (Upstash unlikely to be configured locally)
+        if (db && Array.isArray(db)) {
+          const q = query.toLowerCase();
+          const words = q.split(/\s+/).filter(w => w.length > 0);
+          const results = db
+            .map(r => {
+              const text = `${r.name} ${r.cat} ${r.comp} ${r.memo || ''}`.toLowerCase();
+              const matchCount = words.filter(w => text.includes(w)).length;
+              return { ...r, score: words.length > 0 ? matchCount / words.length : 0 };
+            })
+            .filter(r => r.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, k);
+          res.end(JSON.stringify({ results, engine: 'keyword' }));
+          return;
+        }
+
+        res.end(JSON.stringify({ results: [], engine: 'none' }));
+      });
+
+      // /api/ingest — no-op in dev (Upstash not available locally)
+      server.middlewares.use('/api/ingest', async (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'Method not allowed' })); return; }
+        res.end(JSON.stringify({ ok: true, count: 0, message: 'ローカル開発モード: インジェストはスキップされました' }));
+      });
     },
   };
+}
+
+function parseBody(req) {
+  return new Promise((resolve) => {
+    let data = '';
+    req.on('data', (chunk) => { data += chunk; });
+    req.on('end', () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
+  });
 }
