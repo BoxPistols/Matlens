@@ -17,11 +17,13 @@
     "@ai-sdk/openai": "^3.0.52",
     "@react-three/drei": "^9.117.3",
     "@react-three/fiber": "^8.17.14",
+    "@types/prismjs": "^1.26.6",
     "@upstash/vector": "^1.2.3",
     "ai": "^6.0.154",
     "chart.js": "^4.4.0",
     "lucide-react": "^1.8.0",
     "marked": "^9.1.6",
+    "prismjs": "^1.30.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.170.0"

@@ -1,4 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useEffect, useRef } from 'react'
+import Prism from 'prismjs'
+import 'prismjs/components/prism-typescript'
+import 'prismjs/components/prism-tsx'
+import 'prismjs/components/prism-bash'
+import 'prismjs/components/prism-json'
+import 'prismjs/components/prism-css'
 
 const Step = ({ num, title, children }: { num: string; title: string; children: React.ReactNode }) => (
   <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
@@ -12,11 +19,22 @@ const Step = ({ num, title, children }: { num: string; title: string; children: 
   </div>
 )
 
-const Code = ({ children }: { children: string }) => (
-  <pre style={{ padding: 12, borderRadius: 6, background: 'var(--bg-raised)', border: '1px solid var(--border-faint)', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-hi)', overflowX: 'auto', lineHeight: 1.6, margin: '8px 0' }}>
-    {children}
-  </pre>
-)
+const Code = ({ children, lang = 'tsx' }: { children: string; lang?: string }) => {
+  const ref = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (ref.current) Prism.highlightElement(ref.current)
+  }, [children])
+  return (
+    <div style={{ position: 'relative', margin: '8px 0', borderRadius: 8, overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 12px', background: '#1a1a2e', borderBottom: '1px solid rgba(255,255,255,.08)', fontSize: 11, fontFamily: 'var(--font-mono)', color: '#8a8fb5', letterSpacing: '.03em' }}>
+        <span>{lang}</span>
+      </div>
+      <pre style={{ margin: 0, padding: '14px 16px', background: '#12121f', fontFamily: 'var(--font-mono)', fontSize: 12, lineHeight: 1.7, overflowX: 'auto', tabSize: 2 }}>
+        <code ref={ref} className={`language-${lang}`} style={{ color: '#c9d1d9' }}>{children}</code>
+      </pre>
+    </div>
+  )
+}
 
 const ComponentDevelopment = () => (
   <div style={{ maxWidth: 640, fontFamily: 'var(--font-ui)' }}>
