@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { marked } from 'marked';
 import { Icon } from '../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../components/atoms';
@@ -27,7 +27,27 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { addToast } = useContext(AppCtx) as AppContextValue;
 
+  // Prev/Next navigation
+  const currentIndex = useMemo(() => db.findIndex(x => x.id === recordId), [db, recordId]);
+  const prevId = currentIndex > 0 ? db[currentIndex - 1].id : null;
+  const nextId = currentIndex < db.length - 1 ? db[currentIndex + 1].id : null;
+  const goTo = useCallback((id: string | null) => { if (id) onNav('detail_' + id); }, [onNav]);
+
+  // Keyboard shortcuts: left/right arrow keys
   useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Skip if user is in an input/textarea/select
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      if (e.key === 'ArrowLeft') goTo(prevId);
+      if (e.key === 'ArrowRight') goTo(nextId);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [prevId, nextId, goTo]);
+
+  useEffect(() => {
+    setAiComment(''); setAiLoading(true);
     if (!r) return;
     claude.call(`材料「${r.name}」（${r.comp}）硬度${r.hv}HV・引張${r.ts}MPa・弾性${r.el}GPaの特徴と代表的な用途を2〜3文で教えてください。`)
       .then(t => { setAiComment(t); setAiLoading(false); });
@@ -59,11 +79,24 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         <p><strong>{r.name}</strong>（{r.id}）を削除します。この操作は元に戻せません。</p>
       </Modal>
 
-      {/* Breadcrumb */}
+      {/* Breadcrumb + Prev/Next */}
       <div className="flex items-center gap-1.5 text-[12px] text-text-lo">
         <button onClick={onBack} className="text-accent hover:underline flex items-center gap-1"><Icon name="chevronLeft" size={12} />材料データ一覧</button>
         <Icon name="chevronRight" size={10} />
-        <span>{r.name}</span>
+        <span className="flex-1">{r.name}</span>
+        <div className="flex items-center gap-1 ml-auto">
+          <span className="text-[11px] text-text-lo mr-1">{currentIndex + 1} / {db.length}</span>
+          <button onClick={() => goTo(prevId)} disabled={!prevId}
+            className="flex items-center justify-center w-7 h-7 rounded border border-[var(--border-default)] bg-raised hover:bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="前の材料 (←)">
+            <Icon name="chevronLeft" size={13} />
+          </button>
+          <button onClick={() => goTo(nextId)} disabled={!nextId}
+            className="flex items-center justify-center w-7 h-7 rounded border border-[var(--border-default)] bg-raised hover:bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="次の材料 (→)">
+            <Icon name="chevronRight" size={13} />
+          </button>
+        </div>
       </div>
 
       <Card className="p-5">
@@ -133,7 +166,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         </div>
 
         <div className="flex flex-col gap-3">
-          <AIInsightCard loading={aiLoading} chips={[
+          <AIInsightCard loading={aiLoading} subtitle="この材料の特徴・用途・注意点をAIが要約します。" chips={[
             { label: 'AIチャットで詳しく', onClick: () => onNav(`rag:${r.name}（${r.comp}）の特徴、用途、類似材料との違いを詳しく教えてください`) },
             { label: '類似材料を探す', onClick: () => onNav('sim') },
           ]}>

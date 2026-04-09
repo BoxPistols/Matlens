@@ -64,6 +64,7 @@ export function App() {
 
   const navTo = (p: string) => {
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
+    if (p.startsWith('detail_')) { setDetailId(p.slice(7)); setPage('detail'); return; }
     if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
