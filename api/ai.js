@@ -103,7 +103,7 @@ export default async function handler(req, res) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
         body: JSON.stringify({
-          model: 'gpt-4.1-nano',
+          model: 'gpt-5.4-nano',
           max_tokens: 1000,
           messages: [
             { role: 'system', content: sys },

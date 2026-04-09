@@ -104,10 +104,14 @@ ${ctxText}`;
                     {m.role === 'ai' ? <MarkdownBubble text={m.text} /> : m.text}
                   </div>
                   {m.sources && m.sources.length > 0 && (
-                    <div className="px-3 py-2 bg-vec-dim border border-[var(--border-default)] rounded-md text-[12px] w-full">
-                      <div className="text-[10px] font-bold text-vec tracking-[.05em] uppercase mb-1 flex items-center gap-1"><Icon name="embed" size={11} />参照した材料データ</div>
-                      {m.sources.map(s => <div key={s.id} className="text-text-md font-mono">▸ {s.id}: {s.name}</div>)}
-                    </div>
+                    <details className="w-full">
+                      <summary className="text-[10px] font-bold text-vec tracking-[.05em] uppercase cursor-pointer flex items-center gap-1 hover:opacity-80 select-none py-0.5">
+                        <Icon name="embed" size={11} />参照データ（{m.sources.length}件）
+                      </summary>
+                      <div className="px-3 py-1.5 bg-vec-dim border border-[var(--border-default)] rounded-md text-[12px] mt-1">
+                        {m.sources.map(s => <div key={s.id} className="text-text-md font-mono py-0.5">▸ {s.id}: {s.name}</div>)}
+                      </div>
+                    </details>
                   )}
                 </div>
               </div>
@@ -142,9 +146,10 @@ ${ctxText}`;
           </Card>
           <VecCard>
             <div className="text-[12px] font-bold text-vec uppercase tracking-[.04em] mb-2">最後のRAG取得</div>
-            {ctxSources.length === 0 ? <p>—</p> : ctxSources.map(s=>(
-              <div key={s.id} className="text-[12px] text-text-md font-mono py-0.5 border-b border-[var(--border-faint)] last:border-b-0">
-                ▸ {s.id}: {s.name}
+            {ctxSources.length === 0 ? <p className="text-[12px] text-text-lo">質問を送信すると、関連する材料データが表示されます。</p> : ctxSources.map(s=>(
+              <div key={s.id} className="flex items-center gap-2 text-[12px] text-text-md font-mono py-1 border-b border-[var(--border-faint)] last:border-b-0">
+                <span className="flex-1 truncate">▸ {s.id}: {s.name}</span>
+                <span className="text-[10px] text-vec flex-shrink-0">{(s.score * 100).toFixed(0)}%</span>
               </div>
             ))}
           </VecCard>
