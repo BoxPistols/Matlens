@@ -79,22 +79,24 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         <p><strong>{r.name}</strong>（{r.id}）を削除します。この操作は元に戻せません。</p>
       </Modal>
 
-      {/* Breadcrumb + Prev/Next */}
+      {/* Breadcrumb + prev/next navigation */}
       <div className="flex items-center gap-1.5 text-[12px] text-text-lo">
         <button onClick={onBack} className="text-accent hover:underline flex items-center gap-1"><Icon name="chevronLeft" size={12} />材料データ一覧</button>
         <Icon name="chevronRight" size={10} />
-        <span className="flex-1">{r.name}</span>
-        <div className="flex items-center gap-1 ml-auto">
-          <span className="text-[11px] text-text-lo mr-1">{currentIndex + 1} / {db.length}</span>
+        <span className="truncate">{r.name}</span>
+        <div className="flex items-center gap-1.5 ml-auto flex-shrink-0">
           <button onClick={() => goTo(prevId)} disabled={!prevId}
-            className="flex items-center justify-center w-7 h-7 rounded border border-[var(--border-default)] bg-raised hover:bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-[var(--border-default)] bg-raised hover:bg-hover hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[11px]"
             title="前の材料 (←)">
-            <Icon name="chevronLeft" size={13} />
+            <Icon name="chevronLeft" size={12} />
+            {prevId && <span className="hidden sm:inline text-text-md truncate max-w-[80px]">{db[currentIndex - 1]?.name}</span>}
           </button>
+          <span className="text-[11px] text-text-lo font-mono px-1">{currentIndex + 1} / {db.length}</span>
           <button onClick={() => goTo(nextId)} disabled={!nextId}
-            className="flex items-center justify-center w-7 h-7 rounded border border-[var(--border-default)] bg-raised hover:bg-hover disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-[var(--border-default)] bg-raised hover:bg-hover hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[11px]"
             title="次の材料 (→)">
-            <Icon name="chevronRight" size={13} />
+            {nextId && <span className="hidden sm:inline text-text-md truncate max-w-[80px]">{db[currentIndex + 1]?.name}</span>}
+            <Icon name="chevronRight" size={12} />
           </button>
         </div>
       </div>
