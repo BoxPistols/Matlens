@@ -1,0 +1,13 @@
+{
+  "name": "Matlens — 研究・実験データ管理",
+  "short_name": "Matlens",
+  "description": "材料研究者向けデータ管理 + AIベクトル検索",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e3050",
+  "theme_color": "#1e3050",
+  "icons": [
+    { "src": "/public/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/public/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
