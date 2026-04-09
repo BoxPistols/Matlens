@@ -1252,7 +1252,7 @@ const ExportModal = ({ open, onClose, db, filtered }) => {
 ===================================================== */
 
 /** Topbar organism */
-const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, embCount }) => {
+const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, embCount, onGlobalSearch, globalQuery, setGlobalQuery }) => {
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
@@ -1285,8 +1285,26 @@ const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, em
         <span className="text-[15px] font-bold tracking-tight">Matlens</span>
       </div>
       <div className="w-px h-4 bg-white/20" />
-      <span className="text-[12px] text-white/60 leading-none">研究・実験データ管理 v3</span>
-      <div className="flex-1" />
+      <span className="text-[12px] text-white/60 leading-none hidden sm:inline">研究・実験データ管理 v3</span>
+
+      {/* Global search */}
+      <div className="flex-1 max-w-md mx-3">
+        <div className="relative">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"><Icon name="search" size={13} /></span>
+          <input
+            value={globalQuery}
+            onChange={e => setGlobalQuery(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing && globalQuery.trim()) { e.preventDefault(); onGlobalSearch(globalQuery.trim()); } }}
+            placeholder="材料名・ID・組成を検索...（Enter）"
+            className="w-full pl-8 pr-3 py-1.5 rounded-md bg-white/10 border border-white/15 text-white text-[12px] placeholder-white/35 outline-none focus:bg-white/15 focus:border-white/30 transition-all font-ui"
+          />
+          {globalQuery && (
+            <button onClick={() => setGlobalQuery('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70">
+              <Icon name="close" size={10} />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Theme switcher */}
       <div className="flex gap-0.5 bg-black/25 p-0.5 rounded-md border border-white/10" role="group" aria-label="テーマ切替">
@@ -1623,8 +1641,10 @@ const DashboardPage = ({ db, onNav, claude, voice }) => {
 };
 
 /** MaterialListPage */
-const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }) => {
+const MaterialListPage = ({ db, dispatch, onNav, onDetail, search, globalQuery, clearGlobalQuery }) => {
   const [q, setQ] = useState('');
+  // Sync global search query
+  useEffect(() => { if (globalQuery) { setQ(globalQuery); clearGlobalQuery(); } }, [globalQuery]);
   const [filterCat, setFilterCat] = useState('');
   const [filterSt, setFilterSt] = useState('');
   const [filterBatch, setFilterBatch] = useState('');
@@ -2824,7 +2844,7 @@ const AboutPage = () => {
   const TECH = [
     {icon:'ai',name:'React 18',cat:'フレームワーク',tag:'コア',desc:'Babel CDN で JSX を直接実行するシングルHTMLファイル構成。hooks + Context API でステート管理。'},
     {icon:'about',name:'CSS Variables + Tailwind',cat:'スタイリング',tag:'デザインシステム',desc:'4テーマを CSS カスタムプロパティで管理。Tailwind ユーティリティクラスと共存。'},
-    {icon:'spark',name:'Claude claude-sonnet-4-20250514',cat:'AI / LLM',tag:'Anthropic',desc:'Anthropic の最新 Claude モデル。RAG コンテキストと組み合わせて根拠ある回答を生成。'},
+    {icon:'spark',name:'Claude Sonnet 4.6',cat:'AI / LLM',tag:'Anthropic',desc:'Anthropic の最新 Claude モデル。RAG コンテキストと組み合わせて根拠ある回答を生成。'},
     {icon:'embed',name:'TensorFlow.js + USE',cat:'機械学習',tag:'Google',desc:'ブラウザで512次元 Embedding を生成。コサイン類似度でインメモリ VSS を実現。'},
     {icon:'report',name:'Chart.js 4',cat:'データ可視化',tag:'OSS',desc:'折れ線・ドーナツ・積み上げ棒・散布図の 4 種グラフをダッシュボードに実装。'},
     {icon:'mic',name:'Web Speech API',cat:'音声',tag:'ブラウザ標準',desc:'SpeechRecognition（ASR）と SpeechSynthesis（TTS）によるハンズフリーワークフロー。'},
@@ -3619,6 +3639,7 @@ function App() {
   const ai = useAI();
   const claude = ai; // 後方互換 - claude.call = ai.call
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [globalQuery, setGlobalQuery] = useState('');
 
   // Mock API install
   useEffect(() => { installMockAPI(() => db, dispatch); }, []);
@@ -3638,12 +3659,13 @@ function App() {
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
   const showDetail = (id) => { setDetailId(id); setPage('detail'); };
+  const handleGlobalSearch = useCallback((q) => { setGlobalQuery(q); setPage('list'); }, []);
 
   const renderPage = () => {
     const commonProps = { db, dispatch, onNav: navTo, claude, embedding, voice };
     switch(page) {
       case 'dash':    return <DashboardPage {...commonProps} />;
-      case 'list':    return <MaterialListPage {...commonProps} onDetail={showDetail} search={embedding.search} />;
+      case 'list':    return <MaterialListPage {...commonProps} onDetail={showDetail} search={embedding.search} globalQuery={globalQuery} clearGlobalQuery={() => setGlobalQuery('')} />;
       case 'new':     return <MaterialFormPage {...commonProps} editId={null} onCancel={() => setPage('list')} onSuccess={() => setPage('list')} />;
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;
       case 'detail':  return <DetailPage {...commonProps} recordId={detailId} onBack={() => setPage('list')} onEdit={() => navTo('edit_'+detailId)} />;
@@ -3668,8 +3690,8 @@ function App() {
         <Topbar
           theme={theme} setTheme={setTheme}
           onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
-          // onToggleVoice={() => setVoicePanelVisible(v=>!v)} // VOICE DISABLED
           embStatus={embedding.status} embCount={embedding.embCount}
+          onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}
         />
         <div className="flex flex-1 overflow-hidden">
           <Sidebar
