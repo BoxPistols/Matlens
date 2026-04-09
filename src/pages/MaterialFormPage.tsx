@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { marked } from 'marked';
 import { Icon } from '../components/Icon';
 import { Button, Card, Input, Select, Textarea, UnitInput, FormGroup } from '../components/atoms';
 import { AIInsightCard, VecCard } from '../components/molecules';
@@ -148,7 +149,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           </Card>
         </div>
         <div className="flex flex-col gap-3 sticky top-0">
-          <AIInsightCard loading={aiLoading} chips={[
+          <AIInsightCard loading={aiLoading} subtitle="入力中の材料に関する補足情報や組成の提案を行います。" chips={[
             { label: '物性値を補完', onClick: aiAutofill },
             { label: '組成テンプレ', onClick: async () => {
               setAiLoading(true);
@@ -156,7 +157,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
               setAiBody(res); setAiLoading(false);
             }},
           ]}>
-            {!aiLoading && <p>{aiBody}</p>}
+            {!aiLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: marked.parse(aiBody) as string }} />}
           </AIInsightCard>
           <Card className="p-4">
             <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">登録フロー</div>

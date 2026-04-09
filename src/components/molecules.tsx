@@ -19,6 +19,7 @@ interface AIInsightCardProps {
   children?: React.ReactNode;
   chips?: { label: string; onClick: () => void; }[];
   loading?: boolean;
+  subtitle?: string;
 }
 
 interface VecCardProps {
@@ -102,13 +103,14 @@ export const ToastHub = () => {
   );
 };
 
-export const AIInsightCard = ({ children, chips, loading }: AIInsightCardProps) => (
+export const AIInsightCard = ({ children, chips, loading, subtitle }: AIInsightCardProps) => (
   <div className="relative overflow-hidden rounded-lg border border-[var(--border-default)] p-4 mb-4" style={{ background: 'var(--ai-dim)' }}>
     <div className="absolute top-0 left-0 right-0 h-0.5" style={{ background: 'linear-gradient(90deg,transparent,var(--ai-mid),transparent)', backgroundSize: '200%', animation: 'scan 3s ease-in-out infinite' }} />
-    <div className="flex items-center gap-2 mb-2">
+    <div className="flex items-center gap-2 mb-1">
       <Icon name="spark" size={13} className="text-ai" />
       <span className="text-[11px] font-bold text-ai tracking-[.06em] uppercase">AI インサイト</span>
     </div>
+    <p className="text-[11px] text-text-lo mb-2">{subtitle || 'AIが材料データを分析し、要点や注意点をまとめます。'}</p>
     <div className="text-[13px] text-text-md leading-[1.65]">
       {loading ? <Typing /> : children}
     </div>

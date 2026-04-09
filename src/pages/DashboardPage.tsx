@@ -93,7 +93,7 @@ export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
           <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />登録</Button>
         </div>
       </div>
-      <AIInsightCard loading={insightLoading} chips={[
+      <AIInsightCard loading={insightLoading} subtitle="登録データ全体の傾向やレビュー優先度をAIが分析します。" chips={[
         { label:'今月の傾向を詳しく', onClick: () => onNav(`rag:今月登録された材料データの傾向を分析してください。カテゴリ分布や物性値の特徴を教えてください。`) },
         { label:'レビュー待ちを確認', onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
         { label:'AI検出の詳細', onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },

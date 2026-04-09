@@ -8,7 +8,8 @@ function loadOwnKey(): string { try { return localStorage.getItem(OWN_KEY_STORAG
 function saveOwnKey(k: string): void { try { if (k) localStorage.setItem(OWN_KEY_STORAGE, k); else localStorage.removeItem(OWN_KEY_STORAGE); } catch(e) {} }
 
 function devFallback(prompt: string): string {
-  return `**ローカル開発モード**\n\nAPI サーバー（Vercel Functions）に接続できないため、デモ応答を表示しています。\n\n本番環境（Vercel）またはAPIキーを設定するとAIが回答します。\n\n**受信したプロンプト:** ${prompt.slice(0, 120)}${prompt.length > 120 ? '...' : ''}`;
+  const trimmed = prompt.slice(0, 120) + (prompt.length > 120 ? '...' : '');
+  return `### ローカル開発モード\n\nAPI サーバー（Vercel Functions）に接続できないため、デモ応答を表示しています。\n\n本番環境（Vercel）へのデプロイ、またはAPIキーを設定すると、AIによる実際の回答が得られます。\n\n---\n\n受信したプロンプト:\n\n> ${trimmed}`;
 }
 
 export function useAI(): AIHook {
@@ -19,8 +20,9 @@ export function useAI(): AIHook {
   const hasOwnKey = !!ownKey;
 
   useEffect(() => {
-    if (isDev) { setRateInfo({ remaining: 30, limit: 30 }); return; }
-    fetch('/api/ai').then(r => r.json()).then(d => setRateInfo({ remaining: d.remaining, limit: d.limit })).catch(()=>{});
+    fetch('/api/ai').then(r => r.json()).then(d => setRateInfo({ remaining: d.remaining, limit: d.limit })).catch(() => {
+      if (isDev) setRateInfo({ remaining: 30, limit: 30 });
+    });
   }, []);
 
   const setOwnKey = useCallback((key: string) => {
@@ -47,9 +49,6 @@ export function useAI(): AIHook {
       } catch (e) { return `API接続エラー: ${(e as Error).message}`; }
     }
 
-    // Dev mode: no server proxy available, return demo response
-    if (isDev) return devFallback(prompt);
-
     const effectiveProvider = provider === 'gemini-flash' ? 'gemini' : provider;
     try {
       const res = await fetch('/api/ai', {
@@ -59,9 +58,14 @@ export function useAI(): AIHook {
       });
       const d = await res.json();
       if (d.remaining !== undefined) setRateInfo({ remaining: d.remaining, limit: d.limit });
-      if (d.error) return `APIエラー: ${d.error}`;
+      if (d.error) {
+        // Dev mode: server has no API key configured — show fallback
+        if (isDev) return devFallback(prompt);
+        return `APIエラー: ${d.error}`;
+      }
       return d.text || '応答を取得できませんでした。';
     } catch (e) {
+      if (isDev) return devFallback(prompt);
       return `API接続エラー: ${(e as Error).message}`;
     }
   }, [provider, hasOwnKey, ownKey]);

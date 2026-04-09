@@ -121,6 +121,12 @@ body{
 }
 :focus-visible{outline:2px solid var(--border-focus);outline-offset:2px;border-radius:var(--radius-sm)}
 :focus:not(:focus-visible){outline:none}
+
+/* Custom checkbox */
+.matlens-checkbox{appearance:none;-webkit-appearance:none;border:1.5px solid var(--border-strong);border-radius:3px;background:var(--bg-surface);transition:all .12s ease}
+.matlens-checkbox:checked{background:var(--accent);border-color:var(--accent);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7.5L5.5 10L11 4' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:100%;background-position:center;background-repeat:no-repeat}
+.matlens-checkbox:hover{border-color:var(--accent-mid)}
+.matlens-checkbox:focus-visible{outline:2px solid var(--border-focus);outline-offset:2px}
 .skip-nav{position:absolute;top:-60px;left:8px;z-index:9999;background:var(--accent);color:#fff;padding:8px 16px;border-radius:0 0 var(--radius-md) var(--radius-md);font-size:14px;font-weight:600;text-decoration:none;transition:top .15s}
 .skip-nav:focus{top:0}
 
