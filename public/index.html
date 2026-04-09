@@ -693,67 +693,11 @@ const PROVIDERS = [
   { id: 'openai-mini',  label: 'GPT-4.1 mini',     model: 'gpt-4.1-mini',     free: false },
 ];
 
-const VALID_INVITE_CODES = new Set(['MATLENS2026', 'MATLENS-DEMO', 'RESEARCH2026']);
-const RATE_LIMITS = { 'own-key': Infinity, invited: 30, public: 20 };
-const RL_STORAGE_KEY = 'matlens_rl_v1';
-const SESSION_KEY    = 'matlens_session_v1';
-
-function loadRL() { try { return JSON.parse(localStorage.getItem(RL_STORAGE_KEY) || 'null'); } catch(e) { return null; } }
-function saveRL(state) { try { localStorage.setItem(RL_STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
-function loadSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch(e) { return null; } }
-function saveSession(session) { try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch(e) {} }
-
-function useRateLimit() {
-  const today = () => new Date().toISOString().slice(0, 10);
-  const initState = () => {
-    const sess = loadSession() || { tier: 'public', inviteCode: null, openaiKey: null, geminiKey: null };
-    let rl = loadRL();
-    if (!rl || rl.date !== today()) { rl = { date: today(), count: 0, tier: sess.tier, limit: RATE_LIMITS[sess.tier] }; saveRL(rl); }
-    return { session: sess, rl };
-  };
-  const [state, setState] = useState(initState);
-  const { session, rl } = state;
-  const canCall = rl.count < (rl.limit === Infinity ? Infinity : rl.limit);
-  const remaining = rl.limit === Infinity ? 999 : Math.max(0, rl.limit - rl.count);
-
-  const consume = useCallback(() => {
-    if (session.tier === 'own-key') return true;
-    const current = loadRL() || rl;
-    if (current.count >= current.limit) return false;
-    const next = { ...current, count: current.count + 1 };
-    saveRL(next); setState(s => ({ ...s, rl: next })); return true;
-  }, [session, rl]);
-
-  const applyInvite = useCallback((code) => {
-    const valid = VALID_INVITE_CODES.has(code.trim().toUpperCase());
-    if (!valid) return false;
-    const newSess = { ...session, tier: 'invited', inviteCode: code };
-    saveSession(newSess);
-    const newRl = { date: today(), count: 0, tier: 'invited', limit: RATE_LIMITS.invited };
-    saveRL(newRl); setState({ session: newSess, rl: newRl }); return true;
-  }, [session]);
-
-  const setApiKey = useCallback((provider, key) => {
-    const field = provider === 'openai' ? 'openaiKey' : 'geminiKey';
-    const newSess = { ...session, [field]: key || null, tier: key ? 'own-key' : (session.inviteCode ? 'invited' : 'public') };
-    saveSession(newSess);
-    const newRl = { date: today(), count: loadRL()?.count || 0, tier: newSess.tier, limit: RATE_LIMITS[newSess.tier] };
-    saveRL(newRl); setState({ session: newSess, rl: newRl });
-  }, [session]);
-
-  return { session, rl, canCall, remaining, consume, applyInvite, setApiKey };
-}
-
-function useAI(rateLimit) {
+function useAI() {
   const [provider, setProvider] = useState('openai-nano');
   const providerDef = PROVIDERS.find(p => p.id === provider) || PROVIDERS[0];
 
   const call = useCallback(async (prompt, system) => {
-    if (!rateLimit.canCall) {
-      const { limit } = rateLimit.rl;
-      return `**利用上限に達しました**\n\n本日の利用回数上限（${limit === Infinity ? '無制限' : limit + '回/日'}）に達しました。\n\n明日リセットされます。`;
-    }
-    rateLimit.consume();
     const effectiveProvider = provider === 'gemini-flash' ? 'gemini' : provider;
     try {
       const res = await fetch('/api/ai', {
@@ -765,7 +709,7 @@ function useAI(rateLimit) {
       if (d.error) return `APIエラー: ${d.error}`;
       return d.text || '応答を取得できませんでした。';
     } catch (e) { return `API接続エラー: ${e.message}`; }
-  }, [provider, rateLimit]);
+  }, [provider]);
 
   return { call, provider, setProvider, providerDef, providers: PROVIDERS };
 }
@@ -3450,67 +3394,27 @@ const TestSuitePage = () => {
 /* =====================================================
    === SECTION 16: SETTINGS PANEL (Rate Limit + Provider)
 ===================================================== */
-const SettingsPanel = ({ rateLimit, ai, visible, onClose }) => {
-  const [invite, setInvite] = useState('');
-  const [openaiKey, setOpenaiKey] = useState('');
-  const [geminiKey, setGeminiKey] = useState('');
-  const { session, rl, remaining, applyInvite, setApiKey } = rateLimit;
-  const { addToast } = useContext(AppCtx);
-
+const SettingsPanel = ({ ai, visible, onClose }) => {
   if (!visible) return null;
 
   return (
     <div className="fixed bottom-20 right-6 z-[2500] w-80 bg-surface border border-[var(--border-default)] rounded-xl p-4" style={{boxShadow:'var(--shadow-lg)'}}>
       <div className="flex items-center justify-between mb-3">
-        <div className="text-[14px] font-bold">AI設定 / 利用制限</div>
-        <div className="flex items-center gap-2">
-          <Badge variant={session.tier==='own-key'?'green':session.tier==='invited'?'blue':'gray'}>
-            {session.tier==='own-key'?'自前キー':session.tier==='invited'?'招待済':'公開'}
-          </Badge>
-          <button onClick={onClose} className="text-text-lo hover:text-text-hi"><Icon name="close" size={14}/></button>
-        </div>
+        <div className="text-[14px] font-bold">AI設定</div>
+        <button onClick={onClose} className="text-text-lo hover:text-text-hi"><Icon name="close" size={14}/></button>
       </div>
-      <div className="bg-raised rounded p-3 mb-3 border border-[var(--border-faint)]">
-        <div className="flex justify-between text-[12px] mb-1.5">
-          <span className="text-text-md">本日の残り利用回数</span>
-          <span className={`font-bold font-mono ${remaining<5?'text-err':remaining<10?'text-warn':'text-ok'}`}>{session.tier==='own-key'?'無制限':`${remaining}/${rl.limit}`}</span>
-        </div>
-        <ProgressBar value={session.tier==='own-key'?100:Math.round(remaining/(rl.limit||1)*100)} color={remaining<5?'var(--err)':remaining<10?'var(--warn)':'var(--ok)'}/>
-        <div className="text-[11px] text-text-lo mt-1.5">{session.tier==='own-key'?'APIキー設定済み（無制限）':session.tier==='invited'?'招待コード適用済み（30回/日）':'一般利用（20回/日）'}</div>
-      </div>
-      <FormGroup label="AIプロバイダ" className="mb-3">
+      <FormGroup label="AIプロバイダ">
         <div className="flex flex-col gap-1.5">
-          {PROVIDERS.map(p=>{
-            const disabled=p.requiresKey&&!session.openaiKey;
-            return(
-              <button key={p.id} onClick={()=>!disabled&&ai.setProvider(p.id)} disabled={disabled}
-                className={`flex items-center gap-2 px-3 py-2 rounded border transition-all text-[12px] text-left font-ui ${ai.provider===p.id?'border-accent bg-accent-dim text-accent':'border-[var(--border-default)] bg-raised text-text-md hover:bg-hover disabled:opacity-40 disabled:cursor-not-allowed'}`}>
-                <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${ai.provider===p.id?'border-accent bg-accent':'border-text-lo'}`}/>
-                <span className="font-semibold flex-1">{p.label}</span>
-                {p.free&&<Badge variant="green" className="text-[10px]">無料</Badge>}
-                {p.requiresKey&&<Badge variant="gray" className="text-[10px]">要キー</Badge>}
-              </button>
-            );
-          })}
+          {PROVIDERS.map(p=>(
+            <button key={p.id} onClick={()=>ai.setProvider(p.id)}
+              className={`flex items-center gap-2 px-3 py-2 rounded border transition-all text-[12px] text-left font-ui ${ai.provider===p.id?'border-accent bg-accent-dim text-accent':'border-[var(--border-default)] bg-raised text-text-md hover:bg-hover'}`}>
+              <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${ai.provider===p.id?'border-accent bg-accent':'border-text-lo'}`}/>
+              <span className="font-semibold flex-1">{p.label}</span>
+            </button>
+          ))}
         </div>
       </FormGroup>
-      {session.tier==='public'&&(
-        <FormGroup label="招待コード（30回/日に増量）" className="mb-3">
-          <div className="flex gap-1.5">
-            <Input value={invite} onChange={e=>setInvite(e.target.value)} placeholder="MATLENS2026" className="flex-1 text-[12px]"/>
-            <Button variant="primary" size="sm" onClick={()=>{const ok=applyInvite(invite);if(ok){addToast('招待コード適用 (30回/日)');setInvite('');}else addToast('無効なコードです','warn');}} disabled={!invite}>適用</Button>
-          </div>
-          <p className="text-[11px] text-text-lo mt-1">デモコード: MATLENS2026</p>
-        </FormGroup>
-      )}
-      <div className="flex flex-col gap-2">
-        <FormGroup label="OpenAI APIキー（無制限 + mini解放）">
-          <div className="flex gap-1.5"><Input value={openaiKey} onChange={e=>setOpenaiKey(e.target.value)} placeholder="sk-..." type="password" className="flex-1 text-[12px]"/><Button variant="default" size="sm" onClick={()=>{setApiKey('openai',openaiKey);addToast(openaiKey?'OpenAI キー設定':'キー削除');}}>保存</Button></div>
-        </FormGroup>
-        <FormGroup label="Gemini APIキー（無制限）">
-          <div className="flex gap-1.5"><Input value={geminiKey} onChange={e=>setGeminiKey(e.target.value)} placeholder="AIza..." type="password" className="flex-1 text-[12px]"/><Button variant="default" size="sm" onClick={()=>{setApiKey('gemini',geminiKey);addToast(geminiKey?'Gemini キー設定':'キー削除');}}>保存</Button></div>
-        </FormGroup>
-      </div>
+      <p className="text-[11px] text-text-lo mt-3">APIキーはサーバー側で管理されています。</p>
     </div>
   );
 };
@@ -3534,8 +3438,7 @@ function App() {
 
   const { theme, setTheme } = useTheme();
   const embedding = useEmbedding(db);
-  const rateLimit = useRateLimit();
-  const ai = useAI(rateLimit);
+  const ai = useAI();
   const claude = ai; // 後方互換 - claude.call = ai.call
   const [settingsVisible, setSettingsVisible] = useState(false);
 
@@ -3604,16 +3507,13 @@ function App() {
         </div>
       </div>
       {/* <VoicePanel visible={voicePanelVisible} voice={voice} onClose={() => setVoicePanelVisible(false)} /> VOICE DISABLED */}
-      <SettingsPanel rateLimit={rateLimit} ai={ai} visible={settingsVisible} onClose={() => setSettingsVisible(false)} />
+      <SettingsPanel ai={ai} visible={settingsVisible} onClose={() => setSettingsVisible(false)} />
       {/* AI設定フローティングボタン */}
       <button onClick={() => setSettingsVisible(v => !v)}
         className="fixed bottom-6 right-6 z-[2000] flex items-center gap-1.5 px-3 py-2 rounded-full bg-surface border border-[var(--border-default)] text-[12px] font-semibold font-ui shadow-md hover:bg-hover transition-all"
         title="AI設定 / 利用制限">
         <Icon name="ai" size={13} className="text-ai" />
         <span className="text-text-md">{ai.providerDef.label}</span>
-        <span className={`ml-1 font-mono text-[11px] ${rateLimit.remaining < 5 ? "text-err" : rateLimit.session.tier === "own-key" ? "text-ok" : "text-text-lo"}`}>
-          {rateLimit.session.tier === "own-key" ? "∞" : rateLimit.remaining + "回"}
-        </span>
       </button>
       <ToastHub />
     </AppCtx.Provider>
