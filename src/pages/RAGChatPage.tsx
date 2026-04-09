@@ -42,17 +42,17 @@ ${ctxText}`;
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-start gap-3">
+    <div className="flex flex-col flex-1 min-h-0 gap-3">
+      <div className="flex items-start gap-3 flex-shrink-0">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">
-            RAG チャット <Badge variant="ai">RAG</Badge>
+            AI チャット <Badge variant="ai">AI</Badge>
           </h1>
-          <p className="text-[12px] text-text-lo mt-0.5">材料DBをコンテキストにしたAI質問応答</p>
+          <p className="text-[12px] text-text-lo mt-0.5">登録済みの材料データを元に、AIが質問に回答します</p>
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 text-[12px] text-text-lo px-1">
+      <div className="flex items-center gap-1.5 text-[12px] text-text-lo px-1 flex-shrink-0">
         {['クエリ','Embedding','類似度検索','コンテキスト注入','AI回答'].map((s,i,arr)=>(
           <React.Fragment key={i}>
             <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${i===arr.length-1?'bg-ai-dim text-ai':'bg-vec-dim text-vec'}`}>{s}</span>
@@ -61,7 +61,7 @@ ${ctxText}`;
         ))}
       </div>
 
-      <div className="flex gap-2 flex-wrap items-center">
+      <div className="flex gap-2 flex-wrap items-center flex-shrink-0">
         {PRESETS.slice(0,3).map(p => (
           <button key={p} onClick={() => send(p)}
             className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] bg-ai-dim text-ai border border-[var(--border-default)] hover:bg-ai hover:text-white transition-all font-ui">
@@ -74,8 +74,8 @@ ${ctxText}`;
         </button>
       </div>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 240px', alignItems: 'start' }}>
-        <Card className="overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 360px)', minHeight: '380px' }}>
+      <div className="grid gap-4 flex-1 min-h-0" style={{ gridTemplateColumns: '1fr 240px' }}>
+        <Card className="overflow-hidden flex flex-col min-h-0">
           <div ref={msgsRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2.5 items-start ${m.role==='user' ? 'flex-row-reverse' : ''}`}>
