@@ -15,9 +15,9 @@ const SIZES = [
 const TypographyScale = () => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
     <div style={{ display: 'grid', gridTemplateColumns: '60px 200px 1fr', gap: '8px', padding: '8px 0', borderBottom: '1px solid var(--border-default)', marginBottom: 8 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em' }}>サイズ</span>
-      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em' }}>用途</span>
-      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em' }}>サンプル</span>
+      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em' }}>サイズ</span>
+      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em' }}>用途</span>
+      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em' }}>サンプル</span>
     </div>
     {SIZES.map(s => (
       <div
@@ -41,16 +41,16 @@ const TypographyScale = () => (
       </div>
     ))}
     <div style={{ marginTop: 24, padding: 16, background: 'var(--bg-raised)', borderRadius: 8, border: '1px solid var(--border-faint)' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>フォントファミリー</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-lo)', textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 8 }}>フォントファミリー</div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div>
-          <code style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>--font-ui</code>
+          <code style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>--font-ui</code>
           <p style={{ fontSize: 13, fontFamily: 'var(--font-ui)', color: 'var(--text-hi)', marginTop: 4 }}>
             -apple-system, BlinkMacSystemFont, Hiragino Sans, Yu Gothic UI, Meiryo, Arial, sans-serif
           </p>
         </div>
         <div>
-          <code style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>--font-mono</code>
+          <code style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>--font-mono</code>
           <p style={{ fontSize: 13, fontFamily: 'var(--font-mono)', color: 'var(--text-hi)', marginTop: 4 }}>
             SFMono-Regular, Consolas, Courier New, monospace
           </p>
