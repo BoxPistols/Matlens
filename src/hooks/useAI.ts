@@ -47,6 +47,9 @@ export function useAI(): AIHook {
       } catch (e) { return `API接続エラー: ${(e as Error).message}`; }
     }
 
+    // Dev mode: no server proxy available, return demo response
+    if (isDev) return devFallback(prompt);
+
     const effectiveProvider = provider === 'gemini-flash' ? 'gemini' : provider;
     try {
       const res = await fetch('/api/ai', {
@@ -54,13 +57,11 @@ export function useAI(): AIHook {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ provider: effectiveProvider, prompt, system })
       });
-      if (!res.ok && isDev) return devFallback(prompt);
       const d = await res.json();
       if (d.remaining !== undefined) setRateInfo({ remaining: d.remaining, limit: d.limit });
       if (d.error) return `APIエラー: ${d.error}`;
       return d.text || '応答を取得できませんでした。';
     } catch (e) {
-      if (isDev) return devFallback(prompt);
       return `API接続エラー: ${(e as Error).message}`;
     }
   }, [provider, hasOwnKey, ownKey]);
