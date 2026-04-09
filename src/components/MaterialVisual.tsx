@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Environment, Float } from '@react-three/drei';
+import { Float } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Material properties → visual parameters mapping
@@ -117,10 +117,10 @@ export const MaterialVisual = ({ cat, hv, ts, el, size = 160, animate = true, cl
       gl={{ antialias: true, alpha: true }}
       style={{ background: 'transparent' }}
     >
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 5, 5]} intensity={1.2} />
-      <directionalLight position={[-3, -2, 4]} intensity={0.4} color="#8888ff" />
-      <Environment preset="studio" />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[5, 5, 5]} intensity={1.5} castShadow />
+      <directionalLight position={[-4, -2, 3]} intensity={0.6} color="#8888ff" />
+      <directionalLight position={[0, -5, 0]} intensity={0.3} color="#444466" />
       <MaterialMesh cat={cat} hv={hv} ts={ts} el={el} animate={animate} />
     </Canvas>
   </div>
