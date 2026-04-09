@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useCallback } from 'react';
+import { useState, useEffect, useReducer, useCallback, lazy, Suspense } from 'react';
 import type { Toast, AppContextValue } from './types';
 import { AppCtx, dbReducer } from './context/AppContext';
 import { INITIAL_DB } from './data/initialDb';
@@ -12,6 +12,7 @@ import { Topbar } from './components/Topbar';
 import { Sidebar } from './components/Sidebar';
 import { SupportPanel } from './components/SupportPanel';
 import { ToastHub } from './components/molecules';
+import { Typing } from './components/atoms';
 import { DashboardPage } from './pages/DashboardPage';
 import { MaterialListPage } from './pages/MaterialListPage';
 import { MaterialFormPage } from './pages/MaterialFormPage';
@@ -26,7 +27,15 @@ import { AboutPage } from './pages/AboutPage';
 import { ApiDebugPage } from './pages/ApiDebugPage';
 import { UxDesignPage } from './pages/UxDesignPage';
 import { TestSuitePage } from './pages/TestSuitePage';
-import { CatalogPage } from './pages/CatalogPage';
+
+// Lazy load Three.js heavy page to avoid blocking app startup
+const CatalogPage = lazy(() => import('./pages/CatalogPage').then(m => ({ default: m.CatalogPage })));
+
+const LazyFallback = () => (
+  <div className="flex items-center justify-center h-64 text-text-lo">
+    <Typing /> <span className="ml-2 text-[13px]">3D カタログを読み込み中...</span>
+  </div>
+);
 
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
@@ -70,7 +79,7 @@ export function App() {
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
       case 'rag':     return <RAGChatPage {...commonProps} />;
       case 'sim':     return <SimilarPage {...commonProps} />;
-      case 'catalog': return <CatalogPage db={db} onNav={navTo} onDetail={showDetail} />;
+      case 'catalog': return <Suspense fallback={<LazyFallback />}><CatalogPage db={db} onNav={navTo} onDetail={showDetail} /></Suspense>;
       case 'voice':   return <VoicePage />;
       case 'api':     return <ApiDebugPage db={db} dispatch={dispatch} />;
       case 'tests':   return <TestSuitePage />;
