@@ -74,7 +74,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 min-w-0">
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} db={db} filtered={filtered} />
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="削除の確認" footer={
         <>
@@ -157,11 +157,11 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px]" style={{ tableLayout:'fixed' }}>
+          <table className="w-full text-[13px] min-w-[860px]">
             <colgroup>
-              <col style={{width:'36px'}}/><col style={{width:'90px'}}/><col /><col style={{width:'96px'}}/>
-              <col style={{width:'76px'}}/><col style={{width:'130px'}}/><col style={{width:'88px'}}/>
-              <col style={{width:'82px'}}/><col style={{width:'48px'}}/><col style={{width:'76px'}}/>
+              <col style={{width:'36px'}}/><col style={{width:'80px'}}/><col /><col style={{width:'80px'}}/>
+              <col style={{width:'68px'}}/><col style={{width:'110px'}}/><col style={{width:'80px'}}/>
+              <col style={{width:'72px'}}/><col style={{width:'40px'}}/><col style={{width:'72px'}}/>
             </colgroup>
             <thead>
               <tr className="bg-raised">
