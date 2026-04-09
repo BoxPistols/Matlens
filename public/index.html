@@ -345,7 +345,8 @@ const ICONS = {
   copy:       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><rect x="5" y="5" width="9" height="9" rx="1"/><path d="M5 5V3a1 1 0 00-1-1H2a1 1 0 00-1 1v8a1 1 0 001 1h2"/></svg>,
   speaker:    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 5.5h2.5l3.5-3v11l-3.5-3H3a1 1 0 01-1-1v-3a1 1 0 011-1zm9 .5a4 4 0 010 4M10.5 4A6 6 0 0113 8a6 6 0 01-2.5 4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>,
   stop:       <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>,
-  refresh:    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M13 3a6 6 0 11-1 8M13 3v4h-4"/></svg>,
+  refresh:    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 8a6 6 0 0110.5-4M14 2v4h-4"/><path d="M14 8a6 6 0 01-10.5 4M2 14v-4h4"/></svg>,
+  play:       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>,
   spark:      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.5 5H15l-4.5 3.3 1.7 5.2L8 11.3l-4.2 3.2 1.7-5.2L1 6h5.5z"/></svg>,
   embed:      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="4" cy="8" r="2"/><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><path d="M6 7.5l4-2.5M6 8.5l4 2.5"/></svg>,
   warning:    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1L1 14h14L8 1zm0 3l4.5 8h-9L8 4zm-.5 3v3h1V7h-1zm0 4v1h1v-1h-1z"/></svg>,
@@ -627,7 +628,7 @@ function installMockAPI(getDb, dispatch) {
   const originalFetch = window.fetch.bind(window);
   window.fetch = async (input, init = {}) => {
     const url = typeof input === 'string' ? input : input.url;
-    if (!url.startsWith('/api/')) return originalFetch(input, init);
+    if (!url.startsWith('/api/') || url.startsWith('/api/ai')) return originalFetch(input, init);
     const start = Date.now();
     const method = (init.method || 'GET').toUpperCase();
     const path = url.replace(/\?.*$/, '');
@@ -686,18 +687,54 @@ function installMockAPI(getDb, dispatch) {
 /* =====================================================
    === SECTION 12: MULTI-PROVIDER AI + RATE LIMIT
 ===================================================== */
-/** @type {Provider[]} */
 const PROVIDERS = [
-  { id: 'openai-nano',  label: 'GPT-4.1 nano',    model: 'gpt-4.1-nano',     free: true },
+  { id: 'openai-nano',  label: 'GPT-5.4 nano',    model: 'gpt-4.1-nano',  free: true },
   { id: 'gemini-flash', label: 'Gemini 2.5 Flash', model: 'gemini-2.5-flash', free: true },
-  { id: 'openai-mini',  label: 'GPT-4.1 mini',     model: 'gpt-4.1-mini',     free: false },
+  { id: 'openai-mini',  label: 'GPT-5.4 mini',    model: 'gpt-4.1-mini',  free: false, requiresKey: true },
 ];
+
+const OWN_KEY_STORAGE = 'matlens_own_openai_key';
+function loadOwnKey() { try { return localStorage.getItem(OWN_KEY_STORAGE) || ''; } catch(e) { return ''; } }
+function saveOwnKey(k) { try { if (k) localStorage.setItem(OWN_KEY_STORAGE, k); else localStorage.removeItem(OWN_KEY_STORAGE); } catch(e) {} }
 
 function useAI() {
   const [provider, setProvider] = useState('openai-nano');
+  const [ownKey, setOwnKeyState] = useState(loadOwnKey);
+  const [rateInfo, setRateInfo] = useState({ remaining: null, limit: null });
   const providerDef = PROVIDERS.find(p => p.id === provider) || PROVIDERS[0];
+  const hasOwnKey = !!ownKey;
+
+  // Fetch initial rate limit status
+  useEffect(() => {
+    fetch('/api/ai').then(r => r.json()).then(d => setRateInfo({ remaining: d.remaining, limit: d.limit })).catch(()=>{});
+  }, []);
+
+  const setOwnKey = useCallback((key) => {
+    saveOwnKey(key);
+    setOwnKeyState(key);
+    if (key) setProvider('openai-mini');
+    else if (provider === 'openai-mini') setProvider('openai-nano');
+  }, [provider]);
 
   const call = useCallback(async (prompt, system) => {
+    const sys = system || 'あなたは材料科学の専門家AIアシスタントです。Matlens に組み込まれています。Markdown形式で簡潔・実用的な日本語で回答してください。';
+
+    // --- User's own key → direct API call (no server proxy, no rate limit) ---
+    if (hasOwnKey && (provider === 'openai-mini' || provider === 'openai-nano')) {
+      try {
+        const model = provider === 'openai-mini' ? 'gpt-4.1-mini' : 'gpt-4.1-nano';
+        const res = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ownKey}` },
+          body: JSON.stringify({ model, max_tokens: 1000, messages: [{ role: 'system', content: sys }, { role: 'user', content: prompt }] })
+        });
+        const d = await res.json();
+        if (d.error) return `OpenAI エラー: ${d.error.message}`;
+        return d.choices?.[0]?.message?.content || '応答を取得できませんでした。';
+      } catch (e) { return `API接続エラー: ${e.message}`; }
+    }
+
+    // --- Free tier → server proxy with rate limit ---
     const effectiveProvider = provider === 'gemini-flash' ? 'gemini' : provider;
     try {
       const res = await fetch('/api/ai', {
@@ -706,12 +743,13 @@ function useAI() {
         body: JSON.stringify({ provider: effectiveProvider, prompt, system })
       });
       const d = await res.json();
+      if (d.remaining !== undefined) setRateInfo({ remaining: d.remaining, limit: d.limit });
       if (d.error) return `APIエラー: ${d.error}`;
       return d.text || '応答を取得できませんでした。';
     } catch (e) { return `API接続エラー: ${e.message}`; }
-  }, [provider]);
+  }, [provider, hasOwnKey, ownKey]);
 
-  return { call, provider, setProvider, providerDef, providers: PROVIDERS };
+  return { call, provider, setProvider, providerDef, providers: PROVIDERS, hasOwnKey, ownKey, setOwnKey, rateInfo };
 }
 
 
@@ -1264,7 +1302,7 @@ const Topbar = ({ theme, setTheme, onToggleSidebar, onToggleVoice, embStatus, em
       </div>
 
       {/* Embedding status */}
-      <Tooltip label={embStatus === "fallback" ? "キーワード検索モードで動作中（TF.jsモデル読込失敗）" : `Embedding: ${vecStatusLabel} — クリックでVSS画面へ`} placement="bottom">
+      <Tooltip label={embStatus === "fallback" ? "キーワード検索モード" : `ベクトル検索: ${vecStatusLabel}`} placement="left">
       <button
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 ${embStatus === 'ready' ? 'bg-vec-dim text-vec border-[var(--vec-mid)]' : 'bg-white/10 text-white/80 border-white/20'}`}
         aria-label="ベクトル検索ページへ"
@@ -3354,7 +3392,7 @@ const TestSuitePage = () => {
         </div>
         <div className="flex gap-2 items-center">
           {ran>0&&<div className={`text-[13px] font-bold font-mono ${passed===ran?'text-ok':'text-err'}`}>{passed}/{ran} ({rate}%)</div>}
-          <Button variant="primary" onClick={()=>runCases(TEST_CASES)} disabled={running}><Icon name="refresh" size={13}/>{running?'実行中...':'全実行'}</Button>
+          <Button variant="primary" onClick={()=>runCases(TEST_CASES)} disabled={running}><Icon name="play" size={13}/>{running?'実行中...':'全実行'}</Button>
         </div>
       </div>
       {ran>0&&<div className="grid grid-cols-4 gap-3"><KpiCard label="総数" value={total}/><KpiCard label="実行" value={ran}/><KpiCard label="通過" value={passed} color="var(--ok)"/><KpiCard label="失敗" value={failed} color={failed>0?'var(--err)':'var(--ok)'}/></div>}
@@ -3395,26 +3433,86 @@ const TestSuitePage = () => {
    === SECTION 16: SETTINGS PANEL (Rate Limit + Provider)
 ===================================================== */
 const SettingsPanel = ({ ai, visible, onClose }) => {
+  const [keyInput, setKeyInput] = useState(ai.ownKey ? '••••••••' : '');
+  const { addToast } = useContext(AppCtx);
   if (!visible) return null;
+
+  const { rateInfo, hasOwnKey } = ai;
 
   return (
     <div className="fixed bottom-20 right-6 z-[2500] w-80 bg-surface border border-[var(--border-default)] rounded-xl p-4" style={{boxShadow:'var(--shadow-lg)'}}>
       <div className="flex items-center justify-between mb-3">
         <div className="text-[14px] font-bold">AI設定</div>
-        <button onClick={onClose} className="text-text-lo hover:text-text-hi"><Icon name="close" size={14}/></button>
+        <div className="flex items-center gap-2">
+          <Badge variant={hasOwnKey ? 'green' : 'gray'}>{hasOwnKey ? '自前キー' : '無料枠'}</Badge>
+          <button onClick={onClose} className="text-text-lo hover:text-text-hi"><Icon name="close" size={14}/></button>
+        </div>
       </div>
-      <FormGroup label="AIプロバイダ">
+
+      {/* Rate limit status (free tier only) */}
+      {!hasOwnKey && rateInfo.limit !== null && (
+        <div className="bg-raised rounded p-3 mb-3 border border-[var(--border-faint)]">
+          <div className="flex justify-between text-[12px] mb-1.5">
+            <span className="text-text-md">本日の残り回数</span>
+            <span className={`font-bold font-mono ${rateInfo.remaining < 5 ? 'text-err' : rateInfo.remaining < 10 ? 'text-warn' : 'text-ok'}`}>
+              {rateInfo.remaining}/{rateInfo.limit}
+            </span>
+          </div>
+          <ProgressBar value={Math.round((rateInfo.remaining / rateInfo.limit) * 100)} color={rateInfo.remaining < 5 ? 'var(--err)' : rateInfo.remaining < 10 ? 'var(--warn)' : 'var(--ok)'} />
+          <p className="text-[11px] text-text-lo mt-1.5">無料枠（{rateInfo.limit}回/日）— 自分のAPIキーで無制限</p>
+        </div>
+      )}
+      {hasOwnKey && (
+        <div className="bg-[var(--ok-dim)] rounded p-3 mb-3 border border-[var(--border-faint)]">
+          <div className="text-[12px] text-ok font-semibold">自分のAPIキー設定済み — 無制限</div>
+        </div>
+      )}
+
+      {/* Provider selector */}
+      <FormGroup label="AIプロバイダ" className="mb-3">
         <div className="flex flex-col gap-1.5">
-          {PROVIDERS.map(p=>(
-            <button key={p.id} onClick={()=>ai.setProvider(p.id)}
-              className={`flex items-center gap-2 px-3 py-2 rounded border transition-all text-[12px] text-left font-ui ${ai.provider===p.id?'border-accent bg-accent-dim text-accent':'border-[var(--border-default)] bg-raised text-text-md hover:bg-hover'}`}>
-              <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${ai.provider===p.id?'border-accent bg-accent':'border-text-lo'}`}/>
-              <span className="font-semibold flex-1">{p.label}</span>
-            </button>
-          ))}
+          {PROVIDERS.map(p => {
+            const disabled = p.requiresKey && !hasOwnKey;
+            return (
+              <button key={p.id} onClick={() => !disabled && ai.setProvider(p.id)} disabled={disabled}
+                className={`flex items-center gap-2 px-3 py-2 rounded border transition-all text-[12px] text-left font-ui ${ai.provider === p.id ? 'border-accent bg-accent-dim text-accent' : disabled ? 'border-[var(--border-faint)] bg-raised text-text-lo opacity-50 cursor-not-allowed' : 'border-[var(--border-default)] bg-raised text-text-md hover:bg-hover'}`}>
+                <div className={`w-3 h-3 rounded-full border-2 flex-shrink-0 ${ai.provider === p.id ? 'border-accent bg-accent' : 'border-text-lo'}`} />
+                <span className="font-semibold flex-1">{p.label}</span>
+                {p.free && <Badge variant="green" className="text-[10px]">無料</Badge>}
+                {p.requiresKey && <Badge variant={hasOwnKey ? 'blue' : 'gray'} className="text-[10px]">{hasOwnKey ? '有効' : '要キー'}</Badge>}
+              </button>
+            );
+          })}
         </div>
       </FormGroup>
-      <p className="text-[11px] text-text-lo mt-3">APIキーはサーバー側で管理されています。</p>
+
+      {/* Own API key */}
+      <FormGroup label="OpenAI APIキー（無制限 + mini解放）">
+        <div className="flex gap-1.5">
+          <Input
+            value={keyInput}
+            onChange={e => setKeyInput(e.target.value)}
+            onFocus={() => { if (keyInput === '••••••••') setKeyInput(''); }}
+            placeholder="sk-..."
+            type="password"
+            className="flex-1 text-[12px]"
+          />
+          <Button variant="default" size="sm" onClick={() => {
+            const key = keyInput === '••••••••' ? ai.ownKey : keyInput;
+            ai.setOwnKey(key);
+            addToast(key ? 'APIキー設定済み（無制限モード）' : 'キーを削除しました');
+            if (key) setKeyInput('••••••••');
+          }}>保存</Button>
+          {hasOwnKey && (
+            <Button variant="ghost" size="sm" onClick={() => {
+              ai.setOwnKey('');
+              setKeyInput('');
+              addToast('APIキーを削除しました');
+            }}>削除</Button>
+          )}
+        </div>
+        <p className="text-[11px] text-text-lo mt-1">キーはブラウザのlocalStorageに保存されます。共用PCでは使用後に削除してください。</p>
+      </FormGroup>
     </div>
   );
 };
