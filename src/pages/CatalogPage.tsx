@@ -62,7 +62,7 @@ export const CatalogPage = ({ db, onNav, onDetail }: CatalogPageProps) => {
                 : 'border-[var(--border-faint)] bg-raised hover:bg-hover'
             }`}
           >
-            <MaterialVisual cat={cat} hv={500} ts={500} el={200} size={48} animate={false} className="rounded-md flex-shrink-0" />
+            <MaterialVisual name={cat} cat={cat} hv={500} size={48} className="flex-shrink-0" />
             <div>
               <div className={`text-[13px] font-bold ${CAT_COLORS[cat] || 'text-text-hi'}`}>{cat}</div>
               <div className="text-[12px] text-text-lo">{catCounts[cat] || 0}件</div>
@@ -100,7 +100,7 @@ export const CatalogPage = ({ db, onNav, onDetail }: CatalogPageProps) => {
               className="group flex flex-col bg-surface border border-[var(--border-faint)] rounded-xl overflow-hidden hover:border-accent hover:shadow-md transition-all text-left"
             >
               <div className="flex items-center justify-center p-4 bg-sunken">
-                <MaterialVisual cat={r.cat} hv={r.hv} ts={r.ts} el={r.el} size={140} animate={true} />
+                <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={140} showLabel />
               </div>
               <div className="p-3 flex flex-col gap-1">
                 <div className="text-[11px] font-mono text-text-lo">{r.id}</div>
@@ -137,7 +137,7 @@ export const CatalogPage = ({ db, onNav, onDetail }: CatalogPageProps) => {
               onClick={() => onDetail(r.id)}
               className="group flex items-center gap-4 p-3 bg-surface border border-[var(--border-faint)] rounded-lg hover:border-accent hover:bg-hover transition-all text-left"
             >
-              <MaterialVisual cat={r.cat} hv={r.hv} ts={r.ts} el={r.el} size={64} animate={false} className="rounded-md flex-shrink-0" />
+              <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={64} className="flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-[11px] text-text-lo">{r.id}</span>
