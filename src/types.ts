@@ -75,6 +75,7 @@ export interface EmbeddingHook {
   search: (query: string, topK?: number) => Promise<MaterialWithScore[]>;
   addToIndex: (record: Material) => Promise<void>;
   embCount: number;
+  engine?: string;
 }
 
 export interface AIHook {
