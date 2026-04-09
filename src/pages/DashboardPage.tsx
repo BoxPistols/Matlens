@@ -94,9 +94,9 @@ export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
         </div>
       </div>
       <AIInsightCard loading={insightLoading} chips={[
-        { label:'今月の傾向', onClick: () => onNav('rag') },
-        { label:'レビュー優先度', onClick: () => onNav('rag') },
-        { label:'AIアラート詳細', onClick: () => onNav('rag') },
+        { label:'今月の傾向を詳しく', onClick: () => onNav(`rag:今月登録された材料データの傾向を分析してください。カテゴリ分布や物性値の特徴を教えてください。`) },
+        { label:'レビュー待ちを確認', onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
+        { label:'AI検出の詳細', onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },
       ]}>
         {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: typeof marked !== 'undefined' ? marked.parse(insight) : insight }} />}
       </AIInsightCard>
