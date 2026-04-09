@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from '../components/Icon';
+import { Icon, IconName } from '../components/Icon';
 import { Badge, Card, SectionCard } from '../components/atoms';
 import { AIInsightCard, VecCard } from '../components/molecules';
 
@@ -42,7 +42,7 @@ export const AboutPage = () => {
         <div className="grid gap-3" style={{ gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))' }}>
           {TECH.map(t=>(
             <div key={t.name} className="bg-raised border border-[var(--border-faint)] rounded-md p-3.5">
-              <Icon name={t.icon} size={20} className="text-accent mb-2" />
+              <Icon name={t.icon as IconName} size={20} className="text-accent mb-2" />
               <div className="text-[13px] font-bold text-text-hi mb-0.5">{t.name}</div>
               <div className="text-[12px] text-text-lo mb-1.5">{t.cat}</div>
               <div className="text-[12px] text-text-md leading-relaxed">{t.desc}</div>

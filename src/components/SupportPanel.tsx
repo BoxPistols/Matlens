@@ -1,14 +1,22 @@
 import { useState, useContext } from 'react';
-import { Icon } from './Icon';
+import { Icon, IconName } from './Icon';
 import { Button, Badge, Input, FormGroup, Divider, ProgressBar } from './atoms';
 import { AppCtx } from '../context/AppContext';
 import { PROVIDERS, SUPPORT_TABS, FAQ_ITEMS } from '../data/constants';
+import type { AIHook, AppContextValue } from '../types';
 
-export const SupportPanel = ({ ai, visible, onClose, onNav }) => {
+interface SupportPanelProps {
+  ai: AIHook;
+  visible: boolean;
+  onClose: () => void;
+  onNav: (page: string) => void;
+}
+
+export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps) => {
   const [tab, setTab] = useState('help');
   const [keyInput, setKeyInput] = useState(ai.ownKey ? '••••••••' : '');
-  const [expandedFaq, setExpandedFaq] = useState(null);
-  const { addToast } = useContext(AppCtx);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const { addToast } = useContext(AppCtx) as AppContextValue;
   if (!visible) return null;
 
   const { rateInfo, hasOwnKey } = ai;
@@ -23,7 +31,7 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }) => {
         {SUPPORT_TABS.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`flex items-center gap-1 px-3 py-2 text-[12px] font-semibold border-b-2 transition-all font-ui ${tab === t.id ? 'border-accent text-accent' : 'border-transparent text-text-lo hover:text-text-md'}`}>
-            <Icon name={t.icon} size={12} />{t.label}
+            <Icon name={t.icon as IconName} size={12} />{t.label}
           </button>
         ))}
       </div>
@@ -35,7 +43,7 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }) => {
               {[{icon:'dashboard',label:'ダッシュボード',desc:'KPI・グラフで全体を把握',page:'dash'},{icon:'list',label:'材料データ一覧',desc:'登録・フィルタ・一括操作',page:'list'},{icon:'vecSearch',label:'ベクトル検索',desc:'AIで意味的に類似材料を検索',page:'vsearch'},{icon:'rag',label:'RAG チャット',desc:'データを元にAIが回答',page:'rag'},{icon:'similar',label:'類似材料探索',desc:'材料間の類似度を比較',page:'sim'}].map(item => (
                 <button key={item.page} onClick={() => { onNav(item.page); onClose(); }}
                   className="flex items-start gap-2.5 p-2.5 rounded-md border border-[var(--border-faint)] bg-raised hover:bg-hover hover:border-accent transition-all text-left">
-                  <Icon name={item.icon} size={14} className="text-accent mt-0.5 flex-shrink-0" />
+                  <Icon name={item.icon as IconName} size={14} className="text-accent mt-0.5 flex-shrink-0" />
                   <div><div className="text-[12px] font-semibold text-text-hi">{item.label}</div><div className="text-[11px] text-text-lo">{item.desc}</div></div>
                 </button>
               ))}
@@ -67,9 +75,9 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }) => {
               <div className="bg-raised rounded p-3 border border-[var(--border-faint)]">
                 <div className="flex justify-between text-[12px] mb-1.5">
                   <span className="text-text-md">本日の残り回数</span>
-                  <span className={`font-bold font-mono ${rateInfo.remaining < 5 ? 'text-err' : rateInfo.remaining < 10 ? 'text-warn' : 'text-ok'}`}>{rateInfo.remaining}/{rateInfo.limit}</span>
+                  <span className={`font-bold font-mono ${rateInfo.remaining! < 5 ? 'text-err' : rateInfo.remaining! < 10 ? 'text-warn' : 'text-ok'}`}>{rateInfo.remaining}/{rateInfo.limit}</span>
                 </div>
-                <ProgressBar value={Math.round((rateInfo.remaining / rateInfo.limit) * 100)} color={rateInfo.remaining < 5 ? 'var(--err)' : rateInfo.remaining < 10 ? 'var(--warn)' : 'var(--ok)'} />
+                <ProgressBar value={Math.round((rateInfo.remaining! / rateInfo.limit!) * 100)} color={rateInfo.remaining! < 5 ? 'var(--err)' : rateInfo.remaining! < 10 ? 'var(--warn)' : 'var(--ok)'} />
                 <p className="text-[11px] text-text-lo mt-1.5">無料枠（{rateInfo.limit}回/日）</p>
               </div>
             )}

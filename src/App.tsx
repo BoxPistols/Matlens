@@ -1,4 +1,5 @@
 import { useState, useEffect, useReducer, useCallback } from 'react';
+import type { Toast, AppContextValue } from './types';
 import { AppCtx, dbReducer } from './context/AppContext';
 import { INITIAL_DB } from './data/initialDb';
 import { useTheme } from './hooks/useTheme';
@@ -29,8 +30,8 @@ import { TestSuitePage } from './pages/TestSuitePage';
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
   const [page, setPage] = useState('dash');
-  const [detailId, setDetailId] = useState(null);
-  const [toasts, setToasts] = useState([]);
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const { theme, setTheme } = useTheme();
@@ -44,18 +45,18 @@ export function App() {
 
   const voice = useVoice();
 
-  const addToast = useCallback((msg, type = 'ok') => {
+  const addToast = useCallback((msg: string, type = 'ok') => {
     const id = Date.now();
     setToasts(t => [...t, { id, msg, type }]);
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3200);
   }, []);
 
-  const navTo = (p) => {
+  const navTo = (p: string) => {
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
-  const showDetail = (id) => { setDetailId(id); setPage('detail'); };
-  const handleGlobalSearch = useCallback((q) => { setGlobalQuery(q); setPage('list'); }, []);
+  const showDetail = (id: string) => { setDetailId(id); setPage('detail'); };
+  const handleGlobalSearch = useCallback((q: string) => { setGlobalQuery(q); setPage('list'); }, []);
 
   const renderPage = () => {
     const commonProps = { db, dispatch, onNav: navTo, claude, embedding, voice };
@@ -64,11 +65,11 @@ export function App() {
       case 'list':    return <MaterialListPage {...commonProps} onDetail={showDetail} search={embedding.search} />;
       case 'new':     return <MaterialFormPage {...commonProps} editId={null} onCancel={() => setPage('list')} onSuccess={() => setPage('list')} />;
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;
-      case 'detail':  return <DetailPage {...commonProps} recordId={detailId} onBack={() => setPage('list')} onEdit={() => navTo('edit_'+detailId)} />;
+      case 'detail':  return <DetailPage {...commonProps} recordId={detailId!} onBack={() => setPage('list')} onEdit={() => navTo('edit_'+detailId)} />;
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
       case 'rag':     return <RAGChatPage {...commonProps} />;
       case 'sim':     return <SimilarPage {...commonProps} />;
-      case 'voice':   return <VoicePage voice={voice} />;
+      case 'voice':   return <VoicePage />;
       case 'api':     return <ApiDebugPage db={db} dispatch={dispatch} />;
       case 'tests':   return <TestSuitePage />;
       case 'uxdesign':return <UxDesignPage />;
@@ -80,7 +81,7 @@ export function App() {
   };
 
   return (
-    <AppCtx.Provider value={{ db, dispatch, addToast, toasts, theme }}>
+    <AppCtx.Provider value={{ db, dispatch, addToast, toasts, theme } satisfies AppContextValue}>
       <a href="#main" className="skip-nav">コンテンツへスキップ</a>
       <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--bg-base)' }}>
         <Topbar

@@ -2,7 +2,18 @@ import { Icon } from './Icon';
 import { Tooltip } from './Tooltip';
 import { Typing } from './atoms';
 
-export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, onGlobalSearch, globalQuery, setGlobalQuery }) => {
+interface TopbarProps {
+  theme: string;
+  setTheme: (t: string) => void;
+  onToggleSidebar: () => void;
+  embStatus: string;
+  embCount: number;
+  onGlobalSearch: (q: string) => void;
+  globalQuery: string;
+  setGlobalQuery: (q: string) => void;
+}
+
+export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, onGlobalSearch, globalQuery, setGlobalQuery }: TopbarProps) => {
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },

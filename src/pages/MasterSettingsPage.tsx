@@ -1,7 +1,12 @@
 import { Icon } from '../components/Icon';
 import { Badge, SectionCard, ProgressBar } from '../components/atoms';
+import type { Material } from '../types';
 
-export const MasterSettingsPage = ({ db }) => {
+interface MasterSettingsPageProps {
+  db: Material[];
+}
+
+export const MasterSettingsPage = ({ db }: MasterSettingsPageProps) => {
   const CATEGORIES = ['金属合金','セラミクス','ポリマー','複合材料'];
   const STATUSES   = ['登録済','レビュー待','承認済','要修正'];
   const BATCHES    = [...new Set(db.map(r => r.batch))].sort().reverse();

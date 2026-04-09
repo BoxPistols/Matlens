@@ -3,13 +3,20 @@ import { marked } from 'marked';
 import { Icon } from '../components/Icon';
 import { Button, Badge, Card, Input, Select, FormGroup, UnitInput, Typing } from '../components/atoms';
 import { AIInsightCard, VecCard } from '../components/molecules';
+import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../types';
 
-export const SimilarPage = ({ db, embedding, claude }) => {
+interface SimilarPageProps {
+  db: Material[];
+  embedding: EmbeddingHook;
+  claude: AIHook;
+}
+
+export const SimilarPage = ({ db, embedding, claude }: SimilarPageProps) => {
   const [base, setBase] = useState('MAT-0237 — SUS316L 低炭素ステンレス');
   const [weight, setWeight] = useState('総合スコア');
   const [k, setK] = useState(10);
   const [threshold, setThreshold] = useState(60);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<MaterialWithScore[]>([]);
   const [aiComment, setAiComment] = useState('');
   const [running, setRunning] = useState(false);
   const [ran, setRan] = useState(false);

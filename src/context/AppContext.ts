@@ -1,14 +1,15 @@
 import { createContext } from 'react';
+import type { AppContextValue, Material, DbAction } from '../types';
 
-export const AppCtx = createContext(null);
+export const AppCtx = createContext<AppContextValue | null>(null);
 
 export const DB_ACTIONS = {
   ADD: 'ADD', UPDATE: 'UPDATE', DELETE: 'DELETE',
   BULK_DELETE: 'BULK_DELETE', BULK_APPROVE: 'BULK_APPROVE',
   IMPORT: 'IMPORT',
-};
+} as const;
 
-export function dbReducer(state, action) {
+export function dbReducer(state: Material[], action: DbAction): Material[] {
   switch(action.type) {
     case DB_ACTIONS.ADD:    return [action.record, ...state];
     case DB_ACTIONS.UPDATE: return state.map(r => r.id === action.record.id ? {...r,...action.record} : r);

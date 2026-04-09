@@ -4,14 +4,26 @@ import { Icon } from '../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../components/atoms';
 import { Modal, AIInsightCard, VecCard } from '../components/molecules';
 import { AppCtx } from '../context/AppContext';
+import type { Material, AIHook, EmbeddingHook, AppContextValue, MaterialWithScore } from '../types';
 
-export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, embedding, onNav }) => {
+interface DetailPageProps {
+  db: Material[];
+  recordId: string;
+  dispatch: React.Dispatch<any>;
+  onBack: () => void;
+  onEdit: () => void;
+  claude: AIHook;
+  embedding: EmbeddingHook;
+  onNav: (page: string) => void;
+}
+
+export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, embedding, onNav }: DetailPageProps) => {
   const r = db.find(x => x.id === recordId);
   const [aiComment, setAiComment] = useState('');
   const [aiLoading, setAiLoading] = useState(true);
-  const [vecNear, setVecNear] = useState([]);
+  const [vecNear, setVecNear] = useState<MaterialWithScore[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const { addToast } = useContext(AppCtx);
+  const { addToast } = useContext(AppCtx) as AppContextValue;
 
   useEffect(() => {
     if (!r) return;
@@ -70,7 +82,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
-          {[['バッチ',r.batch],['組成',r.comp,true],['密度',r.dn?`${r.dn} g/cm³`:'—']].map(([lbl,val,mono])=>(
+          {([['バッチ',r.batch,false],['組成',r.comp,true],['密度',r.dn?`${r.dn} g/cm³`:'—',false]] as [string,string,boolean][]).map(([lbl,val,mono])=>(
             <div key={lbl} className="bg-raised border border-[var(--border-faint)] rounded-md p-3">
               <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.05em] mb-1">{lbl}</div>
               <div className={`text-[13px] font-semibold ${mono?'font-mono text-[12px]':''}`}>{val}</div>

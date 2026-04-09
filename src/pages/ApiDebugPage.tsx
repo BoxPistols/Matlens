@@ -4,9 +4,15 @@ import { Tooltip } from '../components/Tooltip';
 import { Button, Badge, Card, SectionCard, Input, Select, Textarea, FormGroup, UnitInput } from '../components/atoms';
 import { AIInsightCard } from '../components/molecules';
 import { onApiLog, getApiLogs, MOCK_CONFIG, clearApiLogs } from '../services/mockApi';
+import type { Material, ApiLog } from '../types';
 
-const statusColor = (s) => s >= 500 ? 'text-err' : s >= 400 ? 'text-warn' : s >= 200 ? 'text-ok' : 'text-text-lo';
-const methodColor = (m) => ({ GET:'text-ok', POST:'text-accent', PUT:'text-warn', PATCH:'text-ai', DELETE:'text-err' }[m] || 'text-text-md');
+interface ApiDebugPageProps {
+  db: Material[];
+  dispatch: React.Dispatch<any>;
+}
+
+const statusColor = (s: number) => s >= 500 ? 'text-err' : s >= 400 ? 'text-warn' : s >= 200 ? 'text-ok' : 'text-text-lo';
+const methodColor = (m: string) => ({ GET:'text-ok', POST:'text-accent', PUT:'text-warn', PATCH:'text-ai', DELETE:'text-err' } as Record<string, string>)[m] || 'text-text-md';
 
 // TypeScript type definition string constant (avoids Babel misinterpreting <T> in JSX)
 const TS_TYPE_DEF = [
@@ -49,15 +55,15 @@ const TS_TYPE_DEF = [
   "}",
 ].join("\n");
 
-export const ApiDebugPage = ({ db, dispatch }) => {
-  const [logs, setLogs] = useState(() => getApiLogs());
-  const [selected, setSelected] = useState(null);
+export const ApiDebugPage = ({ db, dispatch }: ApiDebugPageProps) => {
+  const [logs, setLogs] = useState<ApiLog[]>(() => getApiLogs());
+  const [selected, setSelected] = useState<ApiLog | null>(null);
   const [tab, setTab] = useState('logs');
   const [config, setConfig] = useState({ ...MOCK_CONFIG });
   const [customMethod, setCustomMethod] = useState('GET');
   const [customPath, setCustomPath] = useState('/api/materials');
   const [customBody, setCustomBody] = useState('');
-  const [customResult, setCustomResult] = useState(null);
+  const [customResult, setCustomResult] = useState<{ status?: number; body?: any; headers?: Record<string, string>; error?: string } | null>(null);
   const [sending, setSending] = useState(false);
 
   useEffect(() => { const unsub = onApiLog(() => setLogs([...getApiLogs()])); return unsub; }, []);
@@ -65,17 +71,17 @@ export const ApiDebugPage = ({ db, dispatch }) => {
   const runRequest = async () => {
     setSending(true);
     try {
-      const opts = { method: customMethod, headers: { 'Content-Type': 'application/json' } };
+      const opts: RequestInit = { method: customMethod, headers: { 'Content-Type': 'application/json' } };
       if (customBody && ['POST','PUT','PATCH'].includes(customMethod)) opts.body = customBody;
       const res = await fetch(customPath, opts);
       const text = await res.text();
       let body; try { body = JSON.parse(text); } catch(e) { body = text; }
       setCustomResult({ status: res.status, body, headers: Object.fromEntries([...res.headers.entries()]) });
-    } catch (e) { setCustomResult({ error: e.message }); }
+    } catch (e) { setCustomResult({ error: (e as Error).message }); }
     setSending(false);
   };
 
-  const generateCurl = (log) => {
+  const generateCurl = (log: ApiLog) => {
     let cmd = `curl -X ${log.method} 'http://localhost:8000${log.path}'`;
     cmd += `\n  -H 'Content-Type: application/json'`;
     if (log.reqBody) cmd += `\n  -d '${JSON.stringify(log.reqBody)}'`;
@@ -154,8 +160,8 @@ export const ApiDebugPage = ({ db, dispatch }) => {
                 <span className={`ml-auto font-bold font-mono ${statusColor(selected.status)}`}>{selected.status}</span>
                 <span className="text-[12px] text-text-lo">{selected.latency}ms</span>
               </div>
-              {selected.reqBody&&<div className="mb-3"><div className="font-bold text-text-lo uppercase tracking-[.04em] text-[11px] mb-1">Request Body</div><pre className="bg-sunken rounded p-3 font-mono text-[11px] border border-[var(--border-faint)] overflow-x-auto max-h-32">{JSON.stringify(selected.reqBody,null,2)}</pre></div>}
-              <div className="mb-3"><div className="font-bold text-text-lo uppercase tracking-[.04em] text-[11px] mb-1">Response</div><pre className="bg-sunken rounded p-3 font-mono text-[11px] border border-[var(--border-faint)] overflow-x-auto max-h-40">{JSON.stringify(selected.resBody,null,2)}</pre></div>
+              {!!selected.reqBody&&<div className="mb-3"><div className="font-bold text-text-lo uppercase tracking-[.04em] text-[11px] mb-1">Request Body</div><pre className="bg-sunken rounded p-3 font-mono text-[11px] border border-[var(--border-faint)] overflow-x-auto max-h-32">{String(JSON.stringify(selected.reqBody,null,2))}</pre></div>}
+              <div className="mb-3"><div className="font-bold text-text-lo uppercase tracking-[.04em] text-[11px] mb-1">Response</div><pre className="bg-sunken rounded p-3 font-mono text-[11px] border border-[var(--border-faint)] overflow-x-auto max-h-40">{String(JSON.stringify(selected.resBody,null,2))}</pre></div>
               <div><div className="font-bold text-text-lo uppercase tracking-[.04em] text-[11px] mb-1">cURL</div><pre className="bg-sunken rounded p-3 font-mono text-[11px] border border-[var(--border-faint)]">{generateCurl(selected)}</pre><Button variant="ghost" size="xs" className="mt-1" onClick={()=>navigator.clipboard.writeText(generateCurl(selected))}><Icon name="copy" size={11}/>\u30B3\u30D4\u30FC</Button></div>
             </Card>
           )}
@@ -174,7 +180,7 @@ export const ApiDebugPage = ({ db, dispatch }) => {
               {['POST','PUT','PATCH'].includes(customMethod)&&<FormGroup label="Request Body (JSON)"><Textarea value={customBody} onChange={e=>setCustomBody(e.target.value)} rows={4} className="font-mono text-[12px]" placeholder='{"name":"\u6750\u6599\u540D","cat":"\u91D1\u5C5E\u5408\u91D1"}'/></FormGroup>}
             </SectionCard>
             {customResult&&<SectionCard title="\u30EC\u30B9\u30DD\u30F3\u30B9">
-              <div className={`font-bold font-mono text-[14px] mb-2 ${statusColor(customResult.status)}`}>HTTP {customResult.status}</div>
+              <div className={`font-bold font-mono text-[14px] mb-2 ${statusColor(customResult.status!)}`}>HTTP {customResult.status}</div>
               {customResult.error?<div className="text-err text-[13px]">{customResult.error}</div>:<pre className="bg-sunken rounded p-3 font-mono text-[11px] border border-[var(--border-faint)] max-h-60 overflow-auto">{JSON.stringify(customResult.body,null,2)}</pre>}
             </SectionCard>}
           </div>

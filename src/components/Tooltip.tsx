@@ -1,10 +1,24 @@
 import { useState, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-export const Tooltip = ({ label, placement = 'bottom', children, className = '' }) => {
-  const triggerRef = useRef(null);
-  const timerRef   = useRef(null);
-  const [pos, setPos]       = useState(null);
+interface TooltipProps {
+  label?: string;
+  placement?: 'bottom' | 'top' | 'right' | 'left';
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface TooltipPos {
+  top: number;
+  left: number;
+  arrowLeft: string;
+  placement: string;
+}
+
+export const Tooltip = ({ label, placement = 'bottom', children, className = '' }: TooltipProps) => {
+  const triggerRef = useRef<HTMLSpanElement>(null);
+  const timerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [pos, setPos]       = useState<TooltipPos | null>(null);
   const [visible, setVisible] = useState(false);
   const DELAY = 500;
   const GAP   = 8;
@@ -57,7 +71,7 @@ export const Tooltip = ({ label, placement = 'bottom', children, className = '' 
   }, [calcPos]);
 
   const hide = useCallback(() => {
-    clearTimeout(timerRef.current);
+    if (timerRef.current) clearTimeout(timerRef.current);
     setVisible(false);
     setPos(null);
   }, []);
@@ -72,7 +86,7 @@ export const Tooltip = ({ label, placement = 'bottom', children, className = '' 
         top:  pos.top,
         left: pos.left,
         '--tt-arrow': pos.arrowLeft,
-      }}
+      } as React.CSSProperties}
     >
       {label}
     </div>,

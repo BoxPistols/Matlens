@@ -7,7 +7,7 @@ import { HELP_TERMS } from '../data/constants';
 export const HelpPage = () => {
   const [cat, setCat] = useState('all');
   const [q, setQ] = useState('');
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const CATS = [{id:'all',label:'すべて'},{id:'mat',label:'材料工学'},{id:'ai',label:'AI / ML'},{id:'sys',label:'システム'},{id:'ops',label:'操作ガイド'}];
   const filtered = HELP_TERMS.filter(t => (cat==='all'||t.cat===cat) && (!q||`${t.term} ${t.en} ${t.body}`.toLowerCase().includes(q.toLowerCase())));
   return (

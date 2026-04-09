@@ -5,10 +5,17 @@ import { Icon } from '../components/Icon';
 import { Button, Badge, Card, SectionCard, ProgressBar } from '../components/atoms';
 import { AIInsightCard, KpiCard, ExportModal } from '../components/molecules';
 import { AppCtx } from '../context/AppContext';
+import type { Material, AIHook, AppContextValue } from '../types';
+
+interface DashboardPageProps {
+  db: Material[];
+  onNav: (page: string) => void;
+  claude: AIHook;
+}
 
 Chart.register(...registerables);
 
-export const DashboardPage = ({ db, onNav, claude }) => {
+export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
   const [insight, setInsight] = useState('');
   const [insightLoading, setInsightLoading] = useState(true);
   const chartRefs = { trend: useRef(null), donut: useRef(null), status: useRef(null), scatter: useRef(null) };
@@ -20,14 +27,14 @@ export const DashboardPage = ({ db, onNav, claude }) => {
   }, []);
 
   useEffect(() => {
-    const getV = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const getV = (n: string) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
     const a=getV('--accent'), ok=getV('--ok'), warn=getV('--warn'), ai=getV('--ai-mid'), lo=getV('--text-lo'), bf=getV('--border-faint');
     Chart.defaults.color=lo; Chart.defaults.borderColor=bf; Chart.defaults.font.size=11;
-    const destroy = (k) => { if(chartInstances.current[k]){chartInstances.current[k].destroy();delete chartInstances.current[k];} };
+    const destroy = (k: string) => { if((chartInstances.current as any)[k]){(chartInstances.current as any)[k].destroy();delete (chartInstances.current as any)[k];} };
 
     if(chartRefs.trend.current){
       destroy('trend');
-      chartInstances.current.trend = new Chart(chartRefs.trend.current, {
+      (chartInstances.current as any).trend = new Chart(chartRefs.trend.current, {
         type:'line',
         data:{ labels:['5月','6月','7月','8月','9月','10月','11月','12月','1月','2月','3月','4月'],
           datasets:[
@@ -40,7 +47,7 @@ export const DashboardPage = ({ db, onNav, claude }) => {
     if(chartRefs.donut.current){
       destroy('donut');
       const cats=[{cat:'金属合金',n:db.filter(r=>r.cat==='金属合金').length||102,c:a},{cat:'セラミクス',n:db.filter(r=>r.cat==='セラミクス').length||68,c:ok},{cat:'ポリマー',n:db.filter(r=>r.cat==='ポリマー').length||47,c:warn},{cat:'複合材料',n:db.filter(r=>r.cat==='複合材料').length||30,c:ai}];
-      chartInstances.current.donut = new Chart(chartRefs.donut.current, {
+      (chartInstances.current as any).donut = new Chart(chartRefs.donut.current, {
         type:'doughnut',
         data:{labels:cats.map(d=>d.cat),datasets:[{data:cats.map(d=>d.n),backgroundColor:cats.map(d=>d.c+'cc'),borderColor:cats.map(d=>d.c),borderWidth:1.5,hoverOffset:6}]},
         options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8,font:{size:11}}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}件`}}}}
@@ -51,7 +58,7 @@ export const DashboardPage = ({ db, onNav, claude }) => {
       const batches=['B-035','B-036','B-037','B-038'];
       const statusList=['承認済','登録済','レビュー待','要修正'];
       const sColors=[ok+'cc',a+'cc',warn+'cc','#E24B4Acc'];
-      chartInstances.current.status = new Chart(chartRefs.status.current, {
+      (chartInstances.current as any).status = new Chart(chartRefs.status.current, {
         type:'bar',
         data:{labels:batches,datasets:statusList.map((s,i)=>({label:s,data:batches.map(b=>db.filter(r=>r.batch===b&&r.status===s).length||[3,2,2,1][i]),backgroundColor:sColors[i],borderRadius:2,borderSkipped:false}))},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:8}},tooltip:{mode:'index'}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,beginAtZero:true,grid:{color:bf}}}}
@@ -59,17 +66,17 @@ export const DashboardPage = ({ db, onNav, claude }) => {
     }
     if(chartRefs.scatter.current){
       destroy('scatter');
-      const catColors={'金属合金':a,'セラミクス':ok,'ポリマー':warn,'複合材料':ai};
-      chartInstances.current.scatter = new Chart(chartRefs.scatter.current, {
+      const catColors: Record<string, string> ={'金属合金':a,'セラミクス':ok,'ポリマー':warn,'複合材料':ai};
+      (chartInstances.current as any).scatter = new Chart(chartRefs.scatter.current, {
         type:'scatter',
         data:{datasets:['金属合金','セラミクス','ポリマー','複合材料'].map(cat=>({label:cat,data:db.filter(r=>r.cat===cat&&r.hv&&r.ts).map(r=>({x:r.hv,y:r.ts})),backgroundColor:(catColors[cat]||a)+'99',pointRadius:5,pointHoverRadius:7}))},
         options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,padding:8}},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label} HV:${ctx.parsed.x} MPa:${ctx.parsed.y}`}}},scales:{x:{title:{display:true,text:'硬度 (HV)',font:{size:11}},grid:{color:bf}},y:{title:{display:true,text:'引張強さ (MPa)',font:{size:11}},grid:{color:bf}}}}
       });
     }
-    return () => { Object.values(chartInstances.current).forEach(c => c.destroy()); chartInstances.current={}; };
+    return () => { Object.values(chartInstances.current as any).forEach((c: any) => c.destroy()); chartInstances.current={}; };
   }, [db]);
 
-  const { addToast } = useContext(AppCtx);
+  const { addToast } = useContext(AppCtx) as AppContextValue;
   const [exportOpen, setExportOpen] = useState(false);
 
   return (
@@ -121,7 +128,7 @@ export const DashboardPage = ({ db, onNav, claude }) => {
           ))}
         </SectionCard>
         <SectionCard title="実験フェーズ進捗">
-          {[['データ収集','var(--accent)',88],['一次評価','var(--ok)',74],['解析・検証','var(--warn)',51],['報告書作成','var(--ai-mid)',32]].map(([lbl,col,val]) => (
+          {([['データ収集','var(--accent)',88],['一次評価','var(--ok)',74],['解析・検証','var(--warn)',51],['報告書作成','var(--ai-mid)',32]] as [string, string, number][]).map(([lbl,col,val]) => (
             <div key={lbl} className="flex items-center gap-2.5 py-1.5 text-[12px]">
               <span className="w-20 text-text-md flex-shrink-0">{lbl}</span>
               <ProgressBar value={val} color={col} className="flex-1 h-1.5" />

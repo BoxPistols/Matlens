@@ -2,15 +2,22 @@ import React, { useState, useRef } from 'react';
 import { Icon } from '../components/Icon';
 import { Button, Badge, Card, Input, Typing } from '../components/atoms';
 import { MarkdownBubble, VecCard } from '../components/molecules';
+import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../types';
 
-export const RAGChatPage = ({ db, embedding, claude }) => {
-  const [messages, setMessages] = useState([
+interface RAGChatPageProps {
+  db: Material[];
+  embedding: EmbeddingHook;
+  claude: AIHook;
+}
+
+export const RAGChatPage = ({ db, embedding, claude }: RAGChatPageProps) => {
+  const [messages, setMessages] = useState<{ role: string; text: string; sources?: MaterialWithScore[] }[]>([
     { role: 'ai', text: 'Matlens の材料データベースについてなんでも聞いてください。ベクトル検索で関連データを取得し、根拠のある回答を提供します。' }
   ]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [ctxSources, setCtxSources] = useState([]);
-  const msgsRef = useRef(null);
+  const [ctxSources, setCtxSources] = useState<MaterialWithScore[]>([]);
+  const msgsRef = useRef<HTMLDivElement>(null);
 
   const PRESETS = ['硬度が300HV以上の金属合金を教えて','SUS316L に近い物性の材料は何がある？','航空宇宙用途に適した軽量材料を提案して','レビュー待ちデータの懸念点を分析して','耐食性と強度を両立する材料を教えて'];
 

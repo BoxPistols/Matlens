@@ -4,8 +4,19 @@ import { Button, Card, Input, Select, Textarea, UnitInput, FormGroup } from '../
 import { AIInsightCard, VecCard } from '../components/molecules';
 import { AppCtx } from '../context/AppContext';
 import { getNextId, incrementNextId } from '../data/initialDb';
+import type { Material, AIHook, EmbeddingHook, AppContextValue } from '../types';
 
-export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, claude, embedding }) => {
+interface MaterialFormPageProps {
+  db: Material[];
+  dispatch: React.Dispatch<any>;
+  editId: string | null;
+  onCancel: () => void;
+  onSuccess: () => void;
+  claude: AIHook;
+  embedding: EmbeddingHook;
+}
+
+export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, claude, embedding }: MaterialFormPageProps) => {
   const editing = editId ? db.find(r => r.id === editId) : null;
   const [form, setForm] = useState({
     name: editing?.name || '', cat: editing?.cat || '',
@@ -14,18 +25,18 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
     pf: editing?.pf || '', el2: editing?.el2 || '', dn: editing?.dn || '',
     temp: '', memo: editing?.memo || '',
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [aiBody, setAiBody] = useState('組成式を入力すると物性値の目安を提案します。');
   const [aiLoading, setAiLoading] = useState(false);
-  const [compTimer, setCompTimer] = useState(null);
-  const { addToast } = useContext(AppCtx);
+  const [compTimer, setCompTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const { addToast } = useContext(AppCtx) as AppContextValue;
 
   const newId = getNextId();
 
-  const set = (k) => (v) => setForm(f => ({...f, [k]: v}));
-  const setV = (k) => (e) => set(k)(e.target.value);
+  const set = (k: string) => (v: any) => setForm(f => ({...f, [k]: v}));
+  const setV = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => set(k)(e.target.value);
 
-  const onCompChange = (v) => {
+  const onCompChange = (v: string) => {
     set('comp')(v);
     if (compTimer) clearTimeout(compTimer);
     if (v.length < 3) return;
@@ -51,7 +62,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   };
 
   const validate = () => {
-    const e = {};
+    const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = '必須項目です';
     if (!form.cat) e.cat = '必須項目です';
     if (!form.comp.trim()) e.comp = '必須項目です';
@@ -61,14 +72,14 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
 
   const submit = async () => {
     if (!validate()) { addToast('必須項目を入力してください', 'warn'); return; }
-    const record = {
-      id: editing ? editId : newId,
-      name: form.name, cat: form.cat, comp: form.comp,
-      hv: parseFloat(form.hv)||0, ts: parseFloat(form.ts)||0, el: parseFloat(form.el)||0,
-      pf: parseFloat(form.pf)||null, el2: parseFloat(form.el2)||0, dn: parseFloat(form.dn)||0,
+    const record: Material = {
+      id: editing ? editId! : newId,
+      name: form.name, cat: form.cat as Material['cat'], comp: form.comp,
+      hv: parseFloat(String(form.hv))||0, ts: parseFloat(String(form.ts))||0, el: parseFloat(String(form.el))||0,
+      pf: parseFloat(String(form.pf))||null, el2: parseFloat(String(form.el2))||0, dn: parseFloat(String(form.dn))||0,
       batch: form.batch || 'B-未分類',
       date: new Date().toISOString().slice(0,10),
-      author: '木村 研一', status: editing?.status || '登録済', ai: editing?.ai || false,
+      author: '木村 研一', status: editing?.status || '登録済' as Material['status'], ai: editing?.ai || false,
       memo: form.memo,
     };
     if (editing) {
@@ -83,8 +94,8 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
     onSuccess();
   };
 
-  const anomalyHv = parseFloat(form.hv) > 3500;
-  const anomalyTs = parseFloat(form.ts) > 3000;
+  const anomalyHv = parseFloat(String(form.hv)) > 3500;
+  const anomalyTs = parseFloat(String(form.ts)) > 3000;
 
   return (
     <div className="flex flex-col gap-4">
@@ -106,7 +117,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
                   {['金属合金','セラミクス','ポリマー','複合材料'].map(c=><option key={c}>{c}</option>)}
                 </Select>
               </FormGroup>
-              <FormGroup label="サンプルID" hint="自動採番"><Input value={editing ? editId : newId} readOnly className="bg-sunken text-text-lo cursor-default" /></FormGroup>
+              <FormGroup label="サンプルID" hint="自動採番"><Input value={editing ? editId! : newId} readOnly className="bg-sunken text-text-lo cursor-default" /></FormGroup>
               <FormGroup label="バッチ番号"><Input value={form.batch} onChange={setV('batch')} placeholder="例: B-038" /></FormGroup>
               <FormGroup label="登録者"><Input value="木村 研一" readOnly className="bg-sunken text-text-lo cursor-default" /></FormGroup>
               <FormGroup label="試験温度"><UnitInput unit="℃" inputProps={{ value: form.temp, onChange: setV('temp'), placeholder: '25' }} /></FormGroup>

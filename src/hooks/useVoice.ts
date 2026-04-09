@@ -1,4 +1,6 @@
-export function useVoice() {
+import type { VoiceHook } from '../types';
+
+export function useVoice(): VoiceHook {
   return {
     voiceState: 'idle', transcript: '', isHandsfree: false,
     ttsRate: 1, setTtsRate: () => {}, ttsPitch: 1, setTtsPitch: () => {},
