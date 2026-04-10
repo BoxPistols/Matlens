@@ -4,6 +4,7 @@ import { Tooltip } from '../Tooltip';
 import { Typing, Badge } from '../atoms';
 import type { Material } from '../../types';
 import { STORYBOOK_URL } from '../../data/constants';
+import { isComposing } from '../../utils/keyboard';
 
 interface TopbarProps {
   theme: string;
@@ -75,6 +76,9 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.nativeEvent.isComposing) return;
+
+    // IME 変換中の Enter は候補確定に使われるので送信処理に流さない
+    if (isComposing(e)) return;
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();

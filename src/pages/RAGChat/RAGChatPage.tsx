@@ -3,6 +3,7 @@ import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Typing } from '../../components/atoms';
 import { MarkdownBubble, VecCard } from '../../components/molecules';
 import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
+import { isSubmitShortcut, submitShortcutLabel } from '../../utils/keyboard';
 
 interface RAGChatPageProps {
   db: Material[];
@@ -147,8 +148,8 @@ ${ctxText}`;
           </div>
           <div className="px-3 py-2.5 border-t border-[var(--border-faint)] flex gap-2 items-end">
             <textarea value={input} onChange={e=>setInput(e.target.value)}
-              onKeyDown={e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }}
-              placeholder="質問を入力... (Enter 送信、Shift+Enter 改行)"
+              onKeyDown={e=>{ if(isSubmitShortcut(e)){e.preventDefault();send();} }}
+              placeholder={`質問を入力... (${submitShortcutLabel()} 送信、Enter 改行)`}
               rows={2} className="flex-1 px-3 py-2 border border-[var(--border-default)] rounded-md bg-raised text-text-hi text-[13px] font-ui resize-none leading-snug max-h-24 outline-none focus:border-[var(--ai-mid)] focus:ring-2 focus:ring-[var(--ai-glow)]" />
             <Button variant="ai" onClick={() => send()} disabled={sending || !input.trim()}>
               送信 <Icon name="chevronRight" size={12} />

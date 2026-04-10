@@ -5,6 +5,7 @@ import { searchFaq } from './faqDatabase'
 import { getStoryGuide } from './storyGuideMap'
 import { callAi } from './chatAiService'
 import { CodeBlock } from './CodeBlock'
+import { isSubmitShortcut, submitShortcutLabel } from '../../../utils/keyboard'
 
 interface ChatSupportProps {
   currentStory: StoryContext | null
@@ -395,8 +396,8 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
             <input
               value={input}
               onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
-              placeholder="質問を入力..."
+              onKeyDown={e => { if (isSubmitShortcut(e)) { e.preventDefault(); handleSend(); } }}
+              placeholder={`質問を入力... (${submitShortcutLabel()} 送信)`}
               style={{
                 flex: 1,
                 padding: '6px 10px',
