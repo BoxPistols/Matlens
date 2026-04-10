@@ -122,6 +122,16 @@ body{
 :focus-visible{outline:2px solid var(--border-focus);outline-offset:2px;border-radius:var(--radius-sm)}
 :focus:not(:focus-visible){outline:none}
 
+/* Text selection — theme-aware, avoids muddy OS defaults on dark cards */
+[data-theme="light"] ::selection{background:#b6d4f5;color:#0d1520}
+[data-theme="light"] ::-moz-selection{background:#b6d4f5;color:#0d1520}
+[data-theme="dark"] ::selection{background:#3560a0;color:#f2f8ff}
+[data-theme="dark"] ::-moz-selection{background:#3560a0;color:#f2f8ff}
+[data-theme="eng"] ::selection{background:#0d4a3c;color:#e8f0f5}
+[data-theme="eng"] ::-moz-selection{background:#0d4a3c;color:#e8f0f5}
+[data-theme="cae"] ::selection{background:#6e4410;color:#f8ecd4}
+[data-theme="cae"] ::-moz-selection{background:#6e4410;color:#f8ecd4}
+
 /* Custom checkbox */
 .matlens-checkbox{appearance:none;-webkit-appearance:none;border:1.5px solid var(--border-strong);border-radius:3px;background:var(--bg-surface);transition:all .12s ease}
 .matlens-checkbox:checked{background:var(--accent);border-color:var(--accent);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7.5L5.5 10L11 4' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:100%;background-position:center;background-repeat:no-repeat}
