@@ -1,5 +1,9 @@
 import { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
+import {
+  serializeMaterialToMaiml,
+  downloadMaimlFile,
+} from '../../services/maiml';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../../components/atoms';
 import { Modal, AIInsightCard, VecCard } from '../../components/molecules';
@@ -99,6 +103,18 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             </div>
           </div>
           <div className="flex gap-2">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => {
+                const xml = serializeMaterialToMaiml(r);
+                downloadMaimlFile(xml, `${r.id}.maiml`);
+                addToast('MaiML ファイルをダウンロードしました');
+              }}
+              title="この材料を MaiML (JIS K 0200:2024) で書き出す"
+            >
+              <Icon name="download" size={12} />MaiML
+            </Button>
             <Button variant="default" size="sm" onClick={onEdit}><Icon name="edit" size={12} />編集</Button>
             <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}><Icon name="trash" size={12} />削除</Button>
           </div>

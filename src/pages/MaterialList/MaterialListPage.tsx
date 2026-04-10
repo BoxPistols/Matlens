@@ -4,7 +4,7 @@ import { DataDisclaimer } from '../../components/DataDisclaimer';
 import { MaterialVisual } from '../../components/MaterialVisual';
 import { Tooltip } from '../../components/Tooltip';
 import { Button, Badge, Card, Input, Select, Checkbox } from '../../components/atoms';
-import { Modal, SearchBox, FilterChip, ExportModal } from '../../components/molecules';
+import { Modal, SearchBox, FilterChip, ExportModal, ImportModal } from '../../components/molecules';
 import { AppCtx } from '../../context/AppContext';
 import type { Material, AppContextValue, MaterialWithScore } from '../../types';
 
@@ -42,6 +42,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   const [advOpen, setAdvOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'card' | 'compact'>('table');
   const { addToast } = useContext(AppCtx) as AppContextValue;
 
@@ -90,6 +91,21 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   return (
     <div className="flex flex-col gap-4 min-w-0">
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} db={db} filtered={filtered} />
+      <ImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onImport={(records) => {
+          // Skip records whose id already exists in the DB to avoid duplicates.
+          const existing = new Set(db.map(r => r.id));
+          const fresh = records.filter(r => r.id && !existing.has(r.id));
+          if (fresh.length === 0) {
+            addToast('取り込めるデータがありません（ID が既に存在します）', 'warn');
+            return;
+          }
+          dispatch({ type: 'IMPORT', records: fresh });
+          addToast(`${fresh.length}件を取り込みました`);
+        }}
+      />
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="削除の確認" footer={
         <>
           <Button variant="default" onClick={() => setDeleteTarget(null)}>キャンセル</Button>
@@ -106,6 +122,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
           <p className="text-[12px] text-text-lo mt-0.5">{filtered.length}件 (DB: {db.length}件)</p>
         </div>
         <div className="flex gap-2">
+          <Button variant="default" size="sm" onClick={() => setImportOpen(true)} title="MaiML / JSON ファイルをインポート"><Icon name="upload" size={13} />インポート</Button>
           <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />エクスポート</Button>
           <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />登録</Button>
         </div>
