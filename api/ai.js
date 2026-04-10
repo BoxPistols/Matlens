@@ -23,6 +23,7 @@ import {
   validateProvider,
   assertJsonContentType,
 } from './lib/validation.js';
+import { applyCors } from './lib/cors.js';
 
 // @ai-sdk/google reads from GOOGLE_GENERATIVE_AI_API_KEY; accept GEMINI_API_KEY
 // as an alias since that's what the rest of the Matlens codebase uses.
@@ -51,10 +52,11 @@ function errorResponse(res, status, classified, rl) {
 }
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // CORS — restrict to Matlens deployments + localhost instead of `*`.
+  // Non-browser callers (curl, server-to-server) will have no Origin and
+  // are allowed through; input validation + rate limiting handle those.
+  const corsAllowed = applyCors(req, res);
+  if (!corsAllowed) return res.status(403).json({ error: 'Origin not allowed' });
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   // GET /api/ai → return rate limit status

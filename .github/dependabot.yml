@@ -1,0 +1,62 @@
+version: 2
+updates:
+  # Weekly npm dependency scan. Opens PRs for security advisories
+  # immediately (via `security-updates: all`) and groups routine version
+  # bumps so we don't get five PRs for what is effectively one review.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - security
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+    groups:
+      # Minor + patch bumps roll up into a single PR per ecosystem
+      # segment. Major upgrades still open as individual PRs so they get
+      # dedicated review attention.
+      runtime:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@ai-sdk/*"
+          - "ai"
+          - "@upstash/*"
+          - "marked"
+          - "isomorphic-dompurify"
+        update-types:
+          - "minor"
+          - "patch"
+      dev:
+        patterns:
+          - "vite"
+          - "vitest"
+          - "@vitejs/*"
+          - "@vitest/*"
+          - "@storybook/*"
+          - "storybook"
+          - "@testing-library/*"
+          - "typescript"
+          - "tailwindcss"
+          - "eslint*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions are rarely touched but when they are, keep them
+  # pinned and alerted on.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "chore(ci)"

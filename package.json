@@ -11,7 +11,10 @@
     "build-storybook": "storybook build",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
-    "test:coverage": "vitest run --config vitest.config.ts --coverage"
+    "test:coverage": "vitest run --config vitest.config.ts --coverage",
+    "tokens:build": "node design-tokens/scripts/build-plugin.ts && node design-tokens/scripts/generate-tokens-json.ts",
+    "tokens:build:figma-plugin": "node design-tokens/scripts/build-plugin.ts",
+    "tokens:build:json": "node design-tokens/scripts/generate-tokens-json.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.61",
