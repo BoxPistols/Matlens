@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Typing } from '../../components/atoms';
 import { MarkdownBubble, VecCard } from '../../components/molecules';
+import { ErrorBoundary } from '../../components/ErrorBoundary';
 import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
 import { isSubmitShortcut, submitShortcutLabel } from '../../utils/keyboard';
 
@@ -116,15 +117,31 @@ ${ctxText}`;
 
       <div className="grid gap-4 flex-1 min-h-0" style={{ gridTemplateColumns: '1fr 240px' }}>
         <Card className="overflow-hidden flex flex-col min-h-0">
-          <div ref={msgsRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+          <div
+            ref={msgsRef}
+            role="log"
+            aria-live="polite"
+            aria-atomic="false"
+            aria-label="会話履歴"
+            className="flex-1 overflow-y-auto p-4 flex flex-col gap-3"
+          >
             {messages.map((m, i) => (
-              <div key={i} className={`flex gap-2.5 items-start ${m.role==='user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${m.role==='ai' ? 'bg-ai-dim text-ai' : 'bg-accent-dim text-accent'}`}>
+              <div
+                key={i}
+                role="article"
+                aria-label={m.role === 'ai' ? 'AI の発言' : 'あなたの発言'}
+                className={`flex gap-2.5 items-start ${m.role==='user' ? 'flex-row-reverse' : ''}`}
+              >
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${m.role==='ai' ? 'bg-ai-dim text-ai' : 'bg-accent-dim text-accent'}`} aria-hidden="true">
                   {m.role==='ai' ? <Icon name="ai" size={13} /> : 'KK'}
                 </div>
                 <div className={`max-w-[78%] flex flex-col gap-1.5 ${m.role==='user' ? 'items-end' : ''}`}>
                   <div className={`px-3 py-2 rounded-lg text-[13px] leading-relaxed ${m.role==='ai' ? 'bg-raised border border-[var(--border-faint)]' : 'bg-accent text-white'}`}>
-                    {m.role === 'ai' ? <MarkdownBubble text={m.text} /> : m.text}
+                    {m.role === 'ai' ? (
+                      <ErrorBoundary>
+                        <MarkdownBubble text={m.text} />
+                      </ErrorBoundary>
+                    ) : m.text}
                   </div>
                   {m.sources && m.sources.length > 0 && (
                     <details className="w-full">
@@ -140,21 +157,41 @@ ${ctxText}`;
               </div>
             ))}
             {sending && (
-              <div className="flex gap-2.5 items-start">
-                <div className="w-7 h-7 rounded-full bg-ai-dim text-ai flex items-center justify-center"><Icon name="ai" size={13} /></div>
-                <div className="px-3 py-2.5 bg-raised border border-[var(--border-faint)] rounded-lg"><Typing /></div>
+              <div className="flex gap-2.5 items-start" role="status" aria-live="polite" aria-busy="true">
+                <span className="sr-only">AIが回答を生成中です</span>
+                <div className="w-7 h-7 rounded-full bg-ai-dim text-ai flex items-center justify-center" aria-hidden="true"><Icon name="ai" size={13} /></div>
+                <div className="px-3 py-2.5 bg-raised border border-[var(--border-faint)] rounded-lg" aria-hidden="true"><Typing /></div>
               </div>
             )}
           </div>
-          <div className="px-3 py-2.5 border-t border-[var(--border-faint)] flex gap-2 items-end">
-            <textarea value={input} onChange={e=>setInput(e.target.value)}
+          <form
+            onSubmit={(e) => { e.preventDefault(); send(); }}
+            className="px-3 py-2.5 border-t border-[var(--border-faint)] flex gap-2 items-end"
+            aria-label="AI への質問フォーム"
+          >
+            <label htmlFor="rag-chat-input" className="sr-only">質問を入力</label>
+            <textarea
+              id="rag-chat-input"
+              value={input}
+              onChange={e=>setInput(e.target.value)}
               onKeyDown={e=>{ if(isSubmitShortcut(e)){e.preventDefault();send();} }}
               placeholder={`質問を入力... (${submitShortcutLabel()} 送信、Enter 改行)`}
-              rows={2} className="flex-1 px-3 py-2 border border-[var(--border-default)] rounded-md bg-raised text-text-hi text-[13px] font-ui resize-none leading-snug max-h-24 outline-none focus:border-[var(--ai-mid)] focus:ring-2 focus:ring-[var(--ai-glow)]" />
-            <Button variant="ai" onClick={() => send()} disabled={sending || !input.trim()}>
+              aria-describedby="rag-chat-input-hint"
+              rows={2}
+              className="flex-1 px-3 py-2 border border-[var(--border-default)] rounded-md bg-raised text-text-hi text-[13px] font-ui resize-none leading-snug max-h-24 outline-none focus:border-[var(--ai-mid)] focus:ring-2 focus:ring-[var(--ai-glow)]"
+            />
+            <span id="rag-chat-input-hint" className="sr-only">
+              {submitShortcutLabel()} で送信、Enter で改行
+            </span>
+            <Button
+              type="submit"
+              variant="ai"
+              disabled={sending || !input.trim()}
+              aria-label={sending ? '送信中' : '質問を送信'}
+            >
               送信 <Icon name="chevronRight" size={12} />
             </Button>
-          </div>
+          </form>
         </Card>
 
         <div className="flex flex-col gap-3">
