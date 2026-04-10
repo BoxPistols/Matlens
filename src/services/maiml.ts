@@ -162,6 +162,11 @@ export function serializeMaterialToMaiml(
 
 // ----- Parsing -----
 
+// Hard ceiling on imported document size. Prevents a Billion-Laughs-style
+// entity expansion DoS from exhausting memory even though modern browser
+// DOMParsers already refuse external entities by default.
+export const MAIML_MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+
 export interface MaimlParseResult {
   materials: Material[];
   generatedAt: string | null;
@@ -196,6 +201,23 @@ function numberFrom(value: string | undefined, fallback: number | null = 0): num
  */
 export function parseMaimlToMaterials(xml: string): MaimlParseResult {
   const warnings: string[] = [];
+
+  // Hard size limit. Oversized files are almost always a bug or an attack
+  // (Billion Laughs entity expansion), so we refuse before even touching the
+  // XML parser.
+  if (xml.length > MAIML_MAX_BYTES) {
+    throw new Error(`MaiML: ファイルサイズが上限 (${MAIML_MAX_BYTES} bytes) を超えています`);
+  }
+
+  // Reject DOCTYPE declarations up-front. Modern browser DOMParsers already
+  // refuse to resolve external entities, but declining the entire DOCTYPE
+  // means we also sidestep the Billion-Laughs internal-entity attack and
+  // any parser that might accidentally honour them (e.g. a Node.js xmldom
+  // fallback in future tests). A well-formed MaiML file never needs one.
+  if (/<!DOCTYPE/i.test(xml)) {
+    throw new Error('MaiML: DOCTYPE 宣言を含むファイルは受け付けません');
+  }
+
   const parser = new DOMParser();
   const doc = parser.parseFromString(xml, 'application/xml');
 
