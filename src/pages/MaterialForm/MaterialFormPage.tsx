@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { marked } from 'marked';
+import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Button, Card, Input, Select, Textarea, UnitInput, FormGroup } from '../../components/atoms';
 import { AIInsightCard, VecCard } from '../../components/molecules';
@@ -157,7 +157,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
               setAiBody(res); setAiLoading(false);
             }},
           ]}>
-            {!aiLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: marked.parse(aiBody) as string }} />}
+            {!aiLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(aiBody) }} />}
           </AIInsightCard>
           <Card className="p-4">
             <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">登録フロー</div>

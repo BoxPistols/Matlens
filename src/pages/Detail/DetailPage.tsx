@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useCallback, useMemo } from 'react';
-import { marked } from 'marked';
+import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../../components/atoms';
 import { Modal, AIInsightCard, VecCard } from '../../components/molecules';
@@ -61,12 +61,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
   const maxHv = Math.max(...cmpData.map(x=>x.hv));
   const colors = ['var(--accent)','var(--ok)','var(--warn)','var(--ai-mid)'];
 
-  const renderAiHtml = () => {
-    try {
-      marked.setOptions({ breaks: true, gfm: true });
-      return marked.parse(aiComment);
-    } catch(e) { return aiComment; }
-  };
+  const renderAiHtml = () => renderSafeMarkdown(aiComment);
 
   return (
     <div className="flex flex-col gap-4">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import { marked } from 'marked';
+import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon, IconName } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Button, Badge, Card, Input, SectionCard } from '../atoms';
@@ -169,12 +169,7 @@ export const FilterChip = ({ label, onRemove }: FilterChipProps) => (
 
 export const MarkdownBubble = ({ text, onSpeak }: MarkdownBubbleProps) => {
   const [copied, setCopied] = useState(false);
-  const html = useMemo(() => {
-    try {
-      marked.setOptions({ breaks: true, gfm: true });
-      return marked.parse(text);
-    } catch(e) { return text; }
-  }, [text]);
+  const html = useMemo(() => renderSafeMarkdown(text), [text]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(text);
