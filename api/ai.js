@@ -14,16 +14,18 @@
 import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
-import { checkRateLimit, getRemainingQuota } from './lib/ratelimit.js';
-import { classifyAIError } from './lib/aiErrors.js';
+import { checkRateLimit, getRemainingQuota } from '../lib/ratelimit.js';
+import { classifyAIError } from '../lib/aiErrors.js';
 import {
   ValidationError,
   validatePrompt,
   validateOptionalSystem,
   validateProvider,
   assertJsonContentType,
-} from './lib/validation.js';
-import { applyCors } from './lib/cors.js';
+} from '../lib/validation.js';
+import { applyCors } from '../lib/cors.js';
+import { log } from '../lib/logger.js';
+import { getRequestId, setRequestIdHeader } from '../lib/requestId.js';
 
 // @ai-sdk/google reads from GOOGLE_GENERATIVE_AI_API_KEY; accept GEMINI_API_KEY
 // as an alias since that's what the rest of the Matlens codebase uses.
@@ -52,11 +54,18 @@ function errorResponse(res, status, classified, rl) {
 }
 
 export default async function handler(req, res) {
+  const requestId = getRequestId(req);
+  setRequestIdHeader(res, requestId);
+  const startedAt = Date.now();
+
   // CORS — restrict to Matlens deployments + localhost instead of `*`.
   // Non-browser callers (curl, server-to-server) will have no Origin and
   // are allowed through; input validation + rate limiting handle those.
   const corsAllowed = applyCors(req, res);
-  if (!corsAllowed) return res.status(403).json({ error: 'Origin not allowed' });
+  if (!corsAllowed) {
+    log.warn('cors rejected', { requestId, origin: req.headers?.origin });
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   // GET /api/ai → return rate limit status
@@ -84,10 +93,18 @@ export default async function handler(req, res) {
     system = validateOptionalSystem(body.system);
   } catch (e) {
     if (e instanceof ValidationError) {
+      log.warn('validation failed', { requestId, error: e.message });
       return errorResponse(res, e.status || 400, { code: 'BAD_REQUEST', message: e.message });
     }
     throw e;
   }
+
+  log.info('ai request received', {
+    requestId,
+    provider,
+    promptLength: prompt.length,
+    hasSystem: !!system,
+  });
 
   // Provider key presence check (friendlier than downstream auth error)
   if (provider === 'gemini') {
@@ -141,6 +158,13 @@ export default async function handler(req, res) {
       messages: [{ role: 'user', content: prompt }],
     });
 
+    log.info('ai request completed', {
+      requestId,
+      provider,
+      durationMs: Date.now() - startedAt,
+      responseLength: text?.length ?? 0,
+    });
+
     return res.status(200).json({
       text: text || '応答を取得できませんでした。',
       remaining: rl.remaining,
@@ -148,6 +172,13 @@ export default async function handler(req, res) {
     });
   } catch (e) {
     const classified = classifyAIError(e);
+    log.error('ai request failed', {
+      requestId,
+      provider,
+      durationMs: Date.now() - startedAt,
+      code: classified.code,
+      error: classified.message,
+    });
     return errorResponse(res, 502, classified, rl);
   }
 }

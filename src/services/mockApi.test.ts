@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { getApiLogs, onApiLog, MOCK_CONFIG, installMockAPI, clearApiLogs } from './mockApi';
 
 beforeEach(() => {
