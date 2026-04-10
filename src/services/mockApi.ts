@@ -20,7 +20,11 @@ export function installMockAPI(getDb: any, dispatch: any) {
     const path = url.replace(/\?.*$/, '');
     const query = url.includes('?') ? Object.fromEntries(new URLSearchParams(url.split('?')[1])) : {};
     let reqBody: any = null;
-    try { if (init.body) reqBody = JSON.parse(init.body as string); } catch(e) {}
+    try {
+      if (init.body) reqBody = JSON.parse(init.body as string);
+    } catch {
+      // Body was empty or malformed — leave reqBody as null.
+    }
     if (Math.random() < MOCK_CONFIG.errorRate / 100) {
       await mockDelay();
       const logE = { id: Math.random().toString(36).slice(2), ts: start, method, path, status: 500, latency: Date.now()-start, reqBody, resBody: { error: 'Internal Server Error (simulated)' }, error: 'Simulated 500' };
@@ -28,7 +32,9 @@ export function installMockAPI(getDb: any, dispatch: any) {
       return new Response(JSON.stringify(logE.resBody), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
     await mockDelay();
-    let status = 200, resBody = null;
+    let status = 200;
+    // eslint-disable-next-line no-useless-assignment -- resBody is reassigned by every route branch below; the initial value is deliberate.
+    let resBody: any = null;
     const db = getDb();
     if (method === 'GET' && path === '/api/materials') {
       let rows = [...db];

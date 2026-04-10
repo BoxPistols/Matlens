@@ -113,7 +113,9 @@ export function devApiProxy() {
         if (req.method !== 'POST') { res.statusCode = 405; res.end(JSON.stringify({ error: 'Method not allowed' })); return; }
 
         const body = await parseBody(req);
-        const { query, k = 6, category, db } = body;
+        // `category` is accepted by the production handler but unused by the
+        // local dev fallback; omit to keep the lint clean.
+        const { query, k = 6, db } = body;
         if (!query) { res.statusCode = 400; res.end(JSON.stringify({ error: 'query is required' })); return; }
 
         // Keyword fallback for local dev (Upstash unlikely to be configured locally)

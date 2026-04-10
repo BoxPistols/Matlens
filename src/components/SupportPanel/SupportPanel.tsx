@@ -135,7 +135,7 @@ export const SupportPanel = ({ ai, visible, onClose, onNav, initialTab = 'help',
           <div className="flex flex-col gap-3">
             <div className="text-[12px] text-text-lo">最新の更新履歴と運用情報をまとめています。</div>
             {announcements && announcements.all.length > 0 ? (
-              <ul className="flex flex-col gap-2" role="list">
+              <ul className="flex flex-col gap-2">
                 {announcements.all.map((a, i) => {
                   const typeInfo = ANNOUNCEMENT_TYPE_LABEL[a.type];
                   const isUnread = i < announcements.unreadCount;
