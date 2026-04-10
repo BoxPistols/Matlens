@@ -161,7 +161,19 @@ body{
 .md-preview hr{border:none;border-top:1px solid var(--border-faint);margin:9px 0}
 
 /* Prism.js — dark syntax highlight (guide code blocks) */
-code[class*="language-"],pre[class*="language-"]{text-shadow:none}
+/* Use the UI font stack for better Japanese + long-example readability.
+   Token spans inherit font-family/weight so highlight colors still apply. */
+code[class*="language-"],pre[class*="language-"]{
+  text-shadow:none;
+  font-family:var(--font-ui);
+  font-weight:500;
+  line-height:1.5;
+  letter-spacing:.005em;
+}
+code[class*="language-"] .token,pre[class*="language-"] .token{
+  font-family:inherit;
+  font-weight:inherit;
+}
 .token.comment,.token.prolog,.token.doctype,.token.cdata{color:#6a737d}
 .token.punctuation{color:#8b949e}
 .token.property,.token.tag,.token.boolean,.token.number,.token.constant,.token.symbol{color:#79c0ff}
