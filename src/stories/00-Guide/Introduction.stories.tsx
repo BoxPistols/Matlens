@@ -37,7 +37,7 @@ const Introduction = () => (
         {[
           { name: 'Light', attr: 'light', accent: '#004590', bg: '#eef0f3', desc: '標準テーマ' },
           { name: 'Dark', attr: 'dark', accent: '#5a9ae0', bg: '#10141c', desc: 'ダークモード' },
-          { name: 'Engineering', attr: 'eng', accent: '#00c896', bg: '#1a1f26', desc: 'エンジニアリング' },
+          { name: 'Eng', attr: 'eng', accent: '#00c896', bg: '#1a1f26', desc: 'エンジニアリング' },
           { name: 'CAE', attr: 'cae', accent: '#e89020', bg: '#0e1014', desc: 'CAE解析' },
         ].map(t => (
           <div

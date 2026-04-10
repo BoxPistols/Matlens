@@ -95,7 +95,7 @@ const meta: Meta<typeof ColorPalette> = {
   parameters: {
     docs: {
       description: {
-        component: 'Matlensの4テーマ（Light / Dark / Engineering / CAE）のカラートークン一覧。各ロールカラーのCSS変数と実色を表示。',
+        component: 'Matlensの4テーマ（Light / Dark / Eng / CAE）のカラートークン一覧。各ロールカラーのCSS変数と実色を表示。',
       },
     },
   },

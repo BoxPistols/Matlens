@@ -32,7 +32,7 @@ describe('Topbar', () => {
     renderTopbar();
     expect(screen.getByText('Light')).toBeInTheDocument();
     expect(screen.getByText('Dark')).toBeInTheDocument();
-    expect(screen.getByText('Engineering')).toBeInTheDocument();
+    expect(screen.getByText('Eng')).toBeInTheDocument();
     expect(screen.getByText('CAE')).toBeInTheDocument();
   });
 
@@ -50,7 +50,7 @@ describe('Topbar', () => {
     await userEvent.click(screen.getByText('Light'));
     expect(setTheme).toHaveBeenCalledWith('light');
 
-    await userEvent.click(screen.getByText('Engineering'));
+    await userEvent.click(screen.getByText('Eng'));
     expect(setTheme).toHaveBeenCalledWith('eng');
 
     await userEvent.click(screen.getByText('CAE'));

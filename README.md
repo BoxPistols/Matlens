@@ -185,7 +185,7 @@ CSS Variables で4テーマを定義。`data-theme` 属性で切替。
 |--------|------|
 | `light` | 標準。明るい背景 |
 | `dark` | 暗色。WCAG AA コントラスト準拠 |
-| `eng` | Engineering。モノスペースフォント、ターミナル風 |
+| `eng` | Eng。モノスペースフォント、ターミナル風 |
 | `cae` | CAE。暖色アクセント、解析ツール風 |
 
 トークン例: `--bg-base`, `--bg-surface`, `--text-hi`, `--text-md`, `--text-lo`, `--accent`, `--ai-col`, `--vec` 等。Tailwind の `theme.extend.colors` でブリッジ。

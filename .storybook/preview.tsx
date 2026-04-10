@@ -47,7 +47,7 @@ const preview: Preview = {
         items: [
           { value: 'light', title: 'Light' },
           { value: 'dark', title: 'Dark' },
-          { value: 'eng', title: 'Engineering' },
+          { value: 'eng', title: 'Eng' },
           { value: 'cae', title: 'CAE' },
         ],
         dynamicTitle: true,

@@ -7,7 +7,7 @@ import { STORYBOOK_URL } from '../../data/constants';
 export const AboutPage = () => {
   const TECH = [
     {icon:'dashboard',name:'Vite 5 + React 18',cat:'ビルド / UI',tag:'コア',desc:'高速HMR開発サーバー。TypeScriptで型安全。hooks + Context API + useReducer でステート管理。'},
-    {icon:'about',name:'Tailwind CSS 3 + CSS Variables',cat:'スタイリング',tag:'デザインシステム',desc:'4テーマ（Light/Dark/Engineering/CAE）をCSS変数で管理。Tailwind ユーティリティと共存。'},
+    {icon:'about',name:'Tailwind CSS 3 + CSS Variables',cat:'スタイリング',tag:'デザインシステム',desc:'4テーマ（Light/Dark/Eng/CAE）をCSS変数で管理。Tailwind ユーティリティと共存。'},
     {icon:'spark',name:'OpenAI GPT-5.4 / Gemini 2.5',cat:'AI / LLM',tag:'マルチプロバイダ',desc:'サーバーサイドプロキシ（Vercel Functions）経由。IP単位レートリミット付き無料枠 + 自前キーで無制限。'},
     {icon:'embed',name:'TensorFlow.js + USE',cat:'ベクトル検索',tag:'ブラウザ内ML',desc:'Universal Sentence Encoder で512次元ベクトル生成。コサイン類似度によるインメモリ意味検索。'},
     {icon:'report',name:'Chart.js 4',cat:'データ可視化',tag:'OSS',desc:'折れ線・ドーナツ・積み上げ棒・散布図の4種グラフをダッシュボードに実装。'},

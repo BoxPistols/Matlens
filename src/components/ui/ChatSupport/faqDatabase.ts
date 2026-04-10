@@ -35,7 +35,7 @@ export const FAQ_DATABASE: FaqEntry[] = [
 
 1. **Light** — 標準テーマ。明るいグレー基調
 2. **Dark** — ダークモード。ネイビー基調
-3. **Engineering** — エンジニアリング向け。ダーク+グリーンアクセント、等幅フォント
+3. **Eng** — エンジニアリング向け。ダーク+グリーンアクセント、等幅フォント
 4. **CAE** — CAE解析向け。ダーク+オレンジアクセント、等幅フォント
 
 切替方法: \`document.documentElement.setAttribute('data-theme', 'dark')\`
@@ -193,7 +193,7 @@ Topbar, Sidebar, Tooltip, SupportPanel
   {
     keywords: ['eng', 'engineering', 'エンジニアリング', 'cae', '解析'],
     question: 'eng/caeテーマの特徴は？',
-    answer: `**Engineering テーマ (eng)**
+    answer: `**Eng テーマ (eng)**
 - アクセントカラー: \`--accent: #00c896\`（グリーン）
 - AI: \`--ai-col: #60a8e8\`（ブルー）
 - Vec: \`--vec: #a0e060\`（ライムグリーン）

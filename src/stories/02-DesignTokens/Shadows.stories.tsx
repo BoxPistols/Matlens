@@ -39,7 +39,7 @@ const ShadowScale = () => (
       </div>
       <p style={{ fontSize: 12, color: 'var(--text-md)', lineHeight: 1.6 }}>
         上部ツールバーの Theme セレクターでテーマを切り替えると、各シャドウの強度・色味が変化します。
-        Light テーマでは淡いブルーグレー、Dark / Engineering テーマでは深い黒ベースのシャドウになります。
+        Light テーマでは淡いブルーグレー、Dark / Eng テーマでは深い黒ベースのシャドウになります。
       </p>
     </div>
   </div>
