@@ -13,14 +13,40 @@ const isDev = import.meta.env.DEV;
 const DEFAULT_SYSTEM =
   'あなたは材料科学の専門家AIアシスタントです。Matlens に組み込まれています。Markdown形式で簡潔・実用的な日本語で回答してください。';
 
+// The user's own OpenAI key lives in sessionStorage (not localStorage) so it
+// is scoped to the browser tab and discarded when the tab closes. That gives
+// us "persistent enough for reloads" behaviour without leaving a durable
+// secret on shared or borrowed devices, and shrinks the blast radius of any
+// DOM-level XSS — an attacker who can read sessionStorage can only do so
+// from the same tab, not from another open session or a new window.
+//
+// We also migrate any legacy key from localStorage once so existing users
+// don't lose their setting on this upgrade, then wipe the old copy.
 function loadOwnKey(): string {
-  try { return localStorage.getItem(OWN_KEY_STORAGE) || ''; } catch { return ''; }
+  try {
+    const fromSession = sessionStorage.getItem(OWN_KEY_STORAGE);
+    if (fromSession) return fromSession;
+    const legacy = localStorage.getItem(OWN_KEY_STORAGE);
+    if (legacy) {
+      sessionStorage.setItem(OWN_KEY_STORAGE, legacy);
+      localStorage.removeItem(OWN_KEY_STORAGE);
+      return legacy;
+    }
+    return '';
+  } catch {
+    return '';
+  }
 }
 function saveOwnKey(k: string): void {
   try {
-    if (k) localStorage.setItem(OWN_KEY_STORAGE, k);
-    else localStorage.removeItem(OWN_KEY_STORAGE);
-  } catch {}
+    if (k) sessionStorage.setItem(OWN_KEY_STORAGE, k);
+    else sessionStorage.removeItem(OWN_KEY_STORAGE);
+    // Always clean up any stale localStorage copy so a user can't end up
+    // with two sources of truth after a partial update.
+    localStorage.removeItem(OWN_KEY_STORAGE);
+  } catch {
+    /* sessionStorage may be disabled in private mode */
+  }
 }
 
 function devFallback(prompt: string): string {
