@@ -8,6 +8,13 @@
 //   UPSTASH_REDIS_REST_URL   Upstash Redis REST URL
 //   UPSTASH_REDIS_REST_TOKEN Upstash Redis REST token
 //   DAILY_LIMIT              Requests per user per day (default: 30)
+//
+// TODO: Once Upstash Redis is provisioned (e.g. via
+//   `vercel integration add upstash` → Redis Database), just add
+//   UPSTASH_REDIS_REST_URL / _TOKEN to Vercel env vars. No code change
+//   required — this module auto-switches to the persistent backend.
+//   Until then, the in-memory Map fallback keeps the pre-existing
+//   per-warm-instance behavior (not bypass-proof, but no regression).
 
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
