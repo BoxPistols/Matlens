@@ -63,7 +63,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
 
       {/* Breadcrumb + prev/next navigation */}
       <div className="flex items-center gap-1.5 text-[12px] text-text-lo">
-        <button onClick={onBack} className="text-accent hover:underline flex items-center gap-1"><Icon name="chevronLeft" size={12} />材料データ一覧</button>
+        <button onClick={onBack} className="text-accent hover:underline flex items-center gap-1"><Icon name="chevronLeft" size={12} />戻る</button>
         <Icon name="chevronRight" size={10} />
         <span className="truncate">{r.name}</span>
         <div className="flex items-center gap-1.5 ml-auto flex-shrink-0">
@@ -152,7 +152,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         <div className="flex flex-col gap-3">
           <AIInsightCard loading={aiLoading} subtitle="この材料の特徴・用途・注意点をAIが要約します。" chips={[
             { label: 'AIチャットで詳しく', onClick: () => onNav(`rag:${r.name}（${r.comp}）の特徴、用途、類似材料との違いを詳しく教えてください`) },
-            { label: '類似材料を探す', onClick: () => onNav('sim') },
+            { label: '類似材料を探す', onClick: () => onNav('sim:' + r.id) },
           ]}>
             {!aiLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderAiHtml() }} />}
           </AIInsightCard>
