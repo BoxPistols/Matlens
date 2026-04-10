@@ -37,10 +37,13 @@ const LazyFallback = () => (
   </div>
 );
 
+type NavEntry = { page: string; detailId: string | null };
+
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
   const [page, setPage] = useState('dash');
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [history, setHistory] = useState<NavEntry[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -51,6 +54,7 @@ export function App() {
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [globalQuery, setGlobalQuery] = useState('');
   const [ragInitialQuery, setRagInitialQuery] = useState('');
+  const [simInitialBase, setSimInitialBase] = useState('');
 
   useEffect(() => { installMockAPI(() => db, dispatch); }, []);
 
@@ -62,13 +66,36 @@ export function App() {
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3200);
   }, []);
 
+  // Push the current page onto history before navigating to a new one
+  const pushHistory = () => {
+    setHistory(h => {
+      const last = h[h.length - 1];
+      // Avoid pushing duplicate consecutive entries
+      if (last && last.page === page && last.detailId === detailId) return h;
+      return [...h, { page, detailId }];
+    });
+  };
+
   const navTo = (p: string) => {
+    pushHistory();
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
     if (p.startsWith('detail_')) { setDetailId(p.slice(7)); setPage('detail'); return; }
     if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
+    if (p.startsWith('sim:')) { setSimInitialBase(p.slice(4)); setPage('sim'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
-  const showDetail = (id: string) => { setDetailId(id); setPage('detail'); };
+
+  const goBack = () => {
+    setHistory(h => {
+      if (h.length === 0) { setPage('list'); setDetailId(null); return h; }
+      const prev = h[h.length - 1];
+      setPage(prev.page);
+      setDetailId(prev.detailId);
+      return h.slice(0, -1);
+    });
+  };
+
+  const showDetail = (id: string) => { pushHistory(); setDetailId(id); setPage('detail'); };
   const handleGlobalSearch = useCallback((q: string) => { setGlobalQuery(q); setPage('list'); }, []);
 
   const renderPage = () => {
@@ -78,10 +105,10 @@ export function App() {
       case 'list':    return <MaterialListPage {...commonProps} onDetail={showDetail} search={embedding.search} />;
       case 'new':     return <MaterialFormPage {...commonProps} editId={null} onCancel={() => setPage('list')} onSuccess={() => setPage('list')} />;
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;
-      case 'detail':  return <DetailPage {...commonProps} recordId={detailId!} onBack={() => setPage('list')} onEdit={() => navTo('edit_'+detailId)} />;
+      case 'detail':  return <DetailPage {...commonProps} recordId={detailId!} onBack={goBack} onEdit={() => navTo('edit_'+detailId)} />;
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
       case 'rag':     return <RAGChatPage {...commonProps} initialQuery={ragInitialQuery} clearInitialQuery={() => setRagInitialQuery('')} />;
-      case 'sim':     return <SimilarPage {...commonProps} />;
+      case 'sim':     return <SimilarPage {...commonProps} initialBase={simInitialBase} clearInitialBase={() => setSimInitialBase('')} />;
       case 'catalog': return <Suspense fallback={<LazyFallback />}><CatalogPage db={db} onNav={navTo} onDetail={showDetail} /></Suspense>;
       case 'voice':   return <VoicePage />;
       case 'api':     return <ApiDebugPage db={db} dispatch={dispatch} />;

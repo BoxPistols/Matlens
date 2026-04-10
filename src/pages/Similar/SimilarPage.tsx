@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Select, FormGroup, UnitInput, Typing } from '../../components/atoms';
@@ -9,10 +9,24 @@ interface SimilarPageProps {
   db: Material[];
   embedding: EmbeddingHook;
   claude: AIHook;
+  initialBase?: string;
+  clearInitialBase?: () => void;
 }
 
-export const SimilarPage = ({ db, embedding, claude }: SimilarPageProps) => {
-  const [base, setBase] = useState('MAT-0237 — SUS316L 低炭素ステンレス');
+// Build a "MAT-xxxx — name" label from an id or free-form text
+function resolveBase(input: string, db: Material[]): string {
+  if (!input) return '';
+  const idMatch = input.match(/MAT-\d+/);
+  if (idMatch) {
+    const rec = db.find(r => r.id === idMatch[0]);
+    if (rec) return `${rec.id} — ${rec.name}`;
+  }
+  return input;
+}
+
+export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBase }: SimilarPageProps) => {
+  const [base, setBase] = useState(() => resolveBase(initialBase || 'MAT-0237', db));
+  const autoRan = useRef(false);
   const [weight, setWeight] = useState('総合スコア');
   const [k, setK] = useState(10);
   const [threshold, setThreshold] = useState(60);
@@ -21,19 +35,31 @@ export const SimilarPage = ({ db, embedding, claude }: SimilarPageProps) => {
   const [running, setRunning] = useState(false);
   const [ran, setRan] = useState(false);
 
-  const run = async () => {
+  const runWith = async (baseLabel: string) => {
     setRunning(true);
-    const baseId = (base.match(/MAT-\d+/)||[])[0];
+    const baseId = (baseLabel.match(/MAT-\d+/)||[])[0];
     const baseRec = db.find(r=>r.id===baseId);
-    const q = baseRec ? `${baseRec.name} ${baseRec.comp}` : base;
+    const q = baseRec ? `${baseRec.name} ${baseRec.comp}` : baseLabel;
     const res = await embedding.search(q, k);
     const filtered = res.filter(r => r.id !== baseId && (r.score||0) >= threshold/100);
     setResults(filtered);
     setRan(true);
-    const t = await claude.call(`「${base}」に類似する材料として ${filtered.slice(0,3).map(r=>r.name).join('、')} が候補です。2〜3文で選定ポイントと用途別の使い分けをアドバイスしてください。`);
+    const t = await claude.call(`「${baseLabel}」に類似する材料として ${filtered.slice(0,3).map(r=>r.name).join('、')} が候補です。2〜3文で選定ポイントと用途別の使い分けをアドバイスしてください。`);
     setAiComment(t);
     setRunning(false);
   };
+
+  const run = () => runWith(base);
+
+  // Auto-run when arriving with an initialBase from another page (e.g. detail → similar)
+  useEffect(() => {
+    if (!initialBase || autoRan.current) return;
+    autoRan.current = true;
+    const resolved = resolveBase(initialBase, db);
+    setBase(resolved);
+    runWith(resolved);
+    clearInitialBase?.();
+  }, [initialBase]);
 
   const renderAiHtml = () => renderSafeMarkdown(aiComment);
 
