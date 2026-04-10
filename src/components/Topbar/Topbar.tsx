@@ -77,9 +77,8 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.nativeEvent.isComposing) return;
-
-    // IME 変換中の Enter は候補確定に使われるので送信処理に流さない
+    // IME 変換中の Enter は候補確定に使われるので送信処理に流さない。
+    // isComposing() は Safari の keyCode 229 フォールバックも含む。
     if (isComposing(e)) return;
 
     if (e.key === 'ArrowDown') {
