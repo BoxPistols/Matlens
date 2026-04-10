@@ -77,8 +77,31 @@ export interface EmbeddingHook {
   engine: string;
 }
 
+export type AIErrorCode =
+  | 'UNAUTHORIZED'
+  | 'RATE_LIMIT'
+  | 'SERVER_ERROR'
+  | 'TIMEOUT'
+  | 'NETWORK'
+  | 'UNKNOWN';
+
+export interface AICallError {
+  code: AIErrorCode;
+  message: string;
+}
+
+export interface StreamCallbacks {
+  onChunk: (delta: string) => void;
+  signal?: AbortSignal;
+}
+
 export interface AIHook {
   call: (prompt: string, system?: string) => Promise<string>;
+  callStream: (
+    prompt: string,
+    callbacks: StreamCallbacks,
+    system?: string
+  ) => Promise<string>;
   provider: string;
   setProvider: (id: string) => void;
   providerDef: Provider;
@@ -87,6 +110,7 @@ export interface AIHook {
   ownKey: string;
   setOwnKey: (key: string) => void;
   rateInfo: RateInfo;
+  lastError: AICallError | null;
 }
 
 export interface VoiceHook {

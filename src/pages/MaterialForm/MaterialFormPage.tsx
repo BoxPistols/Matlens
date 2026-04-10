@@ -149,15 +149,21 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           </Card>
         </div>
         <div className="flex flex-col gap-3 sticky top-0">
-          <AIInsightCard loading={aiLoading} subtitle="入力中の材料に関する補足情報や組成の提案を行います。" chips={[
-            { label: '物性値を補完', onClick: aiAutofill },
-            { label: '組成テンプレ', onClick: async () => {
+          <AIInsightCard loading={aiLoading} subtitle="組成やカテゴリから、AIが物性値を推定・組成例を提案します。入力補助のみで、必ず実測値で検証してください。" chips={[
+            { label: '物性値をAIで推定', onClick: aiAutofill },
+            { label: '組成例を表示', onClick: async () => {
               setAiLoading(true);
               const res = await claude.call(`${form.cat||'金属合金'}の代表的な組成式を3種類、材料名付きで各1行で教えてください。`);
               setAiBody(res); setAiLoading(false);
             }},
           ]}>
-            {!aiLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(aiBody) }} />}
+            {!aiLoading && aiBody && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(aiBody) }} />}
+            {!aiLoading && !aiBody && (
+              <div className="text-[12px] text-text-lo space-y-1.5">
+                <p><strong className="text-text-md">物性値をAIで推定</strong>：入力した組成式やカテゴリを元に、硬度・引張強度・弾性率・密度の典型値を<strong>入力欄に自動反映</strong>します。</p>
+                <p><strong className="text-text-md">組成例を表示</strong>：選択中のカテゴリで代表的な組成式を3件、参考表示します（自動反映はされません）。</p>
+              </div>
+            )}
           </AIInsightCard>
           <Card className="p-4">
             <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">登録フロー</div>

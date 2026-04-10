@@ -5,11 +5,17 @@
 //
 // Uses Vercel AI SDK v6 (`ai` + `@ai-sdk/openai` + `@ai-sdk/google`) for
 // unified provider abstraction — one call site for OpenAI and Gemini.
+//
+// Modes:
+//   POST /api/ai           → generateText, returns { text, remaining, limit }
+//   POST /api/ai?stream=1  → streamText, returns text/plain stream of chunks
+//                            (remaining/limit sent via x-ratelimit-* headers)
 
-import { generateText } from 'ai';
+import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 import { checkRateLimit, getRemainingQuota } from './lib/ratelimit.js';
+import { classifyAIError } from './lib/aiErrors.js';
 
 // @ai-sdk/google reads from GOOGLE_GENERATIVE_AI_API_KEY; accept GEMINI_API_KEY
 // as an alias since that's what the rest of the Matlens codebase uses.
@@ -25,6 +31,18 @@ function resolveModel(provider) {
   return openai('gpt-5.4-nano');
 }
 
+function errorResponse(res, status, classified, rl) {
+  const body = {
+    error: classified.message,
+    code: classified.code,
+  };
+  if (rl) {
+    body.remaining = rl.remaining;
+    body.limit = rl.limit;
+  }
+  return res.status(status).json(body);
+}
+
 export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -38,30 +56,60 @@ export default async function handler(req, res) {
     return res.status(200).json({ remaining, limit });
   }
 
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return errorResponse(res, 405, { code: 'UNKNOWN', message: 'Method not allowed' });
+  }
 
   const { provider, prompt, system } = req.body || {};
-  if (!prompt) return res.status(400).json({ error: 'prompt is required' });
+  if (!prompt) {
+    return errorResponse(res, 400, { code: 'UNKNOWN', message: 'prompt is required' });
+  }
 
   // Provider key presence check (friendlier than downstream auth error)
   if (provider === 'gemini') {
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      return res.status(500).json({ error: 'GEMINI_API_KEY not configured' });
+      return errorResponse(res, 500, { code: 'UNAUTHORIZED', message: 'GEMINI_API_KEY not configured' });
     }
   } else if (!process.env.OPENAI_API_KEY) {
-    return res.status(500).json({ error: 'OPENAI_API_KEY not configured' });
+    return errorResponse(res, 500, { code: 'UNAUTHORIZED', message: 'OPENAI_API_KEY not configured' });
   }
 
   // Rate limit check (Upstash Redis persistent or in-memory fallback)
   const rl = await checkRateLimit(req);
   if (!rl.allowed) {
-    return res.status(429).json({
-      error: `本日の利用上限（${rl.limit}回/日）に達しました。明日リセットされます。自分のAPIキーを設定すると無制限で利用できます。`,
-      remaining: 0,
-      limit: rl.limit,
-    });
+    return errorResponse(res, 429, {
+      code: 'RATE_LIMIT',
+      message: `本日の利用上限（${rl.limit}回/日）に達しました。明日リセットされます。自分のAPIキーを設定すると無制限で利用できます。`,
+    }, rl);
   }
 
+  // Detect streaming mode — ?stream=1 query param OR x-stream: 1 header
+  const wantsStream =
+    req.query?.stream === '1' ||
+    req.query?.stream === 'true' ||
+    req.headers['x-stream'] === '1' ||
+    (typeof req.url === 'string' && /[?&]stream=(1|true)\b/.test(req.url));
+
+  if (wantsStream) {
+    try {
+      const result = streamText({
+        model: resolveModel(provider),
+        system: system || DEFAULT_SYSTEM,
+        messages: [{ role: 'user', content: prompt }],
+      });
+      // Pass rate-limit info through headers since the body is the text stream.
+      res.setHeader('X-RateLimit-Remaining', String(rl.remaining));
+      res.setHeader('X-RateLimit-Limit', String(rl.limit));
+      // pipeTextStreamToResponse writes text/plain chunks to the Node response.
+      result.pipeTextStreamToResponse(res);
+      return;
+    } catch (e) {
+      const classified = classifyAIError(e);
+      return errorResponse(res, 502, classified, rl);
+    }
+  }
+
+  // Non-streaming path
   try {
     const { text } = await generateText({
       model: resolveModel(provider),
@@ -75,11 +123,7 @@ export default async function handler(req, res) {
       limit: rl.limit,
     });
   } catch (e) {
-    const providerLabel = provider === 'gemini' ? 'Gemini' : 'OpenAI';
-    return res.status(502).json({
-      error: `${providerLabel}: ${e.message}`,
-      remaining: rl.remaining,
-      limit: rl.limit,
-    });
+    const classified = classifyAIError(e);
+    return errorResponse(res, 502, classified, rl);
   }
 }
