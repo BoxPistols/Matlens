@@ -168,7 +168,7 @@ function buildMetadata() {
   return {
     $themes: THEME_IDS.map(id => ({
       id,
-      name: id === 'eng' ? 'Engineering' : id === 'cae' ? 'CAE' : id === 'dark' ? 'Dark' : 'Light',
+      name: id === 'eng' ? 'Eng' : id === 'cae' ? 'CAE' : id === 'dark' ? 'Dark' : 'Light',
       selectedTokenSets: {
         [id]: 'enabled',
         global: 'source',

@@ -26,7 +26,7 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
-    { id: 'eng',   label: 'Engineering' },
+    { id: 'eng',   label: 'Eng' },
     { id: 'cae',   label: 'CAE' },
   ];
   const engineSuffix = embEngine && embEngine !== 'Keyword' ? ` (${embEngine})` : '';

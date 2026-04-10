@@ -118,7 +118,7 @@ const TechnicalStack = () => (
         {[
           { theme: 'Light', attr: 'light', accent: '#004590', bg: '#eef0f3', desc: 'ブルー基調で明るくクリーン' },
           { theme: 'Dark', attr: 'dark', accent: '#5a9ae0', bg: '#10141c', desc: 'ネイビー基調で目に優しい' },
-          { theme: 'Engineering', attr: 'eng', accent: '#00c896', bg: '#1a1f26', desc: 'グリーン+等幅フォント' },
+          { theme: 'Eng', attr: 'eng', accent: '#00c896', bg: '#1a1f26', desc: 'グリーン+等幅フォント' },
           { theme: 'CAE', attr: 'cae', accent: '#e89020', bg: '#0e1014', desc: 'オレンジ+等幅フォント' },
         ].map(t => (
           <div
