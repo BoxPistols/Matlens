@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:analyze": "ANALYZE=1 vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -65,6 +66,7 @@
     "jsdom": "^29.0.2",
     "playwright": "^1.59.1",
     "postcss": "^8.4.0",
+    "rollup-plugin-visualizer": "^7.0.1",
     "storybook": "^10.3.5",
     "tailwindcss": "^3.4.0",
     "typescript": "^6.0.2",
