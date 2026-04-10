@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { Chart, registerables } from 'chart.js';
-import { marked } from 'marked';
+import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, SectionCard, ProgressBar } from '../../components/atoms';
 import { AIInsightCard, KpiCard, ExportModal } from '../../components/molecules';
@@ -98,7 +98,7 @@ export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
         { label:'レビュー待ちを確認', onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
         { label:'AI検出の詳細', onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },
       ]}>
-        {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: typeof marked !== 'undefined' ? marked.parse(insight) : insight }} />}
+        {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(insight) }} />}
       </AIInsightCard>
       <div className="grid grid-cols-4 gap-3">
         <KpiCard label="総データ件数" value={db.length} delta="▲ 12件（今月）" deltaUp={true} />

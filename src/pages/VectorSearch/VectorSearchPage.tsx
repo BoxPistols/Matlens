@@ -38,8 +38,8 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
       </div>
 
       <VecCard>
-        各材料テキスト（名称・組成・特性）を <strong className="text-text-hi">TF.js Universal Sentence Encoder</strong> で 512次元ベクトルに変換。
-        クエリとの <strong className="text-text-hi">コサイン類似度</strong> を計算してランキング表示します。
+        各材料テキスト（名称・組成・特性）を <strong className="text-text-hi">OpenAI text-embedding-3-small</strong> で 1536次元ベクトルに変換し、
+        <strong className="text-text-hi">Upstash Vector</strong> に保存。クエリとの <strong className="text-text-hi">コサイン類似度</strong> を計算してランキング表示します。
         キーワード検索では拾えない「意味的に近い材料」を発見できます。
         <div className="mt-2 text-[12px]">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${embedding.status==='ready' ? 'bg-[var(--ok-dim)] text-ok' : 'bg-raised text-text-lo'}`}>

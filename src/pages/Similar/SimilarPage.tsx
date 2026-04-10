@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { marked } from 'marked';
+import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Select, FormGroup, UnitInput, Typing } from '../../components/atoms';
 import { AIInsightCard, VecCard } from '../../components/molecules';
@@ -35,12 +35,7 @@ export const SimilarPage = ({ db, embedding, claude }: SimilarPageProps) => {
     setRunning(false);
   };
 
-  const renderAiHtml = () => {
-    try {
-      marked.setOptions({ breaks: true, gfm: true });
-      return marked.parse(aiComment);
-    } catch(e) { return aiComment; }
-  };
+  const renderAiHtml = () => renderSafeMarkdown(aiComment);
 
   return (
     <div className="flex flex-col gap-4">

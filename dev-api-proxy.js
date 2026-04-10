@@ -96,13 +96,12 @@ export function devApiProxy() {
 
         // Keyword fallback for local dev (Upstash unlikely to be configured locally)
         if (db && Array.isArray(db)) {
-          const q = query.toLowerCase();
-          const words = q.split(/\s+/).filter(w => w.length > 0);
-          const results = db
+          const words = tokenizeQuery(query);
+          const results = words.length === 0 ? [] : db
             .map(r => {
               const text = `${r.name} ${r.cat} ${r.comp} ${r.memo || ''}`.toLowerCase();
               const matchCount = words.filter(w => text.includes(w)).length;
-              return { ...r, score: words.length > 0 ? matchCount / words.length : 0 };
+              return { ...r, score: matchCount / words.length };
             })
             .filter(r => r.score > 0)
             .sort((a, b) => b.score - a.score)
@@ -130,4 +129,22 @@ function parseBody(req) {
     req.on('data', (chunk) => { data += chunk; });
     req.on('end', () => { try { resolve(JSON.parse(data)); } catch { resolve({}); } });
   });
+}
+
+// Tokenize query for keyword matching (Japanese-aware)
+function tokenizeQuery(query) {
+  const q = (query || '').toLowerCase().trim();
+  if (!q) return [];
+  const tokens = q
+    .split(/[\s、。・，．,.\/\\\-_;:!?"'（）()「」『』【】\[\]]+/)
+    .filter(t => t.length > 0);
+  // If tokenization yielded only one long Japanese token, generate character bigrams
+  if (tokens.length === 1 && /[^\x00-\x7F]/.test(tokens[0]) && tokens[0].length >= 3) {
+    const bigrams = [];
+    for (let i = 0; i < tokens[0].length - 1; i++) {
+      bigrams.push(tokens[0].slice(i, i + 2));
+    }
+    return [...tokens, ...bigrams];
+  }
+  return tokens;
 }
