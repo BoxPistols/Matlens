@@ -148,8 +148,14 @@ body{
 .md-preview p:last-child{margin:0}
 .md-preview strong{font-weight:700;color:var(--text-hi)}
 .md-preview em{font-style:italic;color:var(--text-md)}
-.md-preview ul,.md-preview ol{margin:5px 0 5px 16px;font-size:13px}
-.md-preview li{margin:2px 0}
+.md-preview ul,.md-preview ol{margin:6px 0 6px 0;padding-left:22px;font-size:13px}
+.md-preview ul{list-style:disc outside}
+.md-preview ol{list-style:decimal outside}
+.md-preview ul ul{list-style:circle outside;margin:3px 0}
+.md-preview ul ul ul{list-style:square outside}
+.md-preview li{margin:3px 0;padding-left:2px}
+.md-preview li>p{margin:0}
+.md-preview li::marker{color:var(--text-lo)}
 .md-preview code{font-family:var(--font-mono);font-size:12px;background:var(--bg-raised);padding:1px 5px;border-radius:3px;border:1px solid var(--border-faint);color:var(--accent)}
 .md-preview pre{background:var(--bg-sunken);padding:10px 12px;border-radius:var(--radius-md);overflow-x:auto;margin:7px 0;border:1px solid var(--border-faint)}
 .md-preview pre code{background:none;border:none;padding:0;color:var(--text-hi)}
