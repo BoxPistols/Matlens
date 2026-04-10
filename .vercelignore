@@ -1,0 +1,27 @@
+# Files excluded from upload to Vercel.
+#
+# Anything listed here is invisible to Vercel's build/deploy pipeline,
+# so it can never be auto-detected as a Serverless Function or bloat
+# the deployment artefact.
+#
+# IMPORTANT: this file is shared between every Vercel project linked
+# to the repo (matlens-storybook AND the main app). Only put things
+# here that NEITHER project needs at deploy time.
+
+# Test sources never run in production — keep them out of the
+# Function count and out of the bundle. Without this rule, Vercel
+# auto-detects every `api/**/*.test.js` as a Serverless Function and
+# the Hobby plan tops out at 12.
+**/*.test.js
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.ts
+**/*.spec.tsx
+
+# Local-only artefacts that no project needs at build time.
+coverage/
+.vitest-cache/
+.claude/
+.serena/
+.vscode/

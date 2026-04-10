@@ -21,7 +21,7 @@ Matlens はプロトタイプ段階のプロダクトですが、セキュリテ
 現時点で Matlens が講じている主な対策を以下にまとめます。詳細は該当ファイルをご参照ください。
 
 ### Input Validation
-- `api/lib/validation.js` にすべての API 入力の検証ロジックを集約
+- `lib/validation.js` にすべての API 入力の検証ロジックを集約
 - すべての文字列入力は NFKC 正規化 + null byte 拒否
 - `provider`, `category` はアローリスト、`topK` は数値範囲チェック
 - `application/json` 以外の Content-Type は 415 で拒否（CSRF の simple request 対策）
@@ -46,7 +46,7 @@ Matlens はプロトタイプ段階のプロダクトですが、セキュリテ
 - `Permissions-Policy` でカメラ・マイク・位置情報等を無効化
 
 ### Rate Limiting
-- `api/lib/ratelimit.js` で Upstash Redis + in-memory fallback
+- `lib/ratelimit.js` で Upstash Redis + in-memory fallback
 - 1 IP あたり `DAILY_LIMIT`（デフォルト 30 回/日）
 
 ### 秘密情報管理

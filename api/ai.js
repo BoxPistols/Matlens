@@ -14,18 +14,18 @@
 import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
-import { checkRateLimit, getRemainingQuota } from './lib/ratelimit.js';
-import { classifyAIError } from './lib/aiErrors.js';
+import { checkRateLimit, getRemainingQuota } from '../lib/ratelimit.js';
+import { classifyAIError } from '../lib/aiErrors.js';
 import {
   ValidationError,
   validatePrompt,
   validateOptionalSystem,
   validateProvider,
   assertJsonContentType,
-} from './lib/validation.js';
-import { applyCors } from './lib/cors.js';
-import { log } from './lib/logger.js';
-import { getRequestId, setRequestIdHeader } from './lib/requestId.js';
+} from '../lib/validation.js';
+import { applyCors } from '../lib/cors.js';
+import { log } from '../lib/logger.js';
+import { getRequestId, setRequestIdHeader } from '../lib/requestId.js';
 
 // @ai-sdk/google reads from GOOGLE_GENERATIVE_AI_API_KEY; accept GEMINI_API_KEY
 // as an alias since that's what the rest of the Matlens codebase uses.

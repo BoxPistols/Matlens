@@ -1,17 +1,17 @@
 // Vercel Serverless Function — Vector Search API
 // POST /api/search { query, k?, category? }
 
-import { search, keywordSearch } from './lib/rag.js';
+import { search, keywordSearch } from '../lib/rag.js';
 import {
   ValidationError,
   validateSearchQuery,
   validateTopK,
   validateCategoryFilter,
   assertJsonContentType,
-} from './lib/validation.js';
-import { applyCors } from './lib/cors.js';
-import { log } from './lib/logger.js';
-import { getRequestId, setRequestIdHeader } from './lib/requestId.js';
+} from '../lib/validation.js';
+import { applyCors } from '../lib/cors.js';
+import { log } from '../lib/logger.js';
+import { getRequestId, setRequestIdHeader } from '../lib/requestId.js';
 
 export default async function handler(req, res) {
   const requestId = getRequestId(req);

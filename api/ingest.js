@@ -1,15 +1,15 @@
 // Vercel Serverless Function — Material Data Ingest API
 // POST /api/ingest { materials: Material[] }
 
-import { ingestMaterials } from './lib/rag.js';
+import { ingestMaterials } from '../lib/rag.js';
 import {
   ValidationError,
   validateIngestMaterials,
   assertJsonContentType,
-} from './lib/validation.js';
-import { applyCors } from './lib/cors.js';
-import { log } from './lib/logger.js';
-import { getRequestId, setRequestIdHeader } from './lib/requestId.js';
+} from '../lib/validation.js';
+import { applyCors } from '../lib/cors.js';
+import { log } from '../lib/logger.js';
+import { getRequestId, setRequestIdHeader } from '../lib/requestId.js';
 
 export default async function handler(req, res) {
   const requestId = getRequestId(req);

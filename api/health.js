@@ -6,9 +6,9 @@
 // Each subsystem is reported individually so a partial outage (e.g. AI key
 // missing but vector DB live) can still be diagnosed at a glance.
 
-import { applyCors } from './lib/cors.js';
-import { log } from './lib/logger.js';
-import { getRequestId, setRequestIdHeader } from './lib/requestId.js';
+import { applyCors } from '../lib/cors.js';
+import { log } from '../lib/logger.js';
+import { getRequestId, setRequestIdHeader } from '../lib/requestId.js';
 
 function checkEnv(name) {
   return process.env[name] ? 'ok' : 'not_configured';
