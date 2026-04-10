@@ -1,21 +1,35 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
-import { Icon } from '../../components/Icon';
+import { Icon, IconName } from '../../components/Icon';
 import { Button, Badge, Card, SectionCard, ProgressBar } from '../../components/atoms';
 import { AIInsightCard, KpiCard, ExportModal } from '../../components/molecules';
 import { AppCtx } from '../../context/AppContext';
 import type { Material, AIHook, AppContextValue } from '../../types';
+import type { AnnouncementsState } from '../../hooks/useAnnouncements/useAnnouncements';
+import type { AnnouncementType } from '../../data/announcements';
 
 interface DashboardPageProps {
   db: Material[];
   onNav: (page: string) => void;
   claude: AIHook;
+  announcements?: AnnouncementsState;
+  onOpenAnnouncements?: () => void;
 }
+
+const ANNOUNCEMENT_TYPE_MAP: Record<
+  AnnouncementType,
+  { icon: IconName; color: string; bg: string; label: string }
+> = {
+  feature: { icon: 'spark', color: 'var(--ai-col)', bg: 'var(--ai-dim)', label: 'NEW' },
+  fix: { icon: 'check', color: 'var(--ok)', bg: 'var(--ok-dim)', label: 'FIX' },
+  info: { icon: 'info', color: 'var(--accent)', bg: 'var(--accent-dim)', label: 'INFO' },
+  warn: { icon: 'warning', color: 'var(--warn)', bg: 'var(--warn-dim)', label: 'NOTICE' },
+};
 
 Chart.register(...registerables);
 
-export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
+export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnouncements }: DashboardPageProps) => {
   const [insight, setInsight] = useState('');
   const [insightLoading, setInsightLoading] = useState(true);
   const chartRefs = { trend: useRef(null), donut: useRef(null), status: useRef(null), scatter: useRef(null) };
@@ -93,13 +107,75 @@ export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
           <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />登録</Button>
         </div>
       </div>
-      <AIInsightCard loading={insightLoading} subtitle="登録データ全体の傾向やレビュー優先度をAIが分析します。" chips={[
-        { label:'今月の傾向を詳しく', onClick: () => onNav(`rag:今月登録された材料データの傾向を分析してください。カテゴリ分布や物性値の特徴を教えてください。`) },
-        { label:'レビュー待ちを確認', onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
-        { label:'AI検出の詳細', onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },
-      ]}>
-        {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(insight) }} />}
-      </AIInsightCard>
+      <div className={`grid grid-cols-1 ${announcements && announcements.all.length > 0 ? 'lg:grid-cols-[2fr_1fr]' : ''} gap-3 items-start`}>
+        <AIInsightCard loading={insightLoading} subtitle="登録データ全体の傾向やレビュー優先度をAIが分析します。" chips={[
+          { label:'今月の傾向を詳しく', onClick: () => onNav(`rag:今月登録された材料データの傾向を分析してください。カテゴリ分布や物性値の特徴を教えてください。`) },
+          { label:'レビュー待ちを確認', onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
+          { label:'AI検出の詳細', onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },
+        ]}>
+          {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(insight) }} />}
+        </AIInsightCard>
+        {announcements && announcements.all.length > 0 && (
+          <Card className="p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Icon name="info" size={13} className="text-accent flex-shrink-0" />
+              <span className="text-[12px] font-bold text-text-lo tracking-[.05em] uppercase">お知らせ</span>
+              {announcements.unreadCount > 0 && (
+                <span className="text-[12px] font-bold text-accent bg-accent-dim px-1.5 py-0.5 rounded-full leading-none">
+                  {announcements.unreadCount}
+                </span>
+              )}
+              {onOpenAnnouncements && (
+                <div className="ml-auto">
+                  <Button variant="ghost" size="xs" onClick={onOpenAnnouncements}>
+                    一覧へ <Icon name="chevronRight" size={10} />
+                  </Button>
+                </div>
+              )}
+            </div>
+            <ul className="flex flex-col">
+              {announcements.all.slice(0, 3).map(a => {
+                const style = ANNOUNCEMENT_TYPE_MAP[a.type];
+                const isUnread = announcements.unread.some(u => u.id === a.id);
+                return (
+                  <li
+                    key={a.id}
+                    className="flex items-start gap-2 py-1.5 border-b border-[var(--border-faint)] last:border-b-0"
+                  >
+                    <span
+                      className="flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded mt-0.5"
+                      style={{ background: style.bg, color: style.color }}
+                      aria-hidden="true"
+                    >
+                      <Icon name={style.icon} size={12} />
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="text-[12px] font-bold tracking-[.06em] uppercase flex-shrink-0"
+                          style={{ color: style.color }}
+                        >
+                          {style.label}
+                        </span>
+                        <span className="text-[12px] text-text-lo flex-shrink-0">{a.date}</span>
+                        {isUnread && (
+                          <span
+                            className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0"
+                            aria-label="未読"
+                          />
+                        )}
+                      </div>
+                      <div className="text-[13px] text-text-hi font-semibold leading-snug truncate">
+                        {a.title}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </Card>
+        )}
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard label="総データ件数" value={db.length} delta="▲ 12件（今月）" deltaUp={true} />
         <KpiCard label="実験バッチ数" value={38} delta="▲ 3バッチ" deltaUp={true} />
