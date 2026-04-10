@@ -50,7 +50,7 @@ export async function callAi(
           { role: 'system', content: systemMessage },
           { role: 'user', content: userMessage },
         ],
-        max_tokens: 1024,
+        max_completion_tokens: 1024,
       }),
     })
     const data = await res.json()
