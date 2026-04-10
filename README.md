@@ -6,7 +6,7 @@
 
 | カテゴリ | 技術 |
 |---------|------|
-| ランタイム | React 18 + TypeScript |
+| ランタイム | React 19 + TypeScript |
 | ビルド | Vite 5 |
 | スタイリング | Tailwind CSS 3 + CSS Variables (4テーマ) |
 | AI (LLM) | OpenAI GPT-5.4 nano/mini, Google Gemini 2.5 Flash |
@@ -15,7 +15,8 @@
 | アイコン | Lucide React |
 | Markdown | marked.js |
 | テスト | Vitest + Testing Library |
-| コンポーネントカタログ | Storybook 10 |
+| コンポーネントカタログ | Storybook 10 (addon-a11y, addon-docs, addon-vitest) |
+| デザイントークン連携 | Figma Variables (カスタムプラグイン経由) |
 | デプロイ | Vercel (静的 + Serverless Functions) |
 
 ## Getting Started
@@ -37,8 +38,21 @@ npm run preview
 ### Storybook
 
 ```bash
-npm run storybook    # http://localhost:6006
+npm run storybook        # 開発サーバー起動 (http://localhost:6006)
+npm run build-storybook  # 静的ビルド (storybook-static/)
 ```
+
+Storybook は 5 カテゴリで構成:
+
+| カテゴリ | 内容 |
+|---------|------|
+| `00-Guide` | Introduction, HowToUse, ForDesigners, ComponentDevelopment, AIAndDesignSystem, CssReference |
+| `01-DesignPhilosophy` | Overview, ComponentDesignGuide (6原則), TechnicalStack |
+| `02-DesignTokens` | Color, Typography, Spacing, Shadows (4テーマ対応) |
+| `03-Components` | Atoms / Molecules / Organisms (Atomic Design) |
+| `04-Patterns` | Dashboard, FormLayout, SearchResults |
+
+右下の FAB ボタンから起動する **ChatSupport コンシェルジュ** が、FAQ / StoryGuide / AI API の 3 層で質問に回答する。APIキーはチャット内の設定パネルから入力し、localStorage に永続化される。
 
 ### テスト
 
@@ -107,6 +121,13 @@ Matlens/
 │   │
 │   └── stories/                  Storybook ガイド・パターン
 │
+├── design-tokens/                 Figma 連携用デザイントークン
+│   ├── tokens.json                Tokens Studio 形式 (4テーマ)
+│   ├── figma-register-variables.js  スタンドアロン登録スクリプト
+│   └── figma-plugin/              Figma プラグイン (manifest + code)
+│       ├── manifest.json
+│       └── code.js
+│
 ├── index.html                    Vite エントリ
 ├── vite.config.js
 ├── tailwind.config.js
@@ -168,6 +189,35 @@ CSS Variables で4テーマを定義。`data-theme` 属性で切替。
 | `cae` | CAE。暖色アクセント、解析ツール風 |
 
 トークン例: `--bg-base`, `--bg-surface`, `--text-hi`, `--text-md`, `--text-lo`, `--accent`, `--ai-col`, `--vec` 等。Tailwind の `theme.extend.colors` でブリッジ。
+
+## Figma 連携 (デザイントークン)
+
+Matlens の CSS 変数トークンを Figma Variables / Styles としてデザインファイルに登録できる。`design-tokens/` に 3 つの形式を用意:
+
+| ファイル | 形式 | 使い方 |
+|---------|------|--------|
+| `design-tokens/tokens.json` | Tokens Studio 形式 | Figma プラグイン「Tokens Studio for Figma」で Import |
+| `design-tokens/figma-plugin/` | 専用 Figma プラグイン | Figma → Plugins → Development → マニフェストからインポート |
+| `design-tokens/figma-register-variables.js` | スタンドアロンスクリプト | 任意の Figma プラグインの code に貼り付けて実行 |
+
+### 専用プラグインでの登録（推奨）
+
+1. Figma で対象ファイルを開く
+2. **Menu → Plugins → Development → マニフェストからインポート...**
+3. `design-tokens/figma-plugin/manifest.json` を選択
+4. プラグイン一覧に「Matlens Design Tokens」が追加される
+5. クリックして実行
+
+### 登録される内容
+
+| 種類 | 数量 | 詳細 |
+|------|------|------|
+| Variable Collection: Color Tokens | 29 変数 × 4 モード | `accent`, `ai-col`, `vec`, `ok/warn/err`, `bg/*`, `text/*`, `border/focus`, `topbar-bg`, `sidebar-bg`, `tag-surface` |
+| Variable Collection: Size Tokens | 16 変数 × 4 モード | `spacing/0.5`〜`spacing/12`, `radius/sm`〜`radius/xl` |
+| Text Styles | 9 スタイル | `Matlens/Heading/H1`〜`H3/Subhead`, `Body/Base/Default`, `Label/Nav/Badge`, `Code/Mono` |
+| Effect Styles | 4 スタイル | `Matlens/Shadow/XS`〜`LG` |
+
+Variable Collection は 4 モード (light/dark/eng/cae) に対応しており、Figma のモード切替でテーマが一括で変わる。CSS 側の値と完全に対応しているので、デザインとコードの乖離を防ぐ。
 
 ## Vercel デプロイ
 
