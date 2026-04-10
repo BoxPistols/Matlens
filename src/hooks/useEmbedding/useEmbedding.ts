@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { Material, MaterialWithScore, EmbeddingHook } from '../../types';
 
 // Tokenize query for keyword matching (Japanese-aware)
@@ -37,13 +37,31 @@ function keywordSearch(db: Material[], query: string, topK: number): MaterialWit
 
 export function useEmbedding(db: Material[]): EmbeddingHook {
   const [engine, setEngine] = useState<string>('ready');
+  // Track the in-flight AbortController so each new search cancels the
+  // previous one. Without this, a user typing fast in the search box races
+  // multiple /api/search round-trips and whichever finishes *last* wins,
+  // even if that's the older request. We also abort on unmount to keep
+  // setEngine from firing on a torn-down component.
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
 
   const search = useCallback(async (query: string, topK: number = 5): Promise<MaterialWithScore[]> => {
+    // Cancel any still-pending search before kicking off a new one.
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
       const res = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, k: topK, db }),
+        signal: controller.signal,
       });
       if (!res.ok) throw new Error('Search API error');
       const data = await res.json();
@@ -67,7 +85,13 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
           } as MaterialWithScore;
         });
       }
-    } catch {
+    } catch (err) {
+      // An AbortError is a deliberate cancellation (user typed a new
+      // query, or the component unmounted). Return an empty list without
+      // touching engine state so the superseding search stays in control.
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        return [];
+      }
       // Server unavailable — use client-side keyword fallback
       setEngine('keyword');
     }

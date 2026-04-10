@@ -195,7 +195,11 @@ export function useAI(): AIHook {
       if (!res.ok) {
         // Error path — server returned JSON error instead of a stream.
         let errBody: { error?: string; code?: AIErrorCode } = {};
-        try { errBody = await res.json(); } catch {}
+        try {
+          errBody = await res.json();
+        } catch {
+          // Body was empty or malformed; fall back to the default.
+        }
         const code: AIErrorCode = errBody.code || codeFromStatus(res.status);
         const message = errBody.error || `HTTP ${res.status}`;
         setLastError({ code, message });

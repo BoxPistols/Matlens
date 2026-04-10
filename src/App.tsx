@@ -184,7 +184,7 @@ export function App() {
   const renderPage = () => {
     const commonProps = { db, dispatch, onNav: navTo, claude, embedding, voice };
     switch(page) {
-      case 'dash':    return <DashboardPage {...commonProps} />;
+      case 'dash':    return <DashboardPage {...commonProps} announcements={announcements} onOpenAnnouncements={() => openSupportPanel('news')} />;
       case 'list':    return <MaterialListPage {...commonProps} onDetail={showDetail} search={embedding.search} />;
       case 'new':     return <MaterialFormPage {...commonProps} editId={null} onCancel={() => setPage('list')} onSuccess={() => setPage('list')} />;
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;

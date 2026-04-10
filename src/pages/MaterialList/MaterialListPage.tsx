@@ -47,7 +47,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   const { addToast } = useContext(AppCtx) as AppContextValue;
 
   const filtered = useMemo(() => {
-    let rows = db.filter(r => {
+    const rows = db.filter(r => {
       if(q && !`${r.id} ${r.name} ${r.comp} ${r.memo} ${r.author}`.toLowerCase().includes(q.toLowerCase())) return false;
       if(filterCat && r.cat !== filterCat) return false;
       if(filterSt && r.status !== filterSt) return false;
@@ -76,7 +76,11 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   const totalPages = Math.ceil(filtered.length / pageSize);
   const slice = filtered.slice((page-1)*pageSize, page*pageSize);
 
-  const toggleSelect = (id: string) => setSelected(prev => { const s=new Set(prev); s.has(id)?s.delete(id):s.add(id); return s; });
+  const toggleSelect = (id: string) => setSelected(prev => {
+    const s = new Set(prev);
+    if (s.has(id)) s.delete(id); else s.add(id);
+    return s;
+  });
   const toggleAll = (checked: boolean) => setSelected(checked ? new Set(slice.map(r=>r.id)) : new Set());
 
   const activeTags = [

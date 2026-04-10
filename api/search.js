@@ -1,19 +1,28 @@
 // Vercel Serverless Function — Vector Search API
 // POST /api/search { query, k?, category? }
 
-import { search, keywordSearch } from './lib/rag.js';
+import { search, keywordSearch } from '../lib/rag.js';
 import {
   ValidationError,
   validateSearchQuery,
   validateTopK,
   validateCategoryFilter,
   assertJsonContentType,
-} from './lib/validation.js';
-import { applyCors } from './lib/cors.js';
+} from '../lib/validation.js';
+import { applyCors } from '../lib/cors.js';
+import { log } from '../lib/logger.js';
+import { getRequestId, setRequestIdHeader } from '../lib/requestId.js';
 
 export default async function handler(req, res) {
+  const requestId = getRequestId(req);
+  setRequestIdHeader(res, requestId);
+  const startedAt = Date.now();
+
   const corsAllowed = applyCors(req, res);
-  if (!corsAllowed) return res.status(403).json({ error: 'Origin not allowed' });
+  if (!corsAllowed) {
+    log.warn('cors rejected', { requestId, origin: req.headers?.origin });
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -30,6 +39,7 @@ export default async function handler(req, res) {
     category = validateCategoryFilter(body.category);
   } catch (e) {
     if (e instanceof ValidationError) {
+      log.warn('search validation failed', { requestId, error: e.message });
       return res.status(e.status || 400).json({ error: e.message });
     }
     throw e;
@@ -42,15 +52,29 @@ export default async function handler(req, res) {
 
   const hasUpstash = process.env.UPSTASH_VECTOR_REST_URL && process.env.UPSTASH_VECTOR_REST_TOKEN;
 
+  log.info('search request received', { requestId, queryLength: query.length, k, category });
+
   try {
     if (hasUpstash && process.env.OPENAI_API_KEY) {
       const results = await search(query, k, category);
+      log.info('search completed', {
+        requestId,
+        engine: 'upstash',
+        durationMs: Date.now() - startedAt,
+        resultCount: results.length,
+      });
       return res.status(200).json({ results, engine: 'upstash' });
     }
 
     // Fallback: keyword search (requires db from client)
     if (db) {
       const results = keywordSearch(db, query, k);
+      log.info('search completed', {
+        requestId,
+        engine: 'keyword',
+        durationMs: Date.now() - startedAt,
+        resultCount: results.length,
+      });
       return res.status(200).json({ results, engine: 'keyword' });
     }
 
@@ -58,7 +82,7 @@ export default async function handler(req, res) {
   } catch (e) {
     // Log internal errors server-side but return a generic message to the
     // client so we don't leak stack traces or provider internals.
-    console.error('[api/search]', e);
+    log.error('search failed', { requestId, durationMs: Date.now() - startedAt, error: e.message });
     return res.status(500).json({ error: '検索中にエラーが発生しました' });
   }
 }
