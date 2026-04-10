@@ -1,44 +1,8 @@
 // Vercel Serverless Function — AI API Proxy with Rate Limiting
 // 環境変数: OPENAI_API_KEY, GEMINI_API_KEY, DAILY_LIMIT (default: 30)
+//          UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN (persistent rate limit)
 
-// --- In-memory rate limit store (per warm instance) ---
-// Production recommendation: replace with Vercel KV or Upstash Redis
-const rateLimitStore = new Map(); // key: "ip:date" → count
-
-const DAILY_LIMIT = parseInt(process.env.DAILY_LIMIT || '30', 10);
-
-function getClientIP(req) {
-  return (
-    req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
-    req.headers['x-real-ip'] ||
-    req.socket?.remoteAddress ||
-    'unknown'
-  );
-}
-
-function checkRateLimit(ip) {
-  const today = new Date().toISOString().slice(0, 10);
-  const key = `${ip}:${today}`;
-
-  // Clean up old entries (different dates)
-  for (const k of rateLimitStore.keys()) {
-    if (!k.endsWith(`:${today}`)) rateLimitStore.delete(k);
-  }
-
-  const current = rateLimitStore.get(key) || 0;
-  if (current >= DAILY_LIMIT) {
-    return { allowed: false, remaining: 0, limit: DAILY_LIMIT };
-  }
-  rateLimitStore.set(key, current + 1);
-  return { allowed: true, remaining: DAILY_LIMIT - current - 1, limit: DAILY_LIMIT };
-}
-
-function getRemainingCount(ip) {
-  const today = new Date().toISOString().slice(0, 10);
-  const key = `${ip}:${today}`;
-  const current = rateLimitStore.get(key) || 0;
-  return { remaining: Math.max(0, DAILY_LIMIT - current), limit: DAILY_LIMIT };
-}
+import { checkRateLimit, getRemainingQuota } from './lib/ratelimit.js';
 
 export default async function handler(req, res) {
   // CORS
@@ -47,11 +11,9 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const ip = getClientIP(req);
-
   // GET /api/ai → return rate limit status
   if (req.method === 'GET') {
-    const { remaining, limit } = getRemainingCount(ip);
+    const { remaining, limit } = await getRemainingQuota(req);
     return res.status(200).json({ remaining, limit });
   }
 
@@ -60,8 +22,8 @@ export default async function handler(req, res) {
   const { provider, prompt, system } = req.body || {};
   if (!prompt) return res.status(400).json({ error: 'prompt is required' });
 
-  // Rate limit check
-  const rl = checkRateLimit(ip);
+  // Rate limit check (async — Upstash Redis or in-memory fallback)
+  const rl = await checkRateLimit(req);
   if (!rl.allowed) {
     return res.status(429).json({
       error: `本日の利用上限（${rl.limit}回/日）に達しました。明日リセットされます。自分のAPIキーを設定すると無制限で利用できます。`,

@@ -18,6 +18,8 @@
     "@react-three/drei": "^9.117.3",
     "@react-three/fiber": "^8.17.14",
     "@types/prismjs": "^1.26.6",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.37.0",
     "@upstash/vector": "^1.2.3",
     "ai": "^6.0.154",
     "chart.js": "^4.4.0",
