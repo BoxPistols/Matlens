@@ -250,6 +250,14 @@ export function App() {
         onClick={() => { if (settingsVisible) setSettingsVisible(false); else openSupportPanel('help'); }}
         className="fixed bottom-6 right-6 z-[2000] flex items-center justify-center w-12 h-12 rounded-full bg-accent text-white shadow-lg hover:bg-[var(--accent-hover)] transition-all"
         title={announcements.unreadCount > 0 ? `サポート / 未読 ${announcements.unreadCount} 件` : 'サポート / ヘルプ / AI設定'}
+        aria-label={
+          settingsVisible
+            ? 'サポートパネルを閉じる'
+            : announcements.unreadCount > 0
+              ? `サポートパネルを開く (未読お知らせ ${announcements.unreadCount} 件)`
+              : 'サポートパネルを開く'
+        }
+        aria-expanded={settingsVisible}
       >
         <Icon name={settingsVisible ? 'close' : 'help'} size={20} />
         {announcements.unreadCount > 0 && !settingsVisible && (
