@@ -19,7 +19,7 @@ function renderContent(text: string) {
   return parts.map((part, i) => {
     if (part.startsWith('```')) {
       const match = part.match(/^```(\w*)\n?([\s\S]*?)```$/)
-      if (match) return <CodeBlock key={i} language={match[1]} code={match[2].trim()} />
+      if (match) return <CodeBlock key={i} language={match[1] ?? ''} code={(match[2] ?? '').trim()} />
       return <CodeBlock key={i} code={part.replace(/```/g, '').trim()} />
     }
     if (part.startsWith('`') && part.endsWith('`')) {

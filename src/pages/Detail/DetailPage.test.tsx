@@ -16,7 +16,7 @@ vi.mock('marked', () => ({
 // Pick the first record from the seed list rather than hard-coding an id —
 // the seed array has been renumbered (and grown) several times and stale
 // hard-coded ids were the main cause of these tests breaking.
-const FIXTURE = INITIAL_DB[0];
+const FIXTURE = INITIAL_DB[0]!;
 
 describe('DetailPage', () => {
   const onBack = vi.fn();

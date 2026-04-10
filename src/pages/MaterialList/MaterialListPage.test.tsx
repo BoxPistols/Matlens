@@ -29,7 +29,7 @@ describe('MaterialListPage', () => {
     // Default sort is id-desc, so the newest seed row is guaranteed to be
     // on page 1. Pick it by id rather than by hard-coded name so renaming
     // records in initialDb.ts doesn't break this test.
-    const firstRow = [...INITIAL_DB].sort((a, b) => b.id.localeCompare(a.id))[0];
+    const firstRow = [...INITIAL_DB].sort((a, b) => b.id.localeCompare(a.id))[0]!;
     expect(screen.getByText(firstRow.name)).toBeInTheDocument();
   });
 

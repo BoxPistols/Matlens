@@ -9,11 +9,13 @@ function tokenize(query: string): string[] {
   const tokens = q
     .split(/[\s、。・，．,.\/\\\-_;:!?"'（）()「」『』【】\[\]]+/)
     .filter(t => t.length > 0);
-  // If tokenization yielded only one long Japanese token, generate character bigrams
-  if (tokens.length === 1 && /[^\x00-\x7F]/.test(tokens[0]) && tokens[0].length >= 3) {
+  // If tokenization yielded only one long Japanese token, generate character bigrams.
+  // Hoist tokens[0] into a local so strict mode's noUncheckedIndexedAccess is happy.
+  const first = tokens[0];
+  if (tokens.length === 1 && first !== undefined && /[^\x00-\x7F]/.test(first) && first.length >= 3) {
     const bigrams: string[] = [];
-    for (let i = 0; i < tokens[0].length - 1; i++) {
-      bigrams.push(tokens[0].slice(i, i + 2));
+    for (let i = 0; i < first.length - 1; i++) {
+      bigrams.push(first.slice(i, i + 2));
     }
     return [...tokens, ...bigrams];
   }

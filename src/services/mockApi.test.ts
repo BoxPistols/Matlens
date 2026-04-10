@@ -177,8 +177,8 @@ describe('installMockAPI', () => {
     await window.fetch('/api/materials');
 
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(listener.mock.calls[0][0]).toHaveProperty('method', 'GET');
-    expect(listener.mock.calls[0][0]).toHaveProperty('path', '/api/materials');
+    expect(listener.mock.calls[0]![0]).toHaveProperty('method', 'GET');
+    expect(listener.mock.calls[0]![0]).toHaveProperty('path', '/api/materials');
 
     unsub();
   });

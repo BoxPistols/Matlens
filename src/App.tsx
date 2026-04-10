@@ -48,8 +48,9 @@ const LazyFallback = () => (
 function parseHash(): { page: string; detailId: string | null } {
   if (typeof window === 'undefined') return { page: 'dash', detailId: null };
   const parts = window.location.hash.slice(1).split('/').filter(Boolean);
-  if (parts.length === 0) return { page: 'dash', detailId: null };
-  return { page: parts[0], detailId: parts[1] ?? null };
+  const first = parts[0];
+  if (!first) return { page: 'dash', detailId: null };
+  return { page: first, detailId: parts[1] ?? null };
 }
 
 function buildHash(page: string, detailId: string | null): string {

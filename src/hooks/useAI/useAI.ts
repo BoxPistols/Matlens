@@ -66,7 +66,9 @@ export function useAI(): AIHook {
   const [ownKey, setOwnKeyState] = useState<string>(loadOwnKey);
   const [rateInfo, setRateInfo] = useState<RateInfo>({ remaining: null, limit: null });
   const [lastError, setLastError] = useState<AICallError | null>(null);
-  const providerDef = PROVIDERS.find(p => p.id === provider) || PROVIDERS[0];
+  // PROVIDERS is a non-empty constant tuple, so PROVIDERS[0] is always defined.
+  // The non-null assertion keeps strict mode quiet without a runtime check.
+  const providerDef = PROVIDERS.find(p => p.id === provider) ?? PROVIDERS[0]!;
   const hasOwnKey = !!ownKey;
 
   // Refs so the latest values are available inside long-running stream reads

@@ -239,10 +239,10 @@ export function parseMaimlToMaterials(xml: string): MaimlParseResult {
   // Walk to <results> and collect materials. We look up nested results (the
   // measurement values) by sampleRef so bulk documents round-trip cleanly.
   const resultsEls = root.getElementsByTagName('results');
-  if (resultsEls.length === 0) {
+  const resultsRoot = resultsEls[0];
+  if (!resultsRoot) {
     return { materials: [], generatedAt, source, warnings };
   }
-  const resultsRoot = resultsEls[0];
 
   const materialEls = resultsRoot.getElementsByTagName('material');
   const measurementByRef: Record<string, Record<string, number>> = {};

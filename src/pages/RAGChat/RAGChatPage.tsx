@@ -63,6 +63,7 @@ ${ctxText}`;
           if (replyIndex < 0 || replyIndex >= prev.length) return prev;
           const next = prev.slice();
           const current = next[replyIndex];
+          if (!current) return prev;
           next[replyIndex] = { ...current, text: current.text + delta };
           return next;
         });

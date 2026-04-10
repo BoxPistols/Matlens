@@ -28,7 +28,7 @@ describe('MaterialFormPage', () => {
 
   // Use a real id from the seed list. The previous hard-coded MAT-0247 has
   // been retired since the seed range was renumbered.
-  const EDIT_FIXTURE = INITIAL_DB[0];
+  const EDIT_FIXTURE = INITIAL_DB[0]!;
   const setupEdit = () =>
     renderWithContext(
       <MaterialFormPage

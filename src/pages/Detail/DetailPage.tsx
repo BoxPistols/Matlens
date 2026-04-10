@@ -33,8 +33,8 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
 
   // Prev/Next navigation (via on-screen buttons only — no global arrow-key shortcut)
   const currentIndex = useMemo(() => db.findIndex(x => x.id === recordId), [db, recordId]);
-  const prevId = currentIndex > 0 ? db[currentIndex - 1].id : null;
-  const nextId = currentIndex < db.length - 1 ? db[currentIndex + 1].id : null;
+  const prevId = currentIndex > 0 ? (db[currentIndex - 1]?.id ?? null) : null;
+  const nextId = currentIndex < db.length - 1 ? (db[currentIndex + 1]?.id ?? null) : null;
   const goTo = useCallback((id: string | null) => { if (id) onNav('detail_' + id); }, [onNav]);
 
   useEffect(() => {
