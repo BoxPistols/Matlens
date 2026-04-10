@@ -1,19 +1,43 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Icon, IconName } from '../Icon';
 import { Button, Badge, Input, FormGroup, Divider, ProgressBar } from '../atoms';
 import { AppCtx } from '../../context/AppContext';
 import { PROVIDERS, SUPPORT_TABS, FAQ_ITEMS, STORYBOOK_URL } from '../../data/constants';
 import type { AIHook, AppContextValue } from '../../types';
+import type { AnnouncementsState } from '../../hooks/useAnnouncements';
+import type { AnnouncementType } from '../../data/announcements';
 
 interface SupportPanelProps {
   ai: AIHook;
   visible: boolean;
   onClose: () => void;
   onNav: (page: string) => void;
+  initialTab?: string;
+  announcements?: AnnouncementsState;
 }
 
-export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps) => {
-  const [tab, setTab] = useState('help');
+const ANNOUNCEMENT_TYPE_LABEL: Record<AnnouncementType, { label: string; color: string }> = {
+  feature: { label: 'NEW', color: 'text-ai' },
+  fix: { label: 'FIX', color: 'text-ok' },
+  info: { label: 'INFO', color: 'text-accent' },
+  warn: { label: 'NOTICE', color: 'text-warn' },
+};
+
+export const SupportPanel = ({ ai, visible, onClose, onNav, initialTab = 'help', announcements }: SupportPanelProps) => {
+  const [tab, setTab] = useState(initialTab);
+
+  // When the parent re-opens the panel with a different target tab (e.g. news),
+  // reflect that on every visible transition.
+  useEffect(() => {
+    if (visible) setTab(initialTab);
+  }, [visible, initialTab]);
+
+  // Open the news tab → flush the unread state so the badge clears.
+  useEffect(() => {
+    if (visible && tab === 'news' && announcements && announcements.unreadCount > 0) {
+      announcements.markAsSeen();
+    }
+  }, [visible, tab, announcements]);
   const [keyInput, setKeyInput] = useState(ai.ownKey ? '••••••••' : '');
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'ok' | 'error'>('idle');
@@ -51,12 +75,25 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps)
         <button onClick={onClose} className="text-text-lo hover:text-text-hi"><Icon name="close" size={14}/></button>
       </div>
       <div className="flex border-b border-[var(--border-faint)] px-4 gap-1 flex-shrink-0">
-        {SUPPORT_TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1 px-3 py-2 text-[12px] font-semibold border-b-2 transition-all font-ui ${tab === t.id ? 'border-accent text-accent' : 'border-transparent text-text-lo hover:text-text-md'}`}>
-            <Icon name={t.icon as IconName} size={12} />{t.label}
-          </button>
-        ))}
+        {SUPPORT_TABS.map(t => {
+          const isNews = t.id === 'news';
+          const unread = isNews ? announcements?.unreadCount ?? 0 : 0;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`relative flex items-center gap-1 px-3 py-2 text-[12px] font-semibold border-b-2 transition-all font-ui ${tab === t.id ? 'border-accent text-accent' : 'border-transparent text-text-lo hover:text-text-md'}`}
+            >
+              <Icon name={t.icon as IconName} size={12} />
+              {t.label}
+              {unread > 0 && (
+                <span className="ml-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--err)] text-white text-[9px] font-bold flex items-center justify-center">
+                  {unread > 9 ? '9+' : unread}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
       <div className="flex-1 overflow-y-auto p-4">
         {tab === 'help' && (
@@ -92,6 +129,39 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps)
                 <div className="text-[11px] text-text-lo">コンポーネント・デザインシステムを参照</div>
               </div>
             </a>
+          </div>
+        )}
+        {tab === 'news' && (
+          <div className="flex flex-col gap-3">
+            <div className="text-[12px] text-text-lo">最新の更新履歴と運用情報をまとめています。</div>
+            {announcements && announcements.all.length > 0 ? (
+              <ul className="flex flex-col gap-2" role="list">
+                {announcements.all.map((a, i) => {
+                  const typeInfo = ANNOUNCEMENT_TYPE_LABEL[a.type];
+                  const isUnread = i < announcements.unreadCount;
+                  return (
+                    <li
+                      key={a.id}
+                      className={`rounded-md border p-3 transition-colors ${isUnread ? 'border-accent bg-accent-dim/40' : 'border-[var(--border-faint)] bg-raised'}`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-[10px] font-bold tracking-[.06em] uppercase ${typeInfo.color}`}>
+                          {typeInfo.label}
+                        </span>
+                        <span className="text-[11px] text-text-lo font-mono">{a.date}</span>
+                        {isUnread && (
+                          <Badge variant="red" className="text-[9px]">未読</Badge>
+                        )}
+                      </div>
+                      <div className="text-[13px] font-bold text-text-hi leading-snug">{a.title}</div>
+                      <p className="text-[12px] text-text-md mt-1 leading-relaxed">{a.body}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <div className="text-[12px] text-text-lo text-center py-6">お知らせはありません</div>
+            )}
           </div>
         )}
         {tab === 'faq' && (

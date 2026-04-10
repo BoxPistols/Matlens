@@ -11,8 +11,10 @@ import { Icon } from './components/Icon';
 import { Topbar } from './components/Topbar';
 import { Sidebar } from './components/Sidebar';
 import { SupportPanel } from './components/SupportPanel';
+import { AnnouncementBanner } from './components/AnnouncementBanner';
 import { ToastHub } from './components/molecules';
 import { Typing } from './components/atoms';
+import { useAnnouncements } from './hooks/useAnnouncements';
 import { DashboardPage } from './pages/Dashboard';
 import { MaterialListPage } from './pages/MaterialList';
 import { MaterialFormPage } from './pages/MaterialForm';
@@ -52,9 +54,17 @@ export function App() {
   const ai = useAI();
   const claude = ai;
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [settingsInitialTab, setSettingsInitialTab] = useState<string>('help');
   const [globalQuery, setGlobalQuery] = useState('');
   const [ragInitialQuery, setRagInitialQuery] = useState('');
   const [simInitialBase, setSimInitialBase] = useState('');
+  const announcements = useAnnouncements();
+  const [bannerHidden, setBannerHidden] = useState(false);
+
+  const openSupportPanel = (tab: string = 'help') => {
+    setSettingsInitialTab(tab);
+    setSettingsVisible(true);
+  };
 
   useEffect(() => { installMockAPI(() => db, dispatch); }, []);
 
@@ -132,6 +142,14 @@ export function App() {
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}
           db={db} onDetail={showDetail}
         />
+        {announcements.latestUnread && !bannerHidden && (
+          <AnnouncementBanner
+            announcement={announcements.latestUnread}
+            unreadCount={announcements.unreadCount}
+            onDismiss={() => { announcements.markAsSeen(); setBannerHidden(true); }}
+            onOpenAll={() => { openSupportPanel('news'); setBannerHidden(true); }}
+          />
+        )}
         <div className="flex flex-1 overflow-hidden">
           <Sidebar
             currentPage={page} onNav={navTo}
@@ -145,11 +163,28 @@ export function App() {
           </main>
         </div>
       </div>
-      <SupportPanel ai={ai} visible={settingsVisible} onClose={() => setSettingsVisible(false)} onNav={navTo} />
-      <button onClick={() => setSettingsVisible(v => !v)}
+      <SupportPanel
+        ai={ai}
+        visible={settingsVisible}
+        onClose={() => setSettingsVisible(false)}
+        onNav={navTo}
+        initialTab={settingsInitialTab}
+        announcements={announcements}
+      />
+      <button
+        onClick={() => { if (settingsVisible) setSettingsVisible(false); else openSupportPanel('help'); }}
         className="fixed bottom-6 right-6 z-[2000] flex items-center justify-center w-12 h-12 rounded-full bg-accent text-white shadow-lg hover:bg-[var(--accent-hover)] transition-all"
-        title="サポート / ヘルプ / AI設定">
+        title={announcements.unreadCount > 0 ? `サポート / 未読 ${announcements.unreadCount} 件` : 'サポート / ヘルプ / AI設定'}
+      >
         <Icon name={settingsVisible ? 'close' : 'help'} size={20} />
+        {announcements.unreadCount > 0 && !settingsVisible && (
+          <span
+            aria-hidden="true"
+            className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[var(--err)] text-white text-[10px] font-bold flex items-center justify-center border-2 border-[var(--bg-base)]"
+          >
+            {announcements.unreadCount > 9 ? '9+' : announcements.unreadCount}
+          </span>
+        )}
       </button>
       <ToastHub />
     </AppCtx.Provider>
