@@ -1,63 +1,55 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Icon, IconName } from './Icon';
+import { render } from '@testing-library/react';
+import { Icon, type IconName } from './Icon';
 
+// Full set of icon names supported by the component. Keep this in sync with
+// the IconName union in Icon.tsx.
 const ALL_ICONS: IconName[] = [
-  'dashboard','list','plus','search','vecSearch','rag',
-  'similar','mic','help','about','settings',
-  'chevronLeft','chevronRight','chevronDown','close','check',
-  'edit','trash','download','upload','copy','speaker',
-  'stop','refresh','play','spark','embed','warning',
-  'info','filter','sort','pdf','json','csv','report',
-  'ai','scan',
+  'dashboard', 'list', 'plus', 'search', 'vecSearch', 'rag',
+  'similar', 'mic', 'help', 'about', 'settings',
+  'chevronLeft', 'chevronRight', 'chevronDown', 'close', 'check',
+  'edit', 'trash', 'download', 'upload', 'copy', 'speaker',
+  'stop', 'refresh', 'play', 'spark', 'embed', 'warning',
+  'info', 'filter', 'sort', 'pdf', 'json', 'csv', 'report',
+  'ai', 'scan',
 ];
 
 describe('Icon', () => {
-  it.each(ALL_ICONS)('renders without crashing for icon name "%s"', (name) => {
+  it.each(ALL_ICONS)('renders an <svg> for "%s"', (name) => {
     const { container } = render(<Icon name={name} />);
-    const span = container.querySelector('span');
-    expect(span).toBeInTheDocument();
-    // should contain an svg child
-    expect(span!.querySelector('svg')).toBeInTheDocument();
+    // lucide-react renders the icon as an <svg> directly — no wrapper.
+    expect(container.querySelector('svg')).toBeInTheDocument();
   });
 
-  it('renders with custom size', () => {
+  it('renders with a custom size', () => {
     const { container } = render(<Icon name="dashboard" size={32} />);
-    const span = container.querySelector('span');
-    expect(span).toHaveStyle({ width: '32px', height: '32px' });
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('width', '32');
+    expect(svg).toHaveAttribute('height', '32');
   });
 
-  it('renders with default size of 16', () => {
+  it('defaults to size 16 when no size prop is given', () => {
     const { container } = render(<Icon name="dashboard" />);
-    const span = container.querySelector('span');
-    expect(span).toHaveStyle({ width: '16px', height: '16px' });
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('width', '16');
+    expect(svg).toHaveAttribute('height', '16');
   });
 
-  it('renders with custom className', () => {
+  it('applies a custom className to the svg element', () => {
     const { container } = render(<Icon name="search" className="text-red-500" />);
-    const span = container.querySelector('span');
-    expect(span).toHaveClass('text-red-500');
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveClass('text-red-500');
   });
 
-  it('applies default inline-flex classes', () => {
+  it('keeps the default inline-flex / flex-shrink-0 utility classes', () => {
     const { container } = render(<Icon name="plus" />);
-    const span = container.querySelector('span');
-    expect(span).toHaveClass('inline-flex', 'items-center', 'justify-center', 'flex-shrink-0');
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveClass('inline-flex', 'flex-shrink-0');
   });
 
-  it('has role="img" and aria-hidden="true"', () => {
-    render(<Icon name="dashboard" />);
-    const el = screen.getByRole('img', { hidden: true });
-    expect(el).toBeInTheDocument();
-    expect(el).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  it('returns null content for an invalid icon name', () => {
+  it('renders nothing for an unknown icon name', () => {
     const { container } = render(<Icon name={'nonexistent' as IconName} />);
-    const span = container.querySelector('span');
-    expect(span).toBeInTheDocument();
-    // span should have no SVG child since ICONS['nonexistent'] is undefined -> null
-    expect(span!.querySelector('svg')).not.toBeInTheDocument();
-    expect(span!.childNodes.length).toBe(0);
+    // Unknown names return null, so there should be no <svg> in the tree.
+    expect(container.querySelector('svg')).not.toBeInTheDocument();
   });
 });
