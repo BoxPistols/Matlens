@@ -100,21 +100,21 @@ export const DashboardPage = ({ db, onNav, claude }: DashboardPageProps) => {
       ]}>
         {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(insight) }} />}
       </AIInsightCard>
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiCard label="総データ件数" value={db.length} delta="▲ 12件（今月）" deltaUp={true} />
         <KpiCard label="実験バッチ数" value={38} delta="▲ 3バッチ" deltaUp={true} />
         <KpiCard label="レビュー待ち" value={db.filter(r=>r.status==='レビュー待').length} delta="▼ 要対応" deltaUp={false} />
         <KpiCard label="AI 検出" value={db.filter(r=>r.ai).length} delta="異常値候補あり" color="var(--ai-col)" />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <SectionCard title="月次登録件数トレンド（12ヶ月）"><div className="chart-container"><canvas ref={chartRefs.trend} /></div></SectionCard>
         <SectionCard title="カテゴリ別件数構成"><div className="chart-container"><canvas ref={chartRefs.donut} /></div></SectionCard>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <SectionCard title="バッチ別ステータス内訳"><div className="chart-container"><canvas ref={chartRefs.status} /></div></SectionCard>
         <SectionCard title="硬度 vs 引張強さ 散布図"><div className="chart-container"><canvas ref={chartRefs.scatter} /></div></SectionCard>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <SectionCard title="最近登録されたデータ" action={<Button variant="ghost" size="xs" onClick={() => onNav('list')}>一覧へ <Icon name="chevronRight" size={10} /></Button>}>
           {db.slice(0,5).map((r, i) => (
             <div key={r.id} className="flex items-center gap-2.5 py-1.5 border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer hover:bg-hover rounded px-1 transition-colors">

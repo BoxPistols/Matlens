@@ -105,23 +105,23 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
   };
 
   return (
-    <header className="flex-shrink-0 flex items-center gap-3 px-5 h-[52px] border-b border-[rgba(255,255,255,.06)]" style={{ background: 'var(--topbar-bg)' }} role="banner">
+    <header className="flex-shrink-0 flex items-center gap-3 px-5 h-[52px] border-b border-[rgba(255,255,255,.06)] overflow-x-auto no-scrollbar" style={{ background: 'var(--topbar-bg)' }} role="banner">
       <Tooltip label="サイドバーを開閉" placement="bottom">
       <button onClick={onToggleSidebar} className="w-8 h-8 flex items-center justify-center rounded bg-white/10 border border-white/20 text-white hover:bg-white/25 transition-all flex-shrink-0" aria-label="サイドバーを開閉する">
         <svg viewBox="0 0 16 16" fill="currentColor" width={15} height={15}><rect x="1" y="3" width="14" height="1.5" rx="0.75"/><rect x="1" y="7.25" width="14" height="1.5" rx="0.75"/><rect x="1" y="11.5" width="14" height="1.5" rx="0.75"/></svg>
       </button>
       </Tooltip>
-      <div className="flex items-center gap-2 text-white select-none">
+      <div className="flex items-center gap-2 text-white select-none flex-shrink-0">
         <div className="w-6 h-6 rounded flex items-center justify-center bg-white/20 border border-white/25">
           <Icon name="dashboard" size={13} className="text-white" />
         </div>
         <span className="text-[15px] font-bold tracking-tight">Matlens</span>
       </div>
-      <div className="w-px h-4 bg-white/20" />
-      <span className="text-[12px] text-white/60 leading-none hidden sm:inline">研究・実験データ管理 v3</span>
+      <div className="w-px h-4 bg-white/20 hidden md:block flex-shrink-0" />
+      <span className="text-[12px] text-white/60 leading-none hidden lg:inline flex-shrink-0">研究・実験データ管理 v3</span>
 
       {/* Global search with live results */}
-      <div className="flex-1 max-w-lg mx-3 relative">
+      <div className="flex-1 min-w-[160px] max-w-lg mx-1 md:mx-3 relative">
         <div className="relative">
           <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"><Icon name="search" size={13} /></span>
           <input
@@ -183,7 +183,7 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
         )}
       </div>
 
-      <div className="flex gap-0.5 bg-black/25 p-0.5 rounded-md border border-white/10" role="group" aria-label="テーマ切替">
+      <div className="hidden md:flex gap-0.5 bg-black/25 p-0.5 rounded-md border border-white/10 flex-shrink-0" role="group" aria-label="テーマ切替">
         {THEMES.map(t => (
           <button key={t.id} className={`px-2.5 py-1 rounded text-[12px] font-medium transition-all duration-150 font-ui ${theme === t.id ? 'bg-white/18 text-white' : 'text-white/50 hover:text-white/80'}`} onClick={() => setTheme(t.id)} aria-pressed={theme === t.id}>
             {t.label}
@@ -194,7 +194,7 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
         <button
           type="button"
           onClick={onOpenNotifications}
-          className="relative flex items-center justify-center w-9 h-9 rounded-full border border-white/20 bg-white/10 text-white/80 hover:bg-white/20 hover:text-white transition-all duration-200"
+          className="relative flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-white/20 bg-white/10 text-white/80 hover:bg-white/20 hover:text-white transition-all duration-200"
           aria-label={unreadNotifications > 0 ? `お知らせ 未読 ${unreadNotifications} 件` : 'お知らせ'}
         >
           <Icon name="info" size={15} />
@@ -209,7 +209,7 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
         </button>
       </Tooltip>
       <Tooltip label={embStatus === "fallback" ? "キーワード検索モード" : `ベクトル検索: ${vecStatusLabel}`} placement="left">
-        <button className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 ${embStatus === 'ready' ? 'bg-vec-dim text-vec border-[var(--vec-mid)]' : 'bg-white/10 text-white/80 border-white/20'}`} aria-label="ベクトル検索ページへ">
+        <button className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 ${embStatus === 'ready' ? 'bg-vec-dim text-vec border-[var(--vec-mid)]' : 'bg-white/10 text-white/80 border-white/20'}`} aria-label="ベクトル検索ページへ">
           <Icon name="embed" size={12} />
           <span>{vecStatusLabel}</span>
           {(embStatus === 'loading' || embStatus === 'indexing') && <Typing color="currentColor" />}
@@ -220,7 +220,7 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
           href={STORYBOOK_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border border-white/20 bg-white/10 text-white/80 hover:bg-[#FF4785]/20 hover:text-white hover:border-[#FF4785]/60 transition-all duration-200"
+          className="hidden sm:flex flex-shrink-0 items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border border-white/20 bg-white/10 text-white/80 hover:bg-[#FF4785]/20 hover:text-white hover:border-[#FF4785]/60 transition-all duration-200"
           aria-label="Storybook を新しいタブで開く"
         >
           <span className="w-2 h-2 rounded-full bg-[#FF4785] flex-shrink-0" aria-hidden="true" />
@@ -229,7 +229,7 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
         </a>
       </Tooltip>
       <Tooltip label="ログインユーザー: 木村 研一" placement="left">
-      <div className="w-8 h-8 rounded-full bg-white/20 border-[1.5px] border-white/40 flex items-center justify-center text-[11px] font-bold text-white" aria-label="ログインユーザー">
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 border-[1.5px] border-white/40 flex items-center justify-center text-[11px] font-bold text-white" aria-label="ログインユーザー">
         KK
       </div>
       </Tooltip>

@@ -9,17 +9,23 @@
   --bg-base:#eef0f3; --bg-surface:#ffffff; --bg-raised:#f5f6f8;
   --bg-sunken:#e4e6ea; --bg-hover:#e8eef7; --bg-active:#d4e2f4;
   --border-faint:rgba(0,30,80,.07); --border-default:rgba(0,30,80,.13);
-  --border-strong:rgba(0,30,80,.22); --border-focus:#0050AA;
+  --border-strong:rgba(0,30,80,.22); --border-focus:#0a5fcc;
   --text-hi:#0d1520; --text-md:#3a4554; --text-lo:#6b7a8d;
-  --accent:#004590; --accent-hover:#003070;
-  --accent-dim:#dce8f7; --accent-mid:#1a6bc0;
-  --accent-glow:rgba(0,69,144,.12);
-  --ai-col:#3b35a0; --ai-dim:#ebebfa; --ai-mid:#5c56cc;
-  --ai-glow:rgba(59,53,160,.1);
-  --vec:#0a6657; --vec-dim:#d8f0eb; --vec-mid:#0f8f78;
-  --ok:#1e6b0f; --ok-dim:#e4f3de;
-  --warn:#7a4b00; --warn-dim:#fdf0d8;
-  --err:#8b1a1a; --err-dim:#fdeaea;
+  /* Accent — sapphire. 6.5:1 on white, visibly richer than previous navy */
+  --accent:#0d5dc7; --accent-hover:#094ba3;
+  --accent-dim:#e2ecfa; --accent-mid:#2c78db;
+  --accent-glow:rgba(13,93,199,.14);
+  /* AI — vibrant indigo, still WCAG AA on white */
+  --ai-col:#524acc; --ai-dim:#ececfb; --ai-mid:#6c65e0;
+  --ai-glow:rgba(82,74,204,.14);
+  /* Vec — fresh teal. 4.7:1 on white */
+  --vec:#0e8c72; --vec-dim:#d6f1ea; --vec-mid:#14a585;
+  /* OK — slightly brighter forest green */
+  --ok:#2a8418; --ok-dim:#e3f3db;
+  /* Warn — amber. Shifts from brown toward warmer amber for clarity */
+  --warn:#a05d00; --warn-dim:#fdefd5;
+  /* Err — vivid red */
+  --err:#b52424; --err-dim:#fde8e8;
   --tag-surface:#e8ebef;
   --shadow-xs:0 1px 2px rgba(0,20,60,.06);
   --shadow-sm:0 2px 6px rgba(0,20,60,.08);
@@ -122,9 +128,13 @@ body{
 :focus-visible{outline:2px solid var(--border-focus);outline-offset:2px;border-radius:var(--radius-sm)}
 :focus:not(:focus-visible){outline:none}
 
+/* Utility — hide scrollbar but keep horizontal scrolling enabled (topbar on mobile) */
+.no-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
+.no-scrollbar::-webkit-scrollbar{display:none}
+
 /* Text selection — theme-aware, avoids muddy OS defaults on dark cards */
-[data-theme="light"] ::selection{background:#b6d4f5;color:#0d1520}
-[data-theme="light"] ::-moz-selection{background:#b6d4f5;color:#0d1520}
+[data-theme="light"] ::selection{background:#c2dcf8;color:#0d1520}
+[data-theme="light"] ::-moz-selection{background:#c2dcf8;color:#0d1520}
 [data-theme="dark"] ::selection{background:#3560a0;color:#f2f8ff}
 [data-theme="dark"] ::-moz-selection{background:#3560a0;color:#f2f8ff}
 [data-theme="eng"] ::selection{background:#0d4a3c;color:#e8f0f5}
