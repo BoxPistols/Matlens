@@ -39,7 +39,7 @@ Matlens はプロトタイプ段階のプロダクトですが、セキュリテ
 
 ### HTTP Security Headers (`vercel.json`)
 - `Content-Security-Policy` (self + 明示的な connect-src アローリスト)
-- `X-Frame-Options: DENY` + CSP `frame-ancestors 'none'` (クリックジャッキング対策)
+- `X-Frame-Options: SAMEORIGIN` + CSP `frame-ancestors 'self'` (クリックジャッキング対策。Storybook の自己 iframe を許可しつつ外部埋め込みはブロック)
 - `X-Content-Type-Options: nosniff`
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `Strict-Transport-Security` (HSTS, 1 年)
