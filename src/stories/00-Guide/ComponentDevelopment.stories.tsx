@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect, useRef } from 'react'
 import Prism from 'prismjs'
+import 'prismjs/components/prism-markup'
+import 'prismjs/components/prism-javascript'
+import 'prismjs/components/prism-jsx'
 import 'prismjs/components/prism-typescript'
 import 'prismjs/components/prism-tsx'
-import 'prismjs/components/prism-bash'
-import 'prismjs/components/prism-json'
-import 'prismjs/components/prism-css'
 
 const Step = ({ num, title, children }: { num: string; title: string; children: React.ReactNode }) => (
   <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>

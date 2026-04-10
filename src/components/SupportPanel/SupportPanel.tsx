@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Icon, IconName } from '../Icon';
 import { Button, Badge, Input, FormGroup, Divider, ProgressBar } from '../atoms';
 import { AppCtx } from '../../context/AppContext';
-import { PROVIDERS, SUPPORT_TABS, FAQ_ITEMS } from '../../data/constants';
+import { PROVIDERS, SUPPORT_TABS, FAQ_ITEMS, STORYBOOK_URL } from '../../data/constants';
 import type { AIHook, AppContextValue } from '../../types';
 
 interface SupportPanelProps {
@@ -72,10 +72,26 @@ export const SupportPanel = ({ ai, visible, onClose, onNav }: SupportPanelProps)
               ))}
             </div>
             <Divider />
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button variant="default" size="sm" onClick={() => { onNav('help'); onClose(); }}><Icon name="help" size={11} />詳細ヘルプ</Button>
               <Button variant="default" size="sm" onClick={() => { onNav('about'); onClose(); }}><Icon name="about" size={11} />技術スタック</Button>
             </div>
+            <a
+              href={STORYBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2.5 p-2.5 rounded-md border border-[#FF4785]/40 bg-[#FF4785]/8 hover:bg-[#FF4785]/15 hover:border-[#FF4785] transition-all text-left group"
+              aria-label="Storybook を新しいタブで開く"
+            >
+              <span className="w-7 h-7 rounded-md bg-[#FF4785] flex items-center justify-center text-white font-black text-[13px] flex-shrink-0">M</span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[12px] font-semibold text-text-hi flex items-center gap-1.5">
+                  Storybook
+                  <span className="text-[10px] text-text-lo">↗</span>
+                </div>
+                <div className="text-[11px] text-text-lo">コンポーネント・デザインシステムを参照</div>
+              </div>
+            </a>
           </div>
         )}
         {tab === 'faq' && (

@@ -2,6 +2,7 @@ import React from 'react';
 import { Icon, IconName } from '../../components/Icon';
 import { Badge, Card, SectionCard } from '../../components/atoms';
 import { AIInsightCard, VecCard } from '../../components/molecules';
+import { STORYBOOK_URL } from '../../data/constants';
 
 export const AboutPage = () => {
   const TECH = [
@@ -108,7 +109,6 @@ export const AboutPage = () => {
             {[
               ['Vercel (本番)','GitHubプッシュで自動デプロイ。静的ファイル + Serverless Functions。環境変数でAPIキー管理。'],
               ['Vite dev server (ローカル)','npm run dev で起動。/api/ai は開発モードでデモ応答を返す。自前キー設定時は直接API。'],
-              ['Storybook 10','npm run storybook でコンポーネントカタログを起動。ストーリーは各コンポーネントフォルダにコロケーション。'],
               ['Vitest','npm run test でユニットテスト実行。各モジュールと同じフォルダにテストファイルを配置。'],
             ].map(([title, desc]) => (
               <div key={title} className="flex gap-2.5 py-2 border-b border-[var(--border-faint)] last:border-b-0">
@@ -119,6 +119,23 @@ export const AboutPage = () => {
                 </div>
               </div>
             ))}
+            <a
+              href={STORYBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 mt-1 rounded-md border border-[#FF4785]/40 bg-[#FF4785]/8 hover:bg-[#FF4785]/15 hover:border-[#FF4785] transition-all"
+              aria-label="Storybook を新しいタブで開く"
+            >
+              <span className="w-10 h-10 rounded-md bg-[#FF4785] flex items-center justify-center text-white font-black text-[18px] flex-shrink-0 shadow-sm">M</span>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-bold text-text-hi flex items-center gap-1.5">
+                  Storybook 10 <span className="text-[11px] text-text-lo">（公開中）</span>
+                  <span className="text-[11px] opacity-70">↗</span>
+                </div>
+                <div className="text-[12px] text-text-md mt-0.5 truncate">{STORYBOOK_URL}</div>
+                <div className="text-[11px] text-text-lo mt-0.5">コンポーネントカタログ・デザイン原則・ストーリー一覧を参照</div>
+              </div>
+            </a>
           </div>
         </SectionCard>
       </div>

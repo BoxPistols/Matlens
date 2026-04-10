@@ -3,6 +3,7 @@ import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Typing, Badge } from '../atoms';
 import type { Material } from '../../types';
+import { STORYBOOK_URL } from '../../data/constants';
 
 interface TopbarProps {
   theme: string;
@@ -189,6 +190,19 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
           <span>{vecStatusLabel}</span>
           {(embStatus === 'loading' || embStatus === 'indexing') && <Typing color="currentColor" />}
         </button>
+      </Tooltip>
+      <Tooltip label="Storybook - コンポーネントカタログ" placement="bottom">
+        <a
+          href={STORYBOOK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border border-white/20 bg-white/10 text-white/80 hover:bg-[#FF4785]/20 hover:text-white hover:border-[#FF4785]/60 transition-all duration-200"
+          aria-label="Storybook を新しいタブで開く"
+        >
+          <span className="w-2 h-2 rounded-full bg-[#FF4785] flex-shrink-0" aria-hidden="true" />
+          <span>Storybook</span>
+          <span className="text-[10px] opacity-70" aria-hidden="true">↗</span>
+        </a>
       </Tooltip>
       <Tooltip label="ログインユーザー: 木村 研一" placement="left">
       <div className="w-8 h-8 rounded-full bg-white/20 border-[1.5px] border-white/40 flex items-center justify-center text-[11px] font-bold text-white" aria-label="ログインユーザー">
