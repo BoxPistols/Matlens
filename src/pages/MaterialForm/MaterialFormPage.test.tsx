@@ -26,12 +26,15 @@ describe('MaterialFormPage', () => {
       />,
     );
 
+  // Use a real id from the seed list. The previous hard-coded MAT-0247 has
+  // been retired since the seed range was renumbered.
+  const EDIT_FIXTURE = INITIAL_DB[0];
   const setupEdit = () =>
     renderWithContext(
       <MaterialFormPage
         db={INITIAL_DB}
         dispatch={mockContext.dispatch}
-        editId="MAT-0247"
+        editId={EDIT_FIXTURE.id}
         onCancel={onCancel}
         onSuccess={onSuccess}
         claude={mockClaude}
