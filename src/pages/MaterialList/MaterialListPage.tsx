@@ -135,15 +135,15 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
       <Card className="p-3">
         <div className="flex gap-2 flex-wrap items-center">
           <SearchBox value={q} onChange={setQ} placeholder="名称・ID・組成・備考で全文検索..." className="min-w-48 flex-1" />
-          <Select value={filterCat} onChange={e=>setFilterCat(e.target.value)} className="min-w-[120px]">
+          <Select aria-label="カテゴリでフィルタ" value={filterCat} onChange={e=>setFilterCat(e.target.value)} className="min-w-[120px]">
             <option value="">全カテゴリ</option>
             {['金属合金','セラミクス','ポリマー','複合材料'].map(c=><option key={c}>{c}</option>)}
           </Select>
-          <Select value={filterSt} onChange={e=>setFilterSt(e.target.value)} className="min-w-[120px]">
+          <Select aria-label="ステータスでフィルタ" value={filterSt} onChange={e=>setFilterSt(e.target.value)} className="min-w-[120px]">
             <option value="">全ステータス</option>
             {['登録済','レビュー待','承認済','要修正'].map(s=><option key={s}>{s}</option>)}
           </Select>
-          <Select value={filterBatch} onChange={e=>setFilterBatch(e.target.value)}>
+          <Select aria-label="バッチでフィルタ" value={filterBatch} onChange={e=>setFilterBatch(e.target.value)}>
             <option value="">全バッチ</option>
             {['B-038','B-037','B-036','B-035'].map(b=><option key={b}>{b}</option>)}
           </Select>
@@ -187,7 +187,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
             </div>
           )}
           <div className="ml-auto flex items-center gap-2">
-            <Select value={sortKey} onChange={e=>setSortKey(e.target.value)} className="text-[12px] py-1">
+            <Select aria-label="並び順" value={sortKey} onChange={e=>setSortKey(e.target.value)} className="text-[12px] py-1">
               {[['id-desc','ID降順'],['id-asc','ID昇順'],['hv-desc','硬度高'],['hv-asc','硬度低'],['dt-desc','日付新'],['nm-asc','名称']].map(([v,l])=><option key={v} value={v}>{l}</option>)}
             </Select>
             <div className="flex bg-raised rounded-md border border-[var(--border-faint)] p-0.5">
@@ -225,7 +225,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <tr><td colSpan={10} className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></td></tr>
                 ) : slice.map(r => (
                   <tr key={r.id} className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`} onClick={e => { if((e.target as HTMLElement).tagName==='BUTTON'||(e.target as HTMLElement).tagName==='INPUT') return; onDetail(r.id); }}>
-                    <td onClick={e=>e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={()=>toggleSelect(r.id)} /></label></td>
+                    <td onClick={e=>e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={()=>toggleSelect(r.id)} aria-label={`${r.name} を選択`} /></label></td>
                     <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] text-text-lo"><Hl text={r.id} query={q} /></span></td>
                     <td className="px-3.5 py-2.5"><span className="font-semibold"><Hl text={r.name} query={q} /></span></td>
                     <td className="px-3.5 py-2.5"><Badge variant="gray">{r.cat}</Badge></td>
@@ -301,7 +301,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
         <div className="flex items-center justify-between px-4 py-2.5 bg-raised border-t border-[var(--border-faint)]">
           <span className="text-[12px] text-text-lo">{(page-1)*pageSize+1}–{Math.min(page*pageSize,filtered.length)} / {filtered.length}件</span>
           <div className="flex items-center gap-1">
-            <Button variant="default" size="xs" onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page<=1}><Icon name="chevronLeft" size={10} /></Button>
+            <Button variant="default" size="xs" onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={page<=1} aria-label="前のページ"><Icon name="chevronLeft" size={10} /></Button>
             {Array.from({length:Math.min(totalPages,5)},(_,i)=>{
               let p = i+1;
               if(totalPages>5){
@@ -311,8 +311,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
               }
               return <Button key={p} variant={p===page?'primary':'default'} size="xs" onClick={()=>setPage(p)}>{p}</Button>;
             })}
-            <Button variant="default" size="xs" onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page>=totalPages}><Icon name="chevronRight" size={10} /></Button>
-            <Select value={pageSize} onChange={e=>{setPageSize(parseInt(e.target.value));setPage(1);}} className="text-[12px] py-1 ml-2">
+            <Button variant="default" size="xs" onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={page>=totalPages} aria-label="次のページ"><Icon name="chevronRight" size={10} /></Button>
+            <Select aria-label="1ページあたりの件数" value={pageSize} onChange={e=>{setPageSize(parseInt(e.target.value));setPage(1);}} className="text-[12px] py-1 ml-2">
               {[10,25,50].map(n=><option key={n} value={n}>{n}件</option>)}
             </Select>
           </div>
