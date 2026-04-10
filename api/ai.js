@@ -16,6 +16,13 @@ import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 import { checkRateLimit, getRemainingQuota } from './lib/ratelimit.js';
 import { classifyAIError } from './lib/aiErrors.js';
+import {
+  ValidationError,
+  validatePrompt,
+  validateOptionalSystem,
+  validateProvider,
+  assertJsonContentType,
+} from './lib/validation.js';
 
 // @ai-sdk/google reads from GOOGLE_GENERATIVE_AI_API_KEY; accept GEMINI_API_KEY
 // as an alias since that's what the rest of the Matlens codebase uses.
@@ -60,9 +67,24 @@ export default async function handler(req, res) {
     return errorResponse(res, 405, { code: 'UNKNOWN', message: 'Method not allowed' });
   }
 
-  const { provider, prompt, system } = req.body || {};
-  if (!prompt) {
-    return errorResponse(res, 400, { code: 'UNKNOWN', message: 'prompt is required' });
+  // Input validation — reject bad content-type, unknown providers, and
+  // oversized / empty / null-byte-infested prompts before touching the
+  // rate limiter or the upstream model. Everything from req.body is
+  // treated as untrusted.
+  let provider;
+  let prompt;
+  let system;
+  try {
+    assertJsonContentType(req);
+    const body = req.body || {};
+    provider = validateProvider(body.provider);
+    prompt = validatePrompt(body.prompt);
+    system = validateOptionalSystem(body.system);
+  } catch (e) {
+    if (e instanceof ValidationError) {
+      return errorResponse(res, e.status || 400, { code: 'BAD_REQUEST', message: e.message });
+    }
+    throw e;
   }
 
   // Provider key presence check (friendlier than downstream auth error)
