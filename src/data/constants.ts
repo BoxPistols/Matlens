@@ -61,6 +61,7 @@ export const FAQ_ITEMS: { q: string; a: string }[] = [
 
 export const SUPPORT_TABS: { id: string; label: string; icon: string }[] = [
   { id: 'help', label: 'ヘルプ', icon: 'help' },
+  { id: 'news', label: 'お知らせ', icon: 'spark' },
   { id: 'faq',  label: 'Q&A',   icon: 'info' },
   { id: 'ai',   label: 'AI設定', icon: 'ai' },
 ];

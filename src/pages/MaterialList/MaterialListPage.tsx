@@ -246,7 +246,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
 
         {/* === Card view === */}
         {viewMode === 'card' && (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-3">
             {slice.length === 0 ? (
               <div className="col-span-full text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></div>
             ) : slice.map(r => (
