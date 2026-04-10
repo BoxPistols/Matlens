@@ -65,6 +65,11 @@ export function App() {
   const [page, setPage] = useState(initialRoute.page);
   const [detailId, setDetailId] = useState<string | null>(initialRoute.detailId);
   const isFirstRender = useRef(true);
+  // Track how many hash navigations the app itself has pushed. Used by
+  // goBack() to know whether window.history.back() will stay inside Matlens
+  // or step off the site entirely (e.g. when the user landed on a shared
+  // detail URL with no prior in-app navigation).
+  const navDepth = useRef(0);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -105,6 +110,7 @@ export function App() {
       window.history.replaceState(null, '', nextHash);
     } else {
       window.history.pushState(null, '', nextHash);
+      navDepth.current += 1;
     }
   }, [page, detailId]);
 
@@ -113,12 +119,16 @@ export function App() {
   }, []);
 
   // Browser back / forward (including Cmd+[, Cmd+], and the buttons) fires
-  // popstate — sync our React state back from the URL.
+  // popstate — sync our React state back from the URL. Every popstate means
+  // the user walked one entry in the browser history, so decrement the
+  // counter (but never below zero — forward navigation is also popstate and
+  // we don't track a separate forward depth).
   useEffect(() => {
     const handler = () => {
       const next = parseHash();
       setPage(next.page);
       setDetailId(next.detailId);
+      navDepth.current = Math.max(0, navDepth.current - 1);
     };
     window.addEventListener('popstate', handler);
     return () => window.removeEventListener('popstate', handler);
@@ -157,7 +167,15 @@ export function App() {
   };
 
   const goBack = useCallback(() => {
-    window.history.back();
+    if (navDepth.current > 0) {
+      window.history.back();
+    } else {
+      // No in-app navigations to pop (e.g. user opened a shared detail URL
+      // directly). Route to the material list instead of letting back()
+      // navigate off the site.
+      setPage('list');
+      setDetailId(null);
+    }
   }, []);
 
   const showDetail = (id: string) => { setDetailId(id); setPage('detail'); };
