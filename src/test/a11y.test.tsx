@@ -19,7 +19,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { axe } from 'jest-axe';
-import { renderWithContext, mockClaude, mockEmbedding, mockVoice, INITIAL_DB, mockContext } from './helpers';
+import { renderWithContext, mockClaude, mockEmbedding, INITIAL_DB, mockContext } from './helpers';
 import { MaterialListPage } from '../pages/MaterialList';
 import { HelpPage } from '../pages/Help';
 import { AboutPage } from '../pages/About';
@@ -51,9 +51,6 @@ describe('a11y smoke', () => {
         dispatch={mockContext.dispatch}
         onNav={() => {}}
         onDetail={() => {}}
-        claude={mockClaude}
-        embedding={mockEmbedding}
-        voice={mockVoice}
         search={mockEmbedding.search}
       />,
     );

@@ -1,0 +1,7 @@
+# Pre-commit: run the typecheck + lint, but NOT the full test suite.
+# Tests are CI's job — blocking local commits on them is too slow and
+# encourages --no-verify, which is worse than not having the hook at all.
+#
+# If a specific hot-spot needs a heavier pre-commit check, add it here.
+pnpm typecheck
+pnpm lint

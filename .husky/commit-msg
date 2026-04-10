@@ -1,0 +1,4 @@
+# Enforce Conventional Commits via commitlint. The message file path is
+# passed in $1 by git. `--edit` tells commitlint to read from that path
+# rather than stdin.
+pnpm exec commitlint --edit "$1"
