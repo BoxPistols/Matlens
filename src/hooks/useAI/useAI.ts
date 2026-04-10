@@ -41,7 +41,7 @@ export function useAI(): AIHook {
         const res = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ownKey}` },
-          body: JSON.stringify({ model, max_tokens: 1000, messages: [{ role: 'system', content: sys }, { role: 'user', content: prompt }] })
+          body: JSON.stringify({ model, max_completion_tokens: 1000, messages: [{ role: 'system', content: sys }, { role: 'user', content: prompt }] })
         });
         const d = await res.json();
         if (d.error) return `OpenAI エラー: ${d.error.message}`;

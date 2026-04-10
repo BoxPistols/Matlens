@@ -104,7 +104,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
         body: JSON.stringify({
           model: 'gpt-5.4-nano',
-          max_tokens: 1000,
+          max_completion_tokens: 1000,
           messages: [
             { role: 'system', content: sys },
             { role: 'user', content: prompt },

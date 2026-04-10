@@ -77,7 +77,7 @@ export function devApiProxy() {
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
               body: JSON.stringify({
                 model,
-                max_tokens: 1000,
+                max_completion_tokens: 1000,
                 messages: [
                   { role: 'system', content: sys },
                   { role: 'user', content: prompt },
