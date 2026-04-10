@@ -5,17 +5,18 @@
 // goal is _not_ to replace manual / keyboard testing, but to catch the
 // class of accessibility bugs that are cheap to detect automatically:
 //   • missing form labels
-//   • contrast failures on static text
 //   • role / aria-* mismatches
-//   • buttons with no accessible name
+//   • buttons / selects with no accessible name
 //
-// We deliberately skip pages that embed <canvas> (Dashboard charts) —
-// jsdom can't render them and the axe rules would return noise.
+// Color contrast is intentionally EXCLUDED here (see the `rules` override
+// below) — jsdom can't resolve the `var(--text-hi)` style our theme uses,
+// so axe-core would produce noise. Real contrast checking happens in
+// Storybook via `@storybook/addon-a11y` on fully rendered components.
 //
-// If a new page is added, add it here rather than crafting one-off
-// a11y specs. Pages that _should_ be audited but can't be right now
-// (e.g. because they need a real canvas) must be listed in EXPECTED_SKIPS
-// with a comment pointing at the blocker.
+// Pages that embed `<canvas>` (Dashboard charts) are deliberately not
+// audited here because jsdom can't render them. If a new page is added
+// that needs to be exempted, document the reason inline where it's
+// excluded rather than maintaining a separate skip list.
 
 import { describe, it, expect } from 'vitest';
 import { axe } from 'jest-axe';

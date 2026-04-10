@@ -9,11 +9,11 @@
 //           fix(search): guard against empty db
 //           chore: bump dependencies
 //
-// Allowed types are intentionally kept close to the default preset so
-// existing tooling (Dependabot, commitizen, semantic-release) works
-// without further config. `rag` / `maiml` / `a11y` are added because
-// those are recurring Matlens-specific scopes that would otherwise get
-// shoved into generic buckets.
+// Allowed commit types match the @commitlint/config-conventional default
+// preset so existing tooling (Dependabot, commitizen, semantic-release)
+// works without further config. Scopes are intentionally NOT constrained
+// here — Matlens-specific areas like `rag`, `maiml`, `a11y`, `ai`, `ui`
+// are fine to use but are enforced only by convention, not by lint.
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
