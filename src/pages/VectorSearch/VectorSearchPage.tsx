@@ -3,6 +3,7 @@ import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Select, Typing } from '../../components/atoms';
 import { VecCard } from '../../components/molecules';
 import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
+import { isPlainEnter } from '../../utils/keyboard';
 
 interface VectorSearchPageProps {
   db: Material[];
@@ -53,7 +54,7 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
         <div className="flex gap-2 items-center">
           <div className="relative flex-1">
             <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-vec pointer-events-none"><Icon name="vecSearch" size={15} /></span>
-            <Input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>e.key==='Enter'&&runSearch()}
+            <Input value={query} onChange={e=>setQuery(e.target.value)} onKeyDown={e=>{ if(isPlainEnter(e))runSearch(); }}
               placeholder='例: "高温でも強度が落ちない軽量合金" / "耐食性が高いステンレス系"'
               className="pl-9 text-[14px]" />
           </div>

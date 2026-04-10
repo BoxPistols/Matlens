@@ -1,2 +1,8 @@
-<link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-<script>document.title = 'Matlens Storybook';</script>
+<link rel="icon" type="image/svg+xml" href="./sb-favicon.svg" />
+<script>
+  document.title = 'Matlens Storybook';
+  // Remove the default favicon link injected by Storybook template so the hot-pink one wins
+  document.querySelectorAll('link[rel="icon"]').forEach(l => {
+    if (l.getAttribute('href') !== './sb-favicon.svg') l.remove();
+  });
+</script>
