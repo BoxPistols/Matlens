@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useReducer, useCallback, useRef, lazy, Suspense } from 'react';
 import type { Toast, AppContextValue } from './types';
 import { AppCtx, dbReducer } from './context/AppContext';
 import { INITIAL_DB } from './data/initialDb';
@@ -39,13 +39,32 @@ const LazyFallback = () => (
   </div>
 );
 
-type NavEntry = { page: string; detailId: string | null };
+// Hash routing — persisted in window.location so reload / browser back-forward
+// / copy-paste URL all "just work". Detail / edit pages embed the record id as
+// a second segment (#/detail/MAT-0368); everything else is a single segment.
+// One-shot query state (rag initial query, sim base material) is intentionally
+// NOT persisted — those are one-action kickstarts that would be annoying to
+// replay on reload.
+function parseHash(): { page: string; detailId: string | null } {
+  if (typeof window === 'undefined') return { page: 'dash', detailId: null };
+  const parts = window.location.hash.slice(1).split('/').filter(Boolean);
+  if (parts.length === 0) return { page: 'dash', detailId: null };
+  return { page: parts[0], detailId: parts[1] ?? null };
+}
+
+function buildHash(page: string, detailId: string | null): string {
+  if (detailId && (page === 'detail' || page === 'edit')) {
+    return `#/${page}/${detailId}`;
+  }
+  return `#/${page}`;
+}
 
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
-  const [page, setPage] = useState('dash');
-  const [detailId, setDetailId] = useState<string | null>(null);
-  const [history, setHistory] = useState<NavEntry[]>([]);
+  const initialRoute = parseHash();
+  const [page, setPage] = useState(initialRoute.page);
+  const [detailId, setDetailId] = useState<string | null>(initialRoute.detailId);
+  const isFirstRender = useRef(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -76,18 +95,60 @@ export function App() {
     setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3200);
   }, []);
 
-  // Push the current page onto history before navigating to a new one
-  const pushHistory = () => {
-    setHistory(h => {
-      const last = h[h.length - 1];
-      // Avoid pushing duplicate consecutive entries
-      if (last && last.page === page && last.detailId === detailId) return h;
-      return [...h, { page, detailId }];
-    });
-  };
+  // Write state back to location.hash so reload / back-forward buttons work.
+  // The first render uses replaceState so we don't inject an extra history
+  // entry for the initial paint.
+  useEffect(() => {
+    const nextHash = buildHash(page, detailId);
+    if (window.location.hash === nextHash) return;
+    if (isFirstRender.current) {
+      window.history.replaceState(null, '', nextHash);
+    } else {
+      window.history.pushState(null, '', nextHash);
+    }
+  }, [page, detailId]);
+
+  useEffect(() => {
+    isFirstRender.current = false;
+  }, []);
+
+  // Browser back / forward (including Cmd+[, Cmd+], and the buttons) fires
+  // popstate — sync our React state back from the URL.
+  useEffect(() => {
+    const handler = () => {
+      const next = parseHash();
+      setPage(next.page);
+      setDetailId(next.detailId);
+    };
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
+  }, []);
+
+  // Cmd+Arrow (macOS) / Alt+Arrow (Windows / Linux) should walk the browser
+  // history just like the back/forward buttons, but only when the user isn't
+  // editing a text field (Cmd+Left / Cmd+Right are also cursor navigation in
+  // <input> on macOS, and we must not hijack them there).
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      if (target?.isContentEditable) return;
+      if (!(e.metaKey || e.altKey)) return;
+      if (e.ctrlKey || e.shiftKey) return;
+      if (e.key === 'ArrowLeft' || e.key === '[') {
+        e.preventDefault();
+        window.history.back();
+      } else if (e.key === 'ArrowRight' || e.key === ']') {
+        e.preventDefault();
+        window.history.forward();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const navTo = (p: string) => {
-    pushHistory();
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
     if (p.startsWith('detail_')) { setDetailId(p.slice(7)); setPage('detail'); return; }
     if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
@@ -95,17 +156,11 @@ export function App() {
     setPage(p); if (p !== 'detail') setDetailId(null);
   };
 
-  const goBack = () => {
-    setHistory(h => {
-      if (h.length === 0) { setPage('list'); setDetailId(null); return h; }
-      const prev = h[h.length - 1];
-      setPage(prev.page);
-      setDetailId(prev.detailId);
-      return h.slice(0, -1);
-    });
-  };
+  const goBack = useCallback(() => {
+    window.history.back();
+  }, []);
 
-  const showDetail = (id: string) => { pushHistory(); setDetailId(id); setPage('detail'); };
+  const showDetail = (id: string) => { setDetailId(id); setPage('detail'); };
   const handleGlobalSearch = useCallback((q: string) => { setGlobalQuery(q); setPage('list'); }, []);
 
   const renderPage = () => {
