@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
+import {
+  serializeMaterialsToMaiml,
+  downloadMaimlFile,
+  defaultMaimlFilename,
+  parseMaimlToMaterials,
+} from '../../services/maiml';
 import { Icon, IconName } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Button, Badge, Card, Input, SectionCard } from '../atoms';
@@ -57,6 +63,12 @@ interface ExportModalProps {
   onClose: () => void;
   db: Material[];
   filtered: Material[];
+}
+
+interface ImportModalProps {
+  open: boolean;
+  onClose: () => void;
+  onImport: (materials: Material[]) => void;
 }
 
 interface TypingProps {
@@ -226,24 +238,189 @@ export const ExportModal = ({ open, onClose, db, filtered }: ExportModalProps) =
     win.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Matlens レポート</title><style>body{font-family:sans-serif;font-size:11px;padding:20px}h1{font-size:16px;margin-bottom:4px}.meta{color:#666;font-size:11px;margin-bottom:16px}table{width:100%;border-collapse:collapse}th{background:#1e3050;color:#fff;padding:6px 8px;text-align:left;font-size:10px}td{padding:5px 8px;border-bottom:1px solid #e0e0e0;font-size:10px}tr:nth-child(even) td{background:#f7f7f5}</style></head><body><h1>Matlens 材料データレポート</h1><div class="meta">出力: ${new Date().toLocaleString('ja-JP')} ／ 総件数: ${db.length}件</div><table><thead><tr><th>ID</th><th>名称</th><th>カテゴリ</th><th>硬度HV</th><th>引張MPa</th><th>ステータス</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
     win.document.close(); setTimeout(() => win.print(), 400); onClose();
   };
-  const items = [
+  const exportMaiML = () => {
+    const xml = serializeMaterialsToMaiml(filtered.length > 0 ? filtered : db);
+    downloadMaimlFile(xml, defaultMaimlFilename('matlens'));
+    onClose();
+  };
+  const exportMaiMLAll = () => {
+    const xml = serializeMaterialsToMaiml(db);
+    downloadMaimlFile(xml, `matlens_all_${new Date().toISOString().slice(0, 10)}.maiml`);
+    onClose();
+  };
+  const exportMarkdown = () => {
+    const rows = filtered.map(r => `| ${r.id} | ${r.name} | ${r.cat} | ${r.hv} | ${r.ts} | ${r.comp} | ${r.status} |`).join('\n');
+    const md = `# Matlens 材料データ\n\n出力日時: ${new Date().toLocaleString('ja-JP')}  \n件数: ${filtered.length}件\n\n| ID | 名称 | カテゴリ | 硬度HV | 引張MPa | 組成 | ステータス |\n| --- | --- | --- | --- | --- | --- | --- |\n${rows}\n`;
+    const a = document.createElement('a');
+    a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
+    a.download = `matdb_${new Date().toISOString().slice(0, 10)}.md`; a.click(); onClose();
+  };
+
+  // MaiML is the platform's primary data format (JIS K 0200:2024), so it is
+  // rendered first and visually promoted as the recommended option. The
+  // secondary formats remain available for legacy tooling and ad-hoc sharing.
+  const primary = {
+    label: 'MaiML（推奨）',
+    desc: 'JIS K 0200:2024 共通フォーマット — 他システム連携の基盤',
+    action: exportMaiML,
+  };
+  const secondary: { icon: IconName; label: string; desc: string; action: () => void }[] = [
+    { icon: 'report', label: 'MaiML（全件）', desc: 'DB全件を MaiML で出力', action: exportMaiMLAll },
     { icon: 'csv', label: 'CSV', desc: 'Excel で開けるCSV形式', action: exportCSV },
     { icon: 'json', label: 'JSON', desc: 'システム連携用JSON', action: exportJSON },
+    { icon: 'report', label: 'Markdown', desc: 'ドキュメント共有用', action: exportMarkdown },
     { icon: 'pdf', label: 'PDF レポート', desc: '印刷用フルレポート', action: exportPDF },
-    { icon: 'report', label: '全件 JSON', desc: 'DBフル出力', action: () => { exportJSON(); onClose(); } },
   ];
+
   return (
     <Modal open={open} onClose={onClose} title="データエクスポート" footer={<Button variant="default" onClick={onClose}>閉じる</Button>}>
-      <div className="grid grid-cols-2 gap-2.5">
-        {items.map(item => (
-          <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-2 p-4 bg-raised border border-[var(--border-default)] rounded-md cursor-pointer hover:border-accent hover:bg-accent-dim transition-all duration-150 text-center font-ui">
-            <Icon name={item.icon as IconName} size={22} className="text-accent" />
-            <div>
-              <div className="text-[13px] font-bold text-text-hi">{item.label}</div>
-              <div className="text-[12px] text-text-lo mt-0.5">{item.desc}</div>
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={primary.action}
+          className="flex items-center gap-3 p-4 rounded-md border-2 border-accent bg-accent-dim hover:bg-hover transition-all duration-150 text-left font-ui"
+        >
+          <div className="w-10 h-10 rounded-md bg-accent text-white flex items-center justify-center flex-shrink-0">
+            <Icon name="embed" size={18} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <div className="text-[14px] font-bold text-text-hi">{primary.label}</div>
+              <Badge variant="blue" className="text-[10px]">PRIMARY</Badge>
             </div>
-          </button>
-        ))}
+            <div className="text-[12px] text-text-md mt-0.5">{primary.desc}</div>
+          </div>
+        </button>
+        <div className="grid grid-cols-2 gap-2.5">
+          {secondary.map(item => (
+            <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-2 p-3 bg-raised border border-[var(--border-default)] rounded-md cursor-pointer hover:border-accent hover:bg-hover transition-all duration-150 text-center font-ui">
+              <Icon name={item.icon} size={20} className="text-text-md" />
+              <div>
+                <div className="text-[12px] font-bold text-text-hi">{item.label}</div>
+                <div className="text-[11px] text-text-lo mt-0.5">{item.desc}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+// MaiML / JSON / CSV ファイルをアップロードして Material[] として返すモーダル。
+// 親側 (MaterialListPage など) は onImport で dispatch し DB に反映する。
+export const ImportModal = ({ open, onClose, onImport }: ImportModalProps) => {
+  const [error, setError] = useState<string | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [previewCount, setPreviewCount] = useState<number | null>(null);
+  const [parsed, setParsed] = useState<Material[] | null>(null);
+  const [filename, setFilename] = useState<string>('');
+
+  const reset = () => {
+    setError(null);
+    setWarnings([]);
+    setPreviewCount(null);
+    setParsed(null);
+    setFilename('');
+  };
+
+  const handleFile = async (file: File) => {
+    reset();
+    setFilename(file.name);
+    const text = await file.text();
+    const lower = file.name.toLowerCase();
+    try {
+      if (lower.endsWith('.maiml') || lower.endsWith('.xml') || text.trim().startsWith('<')) {
+        const result = parseMaimlToMaterials(text);
+        setParsed(result.materials);
+        setPreviewCount(result.materials.length);
+        setWarnings(result.warnings);
+        return;
+      }
+      if (lower.endsWith('.json') || text.trim().startsWith('{')) {
+        const json = JSON.parse(text);
+        const list: Material[] = Array.isArray(json) ? json : (json.data ?? []);
+        setParsed(list);
+        setPreviewCount(list.length);
+        return;
+      }
+      setError('対応していないファイル形式です（.maiml / .xml / .json を選択してください）');
+    } catch (e) {
+      setError(`読み込みエラー: ${(e as Error).message}`);
+    }
+  };
+
+  const handleConfirm = () => {
+    if (!parsed || parsed.length === 0) return;
+    onImport(parsed);
+    reset();
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={() => { reset(); onClose(); }}
+      title="データインポート"
+      footer={
+        <>
+          <Button variant="default" onClick={() => { reset(); onClose(); }}>キャンセル</Button>
+          <Button variant="primary" onClick={handleConfirm} disabled={!parsed || parsed.length === 0}>
+            <Icon name="upload" size={12} />{previewCount ? `${previewCount}件を取り込む` : '取り込む'}
+          </Button>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start gap-3 p-3 rounded-md border-2 border-accent bg-accent-dim">
+          <div className="w-10 h-10 rounded-md bg-accent text-white flex items-center justify-center flex-shrink-0">
+            <Icon name="embed" size={18} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <div className="text-[14px] font-bold text-text-hi">MaiML（推奨）</div>
+              <Badge variant="blue" className="text-[10px]">PRIMARY</Badge>
+            </div>
+            <div className="text-[12px] text-text-md mt-0.5">JIS K 0200:2024 共通フォーマットを優先的にサポート</div>
+          </div>
+        </div>
+
+        <label className="flex flex-col items-center gap-2 p-6 border-2 border-dashed border-[var(--border-default)] rounded-md cursor-pointer hover:border-accent hover:bg-hover transition-all">
+          <Icon name="upload" size={24} className="text-text-md" />
+          <div className="text-[13px] font-semibold text-text-hi">ファイルを選択</div>
+          <div className="text-[11px] text-text-lo">.maiml / .xml / .json 対応</div>
+          <input
+            type="file"
+            accept=".maiml,.xml,.json,application/xml,text/xml,application/json"
+            className="hidden"
+            onChange={e => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
+          />
+        </label>
+
+        {filename && !error && (
+          <div className="text-[12px] text-text-md">
+            読み込みファイル: <strong className="font-mono">{filename}</strong>
+          </div>
+        )}
+        {previewCount !== null && (
+          <div className="text-[12px] p-2 rounded bg-[var(--ok-dim)] text-ok border border-[var(--ok)]">
+            {previewCount} 件の材料データを検出しました
+          </div>
+        )}
+        {warnings.length > 0 && (
+          <div className="text-[11px] p-2 rounded bg-[var(--warn-dim)] text-warn border border-[var(--warn)]">
+            <div className="font-bold mb-1">警告 ({warnings.length})</div>
+            {warnings.slice(0, 5).map((w, i) => <div key={i}>• {w}</div>)}
+            {warnings.length > 5 && <div>…他 {warnings.length - 5} 件</div>}
+          </div>
+        )}
+        {error && (
+          <div className="text-[12px] p-2 rounded bg-[var(--err-dim)] text-err border border-[var(--err)]">
+            {error}
+          </div>
+        )}
       </div>
     </Modal>
   );

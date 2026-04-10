@@ -401,10 +401,13 @@ describe('ExportModal', () => {
       <ExportModal open onClose={vi.fn()} db={materials} filtered={materials} />
     );
     expect(screen.getByText('データエクスポート')).toBeInTheDocument();
+    // MaiML is now the primary (recommended) format
+    expect(screen.getByText('MaiML（推奨）')).toBeInTheDocument();
+    expect(screen.getByText('MaiML（全件）')).toBeInTheDocument();
     expect(screen.getByText('CSV')).toBeInTheDocument();
     expect(screen.getByText('JSON')).toBeInTheDocument();
+    expect(screen.getByText('Markdown')).toBeInTheDocument();
     expect(screen.getByText('PDF レポート')).toBeInTheDocument();
-    expect(screen.getByText('全件 JSON')).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
@@ -418,10 +421,11 @@ describe('ExportModal', () => {
     render(
       <ExportModal open onClose={vi.fn()} db={materials} filtered={materials} />
     );
+    expect(screen.getByText(/JIS K 0200:2024/)).toBeInTheDocument();
     expect(screen.getByText('Excel で開けるCSV形式')).toBeInTheDocument();
     expect(screen.getByText('システム連携用JSON')).toBeInTheDocument();
+    expect(screen.getByText('ドキュメント共有用')).toBeInTheDocument();
     expect(screen.getByText('印刷用フルレポート')).toBeInTheDocument();
-    expect(screen.getByText('DBフル出力')).toBeInTheDocument();
   });
 
   it('renders a close button in footer', () => {
