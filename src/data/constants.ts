@@ -14,6 +14,8 @@ export const RATE_LIMITS: Record<string, number> = {
 
 export const OWN_KEY_STORAGE = 'matlens_own_openai_key';
 
+export const STORYBOOK_URL = 'https://matlens-storybook.vercel.app';
+
 export const NAV_ITEMS: NavItem[] = [
   { section: '概要' },
   { id:'dash',    label:'ダッシュボード',    icon:'dashboard' },
