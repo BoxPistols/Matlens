@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, memo } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import {
   serializeMaterialsToMaiml,
@@ -179,7 +179,12 @@ export const FilterChip = ({ label, onRemove }: FilterChipProps) => (
   </span>
 );
 
-export const MarkdownBubble = ({ text, onSpeak }: MarkdownBubbleProps) => {
+// React.memo keeps long RAG chat logs performant by skipping re-renders of
+// every previous bubble whenever a new message streams in. MarkdownBubble
+// is expensive (marked + DOMPurify on every render) so the win compounds.
+// Props are primitive or stable-reference, so the default shallow-compare
+// is enough — no custom equality function needed.
+export const MarkdownBubble = memo(function MarkdownBubble({ text, onSpeak }: MarkdownBubbleProps) {
   const [copied, setCopied] = useState(false);
   const html = useMemo(() => renderSafeMarkdown(text), [text]);
 
@@ -216,7 +221,7 @@ export const MarkdownBubble = ({ text, onSpeak }: MarkdownBubbleProps) => {
       </div>
     </div>
   );
-};
+});
 
 export const ExportModal = ({ open, onClose, db, filtered }: ExportModalProps) => {
   const exportCSV = () => {
