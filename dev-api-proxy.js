@@ -3,7 +3,7 @@
 // Uses AI SDK v6 (ai + @ai-sdk/openai + @ai-sdk/google) so the dev behavior
 // matches the Vercel Function in api/ai.js.
 
-import { generateText } from 'ai';
+import { generateText, streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 
@@ -18,8 +18,6 @@ export function devApiProxy() {
     name: 'dev-api-proxy',
     configureServer(server) {
       server.middlewares.use('/api/ai', async (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-
         if (req.method === 'OPTIONS') {
           res.statusCode = 200;
           res.end();
@@ -28,21 +26,29 @@ export function devApiProxy() {
 
         // GET — rate limit status (unlimited in dev)
         if (req.method === 'GET') {
+          res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({ remaining: 999, limit: 999 }));
           return;
         }
 
         if (req.method !== 'POST') {
+          res.setHeader('Content-Type', 'application/json');
           res.statusCode = 405;
-          res.end(JSON.stringify({ error: 'Method not allowed' }));
+          res.end(JSON.stringify({ error: 'Method not allowed', code: 'UNKNOWN' }));
           return;
         }
+
+        const wantsStream = typeof req.url === 'string' && /[?&]stream=(1|true)\b/.test(req.url);
+        const sendJsonError = (status, code, message) => {
+          res.setHeader('Content-Type', 'application/json');
+          res.statusCode = status;
+          res.end(JSON.stringify({ error: message, code, remaining: 999, limit: 999 }));
+        };
 
         const body = await parseBody(req);
         const { provider, prompt, system } = body;
         if (!prompt) {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ error: 'prompt is required' }));
+          sendJsonError(400, 'UNKNOWN', 'prompt is required');
           return;
         }
 
@@ -56,14 +62,30 @@ export function devApiProxy() {
 
         // Pre-flight key check — friendlier than downstream auth errors.
         if (provider === 'gemini' && !process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-          res.statusCode = 500;
-          res.end(JSON.stringify({ error: 'GEMINI_API_KEY が .env.local に設定されていません' }));
+          sendJsonError(500, 'UNAUTHORIZED', 'GEMINI_API_KEY が .env.local に設定されていません');
           return;
         }
         if (provider !== 'gemini' && !process.env.OPENAI_API_KEY) {
-          res.statusCode = 500;
-          res.end(JSON.stringify({ error: 'OPENAI_API_KEY が .env.local に設定されていません' }));
+          sendJsonError(500, 'UNAUTHORIZED', 'OPENAI_API_KEY が .env.local に設定されていません');
           return;
+        }
+
+        if (wantsStream) {
+          try {
+            const result = streamText({
+              model: resolveModel(provider),
+              system: sys,
+              messages: [{ role: 'user', content: prompt }],
+            });
+            res.setHeader('X-RateLimit-Remaining', '999');
+            res.setHeader('X-RateLimit-Limit', '999');
+            result.pipeTextStreamToResponse(res);
+            return;
+          } catch (e) {
+            const providerLabel = provider === 'gemini' ? 'Gemini' : 'OpenAI';
+            sendJsonError(502, 'SERVER_ERROR', `${providerLabel}: ${e.message}`);
+            return;
+          }
         }
 
         try {
@@ -72,6 +94,7 @@ export function devApiProxy() {
             system: sys,
             messages: [{ role: 'user', content: prompt }],
           });
+          res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({
             text: text || '応答を取得できませんでした。',
             remaining: 999,
@@ -79,8 +102,7 @@ export function devApiProxy() {
           }));
         } catch (e) {
           const providerLabel = provider === 'gemini' ? 'Gemini' : 'OpenAI';
-          res.statusCode = 502;
-          res.end(JSON.stringify({ error: `${providerLabel}: ${e.message}` }));
+          sendJsonError(502, 'SERVER_ERROR', `${providerLabel}: ${e.message}`);
         }
       });
 

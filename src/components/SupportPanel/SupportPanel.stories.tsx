@@ -7,6 +7,7 @@ import type { AppContextValue, AIHook } from '../../types';
 
 const mockAi: AIHook = {
   call: fn(),
+  callStream: fn(),
   provider: 'openai-nano',
   setProvider: fn(),
   providerDef: { id: 'openai-nano', label: 'GPT-5.4 nano', model: 'gpt-5.4-nano', free: true },
@@ -19,6 +20,7 @@ const mockAi: AIHook = {
   ownKey: '',
   setOwnKey: fn(),
   rateInfo: { remaining: 18, limit: 30 },
+  lastError: null,
 };
 
 const mockCtx: AppContextValue = {

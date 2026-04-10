@@ -23,6 +23,16 @@ export const RAGChatPage = ({ db, embedding, claude, initialQuery, clearInitialQ
 
   const PRESETS = ['硬度が300HV以上の金属合金を教えて','SUS316L に近い物性の材料は何がある？','航空宇宙用途に適した軽量材料を提案して','レビュー待ちデータの懸念点を分析して','耐食性と強度を両立する材料を教えて'];
 
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (msgsRef.current) {
+          msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
+        }
+      }, 50);
+    });
+  };
+
   const send = async (q = input.trim()) => {
     if (!q || sending) return;
     setInput('');
@@ -38,16 +48,28 @@ export const RAGChatPage = ({ db, embedding, claude, initialQuery, clearInitialQ
 【関連材料データ】
 ${ctxText}`;
 
-    const reply = await claude.call(q, sys);
-    setMessages(prev => [...prev, { role: 'ai', text: reply, sources: topDocs }]);
-    setSending(false);
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        if (msgsRef.current) {
-          msgsRef.current.scrollTop = msgsRef.current.scrollHeight;
-        }
-      }, 50);
+    // Push an empty assistant message and progressively fill it as chunks arrive.
+    let replyIndex = -1;
+    setMessages(prev => {
+      replyIndex = prev.length;
+      return [...prev, { role: 'ai', text: '', sources: topDocs }];
     });
+
+    await claude.callStream(q, {
+      onChunk: (delta) => {
+        setMessages(prev => {
+          if (replyIndex < 0 || replyIndex >= prev.length) return prev;
+          const next = prev.slice();
+          const current = next[replyIndex];
+          next[replyIndex] = { ...current, text: current.text + delta };
+          return next;
+        });
+        scrollToBottom();
+      },
+    }, sys);
+
+    setSending(false);
+    scrollToBottom();
   };
 
   // Auto-send initial query from detail page context

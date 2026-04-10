@@ -27,24 +27,11 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { addToast } = useContext(AppCtx) as AppContextValue;
 
-  // Prev/Next navigation
+  // Prev/Next navigation (via on-screen buttons only — no global arrow-key shortcut)
   const currentIndex = useMemo(() => db.findIndex(x => x.id === recordId), [db, recordId]);
   const prevId = currentIndex > 0 ? db[currentIndex - 1].id : null;
   const nextId = currentIndex < db.length - 1 ? db[currentIndex + 1].id : null;
   const goTo = useCallback((id: string | null) => { if (id) onNav('detail_' + id); }, [onNav]);
-
-  // Keyboard shortcuts: left/right arrow keys
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      // Skip if user is in an input/textarea/select
-      const tag = (e.target as HTMLElement).tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-      if (e.key === 'ArrowLeft') goTo(prevId);
-      if (e.key === 'ArrowRight') goTo(nextId);
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [prevId, nextId, goTo]);
 
   useEffect(() => {
     setAiComment(''); setAiLoading(true);
