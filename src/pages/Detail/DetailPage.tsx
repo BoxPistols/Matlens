@@ -69,14 +69,14 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         <div className="flex items-center gap-1.5 ml-auto flex-shrink-0">
           <button onClick={() => goTo(prevId)} disabled={!prevId}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-[var(--border-default)] bg-raised hover:bg-hover hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[11px]"
-            title="前の材料 (←)">
+            title="前の材料">
             <Icon name="chevronLeft" size={12} />
             {prevId && <span className="hidden sm:inline text-text-md truncate max-w-[80px]">{db[currentIndex - 1]?.name}</span>}
           </button>
           <span className="text-[11px] text-text-lo font-mono px-1">{currentIndex + 1} / {db.length}</span>
           <button onClick={() => goTo(nextId)} disabled={!nextId}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-[var(--border-default)] bg-raised hover:bg-hover hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[11px]"
-            title="次の材料 (→)">
+            title="次の材料">
             {nextId && <span className="hidden sm:inline text-text-md truncate max-w-[80px]">{db[currentIndex + 1]?.name}</span>}
             <Icon name="chevronRight" size={12} />
           </button>
