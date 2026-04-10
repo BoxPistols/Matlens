@@ -12,6 +12,8 @@ const defaultProps = {
   onGlobalSearch: vi.fn(),
   globalQuery: '',
   setGlobalQuery: vi.fn(),
+  db: [],
+  onDetail: vi.fn(),
 };
 
 const renderTopbar = (overrides = {}) =>
@@ -67,13 +69,13 @@ describe('Topbar', () => {
 
   it('renders search input with placeholder', () => {
     renderTopbar();
-    expect(screen.getByPlaceholderText('材料名・ID・組成を検索...（Enter）')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('材料名・ID・組成を検索...')).toBeInTheDocument();
   });
 
   it('calls setGlobalQuery on search input change', async () => {
     const setGlobalQuery = vi.fn();
     renderTopbar({ setGlobalQuery });
-    const input = screen.getByPlaceholderText('材料名・ID・組成を検索...（Enter）');
+    const input = screen.getByPlaceholderText('材料名・ID・組成を検索...');
     await userEvent.type(input, 'a');
     expect(setGlobalQuery).toHaveBeenCalled();
   });
@@ -81,7 +83,7 @@ describe('Topbar', () => {
   it('calls onGlobalSearch on Enter key', () => {
     const onGlobalSearch = vi.fn();
     renderTopbar({ globalQuery: 'SUS304', onGlobalSearch });
-    const input = screen.getByPlaceholderText('材料名・ID・組成を検索...（Enter）');
+    const input = screen.getByPlaceholderText('材料名・ID・組成を検索...');
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onGlobalSearch).toHaveBeenCalledWith('SUS304');
   });
@@ -89,14 +91,14 @@ describe('Topbar', () => {
   it('shows clear button when globalQuery is not empty', () => {
     renderTopbar({ globalQuery: 'test' });
     // The clear button exists (it uses Icon name="close")
-    const clearButtons = screen.getByPlaceholderText('材料名・ID・組成を検索...（Enter）')
+    const clearButtons = screen.getByPlaceholderText('材料名・ID・組成を検索...')
       .parentElement!.querySelectorAll('button');
     expect(clearButtons.length).toBe(1);
   });
 
   it('does not show clear button when globalQuery is empty', () => {
     renderTopbar({ globalQuery: '' });
-    const inputParent = screen.getByPlaceholderText('材料名・ID・組成を検索...（Enter）').parentElement!;
+    const inputParent = screen.getByPlaceholderText('材料名・ID・組成を検索...').parentElement!;
     const clearButtons = inputParent.querySelectorAll('button');
     expect(clearButtons.length).toBe(0);
   });

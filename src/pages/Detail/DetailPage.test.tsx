@@ -13,12 +13,17 @@ vi.mock('marked', () => ({
   marked: { parse: (s: string) => s, setOptions: vi.fn() },
 }));
 
+// Pick the first record from the seed list rather than hard-coding an id —
+// the seed array has been renumbered (and grown) several times and stale
+// hard-coded ids were the main cause of these tests breaking.
+const FIXTURE = INITIAL_DB[0];
+
 describe('DetailPage', () => {
   const onBack = vi.fn();
   const onEdit = vi.fn();
   const onNav = vi.fn();
 
-  const setup = (recordId = 'MAT-0247') =>
+  const setup = (recordId = FIXTURE.id) =>
     renderWithContext(
       <DetailPage
         db={INITIAL_DB}
@@ -33,10 +38,10 @@ describe('DetailPage', () => {
     );
 
   it('renders material name when record found', () => {
-    setup('MAT-0247');
+    setup();
     expect(
       screen.getByRole('heading', { level: 1 }),
-    ).toHaveTextContent('Ti-6Al-4V チタン合金');
+    ).toHaveTextContent(FIXTURE.name);
   });
 
   it('shows not found message for invalid ID', () => {
@@ -47,14 +52,16 @@ describe('DetailPage', () => {
   });
 
   it('shows properties section', () => {
-    setup('MAT-0247');
+    setup();
     expect(screen.getByText('物性データ')).toBeInTheDocument();
     expect(screen.getByText('硬度')).toBeInTheDocument();
     expect(screen.getByText('引張強さ')).toBeInTheDocument();
   });
 
-  it('shows breadcrumb navigation', () => {
-    setup('MAT-0247');
-    expect(screen.getByText('材料データ一覧')).toBeInTheDocument();
+  it('shows breadcrumb back button', () => {
+    setup();
+    // The breadcrumb label was changed from "材料データ一覧" to "戻る"
+    // when goBack started routing through the navigation history stack.
+    expect(screen.getByText('戻る')).toBeInTheDocument();
   });
 });
