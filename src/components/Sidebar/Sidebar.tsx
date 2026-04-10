@@ -1,7 +1,7 @@
 import { Icon, IconName } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Badge, Typing } from '../atoms';
-import { NAV_ITEMS } from '../../data/constants';
+import { NAV_ITEMS, STORYBOOK_URL } from '../../data/constants';
 
 interface SidebarProps {
   currentPage: string;
@@ -50,7 +50,24 @@ export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embS
           </Tooltip>
         );
       })}
-      <div className="mt-auto p-3 border-t border-[var(--border-faint)]">
+      <div className="mt-auto p-3 border-t border-[var(--border-faint)] flex flex-col gap-2">
+        <Tooltip label="Storybook - コンポーネントカタログを新しいタブで開く" placement="right">
+          <a
+            href={STORYBOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Storybook を新しいタブで開く"
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] font-semibold border border-[var(--border-faint)] bg-raised text-text-md hover:bg-[#FF4785]/10 hover:text-[#FF4785] hover:border-[#FF4785]/40 transition-colors ${collapsed ? 'justify-center px-0' : ''}`}
+          >
+            <span className="w-2 h-2 rounded-full bg-[#FF4785] flex-shrink-0" aria-hidden="true" />
+            {!collapsed && (
+              <>
+                <span className="flex-1 truncate text-left">Storybook</span>
+                <span className="text-[12px] opacity-70" aria-hidden="true">↗</span>
+              </>
+            )}
+          </a>
+        </Tooltip>
         <Tooltip label={embStatus === 'ready' ? `Embedding ${embCount}件インデックス済み` : embStatus === 'fallback' ? 'キーワード検索モードで動作中' : embStatus === 'indexing' ? 'ベクトルインデックスを構築中...' : '検索エンジンを初期化中...'} placement="right">
           <div className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] font-semibold cursor-default ${embStatus === 'ready' ? 'bg-vec-dim text-vec' : 'bg-raised text-text-lo'} ${collapsed ? 'justify-center px-0' : ''}`}>
             <Icon name="embed" size={12} className="flex-shrink-0" />
