@@ -17,6 +17,20 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-10-notifications',
+    date: '2026-04-10',
+    type: 'feature',
+    title: 'アプリ内お知らせ機能を追加',
+    body: 'トップバー右側の鈴アイコン、ヘッダー下バナー、右下サポートボタンに未読バッジ付きで通知を表示するようになりました。「お知らせ」タブから過去の更新履歴もまとめて確認できます。',
+  },
+  {
+    id: '2026-04-10-storybook',
+    date: '2026-04-10',
+    type: 'info',
+    title: 'Storybook でデザインシステムを公開中',
+    body: 'Matlens の UI コンポーネント・デザイントークン・パターンを Storybook で参照できます。トップバー右側の「Storybook」リンク、またはサポートパネル内のリンクから開けます。',
+  },
+  {
     id: '2026-04-10-maiml',
     date: '2026-04-10',
     type: 'feature',

@@ -141,6 +141,8 @@ export function App() {
           embStatus={embedding.status} embCount={embedding.embCount} embEngine={embedding.engine}
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}
           db={db} onDetail={showDetail}
+          unreadNotifications={announcements.unreadCount}
+          onOpenNotifications={() => openSupportPanel('news')}
         />
         {announcements.latestUnread && !bannerHidden && (
           <AnnouncementBanner

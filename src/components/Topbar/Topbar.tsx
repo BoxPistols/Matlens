@@ -18,9 +18,11 @@ interface TopbarProps {
   setGlobalQuery: (q: string) => void;
   db: Material[];
   onDetail: (id: string) => void;
+  unreadNotifications?: number;
+  onOpenNotifications?: () => void;
 }
 
-export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail }: TopbarProps) => {
+export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail, unreadNotifications = 0, onOpenNotifications }: TopbarProps) => {
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
@@ -188,6 +190,24 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
           </button>
         ))}
       </div>
+      <Tooltip label={unreadNotifications > 0 ? `お知らせ (未読 ${unreadNotifications} 件)` : 'お知らせ'} placement="bottom">
+        <button
+          type="button"
+          onClick={onOpenNotifications}
+          className="relative flex items-center justify-center w-9 h-9 rounded-full border border-white/20 bg-white/10 text-white/80 hover:bg-white/20 hover:text-white transition-all duration-200"
+          aria-label={unreadNotifications > 0 ? `お知らせ 未読 ${unreadNotifications} 件` : 'お知らせ'}
+        >
+          <Icon name="info" size={15} />
+          {unreadNotifications > 0 && (
+            <span
+              aria-hidden="true"
+              className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 rounded-full bg-[var(--err)] text-white text-[9px] font-bold flex items-center justify-center border-[1.5px] border-[var(--topbar-bg)]"
+            >
+              {unreadNotifications > 9 ? '9+' : unreadNotifications}
+            </span>
+          )}
+        </button>
+      </Tooltip>
       <Tooltip label={embStatus === "fallback" ? "キーワード検索モード" : `ベクトル検索: ${vecStatusLabel}`} placement="left">
         <button className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border transition-all duration-200 ${embStatus === 'ready' ? 'bg-vec-dim text-vec border-[var(--vec-mid)]' : 'bg-white/10 text-white/80 border-white/20'}`} aria-label="ベクトル検索ページへ">
           <Icon name="embed" size={12} />
