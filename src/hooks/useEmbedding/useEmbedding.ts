@@ -56,7 +56,7 @@ function tokenize(query: string): string[] {
   if (!q) return [];
   // Split on whitespace, punctuation (Japanese and ASCII), and common separators
   const tokens = q
-    .split(/[\s、。・，．,.\/\\\-_;:!?"'（）()「」『』【】\[\]]+/)
+    .split(/[\s、。・，．,./\\\-_;:!?"'（）()「」『』【】[\]]+/)
     .filter(t => t.length > 0);
   // If tokenization yielded only one long Japanese token, generate character bigrams.
   // Hoist tokens[0] into a local so strict mode's noUncheckedIndexedAccess is happy.
