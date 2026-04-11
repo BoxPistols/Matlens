@@ -108,6 +108,17 @@ describe('Topbar', () => {
     expect(screen.getByText('42件')).toBeInTheDocument();
   });
 
+  it('shows localized search engine suffix when embEngine is tfjs', () => {
+    renderTopbar({ embStatus: 'ready', embCount: 10, embEngine: 'tfjs' });
+    expect(screen.getByText(/10件 \(TF\.js USE\)/)).toBeInTheDocument();
+  });
+
+  it('omits engine suffix when embEngine is pending', () => {
+    renderTopbar({ embStatus: 'ready', embCount: 10, embEngine: 'pending' });
+    expect(screen.getByText('10件')).toBeInTheDocument();
+    expect(screen.queryByText(/10件 \(pending\)/)).not.toBeInTheDocument();
+  });
+
   it('renders embedding status as loading', () => {
     renderTopbar({ embStatus: 'loading', embCount: 0 });
     expect(screen.getByText('モデル読込中')).toBeInTheDocument();

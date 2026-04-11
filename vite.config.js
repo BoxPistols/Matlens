@@ -14,6 +14,10 @@ export default defineConfig(({ mode }) => {
   const analyze = process.env.ANALYZE === '1';
 
   return {
+    optimizeDeps: {
+      // TF.js フォールバック経路の初回 dev 読み込みを安定させる
+      include: ['@tensorflow/tfjs', '@tensorflow-models/universal-sentence-encoder'],
+    },
     plugins: [
       react(),
       devApiProxy(),

@@ -5,6 +5,7 @@ import { Typing, Badge } from '../atoms';
 import type { Material } from '../../types';
 import { STORYBOOK_URL } from '../../data/constants';
 import { isComposing } from '../../utils/keyboard';
+import { formatSearchEngineLabel } from '../../utils/searchEngine';
 
 interface TopbarProps {
   theme: string;
@@ -29,7 +30,8 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
     { id: 'eng',   label: 'Eng' },
     { id: 'cae',   label: 'CAE' },
   ];
-  const engineSuffix = embEngine && embEngine !== 'Keyword' ? ` (${embEngine})` : '';
+  const engineLabel = formatSearchEngineLabel(embEngine);
+  const engineSuffix = engineLabel ? ` (${engineLabel})` : '';
   const vecStatusLabel = { idle:'初期化中', loading:'モデル読込中', indexing:'索引構築中', ready:`${embCount}件${engineSuffix}`, fallback:'キーワード検索' }[embStatus] || '—';
 
   // Highlight matched text with yellow marker

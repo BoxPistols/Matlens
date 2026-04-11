@@ -4,6 +4,7 @@ import { Button, Badge, Card, Input, Select, Typing } from '../../components/ato
 import { VecCard } from '../../components/molecules';
 import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
 import { isPlainEnter } from '../../utils/keyboard';
+import { formatSearchEngineLabel } from '../../utils/searchEngine';
 
 interface VectorSearchPageProps {
   db: Material[];
@@ -19,6 +20,14 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
   const [searched, setSearched] = useState(false);
 
   const PRESETS = ['高温強度が高い耐熱合金','軽量で高比強度の材料','耐食性に優れるステンレス系','生体適合性がある金属','低摩擦・化学的に安定なポリマー'];
+
+  const engineLbl = formatSearchEngineLabel(embedding.engine);
+  const engineBadgeText =
+    embedding.status === 'ready'
+      ? engineLbl
+        ? `${embedding.embCount}件 検索可能（${engineLbl}）`
+        : `${embedding.embCount}件 検索可能`
+      : '初期化中...';
 
   const runSearch = async (q = query) => {
     if (!q.trim()) return;
@@ -39,13 +48,17 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
       </div>
 
       <VecCard>
-        各材料テキスト（名称・組成・特性）を <strong className="text-text-hi">OpenAI text-embedding-3-small</strong> で 1536次元ベクトルに変換し、
-        <strong className="text-text-hi">Upstash Vector</strong> に保存。クエリとの <strong className="text-text-hi">コサイン類似度</strong> を計算してランキング表示します。
-        キーワード検索では拾えない「意味的に近い材料」を発見できます。
+        通常は各材料テキスト（名称・組成・特性）を <strong className="text-text-hi">OpenAI text-embedding-3-small</strong> で 1536 次元にし、
+        <strong className="text-text-hi">Upstash Vector</strong> 上で <strong className="text-text-hi">コサイン類似度</strong> によりランキングします。
+        <span className="block mt-1.5">
+          <strong className="text-text-hi">API が利用できない場合</strong> はブラウザ内の{' '}
+          <strong className="text-text-hi">TensorFlow.js + Universal Sentence Encoder</strong>（512 次元）に自動フォールバックし、
+          それでも失敗するとキーワード検索に切り替わります。
+        </span>
         <div className="mt-2 text-[12px]">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${embedding.status==='ready' ? 'bg-[var(--ok-dim)] text-ok' : 'bg-raised text-text-lo'}`}>
-            <Icon name="embed" size={11} />
-            {embedding.status==='ready' ? `${embedding.embCount}件 検索可能（${embedding.engine}）` : '初期化中...'}
+            <Icon name="embed" size={12} />
+            {engineBadgeText}
           </span>
         </div>
       </VecCard>
@@ -86,15 +99,15 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
               <div className="flex items-end gap-1.5 h-10">
                 {results.map((r, i) => (
                   <div key={r.id} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-[10px] text-text-lo">{Math.round((r.score||0)*100)}%</span>
+                    <span className="text-[12px] text-text-lo">{Math.round((r.score||0)*100)}%</span>
                     <div className="w-full rounded-t-sm" style={{ height: `${Math.round((r.score||0)*100)*.28}px`, background: 'var(--vec-mid)', opacity: .4 + (results.length-i)/results.length*.6 }} />
                   </div>
                 ))}
               </div>
               <div className="flex gap-1.5 mt-1">
-                {results.map(r => <div key={r.id} className="flex-1 text-[10px] text-text-lo text-center truncate">{r.id.slice(-4)}</div>)}
+                {results.map(r => <div key={r.id} className="flex-1 text-[12px] text-text-lo text-center truncate">{r.id.slice(-4)}</div>)}
               </div>
-              <p className="text-[11px] text-text-lo mt-1.5">クエリ: "{query}"</p>
+              <p className="text-[12px] text-text-lo mt-1.5">クエリ: "{query}"</p>
             </Card>
           )}
 

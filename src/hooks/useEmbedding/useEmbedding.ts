@@ -87,7 +87,8 @@ function keywordSearch(db: Material[], query: string, topK: number): MaterialWit
 }
 
 export function useEmbedding(db: Material[]): EmbeddingHook {
-  const [engine, setEngine] = useState<string>('ready');
+  /** 直近の検索で使ったバックエンド（初回は未検索の pending） */
+  const [engine, setEngine] = useState<string>('pending');
   // Track the in-flight AbortController so each new search cancels the
   // previous one. Without this, a user typing fast in the search box races
   // multiple /api/search round-trips and whichever finishes *last* wins,
@@ -116,11 +117,13 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
       });
       if (!res.ok) throw new Error('Search API error');
       const data: { engine?: string; results?: SearchApiRow[] } = await res.json();
-      setEngine(data.engine || 'server');
 
       if (data.results && data.results.length > 0) {
+        setEngine(data.engine || 'server');
         return data.results.map(r => mapSearchRowToMaterial(r, db));
       }
+      // 200 だが候補ゼロ → クライアントキーワードへ（engine は upstash のままにしない）
+      setEngine('keyword');
     } catch (err) {
       // An AbortError is a deliberate cancellation (user typed a new
       // query, or the component unmounted). Return an empty list without
