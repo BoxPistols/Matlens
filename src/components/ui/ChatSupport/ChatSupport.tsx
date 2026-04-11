@@ -1,11 +1,37 @@
 import React from 'react'
-import type { ChatMessage, StoryContext } from './chatSupportTypes'
-import { WELCOME_MESSAGE, MAX_MESSAGES, CHAT_STORAGE_KEY, QUICK_SUGGESTIONS } from './chatSupportConstants'
+import type {
+  ChatMessage,
+  Provider,
+  RateLimitInfo,
+  StoryContext,
+} from './chatSupportTypes'
+import {
+  WELCOME_MESSAGE,
+  MAX_MESSAGES,
+  CHAT_STORAGE_KEY,
+  QUICK_SUGGESTIONS,
+  MODELS,
+} from './chatSupportConstants'
 import { searchFaq } from './faqDatabase'
 import { getStoryGuide } from './storyGuideMap'
-import { callAi } from './chatAiService'
+import {
+  callAi,
+  AiQuotaExceededError,
+  AiAuthError,
+  AiUserKeyRequiredError,
+  AiNetworkError,
+} from './chatAiService'
 import { CodeBlock } from './CodeBlock'
 import { isSubmitShortcut, submitShortcutLabel } from '../../../utils/keyboard'
+
+// Valid `Provider` values — used to clean up old localStorage entries that
+// were stored under the pre-refactor `'openai' | 'gemini'` type.
+const VALID_PROVIDERS: readonly Provider[] = [
+  'openai-nano',
+  'openai-mini',
+  'openai',
+  'gemini',
+] as const
 
 interface ChatSupportProps {
   currentStory: StoryContext | null
@@ -69,19 +95,44 @@ function saveMessages(msgs: ChatMessage[]) {
   }
 }
 
-function loadSettings(): { provider: 'openai' | 'gemini'; key: string } {
+interface ChatSettings {
+  provider: Provider
+  key: string
+}
+
+function loadSettings(): ChatSettings {
   try {
     const raw = localStorage.getItem(`${CHAT_STORAGE_KEY}-settings`)
-    return raw ? JSON.parse(raw) : { provider: 'openai', key: '' }
+    if (!raw) return { provider: 'openai-nano', key: '' }
+    const parsed = JSON.parse(raw) as { provider?: string; key?: string }
+    // Back-compat: the pre-refactor storage used `'openai' | 'gemini'`,
+    // where `'openai'` meant "the OpenAI provider family" (nano). Under
+    // the new type `'openai'` is specifically the full gpt-5.4 model
+    // which *requires* a user key — so silently promoting a legacy
+    // `'openai'` value would strand users on a locked model. Remap it to
+    // nano instead.
+    let provider: Provider = 'openai-nano'
+    if (parsed.provider === 'openai') {
+      provider = 'openai-nano'
+    } else if (
+      typeof parsed.provider === 'string' &&
+      (VALID_PROVIDERS as readonly string[]).includes(parsed.provider)
+    ) {
+      provider = parsed.provider as Provider
+    }
+    return { provider, key: typeof parsed.key === 'string' ? parsed.key : '' }
   } catch {
     localStorage.removeItem(`${CHAT_STORAGE_KEY}-settings`)
-    return { provider: 'openai', key: '' }
+    return { provider: 'openai-nano', key: '' }
   }
 }
 
-function saveSettings(provider: 'openai' | 'gemini', key: string) {
+function saveSettings(provider: Provider, key: string) {
   try {
-    localStorage.setItem(`${CHAT_STORAGE_KEY}-settings`, JSON.stringify({ provider, key }))
+    localStorage.setItem(
+      `${CHAT_STORAGE_KEY}-settings`,
+      JSON.stringify({ provider, key }),
+    )
   } catch {
     localStorage.removeItem(`${CHAT_STORAGE_KEY}-settings`)
   }
@@ -93,9 +144,13 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
   const [input, setInput] = React.useState('')
   const [loading, setLoading] = React.useState(false)
   const settingsRef = React.useRef(loadSettings())
-  const [aiProvider, setAiProvider] = React.useState<'openai' | 'gemini'>(settingsRef.current.provider)
+  const [aiProvider, setAiProvider] = React.useState<Provider>(settingsRef.current.provider)
   const [apiKey, setApiKey] = React.useState(settingsRef.current.key)
   const [showSettings, setShowSettings] = React.useState(false)
+  // Latest rate-limit snapshot from the shared-pool path. `null` until the
+  // first request completes; the header chip stays hidden until then to
+  // avoid showing a misleading `30/30` before we actually know.
+  const [rateLimit, setRateLimit] = React.useState<RateLimitInfo | null>(null)
   const scrollRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
@@ -112,6 +167,16 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
     saveSettings(aiProvider, apiKey)
   }, [aiProvider, apiKey])
 
+  // If the user clears their API key while a requires-user-key model is
+  // selected, silently downgrade to nano so the next request doesn't hit
+  // `AiUserKeyRequiredError` on every send.
+  React.useEffect(() => {
+    if (!apiKey) {
+      const model = MODELS.find(m => m.value === aiProvider)
+      if (model?.requiresUserKey) setAiProvider('openai-nano')
+    }
+  }, [apiKey, aiProvider])
+
   const addMessage = (role: ChatMessage['role'], content: string, source?: ChatMessage['source']) => {
     setMessages(prev => {
       const next = [...prev, { id: genId(), role, content, source, timestamp: Date.now() }]
@@ -127,7 +192,8 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
     setInput('')
     setLoading(true)
 
-    // Layer 1: FAQ
+    // Layer 1: FAQ — exact / keyword match against the local database.
+    // Zero cost, zero latency, no quota consumption.
     const faq = searchFaq(q)
     if (faq) {
       addMessage('assistant', faq.answer, 'faq')
@@ -135,7 +201,8 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
       return
     }
 
-    // Layer 2: Story Guide
+    // Layer 2: Story Guide — for questions about the currently-viewed
+    // story ("このページのヒント", "使い方", …). Also free.
     if (currentStory) {
       const guide = getStoryGuide(currentStory.title)
       if (guide) {
@@ -143,10 +210,19 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
           `**${guide.title}** のガイド:`,
           ...guide.tips.map(t => `- ${t}`),
           guide.codeRef ? `\nコード参照: \`${guide.codeRef}\`` : '',
-          guide.relatedStories?.length ? `\n関連ストーリー: ${guide.relatedStories.join(', ')}` : '',
-        ].filter(Boolean).join('\n')
+          guide.relatedStories?.length
+            ? `\n関連ストーリー: ${guide.relatedStories.join(', ')}`
+            : '',
+        ]
+          .filter(Boolean)
+          .join('\n')
 
-        const isGuideRelated = q.includes('ガイド') || q.includes('ヒント') || q.includes('tips') || q.includes('使い方') || q.includes('関連')
+        const isGuideRelated =
+          q.includes('ガイド') ||
+          q.includes('ヒント') ||
+          q.includes('tips') ||
+          q.includes('使い方') ||
+          q.includes('関連')
         if (isGuideRelated) {
           addMessage('assistant', guideText, 'guide')
           setLoading(false)
@@ -155,20 +231,46 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
       }
     }
 
-    // Layer 3: AI API
-    if (!apiKey) {
-      addMessage('assistant', 'AI APIを利用するにはAPIキーが必要です。右上の設定アイコンからキーを設定してください。\n\nFAQで回答できる質問はキー不要です。カラー、テーマ、フォント、ボタン等のキーワードを試してみてください。', 'faq')
+    // Layer 3: AI. No `apiKey` guard here — `callAi` dispatches to the
+    // shared-pool path when the key is empty, which still works for
+    // `projectKeyEnabled` models (nano / mini / gemini). `openai` (full)
+    // throws `AiUserKeyRequiredError` up front and lands in the catch
+    // block below.
+    try {
+      const result = await callAi(q, aiProvider, currentStory, apiKey)
+      if (result.rateLimit) setRateLimit(result.rateLimit)
+      addMessage('assistant', result.text, 'ai')
+    } catch (e) {
+      if (e instanceof AiQuotaExceededError) {
+        setRateLimit({ remaining: e.remaining, limit: e.limit })
+        addMessage(
+          'assistant',
+          `本日の無料枠（${e.limit} 回/日）を使い切りました。日次リセットは協定世界時 0:00 です。\n\n` +
+            `すぐ使いたい場合は右上の ⚙️ から自前の OpenAI / Gemini API キーを設定してください。自前キーでは無制限 + 全モデルが利用可能です。`,
+          'ai',
+        )
+      } else if (e instanceof AiUserKeyRequiredError) {
+        addMessage(
+          'assistant',
+          'このモデルは自前 API キーが必要です。右上 ⚙️ からキーを入力するか、共有プール対応の nano / mini / Gemini に切り替えてください。',
+          'ai',
+        )
+        setShowSettings(true)
+      } else if (e instanceof AiAuthError) {
+        addMessage('assistant', `認証エラー: ${e.message}`, 'ai')
+        setShowSettings(true)
+      } else if (e instanceof AiNetworkError) {
+        addMessage(
+          'assistant',
+          `通信エラー: ${e.message}\n\nFAQ で答えられる質問はオフラインでも動作します。カラー、テーマ、ボタン等のキーワードを試してみてください。`,
+          'ai',
+        )
+      } else {
+        addMessage('assistant', `予期しないエラー: ${(e as Error).message}`, 'ai')
+      }
+    } finally {
       setLoading(false)
-      return
     }
-
-    const result = await callAi(q, currentStory, apiKey, aiProvider)
-    if (result.error) {
-      addMessage('assistant', `エラー: ${result.error}`, 'ai')
-    } else {
-      addMessage('assistant', result.content, 'ai')
-    }
-    setLoading(false)
   }
 
   const sourceLabel = (source?: ChatMessage['source']) => {
@@ -251,8 +353,54 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
                 DS コンシェルジュ
               </span>
               {currentStory && (
-                <span style={{ fontSize: 12, color: 'var(--text-lo)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-lo)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {currentStory.title}
+                </span>
+              )}
+              {/* Shared-pool quota chip. Stays hidden until the first
+                  request completes so we don't show a misleading figure
+                  before we actually know. Colour steps through
+                  default → warn → error as the budget runs out. */}
+              {rateLimit && !apiKey && (
+                <span
+                  title={`共有プール残り: ${rateLimit.remaining}/${rateLimit.limit}`}
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: '2px 6px',
+                    borderRadius: 10,
+                    background:
+                      rateLimit.remaining === 0
+                        ? 'var(--err)'
+                        : rateLimit.remaining < 5
+                          ? 'var(--warn)'
+                          : 'var(--bg-surface)',
+                    color:
+                      rateLimit.remaining === 0 || rateLimit.remaining < 5
+                        ? '#fff'
+                        : 'var(--text-md)',
+                    border: '1px solid var(--border-faint)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  残 {rateLimit.remaining}/{rateLimit.limit}
+                </span>
+              )}
+              {apiKey && (
+                <span
+                  title="自前 API キー使用中 — レート制限なし"
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: '2px 6px',
+                    borderRadius: 10,
+                    background: 'var(--bg-surface)',
+                    color: 'var(--accent)',
+                    border: '1px solid var(--accent)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  自前キー
                 </span>
               )}
             </div>
@@ -275,36 +423,51 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
 
           {/* Settings */}
           {showSettings && (
-            <div style={{ padding: '8px 14px', borderBottom: '1px solid var(--border-faint)', background: 'var(--bg-raised)' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-md)', marginBottom: 6 }}>AI設定</div>
-              <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
-                {(['openai', 'gemini'] as const).map(p => (
-                  <button
-                    key={p}
-                    onClick={() => setAiProvider(p)}
-                    style={{
-                      padding: '3px 10px',
-                      borderRadius: 4,
-                      border: aiProvider === p ? '1px solid var(--accent)' : '1px solid var(--border-default)',
-                      background: aiProvider === p ? 'var(--accent-dim)' : 'transparent',
-                      color: aiProvider === p ? 'var(--accent)' : 'var(--text-md)',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {p === 'openai' ? 'OpenAI' : 'Gemini'}
-                  </button>
-                ))}
+            <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-faint)', background: 'var(--bg-raised)' }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-md)', marginBottom: 4 }}>
+                モデル
+              </div>
+              <select
+                value={aiProvider}
+                onChange={e => setAiProvider(e.target.value as Provider)}
+                style={{
+                  width: '100%',
+                  padding: '5px 8px',
+                  borderRadius: 4,
+                  border: '1px solid var(--border-default)',
+                  background: 'var(--bg-base)',
+                  color: 'var(--text-hi)',
+                  fontSize: 12,
+                  fontFamily: 'var(--font-ui)',
+                  marginBottom: 4,
+                }}
+              >
+                {MODELS.map(m => {
+                  const locked = !!m.requiresUserKey && !apiKey
+                  return (
+                    <option key={m.value} value={m.value} disabled={locked}>
+                      {locked ? '🔒 ' : ''}
+                      {m.label} — {m.description}
+                    </option>
+                  )
+                })}
+              </select>
+              <div style={{ fontSize: 10, color: 'var(--text-lo)', marginBottom: 8, lineHeight: 1.5 }}>
+                {apiKey
+                  ? '自前 API キー使用中。全モデルが無制限で利用可能です。'
+                  : '共有プール使用中（1 日 30 回まで）。鍵アイコン付きのモデルは自前 API キーが必要です。'}
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-md)', marginBottom: 4 }}>
+                自前 API キー（任意）
               </div>
               <input
                 type="password"
-                placeholder="APIキーを入力..."
+                placeholder="OpenAI / Gemini の API キーを入力..."
                 value={apiKey}
                 onChange={e => setApiKey(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '4px 8px',
+                  padding: '5px 8px',
                   borderRadius: 4,
                   border: '1px solid var(--border-default)',
                   background: 'var(--bg-base)',
@@ -313,6 +476,9 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
                   fontFamily: 'var(--font-mono)',
                 }}
               />
+              <div style={{ fontSize: 10, color: 'var(--text-lo)', marginTop: 4, lineHeight: 1.5 }}>
+                キーは端末の localStorage にのみ保存され、Matlens のサーバーには送信されません。
+              </div>
             </div>
           )}
 
