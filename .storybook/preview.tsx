@@ -54,6 +54,12 @@ const preview: Preview = {
                 title: context.title,
                 name: context.name,
                 description: context.parameters?.docs?.description?.component,
+                // argTypes / args come straight from Storybook's own
+                // metadata — the decorator passes them through so the
+                // AI system prompt can answer prop-specific questions
+                // without anyone hand-maintaining a mirror table.
+                argTypes: context.argTypes as Record<string, unknown> | undefined,
+                args: context.args as Record<string, unknown> | undefined,
               }}
             />
           )}
