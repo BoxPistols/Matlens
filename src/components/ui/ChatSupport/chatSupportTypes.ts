@@ -6,10 +6,26 @@ export interface ChatMessage {
   timestamp: number
 }
 
+/**
+ * Story context exposed to ChatSupport. The required fields (title,
+ * name, description) come from Storybook's meta.parameters.docs; the
+ * optional ones are injected by the `.storybook/preview.tsx` decorator
+ * from `context.argTypes` / `context.args` and fed into the AI system
+ * prompt so the model can answer prop-specific questions without
+ * anyone hand-maintaining an argTypes mirror in storyGuideMap.
+ */
 export interface StoryContext {
   title: string
   name: string
   description?: string
+  /**
+   * Storybook's auto-generated argTypes. Keys are prop names, values
+   * carry the type, control, description etc. Kept untyped so a
+   * Storybook version bump that adds fields doesn't break the chat.
+   */
+  argTypes?: Record<string, unknown>
+  /** Current arg values selected in the Controls panel. */
+  args?: Record<string, unknown>
 }
 
 export interface FaqEntry {

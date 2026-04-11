@@ -74,14 +74,53 @@ export interface AiResponse {
 
 // ── Internal helpers ─────────────────────────────────────────────────
 
+// Trim a blob of arbitrary metadata to something that fits in a
+// prompt. Large argTypes trees from Storybook can be thousands of
+// tokens, and we pay for every one — cap at a reasonable ceiling and
+// prefer the argTypes (schema) over args (current values) so the AI
+// sees what the user *can* tweak, not just what they happen to have
+// selected this moment.
+const MAX_CONTEXT_JSON_CHARS = 1500
+
+function safeStringify(value: unknown): string {
+  try {
+    const json = JSON.stringify(value)
+    if (!json) return ''
+    if (json.length <= MAX_CONTEXT_JSON_CHARS) return json
+    return json.slice(0, MAX_CONTEXT_JSON_CHARS) + '… (truncated)'
+  } catch {
+    // Circular reference or otherwise unserialisable. Silent-drop so
+    // one odd story doesn't tank every chat turn.
+    return ''
+  }
+}
+
 function buildSystemPrompt(storyContext: StoryContext | null): string {
   if (!storyContext) return SYSTEM_PROMPT
-  const ctxLines = [
+
+  const ctxLines: string[] = [
     '',
     '## 現在のコンテキスト',
     `- ストーリー: ${storyContext.title} / ${storyContext.name}`,
     `- 説明: ${storyContext.description || 'なし'}`,
   ]
+
+  // Storybook's auto-generated argTypes carry the component's prop
+  // surface — type, control kind, options, description. Feed it to
+  // the model so it can answer "what props does this take?" without
+  // us having to mirror them in storyGuideMap.
+  const argTypes = safeStringify(storyContext.argTypes)
+  if (argTypes && argTypes !== '{}') {
+    ctxLines.push(`- argTypes: \`${argTypes}\``)
+  }
+
+  // Current values from the Controls panel. Useful for "this page
+  // renders the size=lg variant" style queries.
+  const args = safeStringify(storyContext.args)
+  if (args && args !== '{}') {
+    ctxLines.push(`- args: \`${args}\``)
+  }
+
   return SYSTEM_PROMPT + '\n' + ctxLines.join('\n')
 }
 

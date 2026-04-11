@@ -41,12 +41,28 @@ export const MAX_MESSAGES = 50
 
 export const CHAT_STORAGE_KEY = 'matlens-ds-chat'
 
+// Quick-suggestion buttons shown under the welcome message and again
+// when the conversation is otherwise empty. Each one pre-fills the
+// input with a canonical query so users don't have to phrase it
+// themselves — which is both more discoverable and more likely to hit
+// the FAQ / Story Guide layer without spending AI quota.
+//
+// Ordered by expected usage frequency: the first two land on design
+// tokens (the question we get most), then Atomic Design structure,
+// then a contextual "this page" helper that pulls from storyGuideMap.
 export const QUICK_SUGGESTIONS = [
-  { label: 'カラートークン一覧', query: 'カラートークンの一覧を教えて' },
-  { label: 'テーマの使い分け', query: 'テーマの種類と使い分けは？' },
-  { label: 'コンポーネント追加手順', query: 'コンポーネントを追加する手順を教えて' },
-  { label: 'Atomic Design分類', query: 'Atom/Molecule/Organismの使い分け基準は？' },
-  { label: 'このページのガイド', query: 'このページのヒントを教えて' },
+  { label: '現在のページの解説', query: 'このページの解説を教えて' },
+  { label: 'カラートークン', query: 'カラートークンの一覧を教えて' },
+  { label: 'テーマの違い', query: '4 テーマの違いと使い分けは？' },
+  { label: 'Atomic Design', query: 'Atoms / Molecules / Organisms の使い分け基準は？' },
+  { label: '設計 6 原則', query: 'コンポーネント設計 6 原則を教えて' },
+  { label: 'コンポーネント一覧', query: 'Atoms / Molecules / Organisms のコンポーネント一覧は？' },
+  { label: 'トークン命名規則', query: 'CSS 変数トークンの命名規則を教えて' },
+  { label: 'スペーシング', query: 'スペーシングのルールと推奨値は？' },
+  { label: 'シャドウ / 半径', query: 'shadow と radius のトークンを教えて' },
+  { label: 'フォント仕様', query: 'フォントファミリーとサイズ階層を教えて' },
+  { label: 'AI / Vec カラー規約', query: 'AI 機能とベクトル検索のカラー規約を教えて' },
+  { label: '実装の注意点', query: 'コンポーネントを追加する手順と注意点を教えて' },
 ] as const
 
 // ──────────────────────────────────────────────────────────────────────
