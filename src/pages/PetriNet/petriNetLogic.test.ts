@@ -43,6 +43,15 @@ describe('tokenReducer', () => {
     expect(next).toEqual(INITIAL_TOKENS)
   })
 
+  it('restore: 指定した過去状態へ即座に巻き戻す (Undo 用)', () => {
+    const past: TokenState = { ...INITIAL_TOKENS, p0: 0, p3: 1 }
+    const current: TokenState = { ...INITIAL_TOKENS, p0: 0, p4: 1 }
+    const next = tokenReducer(current, { type: 'restore', state: past })
+    expect(next).toEqual(past)
+    // 元の state オブジェクトが変更されていないこと（shallow copy 保証）
+    expect(next).not.toBe(past)
+  })
+
   it('連続 fire で p0 → p1 → p2 とトークンが進行', () => {
     let state = { ...INITIAL_TOKENS }
     state = tokenReducer(state, { type: 'fire', transition: t('t0') })

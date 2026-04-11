@@ -51,6 +51,8 @@ export const HELP_TERMS: { id: string; term: string; en: string; cat: string; ca
   {id:'crud',term:'CRUD',en:'Create, Read, Update, Delete',cat:'sys',catLabel:'システム',catVariant:'green',body:'データ操作の4基本操作の頭文字。Create=新規登録、Read=閲覧、Update=編集、Delete=削除。Matlens は全 CRUD 操作に対応。削除は誤操作防止のため確認ダイアログを挟む。',related:'データ登録、編集'},
   {id:'wcag',term:'WCAG（ウェブアクセシビリティ）',en:'Web Content Accessibility Guidelines',cat:'sys',catLabel:'システム',catVariant:'green',body:'W3C が策定したウェブアクセシビリティのガイドライン。Matlens は AA 準拠を目標。対応項目: コントラスト比 4.5:1 以上、フォーカスリング表示、スキップナビゲーション、aria-label / role 属性、最小フォントサイズ 12px。',related:'フォーカスリング、aria-label'},
   {id:'op-filter',term:'複合フィルタ検索',en:'Advanced Filter',cat:'ops',catLabel:'操作ガイド',catVariant:'amber',body:'材料データ一覧で使える多条件フィルタ。全文検索（名称・ID・組成・備考・登録者）、カテゴリ・ステータス・バッチ番号のドロップダウン絞り込み、詳細条件での硬度数値範囲指定が可能。アクティブなフィルタはタグとして表示され個別解除できる。',related:'一覧画面、ベクトル検索'},
+  {id:'petri',term:'ペトリネット',en:'Petri Net (P/T net)',cat:'sys',catLabel:'システム',catVariant:'green',body:'Place（丸）・Transition（四角）・トークン（●）で並行システムの状態遷移を表すモデル。複数サンプルの並行進行・再加工ループ（サイクル）・合流/分岐を一つのモデルで記述できる。DAG（有向非巡回グラフ）では表現できないフィードバック（例: 後加工済→一次加工済 の再加工）を扱えるのが決定的な採用理由。Matlens では金属試験 11 工程を 12 place / 12 transition で定義し、長時間試験 place には capacity=2 を設定している。原則として順方向発火のみだが、(1) 再加工 t4 のような物理的な逆方向トランジションを定義できる、(2) UI の「1 手戻る」で直前の操作を Undo できる、の 2 通りで戻る動作を表現する。',related:'PNML、MaiML'},
+  {id:'pnml',term:'PNML',en:'Petri Net Markup Language (ISO/IEC 15909-2)',cat:'sys',catLabel:'システム',catVariant:'green',body:'ペトリネットを記述する XML ベースの標準交換フォーマット。ISO/IEC 15909-2 で規定。place / transition / arc と初期マーキング・capacity・座標を保持する。Matlens のワークフロー可視化ページから PNML エクスポートすると、PIPE・GreatSPN・CPN Tools 等の解析ツールに読み込んで到達可能性解析・デッドロック検出などが行える。',related:'ペトリネット、エクスポート'},
 ];
 
 export const FAQ_ITEMS: { q: string; a: string }[] = [
@@ -59,6 +61,8 @@ export const FAQ_ITEMS: { q: string; a: string }[] = [
   { q: 'AI 機能は無料ですか？', a: 'GPT-5.4 nano と Gemini 2.5 Flash は 1日30回まで無料です。自分の OpenAI API キーを設定すると GPT-5.4 mini が無制限で使えます。' },
   { q: '4つのテーマの違いは？', a: 'Light（標準）、Dark（暗色）、Eng（端末風）、CAE（解析風）の4種。トップバーで切替できます。' },
   { q: 'オフラインで使えますか？', a: 'CDN の読み込みにインターネット接続が必要です。初回読み込み後はブラウザキャッシュで一部動作しますが、AI 機能は接続が必要です。' },
+  { q: '試験フロー可視化で工程を戻せますか？', a: 'ペトリネットは本来順方向発火のみですが、Matlens では 2 通りの「戻る」動作を用意しています。(1)「再加工」トランジション t4 — 後加工済 → 一次加工済 の物理的に意味のあるフィードバックループをネット上で定義済み。(2)「1 手戻る」ボタン — 直前の発火／サンプル追加を UI レベルで Undo（最大 20 手まで）。不可逆な工程（破壊試験後など）は設計上戻せません。' },
+  { q: 'PNML ファイルはどこで使えますか？', a: 'PNML は ISO/IEC 15909-2 準拠のペトリネット標準交換フォーマット。試験フロー可視化ページの「PNML」ボタンでダウンロードすると、PIPE・GreatSPN・CPN Tools 等の外部ツールに読み込んで到達可能性解析やデッドロック検出ができます。' },
 ];
 
 export const SUPPORT_TABS: { id: string; label: string; icon: string }[] = [

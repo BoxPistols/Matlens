@@ -25,7 +25,10 @@ import {
   isEnabled,
   straightArcPath,
   reworkArcPath,
+  type TokenState,
 } from './petriNetLogic'
+
+const UNDO_MAX = 20
 
 // ─── 定数 ──────────────────────────────────────────────────────────────────
 const PLACE_R  = 22   // Place 半径 (px)
@@ -209,6 +212,9 @@ type ArcDef = {
 export const PetriNetPage = () => {
   const [tokens, dispatch] = useReducer(tokenReducer, { ...INITIAL_TOKENS })
   const [history, setHistory] = useState<string[]>([])
+  // Undo 用の過去状態スタック。UI レベルの「1 手戻る」用で、
+  // ペトリネット本来の順方向発火とは独立した巻き戻し機能。
+  const [undoStack, setUndoStack] = useState<TokenState[]>([])
 
   const net = METAL_TEST_WORKFLOW
 
@@ -243,17 +249,39 @@ export const PetriNetPage = () => {
     return result
   }, [net, nodeMap])
 
+  // 状態変更前に現在の tokens を undo スタックへ退避する共通処理
+  const pushUndo = () => {
+    setUndoStack(prev => [...prev.slice(-(UNDO_MAX - 1)), tokens])
+  }
+
   const handleFire = (t: TransitionDef) => {
     // 呼出側（TransitionNode の enabled ガード）で発火可能性は保証されているが
     // ロジック破損時の安全のため二重チェック。
     if (!isEnabled(t, tokens, net.places)) return
+    pushUndo()
     dispatch({ type: 'fire', transition: t })
     setHistory(prev => [`${t.label} (${t.id}) 発火`, ...prev.slice(0, 19)])
+  }
+
+  const handleAdd = () => {
+    pushUndo()
+    dispatch({ type: 'add', placeId: 'p0' })
+    setHistory(prev => [`サンプル追加 (p0)`, ...prev.slice(0, 19)])
+  }
+
+  const handleUndo = () => {
+    if (undoStack.length === 0) return
+    const prev = undoStack[undoStack.length - 1]
+    if (!prev) return
+    setUndoStack(s => s.slice(0, -1))
+    dispatch({ type: 'restore', state: prev })
+    setHistory(h => [`1 手戻る`, ...h.slice(0, 19)])
   }
 
   const handleReset = () => {
     dispatch({ type: 'reset' })
     setHistory([])
+    setUndoStack([])
   }
 
   const handleExport = () => {
@@ -284,8 +312,18 @@ export const PetriNetPage = () => {
           <Badge variant={enabledCount > 0 ? 'green' : 'gray'}>
             {enabledCount} 件 発火可能
           </Badge>
-          <Button size="sm" variant="default" onClick={() => dispatch({ type: 'add', placeId: 'p0' })}>
+          <Button size="sm" variant="default" onClick={handleAdd}>
             <Icon name="plus" size={13} /> サンプル追加
+          </Button>
+          <Button
+            size="sm"
+            variant="default"
+            onClick={handleUndo}
+            disabled={undoStack.length === 0}
+            title={undoStack.length === 0 ? '巻き戻せる履歴がありません' : `直前の操作を取り消す (残り ${undoStack.length})`}
+          >
+            <Icon name="chevronLeft" size={13} /> 1 手戻る
+            {undoStack.length > 0 && <span className="ml-1 text-[10px] text-text-lo">({undoStack.length})</span>}
           </Button>
           <Button size="sm" variant="default" onClick={handleExport}>
             <Icon name="download" size={13} /> PNML

@@ -20,6 +20,7 @@ export type TokenAction =
   | { type: 'fire'; transition: TransitionDef }
   | { type: 'add'; placeId: PlaceId }
   | { type: 'reset' }
+  | { type: 'restore'; state: TokenState }
 
 export function tokenReducer(state: TokenState, action: TokenAction): TokenState {
   switch (action.type) {
@@ -33,6 +34,10 @@ export function tokenReducer(state: TokenState, action: TokenAction): TokenState
       return { ...state, [action.placeId]: (state[action.placeId] ?? 0) + 1 }
     case 'reset':
       return { ...INITIAL_TOKENS }
+    case 'restore':
+      // undo 用: 履歴スタックから取り出した過去状態を即座に復元する。
+      // ペトリネットは本来順方向発火のみだが、UI レベルの Undo として実装。
+      return { ...action.state }
     default: {
       // 網羅チェック: TokenAction に新しい variant が追加されたら
       // ここで型エラーになる（_exhaustive: never への代入が失敗する）
