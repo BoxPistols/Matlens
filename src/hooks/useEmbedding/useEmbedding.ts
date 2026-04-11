@@ -1,5 +1,54 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import type { Material, MaterialWithScore, EmbeddingHook } from '../../types';
+import type { Material, MaterialCategory, MaterialWithScore, EmbeddingHook } from '../../types';
+import { semanticSearchWithTfjs } from '../../services/tfjsSemanticSearch';
+
+/** `/api/search` の JSON 行（Upstash メタのみ / キーワード時は Material 近似） */
+interface SearchApiRow {
+  id: string;
+  score?: number;
+  date?: string;
+  name?: string;
+  cat?: string;
+  hv?: number;
+  ts?: number;
+  el?: number;
+  pf?: number | null;
+  el2?: number;
+  dn?: number;
+  comp?: string;
+  batch?: string;
+  author?: string;
+  status?: string;
+  ai?: boolean;
+  memo?: string;
+}
+
+function mapSearchRowToMaterial(r: SearchApiRow, db: Material[]): MaterialWithScore {
+  if (r.date !== undefined) {
+    return r as MaterialWithScore;
+  }
+  const local = db.find(m => m.id === r.id);
+  if (local) return { ...local, score: r.score ?? 0 };
+  return {
+    id: r.id,
+    name: r.name ?? '',
+    cat: (r.cat as MaterialCategory) ?? '金属合金',
+    hv: r.hv ?? 0,
+    ts: r.ts ?? 0,
+    el: r.el ?? 0,
+    pf: r.pf ?? null,
+    el2: r.el2 ?? 0,
+    dn: r.dn ?? 0,
+    comp: r.comp ?? '',
+    batch: r.batch ?? '',
+    date: r.date ?? '',
+    author: r.author ?? '',
+    status: (r.status as Material['status']) ?? '登録済',
+    ai: r.ai ?? false,
+    memo: r.memo ?? '',
+    score: r.score ?? 0,
+  };
+}
 
 // Tokenize query for keyword matching (Japanese-aware)
 function tokenize(query: string): string[] {
@@ -66,26 +115,11 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
         signal: controller.signal,
       });
       if (!res.ok) throw new Error('Search API error');
-      const data = await res.json();
+      const data: { engine?: string; results?: SearchApiRow[] } = await res.json();
       setEngine(data.engine || 'server');
 
       if (data.results && data.results.length > 0) {
-        // Map server results back to MaterialWithScore
-        // Server may return full Material objects (keyword) or partial (upstash)
-        return data.results.map((r: any) => {
-          // If result came from keyword search, it already has full Material fields
-          if (r.date !== undefined) return r as MaterialWithScore;
-          // Upstash results: find matching material in local db, attach score
-          const local = db.find(m => m.id === r.id);
-          if (local) return { ...local, score: r.score ?? 0 };
-          // Construct minimal result from server metadata
-          return {
-            id: r.id, name: r.name || '', cat: r.cat || '金属合金',
-            hv: r.hv || 0, ts: r.ts || 0, el: 0, pf: null, el2: 0, dn: r.dn || 0,
-            comp: r.comp || '', batch: '', date: '', author: '', status: '登録済' as const,
-            ai: false, memo: '', score: r.score ?? 0,
-          } as MaterialWithScore;
-        });
+        return data.results.map(r => mapSearchRowToMaterial(r, db));
       }
     } catch (err) {
       // An AbortError is a deliberate cancellation (user typed a new
@@ -94,7 +128,12 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
       if (err instanceof DOMException && err.name === 'AbortError') {
         return [];
       }
-      // Server unavailable — use client-side keyword fallback
+      // サーバー不可時: まず TensorFlow.js + USE（ブラウザ内）、だめならキーワード
+      const tfResults = await semanticSearchWithTfjs(db, query, topK, controller.signal);
+      if (tfResults.length > 0) {
+        setEngine('tfjs');
+        return tfResults;
+      }
       setEngine('keyword');
     }
 

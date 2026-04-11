@@ -12,13 +12,16 @@ afterEach(() => {
   cleanup();
 });
 
-// Mock TensorFlow.js + USE (heavy ML deps)
-vi.mock('@tensorflow/tfjs', () => ({}));
+// TensorFlow.js + USE は動的 import のみ。テストで誤ってロードしたときの軽量スタブ
 vi.mock('@tensorflow-models/universal-sentence-encoder', () => ({
   load: vi.fn().mockResolvedValue({
-    embed: vi.fn().mockResolvedValue({
-      array: vi.fn().mockResolvedValue([new Array(512).fill(0)]),
-      dispose: vi.fn(),
+    embed: vi.fn().mockImplementation(async (inputs: string | string[]) => {
+      const list = Array.isArray(inputs) ? inputs : [inputs];
+      const rows = list.map(() => new Array<number>(512).fill(0.01));
+      return {
+        array: async () => rows,
+        dispose: vi.fn(),
+      };
     }),
   }),
 }));
