@@ -38,16 +38,18 @@ describe('exportPnml', () => {
   })
 
   it('arc の source/target が place または transition のいずれかを参照する', () => {
-    const placeIds = new Set(METAL_TEST_WORKFLOW.places.map(p => p.id))
-    const transIds = new Set(METAL_TEST_WORKFLOW.transitions.map(t => t.id))
-    const arcSources = [...xml.matchAll(/source="([^"]+)"/g)].map(m => m[1])
-    const arcTargets = [...xml.matchAll(/target="([^"]+)"/g)].map(m => m[1] as string)
-    for (const src of arcSources) {
-      expect(placeIds.has(src as any) || transIds.has(src as any)).toBe(true)
-    }
-    for (const tgt of arcTargets) {
-      expect(placeIds.has(tgt as any) || transIds.has(tgt as any)).toBe(true)
-    }
+    const validIds = new Set<string>([
+      ...METAL_TEST_WORKFLOW.places.map(p => p.id),
+      ...METAL_TEST_WORKFLOW.transitions.map(t => t.id),
+    ])
+    const arcSources = [...xml.matchAll(/source="([^"]+)"/g)]
+      .map(m => m[1])
+      .filter((s): s is string => s !== undefined)
+    const arcTargets = [...xml.matchAll(/target="([^"]+)"/g)]
+      .map(m => m[1])
+      .filter((s): s is string => s !== undefined)
+    for (const src of arcSources) expect(validIds.has(src)).toBe(true)
+    for (const tgt of arcTargets) expect(validIds.has(tgt)).toBe(true)
   })
 
   it('カスタムトークン状態を反映する', () => {

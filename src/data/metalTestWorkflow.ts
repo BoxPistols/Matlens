@@ -84,8 +84,9 @@ export const METAL_TEST_WORKFLOW: PetriNetDef = {
     { id: 'p4',  label: '後加工済',   fullLabel: '後加工済',       x: 50+DX*8,   y: R1Y },
     { id: 'p5',  label: '採取済',     fullLabel: '試験片採取済',   x: 50+DX*7,   y: R2Y },
     { id: 'p6',  label: '評価済',     fullLabel: '評価済',         x: 50+DX*5,   y: R2Y },
-    { id: 'p7',  label: '機械試験済', fullLabel: '機械試験済',     x: 50+DX*3,   y: R2Y },
-    { id: 'p8',  label: '環境試験済', fullLabel: '環境試験済',     x: 50+DX*1,   y: R2Y },
+    // 機械試験・環境試験は長時間試験のため並行ステーション数 2 で上限化する（Petri net の place-capacity）
+    { id: 'p7',  label: '機械試験済', fullLabel: '機械試験済 (長時間)', x: 50+DX*3, y: R2Y, capacity: 2 },
+    { id: 'p8',  label: '環境試験済', fullLabel: '環境試験済 (長時間)', x: 50+DX*1, y: R2Y, capacity: 2 },
     { id: 'p9',  label: '破面解析済', fullLabel: '破面解析済',     x: 50,        y: R3Y },
     { id: 'p10', label: '完了',       fullLabel: 'レポート完了',   x: 50+DX*2,   y: R3Y, isFinal: true },
     { id: 'p11', label: '廃棄',       fullLabel: '廃棄/不合格',    x: 50+DX*5,   y: R3Y, isReject: true },

@@ -3,21 +3,29 @@
  *
  * P/T net セマンティクス:
  *   Place (丸) = 状態バッファ。内部のトークン (●) がサンプルの所在を表す。
- *   Transition (四角) = 工程操作。全入力 place にトークンがあれば発火可能。
- *   フィードバックループ (再加工 t4) は DAG で表現不可 → Petri net の採用根拠。
+ *   Transition (四角) = 工程操作。全入力 place にトークンがあり capacity を
+ *     超えない場合に発火可能。
+ *   フィードバックループ (再加工 t4) は DAG で表現不可 → Petri net 採用の決定理由。
  */
 
-import { useState, useReducer, useCallback } from 'react'
+import { useState, useReducer, useMemo, type KeyboardEvent } from 'react'
 import { Button, Badge, Card } from '../../components/atoms'
 import { Icon } from '../../components/Icon'
 import {
   METAL_TEST_WORKFLOW,
   INITIAL_TOKENS,
   type PlaceId,
+  type TransitionId,
   type PlaceDef,
   type TransitionDef,
 } from '../../data/metalTestWorkflow'
 import { exportPnml, downloadPnml } from '../../services/pnml'
+import {
+  tokenReducer,
+  isEnabled,
+  straightArcPath,
+  reworkArcPath,
+} from './petriNetLogic'
 
 // ─── 定数 ──────────────────────────────────────────────────────────────────
 const PLACE_R  = 22   // Place 半径 (px)
@@ -27,111 +35,6 @@ const TOKEN_R  = 5    // トークンドット半径
 const SVG_W    = 760
 const SVG_H    = 430
 const LABEL_OFFSET = 32  // ノード中心からラベルまでの距離
-
-// ─── トークン状態管理 ──────────────────────────────────────────────────────
-type TokenState = Record<PlaceId, number>
-
-type TokenAction =
-  | { type: 'fire'; transition: TransitionDef }
-  | { type: 'add'; placeId: PlaceId }
-  | { type: 'reset' }
-
-function tokenReducer(state: TokenState, action: TokenAction): TokenState {
-  switch (action.type) {
-    case 'fire': {
-      const next = { ...state }
-      for (const pid of action.transition.inputs)  next[pid] = (next[pid] ?? 0) - 1
-      for (const pid of action.transition.outputs) next[pid] = (next[pid] ?? 0) + 1
-      return next
-    }
-    case 'add': {
-      return { ...state, [action.placeId]: (state[action.placeId] ?? 0) + 1 }
-    }
-    case 'reset':
-      return { ...INITIAL_TOKENS }
-  }
-}
-
-function isEnabled(t: TransitionDef, tokens: TokenState): boolean {
-  return t.inputs.every(pid => (tokens[pid] ?? 0) > 0)
-}
-
-// ─── 弧パス計算 ─────────────────────────────────────────────────────────────
-/**
- * 2 ノード間の弧パス (直線 M...L...) を計算する。
- * ノードの境界（Place: 円、Transition: 矩形）を考慮して開始・終了点を調整する。
- */
-function straightArcPath(
-  sx: number, sy: number, sIsPlace: boolean,
-  tx: number, ty: number, tIsPlace: boolean,
-): string {
-  const dx = tx - sx
-  const dy = ty - sy
-  const len = Math.sqrt(dx * dx + dy * dy)
-  if (len === 0) return ''
-  const ux = dx / len
-  const uy = dy / len
-
-  const srcBorder = sIsPlace
-    ? PLACE_R
-    : Math.abs(ux) >= Math.abs(uy) ? TRANS_W : TRANS_H
-  const tgtBorder = tIsPlace
-    ? PLACE_R
-    : Math.abs(ux) >= Math.abs(uy) ? TRANS_W : TRANS_H
-
-  const x1 = sx + ux * srcBorder
-  const y1 = sy + uy * srcBorder
-  const x2 = tx - ux * (tgtBorder + 4)  // +4 で矢印先端が境界に重なる調整
-  const y2 = ty - uy * (tgtBorder + 4)
-
-  return `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`
-}
-
-// ─── SVG 弧コンポーネント ───────────────────────────────────────────────────
-interface ArcProps {
-  srcId: PlaceId | string
-  tgtId: PlaceId | string
-  net: typeof METAL_TEST_WORKFLOW
-  isRework?: boolean
-  isReject?: boolean
-}
-
-function Arc({ srcId, tgtId, net, isRework, isReject }: ArcProps) {
-  const src = net.places.find(p => p.id === srcId) ?? net.transitions.find(t => t.id === srcId)
-  const tgt = net.places.find(p => p.id === tgtId) ?? net.transitions.find(t => t.id === tgtId)
-  if (!src || !tgt) return null
-
-  const srcIsPlace = net.places.some(p => p.id === srcId)
-  const tgtIsPlace = net.places.some(p => p.id === tgtId)
-
-  let d: string
-  if (isRework) {
-    // 再加工弧: p4(690,90) ↔ t4(530,28) ↔ p3(530,90) — Row1 上方の cubic bezier
-    if (srcIsPlace) {
-      // p4→t4: 上方へのカーブ
-      d = `M ${src.x} ${src.y - PLACE_R} C ${src.x} ${tgt.y} ${tgt.x + TRANS_W + 4} ${tgt.y} ${tgt.x + TRANS_W + 4} ${tgt.y}`
-    } else {
-      // t4→p3: 下方へのカーブ
-      d = `M ${src.x - TRANS_W - 4} ${src.y} C ${src.x - TRANS_W - 4} ${tgt.y - PLACE_R} ${tgt.x} ${tgt.y - PLACE_R} ${tgt.x} ${tgt.y - PLACE_R}`
-    }
-  } else {
-    d = straightArcPath(src.x, src.y, srcIsPlace, tgt.x, tgt.y, tgtIsPlace)
-  }
-
-  const color = isRework ? 'var(--warn)' : isReject ? 'var(--warn)' : 'var(--text-lo)'
-  const dashArray = isRework ? '5,3' : undefined
-
-  return (
-    <path
-      d={d}
-      stroke={color}
-      strokeWidth={1.5}
-      strokeDasharray={dashArray}
-      fill="none"
-      markerEnd={isRework ? 'url(#arrow-warn)' : isReject ? 'url(#arrow-warn)' : 'url(#arrow)'}
-    />
-  )
-}
 
 // ─── トークン表示 ────────────────────────────────────────────────────────────
 function Tokens({ count }: { count: number }) {
@@ -155,13 +58,7 @@ function Tokens({ count }: { count: number }) {
 }
 
 // ─── Place ノード ────────────────────────────────────────────────────────────
-interface PlaceNodeProps {
-  place: PlaceDef
-  tokens: number
-  labelBelow?: boolean
-}
-
-function PlaceNode({ place, tokens, labelBelow = true }: PlaceNodeProps) {
+function PlaceNode({ place, tokens }: { place: PlaceDef; tokens: number }) {
   const stroke = place.isInitial
     ? 'var(--ok)'
     : place.isFinal
@@ -169,8 +66,8 @@ function PlaceNode({ place, tokens, labelBelow = true }: PlaceNodeProps) {
     : place.isReject
     ? 'var(--warn)'
     : 'var(--border-strong)'
-
   const strokeWidth = place.isInitial || place.isFinal ? 2.5 : 1.5
+  const atCapacity = place.capacity !== undefined && tokens >= place.capacity
 
   return (
     <g transform={`translate(${place.x},${place.y})`}>
@@ -182,7 +79,7 @@ function PlaceNode({ place, tokens, labelBelow = true }: PlaceNodeProps) {
       />
       <Tokens count={tokens} />
       <text
-        y={labelBelow ? LABEL_OFFSET : -LABEL_OFFSET}
+        y={LABEL_OFFSET}
         textAnchor="middle"
         dominantBaseline="hanging"
         fontSize={9}
@@ -191,6 +88,19 @@ function PlaceNode({ place, tokens, labelBelow = true }: PlaceNodeProps) {
       >
         {place.label}
       </text>
+      {place.capacity !== undefined && (
+        <text
+          y={LABEL_OFFSET + 11}
+          textAnchor="middle"
+          dominantBaseline="hanging"
+          fontSize={8}
+          fontWeight="bold"
+          fill={atCapacity ? 'var(--warn)' : 'var(--text-lo)'}
+          style={{ userSelect: 'none' }}
+        >
+          {tokens}/{place.capacity}
+        </text>
+      )}
     </g>
   )
 }
@@ -213,14 +123,24 @@ function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
     ? isRework ? 'var(--warn)' : isReject ? 'var(--warn)' : 'var(--accent)'
     : 'var(--border-faint)'
 
-  // ラベルは Transition の外側に表示（Row1 上方の t4 はラベルを上に）
+  // Row 1 上方の t4 はラベルを上に置く
   const labelY = isRework ? -TRANS_H - 4 : TRANS_H + 12
+
+  const handleKeyDown = (e: KeyboardEvent<SVGGElement>) => {
+    if (!enabled) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      onFire()
+    }
+  }
 
   return (
     <g
       transform={`translate(${transition.x},${transition.y})`}
       onClick={enabled ? onFire : undefined}
-      style={{ cursor: enabled ? 'pointer' : 'default' }}
+      onKeyDown={enabled ? handleKeyDown : undefined}
+      tabIndex={enabled ? 0 : undefined}
+      style={{ cursor: enabled ? 'pointer' : 'default', outline: 'none' }}
       role={enabled ? 'button' : undefined}
       aria-label={enabled ? `${transition.label}を実行` : undefined}
       aria-disabled={!enabled}
@@ -249,18 +169,87 @@ function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
   )
 }
 
+// ─── Arc (resolved path を受け取るだけの薄いレンダラー) ────────────────────
+interface ArcProps {
+  d: string
+  isRework?: boolean
+  isReject?: boolean
+}
+
+function Arc({ d, isRework, isReject }: ArcProps) {
+  const color = isRework || isReject ? 'var(--warn)' : 'var(--text-lo)'
+  const dashArray = isRework ? '5,3' : undefined
+  const marker = isRework || isReject ? 'url(#arrow-warn)' : 'url(#arrow)'
+  return (
+    <path
+      d={d}
+      stroke={color}
+      strokeWidth={1.5}
+      strokeDasharray={dashArray}
+      fill="none"
+      markerEnd={marker}
+    />
+  )
+}
+
 // ─── メインページ ────────────────────────────────────────────────────────────
+interface NodeRef {
+  x: number
+  y: number
+  isPlace: boolean
+}
+
+type ArcDef = {
+  key: string
+  d: string
+  isRework?: boolean
+  isReject?: boolean
+}
+
 export const PetriNetPage = () => {
   const [tokens, dispatch] = useReducer(tokenReducer, { ...INITIAL_TOKENS })
   const [history, setHistory] = useState<string[]>([])
 
   const net = METAL_TEST_WORKFLOW
 
-  const handleFire = useCallback((t: TransitionDef) => {
-    if (!isEnabled(t, tokens)) return
+  // ノード ID → 座標/種別 の高速ルックアップ (O(1))
+  const nodeMap = useMemo(() => {
+    const m = new Map<PlaceId | TransitionId, NodeRef>()
+    for (const p of net.places)      m.set(p.id, { x: p.x, y: p.y, isPlace: true })
+    for (const t of net.transitions) m.set(t.id, { x: t.x, y: t.y, isPlace: false })
+    return m
+  }, [net])
+
+  // 全弧パスを一度だけ計算
+  const arcs = useMemo<ArcDef[]>(() => {
+    const result: ArcDef[] = []
+    for (const t of net.transitions) {
+      const trNode = nodeMap.get(t.id)!
+      for (const srcId of t.inputs) {
+        const src = nodeMap.get(srcId)!
+        const d = t.isRework
+          ? reworkArcPath(src, trNode, true, PLACE_R, TRANS_W)
+          : straightArcPath(src.x, src.y, src.isPlace, trNode.x, trNode.y, trNode.isPlace, PLACE_R, TRANS_W, TRANS_H)
+        result.push({ key: `${srcId}-${t.id}`, d, isRework: t.isRework, isReject: t.isReject })
+      }
+      for (const tgtId of t.outputs) {
+        const tgt = nodeMap.get(tgtId)!
+        const d = t.isRework
+          ? reworkArcPath(trNode, tgt, false, PLACE_R, TRANS_W)
+          : straightArcPath(trNode.x, trNode.y, trNode.isPlace, tgt.x, tgt.y, tgt.isPlace, PLACE_R, TRANS_W, TRANS_H)
+        result.push({ key: `${t.id}-${tgtId}`, d, isRework: t.isRework, isReject: t.isReject })
+      }
+    }
+    return result
+  }, [net, nodeMap])
+
+  const handleFire = (t: TransitionDef) => {
+    // 呼出側（TransitionNode の enabled ガード）で発火可能性は保証されているが
+    // ロジック破損時の安全のため二重チェック。
+    if (!isEnabled(t, tokens, net.places)) return
     dispatch({ type: 'fire', transition: t })
     setHistory(prev => [`${t.label} (${t.id}) 発火`, ...prev.slice(0, 19)])
-  }, [tokens])
+  }
 
   const handleReset = () => {
     dispatch({ type: 'reset' })
@@ -272,22 +261,10 @@ export const PetriNetPage = () => {
     downloadPnml(xml, 'metal-test-workflow.pnml')
   }
 
-  const enabledCount = net.transitions.filter(t => isEnabled(t, tokens)).length
+  const enabledCount = net.transitions.filter(t => isEnabled(t, tokens, net.places)).length
   const totalTokens = Object.values(tokens).reduce((a, b) => a + b, 0)
   const completed = tokens['p10'] ?? 0
   const rejected  = tokens['p11'] ?? 0
-
-  // 弧の定義: 全 transition の入出力から派生
-  const arcs = net.transitions.flatMap(t => [
-    ...t.inputs.map(src => ({
-      key: `${src}-${t.id}`, srcId: src, tgtId: t.id,
-      isRework: t.isRework, isReject: t.isReject,
-    })),
-    ...t.outputs.map(tgt => ({
-      key: `${t.id}-${tgt}`, srcId: t.id, tgtId: tgt,
-      isRework: t.isRework, isReject: t.isReject,
-    })),
-  ])
 
   return (
     <div className="flex flex-col gap-4">
@@ -300,7 +277,7 @@ export const PetriNetPage = () => {
           </h1>
           <p className="text-[12px] text-text-lo mt-0.5">
             金属試験プロセスの P/T ネット可視化。
-            トークン (●) がサンプルの進行状況を表す。発火可能なトランジション（青/橙枠）をクリックして工程を進める。
+            トークン (●) がサンプルの進行状況を表す。発火可能なトランジション（青/橙枠）をクリックまたは Enter/Space で工程を進める。
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -348,9 +325,9 @@ export const PetriNetPage = () => {
           <line x1={25} y1={220} x2={735} y2={220} stroke="var(--border-faint)" strokeWidth={0.5} strokeDasharray="3,3" />
           <line x1={25} y1={350} x2={310} y2={350} stroke="var(--border-faint)" strokeWidth={0.5} strokeDasharray="3,3" />
 
-          {/* 弧（ノードより先に描画してノードの下に来るようにする） */}
+          {/* 弧（ノードより先に描画） */}
           {arcs.map(a => (
-            <Arc key={a.key} srcId={a.srcId} tgtId={a.tgtId} net={net} isRework={a.isRework} isReject={a.isReject} />
+            <Arc key={a.key} d={a.d} isRework={a.isRework} isReject={a.isReject} />
           ))}
 
           {/* Transition ノード */}
@@ -358,19 +335,14 @@ export const PetriNetPage = () => {
             <TransitionNode
               key={t.id}
               transition={t}
-              enabled={isEnabled(t, tokens)}
+              enabled={isEnabled(t, tokens, net.places)}
               onFire={() => handleFire(t)}
             />
           ))}
 
           {/* Place ノード（最前面） */}
           {net.places.map(p => (
-            <PlaceNode
-              key={p.id}
-              place={p}
-              tokens={tokens[p.id] ?? 0}
-              labelBelow={p.y !== 28}
-            />
+            <PlaceNode key={p.id} place={p} tokens={tokens[p.id] ?? 0} />
           ))}
 
           {/* 凡例 */}
@@ -416,11 +388,17 @@ export const PetriNetPage = () => {
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             {net.places.map(p => {
               const count = tokens[p.id] ?? 0
+              const atCap = p.capacity !== undefined && count >= p.capacity
               return (
                 <div key={p.id} className="flex justify-between items-center text-[11px]">
-                  <span className="text-text-md truncate">{p.fullLabel}</span>
+                  <span className="text-text-md truncate">
+                    {p.fullLabel}
+                    {p.capacity !== undefined && (
+                      <span className="text-text-lo ml-1">(max {p.capacity})</span>
+                    )}
+                  </span>
                   {count > 0
-                    ? <Badge variant={p.isReject ? 'amber' : p.isFinal ? 'green' : 'blue'}>{count}</Badge>
+                    ? <Badge variant={p.isReject ? 'amber' : p.isFinal ? 'green' : atCap ? 'amber' : 'blue'}>{count}</Badge>
                     : <span className="text-text-lo">—</span>
                   }
                 </div>
@@ -450,7 +428,7 @@ export const PetriNetPage = () => {
         <p className="text-[11px] font-bold text-text-lo mb-1">なぜペトリネットか</p>
         <p className="text-[11px] text-text-md leading-relaxed">
           再加工ループ（後加工済 → 一次加工済）は有向非巡回グラフ (DAG) では表現できない。
-          ペトリネットはサイクルを自然に扱い、複数サンプルの並行進行・place 容量制約（クリープ等の長時間試験）・
+          ペトリネットはサイクルを自然に扱い、複数サンプルの並行進行・place 容量制約（長時間試験の並行ステーション数）・
           合流/分岐も一つのモデルで記述できる。PNML エクスポートで PIPE・GreatSPN などの解析ツールと連携可能。
         </p>
       </Card>
