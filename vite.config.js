@@ -25,6 +25,10 @@ export default defineConfig(({ mode }) => {
         open: false,
       }),
     ].filter(Boolean),
+    resolve: {
+      // Prevent duplicate React instances (e.g. lucide-react v1.x useLucideContext)
+      dedupe: ['react', 'react-dom'],
+    },
     build: {
       outDir: 'dist',
     },
