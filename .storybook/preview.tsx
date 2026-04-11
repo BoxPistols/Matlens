@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/react-vite'
-import { useEffect } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { useGlobals } from 'storybook/preview-api'
 import { ChatSupport } from '../src/components/ui/ChatSupport'
 import '../src/index.css'
@@ -44,24 +44,30 @@ const preview: Preview = {
       const [globals] = useGlobals()
       const theme = globals.theme || 'light'
 
+      // Keep refs up-to-date every render but exclude them from useMemo deps.
+      // This prevents currentStory from being recreated every time the user
+      // tweaks a control (which changes context.args on each keystroke).
+      const argTypesRef = useRef(context.argTypes)
+      const argsRef = useRef(context.args)
+      argTypesRef.current = context.argTypes
+      argsRef.current = context.args
+
+      const description = context.parameters?.docs?.description?.component as string | undefined
+      const currentStory = useMemo(() => ({
+        title: context.title,
+        name: context.name,
+        description,
+        argTypes: argTypesRef.current as Record<string, unknown> | undefined,
+        args: argsRef.current as Record<string, unknown> | undefined,
+      }), [context.title, context.name, description])
+
+      const disableDecoratorChat = context.parameters?.disableDecoratorChat === true
+
       return (
         <ThemeWrapper theme={theme}>
           <Story />
-          {context.viewMode !== 'docs' && (
-            <ChatSupport
-              key={context.id}
-              currentStory={{
-                title: context.title,
-                name: context.name,
-                description: context.parameters?.docs?.description?.component,
-                // argTypes / args come straight from Storybook's own
-                // metadata — the decorator passes them through so the
-                // AI system prompt can answer prop-specific questions
-                // without anyone hand-maintaining a mirror table.
-                argTypes: context.argTypes as Record<string, unknown> | undefined,
-                args: context.args as Record<string, unknown> | undefined,
-              }}
-            />
+          {context.viewMode !== 'docs' && !disableDecoratorChat && (
+            <ChatSupport currentStory={currentStory} />
           )}
         </ThemeWrapper>
       )
