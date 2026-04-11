@@ -108,7 +108,7 @@ describe('dbReducer', () => {
       const ids = new Set(['MAT-0001', 'MAT-0003']);
       const result = dbReducer(baseState, { type: 'BULK_DELETE', ids });
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('MAT-0002');
+      expect(result[0]!.id).toBe('MAT-0002');
     });
 
     it('does nothing if the Set is empty', () => {
@@ -153,8 +153,8 @@ describe('dbReducer', () => {
       ];
       const result = dbReducer(baseState, { type: 'IMPORT', records: imports });
       expect(result).toHaveLength(baseState.length + imports.length);
-      expect(result[0].id).toBe('MAT-0010');
-      expect(result[1].id).toBe('MAT-0011');
+      expect(result[0]!.id).toBe('MAT-0010');
+      expect(result[1]!.id).toBe('MAT-0011');
     });
 
     it('existing records appear after imported ones', () => {

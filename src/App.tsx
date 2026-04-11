@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useCallback, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useReducer, useCallback, useRef, lazy, Suspense, type ReactNode } from 'react';
 import type { Toast, AppContextValue } from './types';
 import { AppCtx, dbReducer } from './context/AppContext';
 import { INITIAL_DB } from './data/initialDb';
@@ -15,27 +15,30 @@ import { AnnouncementBanner } from './components/AnnouncementBanner';
 import { ToastHub } from './components/molecules';
 import { Typing } from './components/atoms';
 import { useAnnouncements } from './hooks/useAnnouncements';
-import { DashboardPage } from './pages/Dashboard';
+// Eagerly loaded: the "hot path" pages a user is most likely to land on
+// from a cold start (list, form, detail, vector search, RAG chat, similar).
+// Everything else is dynamically imported so chart.js, prismjs, and the
+// dev-only test/debug pages don't inflate the initial bundle.
 import { MaterialListPage } from './pages/MaterialList';
 import { MaterialFormPage } from './pages/MaterialForm';
 import { VectorSearchPage } from './pages/VectorSearch';
 import { RAGChatPage } from './pages/RAGChat';
 import { DetailPage } from './pages/Detail';
 import { SimilarPage } from './pages/Similar';
-import { VoicePage } from './pages/Voice';
-import { HelpPage } from './pages/Help';
-import { MasterSettingsPage } from './pages/MasterSettings';
-import { AboutPage } from './pages/About';
-import { ApiDebugPage } from './pages/ApiDebug';
-import { UxDesignPage } from './pages/UxDesign';
-import { TestSuitePage } from './pages/TestSuite';
 
-// Lazy load Three.js heavy page to avoid blocking app startup
+const DashboardPage = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.DashboardPage })));
+const VoicePage = lazy(() => import('./pages/Voice').then(m => ({ default: m.VoicePage })));
+const HelpPage = lazy(() => import('./pages/Help').then(m => ({ default: m.HelpPage })));
+const MasterSettingsPage = lazy(() => import('./pages/MasterSettings').then(m => ({ default: m.MasterSettingsPage })));
+const AboutPage = lazy(() => import('./pages/About').then(m => ({ default: m.AboutPage })));
+const ApiDebugPage = lazy(() => import('./pages/ApiDebug').then(m => ({ default: m.ApiDebugPage })));
+const UxDesignPage = lazy(() => import('./pages/UxDesign').then(m => ({ default: m.UxDesignPage })));
+const TestSuitePage = lazy(() => import('./pages/TestSuite').then(m => ({ default: m.TestSuitePage })));
 const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => ({ default: m.CatalogPage })));
 
-const LazyFallback = () => (
+const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
-    <Typing /> <span className="ml-2 text-[13px]">3D カタログを読み込み中...</span>
+    <Typing /> <span className="ml-2 text-[13px]">{label}</span>
   </div>
 );
 
@@ -48,8 +51,9 @@ const LazyFallback = () => (
 function parseHash(): { page: string; detailId: string | null } {
   if (typeof window === 'undefined') return { page: 'dash', detailId: null };
   const parts = window.location.hash.slice(1).split('/').filter(Boolean);
-  if (parts.length === 0) return { page: 'dash', detailId: null };
-  return { page: parts[0], detailId: parts[1] ?? null };
+  const first = parts[0];
+  if (!first) return { page: 'dash', detailId: null };
+  return { page: first, detailId: parts[1] ?? null };
 }
 
 function buildHash(page: string, detailId: string | null): string {
@@ -183,8 +187,13 @@ export function App() {
 
   const renderPage = () => {
     const commonProps = { db, dispatch, onNav: navTo, claude, embedding, voice };
+    // Wrap all lazy routes in a single Suspense so the fallback is consistent
+    // and we don't re-create a Suspense boundary per route.
+    const lazyPage = (node: ReactNode) => (
+      <Suspense fallback={<LazyFallback />}>{node}</Suspense>
+    );
     switch(page) {
-      case 'dash':    return <DashboardPage {...commonProps} announcements={announcements} onOpenAnnouncements={() => openSupportPanel('news')} />;
+      case 'dash':    return lazyPage(<DashboardPage {...commonProps} announcements={announcements} onOpenAnnouncements={() => openSupportPanel('news')} />);
       case 'list':    return <MaterialListPage {...commonProps} onDetail={showDetail} search={embedding.search} />;
       case 'new':     return <MaterialFormPage {...commonProps} editId={null} onCancel={() => setPage('list')} onSuccess={() => setPage('list')} />;
       case 'edit':    return <MaterialFormPage {...commonProps} editId={detailId} onCancel={() => setPage(detailId ? 'detail' : 'list')} onSuccess={() => { if(detailId) setPage('detail'); else setPage('list'); }} />;
@@ -192,15 +201,15 @@ export function App() {
       case 'vsearch': return <VectorSearchPage {...commonProps} />;
       case 'rag':     return <RAGChatPage {...commonProps} initialQuery={ragInitialQuery} clearInitialQuery={() => setRagInitialQuery('')} />;
       case 'sim':     return <SimilarPage {...commonProps} initialBase={simInitialBase} clearInitialBase={() => setSimInitialBase('')} />;
-      case 'catalog': return <Suspense fallback={<LazyFallback />}><CatalogPage db={db} onNav={navTo} onDetail={showDetail} /></Suspense>;
-      case 'voice':   return <VoicePage />;
-      case 'api':     return <ApiDebugPage db={db} dispatch={dispatch} />;
-      case 'tests':   return <TestSuitePage />;
-      case 'uxdesign':return <UxDesignPage />;
-      case 'help':    return <HelpPage />;
-      case 'settings': return <MasterSettingsPage db={db} />;
-      case 'about':   return <AboutPage />;
-      default:        return <DashboardPage {...commonProps} />;
+      case 'catalog': return lazyPage(<CatalogPage db={db} onNav={navTo} onDetail={showDetail} />);
+      case 'voice':   return lazyPage(<VoicePage />);
+      case 'api':     return lazyPage(<ApiDebugPage db={db} dispatch={dispatch} />);
+      case 'tests':   return lazyPage(<TestSuitePage />);
+      case 'uxdesign':return lazyPage(<UxDesignPage />);
+      case 'help':    return lazyPage(<HelpPage />);
+      case 'settings': return lazyPage(<MasterSettingsPage db={db} />);
+      case 'about':   return lazyPage(<AboutPage />);
+      default:        return lazyPage(<DashboardPage {...commonProps} />);
     }
   };
 

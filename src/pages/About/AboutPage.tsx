@@ -67,12 +67,12 @@ export const AboutPage = () => {
 
       <SectionCard title="コンポーネント設計（Atomic Design + コロケーション）">
         <div className="flex items-stretch gap-0 overflow-x-auto py-2">
-          {[
+          {([
             ['Atoms','Button / Badge / Card / Input / Select / Textarea / Checkbox / ProgressBar / Typing / Kbd','accent'],
             ['Molecules','Modal / SearchBox / FilterChip / Toast / KpiCard / AIInsightCard / VecCard / MarkdownBubble / ExportModal','ai'],
             ['Organisms','Topbar / Sidebar / SupportPanel / DataDisclaimer / MaterialVisual','vec'],
             ['Pages','Dashboard / MaterialList / Detail / Catalog / VectorSearch / RAGChat / Similar / MaterialForm / ApiDebug / TestSuite / Help / About / MasterSettings / UxDesign / Voice','ok'],
-          ].map(([name,items,color],i,arr)=>(
+          ] as const).map(([name,items,color],i,arr)=>(
             <React.Fragment key={name}>
               <div className="flex-1 min-w-[160px] flex flex-col gap-2 px-4 border-r border-[var(--border-faint)] last:border-r-0">
                 <div className={`text-[11px] font-bold uppercase tracking-[.05em] text-[var(--${color})]`}>{name}</div>

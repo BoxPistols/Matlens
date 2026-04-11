@@ -123,8 +123,8 @@ describe('parseMaimlToMaterials', () => {
   it('round-trips XML-special characters', () => {
     const xml = serializeMaterialToMaiml(withXmlSpecials);
     const { materials } = parseMaimlToMaterials(xml);
-    expect(materials[0].name).toBe('A & B "Alloy" <test>');
-    expect(materials[0].comp).toBe("C'arbon & iron");
+    expect(materials[0]!.name).toBe('A & B "Alloy" <test>');
+    expect(materials[0]!.comp).toBe("C'arbon & iron");
   });
 
   it('round-trips multiple materials in a single document', () => {
@@ -132,9 +132,9 @@ describe('parseMaimlToMaterials', () => {
     const xml = serializeMaterialsToMaiml([sample, other]);
     const { materials } = parseMaimlToMaterials(xml);
     expect(materials).toHaveLength(2);
-    expect(materials[0].id).toBe('MAT-0001');
-    expect(materials[1].id).toBe('MAT-0002');
-    expect(materials[1].hv).toBe(350);
+    expect(materials[0]!.id).toBe('MAT-0001');
+    expect(materials[1]!.id).toBe('MAT-0002');
+    expect(materials[1]!.hv).toBe(350);
   });
 
   it('reads header generatedAt and source', () => {
@@ -172,7 +172,7 @@ describe('parseMaimlToMaterials', () => {
   it('restores null proofStress when the result element was omitted', () => {
     const xml = serializeMaterialToMaiml({ ...sample, pf: null });
     const { materials } = parseMaimlToMaterials(xml);
-    expect(materials[0].pf).toBeNull();
+    expect(materials[0]!.pf).toBeNull();
   });
 });
 

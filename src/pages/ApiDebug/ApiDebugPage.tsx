@@ -124,7 +124,7 @@ export const ApiDebugPage = ({ db, dispatch }: ApiDebugPageProps) => {
       </div>
 
       <div className="flex gap-1 border-b border-[var(--border-faint)]">
-        {[['logs','リクエストログ'],['composer','リクエスト送信'],['spec','API仕様書'],['config','モック設定']].map(([id,label])=>(
+        {([['logs','リクエストログ'],['composer','リクエスト送信'],['spec','API仕様書'],['config','モック設定']] as const).map(([id,label])=>(
           <button key={id} onClick={()=>setTab(id)} className={`px-4 py-2 text-[13px] font-medium border-b-2 transition-colors -mb-px font-ui ${tab===id?'border-accent text-accent':'border-transparent text-text-md hover:text-text-hi'}`}>{label}</button>
         ))}
       </div>

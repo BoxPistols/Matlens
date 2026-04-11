@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Pre-commit: run typecheck + lint, but NOT the full test suite.
+# Tests are CI's job — blocking local commits on them is too slow and
+# encourages --no-verify, which is worse than not having the hook at all.
+#
+# `set -e` so a typecheck failure short-circuits the script instead of
+# being silently overwritten by a later passing command's exit code.
+set -e
+
+pnpm typecheck
+pnpm lint

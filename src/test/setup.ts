@@ -1,6 +1,12 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import { afterEach, expect, vi } from 'vitest';
+import { toHaveNoViolations } from 'jest-axe';
+
+// Register jest-axe's `toHaveNoViolations` matcher once at startup so every
+// `expect(container).toHaveNoViolations()` call across the suite works
+// without each file importing it individually.
+expect.extend(toHaveNoViolations);
 
 afterEach(() => {
   cleanup();

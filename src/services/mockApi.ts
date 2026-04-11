@@ -40,9 +40,9 @@ export function installMockAPI(getDb: any, dispatch: any) {
       let rows = [...db];
       if (query.cat)    rows = rows.filter(r => r.cat === query.cat);
       if (query.status) rows = rows.filter(r => r.status === query.status);
-      if (query.q)      rows = rows.filter(r => `${r.name} ${r.id} ${r.comp}`.toLowerCase().includes(query.q.toLowerCase()));
-      if (query.hv_min) rows = rows.filter(r => r.hv >= parseFloat(query.hv_min));
-      if (query.hv_max) rows = rows.filter(r => r.hv <= parseFloat(query.hv_max));
+      if (query.q)      { const qLower = query.q.toLowerCase(); rows = rows.filter(r => `${r.name} ${r.id} ${r.comp}`.toLowerCase().includes(qLower)); }
+      if (query.hv_min) { const hvMin = parseFloat(query.hv_min); rows = rows.filter(r => r.hv >= hvMin); }
+      if (query.hv_max) { const hvMax = parseFloat(query.hv_max); rows = rows.filter(r => r.hv <= hvMax); }
       const page = parseInt(query.page || '1'), limit = parseInt(query.limit || '10');
       resBody = { data: rows.slice((page-1)*limit, page*limit), meta: { total: rows.length, page, limit, pages: Math.ceil(rows.length/limit) } };
     } else if (method === 'GET' && path.match(/^\/api\/materials\/MAT-\d+$/)) {
