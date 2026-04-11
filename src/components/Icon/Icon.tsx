@@ -5,7 +5,7 @@ import {
   Pencil, Trash2, Download, Upload, Copy, Volume2,
   Square, RefreshCw, Play, Sparkles, Share2, AlertTriangle,
   Info, Filter, ArrowDownWideNarrow, FileText, Braces, FileSpreadsheet, ClipboardList,
-  Sun, ScanLine,
+  Sun, ScanLine, Workflow,
   Bot, Send, PanelRight,
   type LucideIcon,
 } from 'lucide-react';
@@ -18,7 +18,8 @@ export type IconName =
   | 'stop' | 'refresh' | 'play' | 'spark' | 'embed' | 'warning'
   | 'info' | 'filter' | 'sort' | 'pdf' | 'json' | 'csv' | 'report'
   | 'ai' | 'scan'
-  | 'bot' | 'send' | 'panelRight';
+  | 'bot' | 'send' | 'panelRight'
+  | 'workflow';
 
 const ICON_MAP: Record<IconName, LucideIcon> = {
   dashboard:    LayoutDashboard,
@@ -61,6 +62,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   bot:          Bot,
   send:         Send,
   panelRight:   PanelRight,
+  workflow:     Workflow,
 };
 
 interface IconProps {

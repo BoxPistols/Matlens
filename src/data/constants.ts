@@ -23,6 +23,8 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'catalog', label:'材料カタログ',      icon:'embed',   badgeLabel:'3D', badgeVariant:'vec' },
   { section: 'データ入力' },
   { id:'new',     label:'新規登録',         icon:'plus' },
+  { section: 'ワークフロー' },
+  { id:'petri',   label:'試験フロー可視化', icon:'workflow' },
   { section: 'AI 分析・検索' },
   { id:'vsearch', label:'意味検索',         icon:'vecSearch', badgeLabel:'AI', badgeVariant:'vec', cls:'vec-nav' },
   { id:'rag',     label:'AI チャット',      icon:'rag',     badgeLabel:'AI',  badgeVariant:'ai',  cls:'ai-nav' },
