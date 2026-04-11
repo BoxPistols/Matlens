@@ -1,5 +1,54 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import type { Material, MaterialWithScore, EmbeddingHook } from '../../types';
+import type { Material, MaterialCategory, MaterialWithScore, EmbeddingHook } from '../../types';
+import { semanticSearchWithTfjs } from '../../services/tfjsSemanticSearch';
+
+/** `/api/search` の JSON 行（Upstash メタのみ / キーワード時は Material 近似） */
+interface SearchApiRow {
+  id: string;
+  score?: number;
+  date?: string;
+  name?: string;
+  cat?: string;
+  hv?: number;
+  ts?: number;
+  el?: number;
+  pf?: number | null;
+  el2?: number;
+  dn?: number;
+  comp?: string;
+  batch?: string;
+  author?: string;
+  status?: string;
+  ai?: boolean;
+  memo?: string;
+}
+
+function mapSearchRowToMaterial(r: SearchApiRow, db: Material[]): MaterialWithScore {
+  if (r.date !== undefined) {
+    return r as MaterialWithScore;
+  }
+  const local = db.find(m => m.id === r.id);
+  if (local) return { ...local, score: r.score ?? 0 };
+  return {
+    id: r.id,
+    name: r.name ?? '',
+    cat: (r.cat as MaterialCategory) ?? '金属合金',
+    hv: r.hv ?? 0,
+    ts: r.ts ?? 0,
+    el: r.el ?? 0,
+    pf: r.pf ?? null,
+    el2: r.el2 ?? 0,
+    dn: r.dn ?? 0,
+    comp: r.comp ?? '',
+    batch: r.batch ?? '',
+    date: r.date ?? '',
+    author: r.author ?? '',
+    status: (r.status as Material['status']) ?? '登録済',
+    ai: r.ai ?? false,
+    memo: r.memo ?? '',
+    score: r.score ?? 0,
+  };
+}
 
 // Tokenize query for keyword matching (Japanese-aware)
 function tokenize(query: string): string[] {
@@ -7,7 +56,7 @@ function tokenize(query: string): string[] {
   if (!q) return [];
   // Split on whitespace, punctuation (Japanese and ASCII), and common separators
   const tokens = q
-    .split(/[\s、。・，．,.\/\\\-_;:!?"'（）()「」『』【】\[\]]+/)
+    .split(/[\s、。・，．,./\\\-_;:!?"'（）()「」『』【】[\]]+/)
     .filter(t => t.length > 0);
   // If tokenization yielded only one long Japanese token, generate character bigrams.
   // Hoist tokens[0] into a local so strict mode's noUncheckedIndexedAccess is happy.
@@ -38,7 +87,8 @@ function keywordSearch(db: Material[], query: string, topK: number): MaterialWit
 }
 
 export function useEmbedding(db: Material[]): EmbeddingHook {
-  const [engine, setEngine] = useState<string>('ready');
+  /** 直近の検索で使ったバックエンド（初回は未検索の pending） */
+  const [engine, setEngine] = useState<string>('pending');
   // Track the in-flight AbortController so each new search cancels the
   // previous one. Without this, a user typing fast in the search box races
   // multiple /api/search round-trips and whichever finishes *last* wins,
@@ -66,27 +116,14 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
         signal: controller.signal,
       });
       if (!res.ok) throw new Error('Search API error');
-      const data = await res.json();
-      setEngine(data.engine || 'server');
+      const data: { engine?: string; results?: SearchApiRow[] } = await res.json();
 
       if (data.results && data.results.length > 0) {
-        // Map server results back to MaterialWithScore
-        // Server may return full Material objects (keyword) or partial (upstash)
-        return data.results.map((r: any) => {
-          // If result came from keyword search, it already has full Material fields
-          if (r.date !== undefined) return r as MaterialWithScore;
-          // Upstash results: find matching material in local db, attach score
-          const local = db.find(m => m.id === r.id);
-          if (local) return { ...local, score: r.score ?? 0 };
-          // Construct minimal result from server metadata
-          return {
-            id: r.id, name: r.name || '', cat: r.cat || '金属合金',
-            hv: r.hv || 0, ts: r.ts || 0, el: 0, pf: null, el2: 0, dn: r.dn || 0,
-            comp: r.comp || '', batch: '', date: '', author: '', status: '登録済' as const,
-            ai: false, memo: '', score: r.score ?? 0,
-          } as MaterialWithScore;
-        });
+        setEngine(data.engine || 'server');
+        return data.results.map(r => mapSearchRowToMaterial(r, db));
       }
+      // 200 だが候補ゼロ → クライアントキーワードへ（engine は upstash のままにしない）
+      setEngine('keyword');
     } catch (err) {
       // An AbortError is a deliberate cancellation (user typed a new
       // query, or the component unmounted). Return an empty list without
@@ -94,7 +131,12 @@ export function useEmbedding(db: Material[]): EmbeddingHook {
       if (err instanceof DOMException && err.name === 'AbortError') {
         return [];
       }
-      // Server unavailable — use client-side keyword fallback
+      // サーバー不可時: まず TensorFlow.js + USE（ブラウザ内）、だめならキーワード
+      const tfResults = await semanticSearchWithTfjs(db, query, topK, controller.signal);
+      if (tfResults.length > 0) {
+        setEngine('tfjs');
+        return tfResults;
+      }
       setEngine('keyword');
     }
 

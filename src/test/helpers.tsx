@@ -34,7 +34,7 @@ const mockEmbedding: EmbeddingHook = {
   search: vi.fn().mockResolvedValue([]),
   addToIndex: vi.fn().mockResolvedValue(undefined),
   embCount: 15,
-  engine: 'keyword',
+  engine: 'pending',
 };
 
 const mockVoice = {
