@@ -98,7 +98,12 @@ function safeStringify(value: unknown): string {
 function buildSystemPrompt(storyContext: StoryContext | null): string {
   if (!storyContext) return SYSTEM_PROMPT
 
-  const ctxLines: string[] = [
+  // Use hierarchical Markdown headings so each context block is a
+  // distinct, skim-able section — flat bullet lists caused argTypes /
+  // args to get buried under boilerplate and the model would often
+  // ignore them entirely (anecdotal but well-established across the
+  // kaze-ux / Matlens shared experience).
+  const sections: string[] = [
     '',
     '## 現在のコンテキスト',
     `- ストーリー: ${storyContext.title} / ${storyContext.name}`,
@@ -106,22 +111,24 @@ function buildSystemPrompt(storyContext: StoryContext | null): string {
   ]
 
   // Storybook's auto-generated argTypes carry the component's prop
-  // surface — type, control kind, options, description. Feed it to
-  // the model so it can answer "what props does this take?" without
-  // us having to mirror them in storyGuideMap.
+  // surface — type, control kind, options, description. Own heading
+  // + fenced JSON block so the model parses it as a structured
+  // reference rather than prose.
   const argTypes = safeStringify(storyContext.argTypes)
   if (argTypes && argTypes !== '{}') {
-    ctxLines.push(`- argTypes: \`${argTypes}\``)
+    sections.push('', '### コンポーネントの props スキーマ (argTypes)')
+    sections.push('```json', argTypes, '```')
   }
 
   // Current values from the Controls panel. Useful for "this page
   // renders the size=lg variant" style queries.
   const args = safeStringify(storyContext.args)
   if (args && args !== '{}') {
-    ctxLines.push(`- args: \`${args}\``)
+    sections.push('', '### 現在の props 値 (args)')
+    sections.push('```json', args, '```')
   }
 
-  return SYSTEM_PROMPT + '\n' + ctxLines.join('\n')
+  return SYSTEM_PROMPT + '\n' + sections.join('\n')
 }
 
 function parseRateLimit(res: Response): RateLimitInfo | undefined {
