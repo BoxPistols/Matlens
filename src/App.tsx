@@ -248,7 +248,7 @@ export function App() {
         )}
         <div className="flex flex-1 overflow-hidden">
           <Sidebar
-            currentPage={page} onNav={navTo}
+            currentPage={page} onNav={navTo} lang={lang}
             collapsed={sidebarCollapsed}
             onToggle={() => setSidebarCollapsed(c => !c)}
             dbCount={db.length}

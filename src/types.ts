@@ -69,8 +69,10 @@ export interface ApiLog {
 
 export interface NavItem {
   section?: string;
+  sectionEn?: string;
   id?: string;
   label?: string;
+  labelEn?: string;
   icon?: string;
   badge?: boolean;
   badgeLabel?: string;
