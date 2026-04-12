@@ -8,7 +8,7 @@ describe('HelpPage', () => {
 
   it('renders title', () => {
     setup();
-    expect(screen.getByText('ヘルプ・用語集')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /ヘルプ・用語集/ })).toBeInTheDocument();
   });
 
   it('shows category filter tabs', () => {

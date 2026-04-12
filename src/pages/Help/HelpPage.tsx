@@ -11,7 +11,7 @@ export const HelpPage = () => {
   const [cat, setCat] = useState('all');
   const [q, setQ] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
-  const CATS = [{id:'all',label:t('すべて', 'All')},{id:'mat',label:t('材料工学', 'Materials')},{id:'ai',label:'AI / ML'},{id:'sys',label:t('システム', 'System')},{id:'ops',label:t('操作ガイド', 'Operations')}];
+  const CATS = [{id:'all',label:t('すべて', 'All')},{id:'guide',label:t('ページガイド', 'Page Guide')},{id:'mat',label:t('材料工学', 'Materials')},{id:'ai',label:'AI / ML'},{id:'sys',label:t('システム', 'System')},{id:'ops',label:t('操作ガイド', 'Operations')}];
   const filtered = HELP_TERMS.filter(t => (cat==='all'||t.cat===cat) && (!q||`${t.term} ${t.en} ${t.body}`.toLowerCase().includes(q.toLowerCase())));
   return (
     <div className="flex flex-col gap-4">
