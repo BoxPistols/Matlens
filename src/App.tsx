@@ -207,7 +207,7 @@ export function App() {
       case 'rag':     return <RAGChatPage {...commonProps} initialQuery={ragInitialQuery} clearInitialQuery={() => setRagInitialQuery('')} />;
       case 'sim':     return <SimilarPage {...commonProps} initialBase={simInitialBase} clearInitialBase={() => setSimInitialBase('')} />;
       case 'catalog': return lazyPage(<CatalogPage db={db} onNav={navTo} onDetail={showDetail} />);
-      case 'petri':   return lazyPage(<PetriNetPage />);
+      case 'petri':   return lazyPage(<PetriNetPage onNav={navTo} />);
       case 'bayes':   return lazyPage(<BayesianOptPage db={db} />);
       case 'simulate': return lazyPage(<SimulationPage />);
       case 'voice':   return lazyPage(<VoicePage />);
