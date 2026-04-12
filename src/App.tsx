@@ -36,6 +36,7 @@ const UxDesignPage = lazy(() => import('./pages/UxDesign').then(m => ({ default:
 const TestSuitePage = lazy(() => import('./pages/TestSuite').then(m => ({ default: m.TestSuitePage })));
 const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => ({ default: m.CatalogPage })));
 const PetriNetPage = lazy(() => import('./pages/PetriNet').then(m => ({ default: m.PetriNetPage })));
+const BayesianOptPage = lazy(() => import('./pages/BayesianOpt').then(m => ({ default: m.BayesianOptPage })));
 
 const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
@@ -204,6 +205,7 @@ export function App() {
       case 'sim':     return <SimilarPage {...commonProps} initialBase={simInitialBase} clearInitialBase={() => setSimInitialBase('')} />;
       case 'catalog': return lazyPage(<CatalogPage db={db} onNav={navTo} onDetail={showDetail} />);
       case 'petri':   return lazyPage(<PetriNetPage />);
+      case 'bayes':   return lazyPage(<BayesianOptPage db={db} />);
       case 'voice':   return lazyPage(<VoicePage />);
       case 'api':     return lazyPage(<ApiDebugPage db={db} dispatch={dispatch} />);
       case 'tests':   return lazyPage(<TestSuitePage />);

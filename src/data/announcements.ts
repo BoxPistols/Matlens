@@ -17,6 +17,27 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-12-bayes-opt',
+    date: '2026-04-12',
+    type: 'feature',
+    title: 'ベイズ最適化ページを追加 — 次実験候補の自動提案',
+    body: 'ガウス過程回帰 + Expected Improvement 獲得関数で「次に試すべき実験点」を提案する新ページを追加しました。「ベイズ最適化」メニューから特徴変数と目的変数を選んで探索できます。',
+  },
+  {
+    id: '2026-04-12-download-preview',
+    date: '2026-04-12',
+    type: 'feature',
+    title: '全ダウンロードにプレビュー確認モーダルを導入',
+    body: 'CSV / JSON / Markdown / MaiML / PNML / AI テキスト / 会話履歴 の全データダウンロードで、ファイル内容・サイズ・行数を確認してから「ダウンロード実行」を押す 2 段階フローに変更しました。',
+  },
+  {
+    id: '2026-04-12-petri-net',
+    date: '2026-04-12',
+    type: 'feature',
+    title: '金属試験ワークフローのペトリネット可視化を追加',
+    body: '11 工程の金属試験ライフサイクルを Petri net で可視化する新ページを追加しました。トークンを発火させて工程を進められ、再加工フィードバックループや長時間試験の並行ステーション制約にも対応。PNML 形式で外部ツール (PIPE/GreatSPN) にエクスポート可能です。',
+  },
+  {
     id: '2026-04-10-notifications',
     date: '2026-04-10',
     type: 'feature',

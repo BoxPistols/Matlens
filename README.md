@@ -1,23 +1,31 @@
 # Matlens
 
-材料研究者・実験担当者向けのデータ管理システム。材料特性値の登録・検索・比較に加え、AIベクトル検索とRAGチャットで意思決定を支援する。
+金属試験データの管理プラットフォーム。**MaiML (JIS K 0200:2024) ネイティブ**の材料特性データ CRUD、
+**Petri net ワークフロー可視化**、**ベイズ最適化**（次実験候補の自動提案）、
+AI ベクトル検索と RAG チャットを統合した研究支援システム。
+
+対象ドメイン: 金属材料の組成・加工・試験・レポートのライフサイクル管理。
+類似サービス: IIC-HQ 等の試験ラボが提供する材料特性データ配信。
 
 ## Tech Stack
 
 | カテゴリ | 技術 |
 |---------|------|
-| ランタイム | React 19 + TypeScript |
-| ビルド | Vite 5 |
+| ランタイム | React 19 + TypeScript (strict + `noUncheckedIndexedAccess`) |
+| ビルド | Vite 6 |
 | スタイリング | Tailwind CSS 3 + CSS Variables (4テーマ) |
-| AI (LLM) | OpenAI GPT-5.4 nano/mini, Google Gemini 2.5 Flash |
-| ベクトル検索 | TensorFlow.js + Universal Sentence Encoder (ブラウザ内) |
+| AI (LLM) | AI SDK v6 + Vercel AI Gateway / OpenAI GPT-5.4 nano/mini / Google Gemini 2.5 Flash |
+| ベクトル検索 | Upstash Vector (サーバー) / TensorFlow.js + Universal Sentence Encoder (ブラウザフォールバック) |
+| データフォーマット | MaiML (JIS K 0200:2024), PNML (ISO/IEC 15909-2), CSV/JSON/Markdown |
+| 数値最適化 | ガウス過程回帰 + Expected Improvement (純 TypeScript 実装、依存なし) |
 | グラフ | Chart.js 4 |
 | アイコン | Lucide React |
-| Markdown | marked.js |
-| テスト | Vitest + Testing Library |
+| Markdown | marked.js + isomorphic-dompurify |
+| テスト | Vitest + Testing Library + jest-axe (a11y スモーク) |
 | コンポーネントカタログ | Storybook 10 (addon-a11y, addon-docs, addon-vitest) |
 | デザイントークン連携 | Figma Variables (カスタムプラグイン経由) |
-| デプロイ | Vercel (静的 + Serverless Functions) |
+| コード品質 | husky + commitlint (Conventional Commits) |
+| デプロイ | Vercel (Fluid Compute Functions + 静的ホスティング) |
 
 ## Getting Started
 
@@ -86,13 +94,15 @@ Matlens/
 │   │   ├── MaterialVisual/       材料ビジュアル (CSS/SVG)
 │   │   └── DataDisclaimer/       データ免責バナー
 │   │
-│   ├── pages/                    15ページ (各フォルダにコロケーション)
+│   ├── pages/                    17ページ (各フォルダにコロケーション)
 │   │   ├── Dashboard/            ダッシュボード (KPI + Chart.js)
 │   │   ├── MaterialList/         材料一覧 (テーブル/カード/コンパクト)
 │   │   ├── MaterialForm/         新規登録 / 編集フォーム
 │   │   ├── Detail/               材料詳細 (prev/next ナビ付き)
 │   │   ├── Catalog/              材料カタログ (CSSビジュアル)
-│   │   ├── VectorSearch/         意味検索 (TF.js Embedding)
+│   │   ├── PetriNet/             金属試験ワークフロー可視化 (P/T ネット + PNML)
+│   │   ├── BayesianOpt/          ベイズ最適化 (GP 回帰 + EI 獲得関数)
+│   │   ├── VectorSearch/         意味検索 (Upstash / TF.js)
 │   │   ├── RAGChat/              AIチャット (RAG)
 │   │   ├── Similar/              類似材料比較
 │   │   ├── ApiDebug/             API テスト (Mock REST)
@@ -117,7 +127,13 @@ Matlens/
 │   │   └── initialDb.ts          サンプル材料データ (68件)
 │   │
 │   ├── services/
-│   │   └── mockApi.ts            fetch インターセプター (Mock REST API)
+│   │   ├── mockApi.ts            fetch インターセプター (Mock REST API)
+│   │   ├── maiml.ts              MaiML (JIS K 0200:2024) シリアライザ/パーサ
+│   │   ├── pnml.ts               PNML (ISO/IEC 15909-2) エクスポーター
+│   │   ├── bayesianOpt.ts        ガウス過程回帰 + EI 獲得関数 (1D)
+│   │   ├── tfjsSemanticSearch.ts TF.js USE によるブラウザ内ベクトル検索
+│   │   ├── downloadFile.ts       Blob ダウンロード共通ユーティリティ
+│   │   └── safeMarkdown.ts       marked + DOMPurify (XSS 対策)
 │   │
 │   └── stories/                  Storybook ガイド・パターン
 │
