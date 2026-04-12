@@ -1,10 +1,12 @@
 /**
- * 結晶構造 3D ビューア — Scientific Instrument Panel デザイン
+ * 結晶構造 3D ビューア — Scientific Instrument Panel
  * PoC: Three.js + @react-three/fiber / BCC · FCC · HCP 原子配置可視化
+ * 修正: min-font 12px / 余白改善 / N=2 + 結合線追加
  */
 import { Suspense, useState, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Line } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
+import * as THREE from 'three'
 
 // ─── Types & Data ─────────────────────────────────────────────
 
@@ -21,13 +23,13 @@ const MATS: MatDef[] = [
   { id:'ti64',   name:'Ti-6Al-4V',   structure:'HCP', a:2.95, c:4.68, color:'#60a5fa', density:4.43, E:114,  ys:880,  uts:950,  hv:334, tm:1660, desc:'α+β型チタン合金。航空機エンジン ファン・コンプレッサーに使用。' },
   { id:'in718',  name:'Inconel 718', structure:'FCC', a:3.60, c:3.60, color:'#fbbf24', density:8.19, E:200,  ys:1100, uts:1380, hv:400, tm:1336, desc:'γ″析出強化 Ni 基超合金。タービンディスクに使用。' },
   { id:'sus316', name:'SUS316L',     structure:'FCC', a:3.59, c:3.59, color:'#94a3b8', density:7.98, E:193,  ys:290,  uts:580,  hv:180, tm:1400, desc:'オーステナイト系ステンレス鋼。耐食性・溶接性に優れる。' },
-  { id:'s45c',   name:'S45C',        structure:'BCC', a:2.87, c:2.87, color:'#a8a29e', density:7.85, E:206,  ys:490,  uts:690,  hv:201, tm:1515, desc:'機械構造用炭素鋼。汎用部品・金型・軸類に使用。' },
-  { id:'a7075',  name:'A7075-T6',    structure:'FCC', a:4.05, c:4.05, color:'#e2e8f0', density:2.81, E:72,   ys:503,  uts:572,  hv:150, tm:635,  desc:'Al-Zn-Mg-Cu 系高強度アルミ合金。航空機構造部材に使用。' },
+  { id:'s45c',   name:'S45C',        structure:'BCC', a:2.87, c:2.87, color:'#c0b090', density:7.85, E:206,  ys:490,  uts:690,  hv:201, tm:1515, desc:'機械構造用炭素鋼。汎用部品・金型・軸類に使用。' },
+  { id:'a7075',  name:'A7075-T6',    structure:'FCC', a:4.05, c:4.05, color:'#d8dfe8', density:2.81, E:72,   ys:503,  uts:572,  hv:150, tm:635,  desc:'Al-Zn-Mg-Cu 系高強度アルミ合金。航空機構造部材に使用。' },
 ]
 
 // ─── Three.js Logic ───────────────────────────────────────────
 
-const N = 3
+const N = 2  // 2×2×2 スーパーセル (原子少なめ = 構造が見やすい)
 const SQRT3 = Math.sqrt(3)
 
 function getAtoms(m: MatDef): [number,number,number][] {
@@ -49,6 +51,29 @@ function getAtoms(m: MatDef): [number,number,number][] {
     }
   }
   return pts
+}
+
+// 最近傍距離カットオフ (構造ごとに適切な値)
+function getNNCutoff(m: MatDef): number {
+  if (m.structure === 'BCC') return m.a * Math.sqrt(3) / 2 * 1.10  // 体対角線
+  if (m.structure === 'FCC') return m.a / Math.sqrt(2) * 1.10       // 面対角線
+  return m.a * 1.22  // HCP: 面内(a) + 層間(≈1.18a) の両方を含む
+}
+
+// 結合ペアを列挙
+function getBonds(atoms: [number,number,number][], cutoff: number) {
+  const c2 = cutoff * cutoff
+  const segs: number[] = []
+  for (let i=0; i<atoms.length; i++) {
+    for (let j=i+1; j<atoms.length; j++) {
+      const a=atoms[i]!, b=atoms[j]!
+      const dx=b[0]-a[0], dy=b[1]-a[1], dz=b[2]-a[2]
+      if (dx*dx+dy*dy+dz*dz <= c2) {
+        segs.push(a[0],a[1],a[2], b[0],b[1],b[2])
+      }
+    }
+  }
+  return segs
 }
 
 type Edge = [[number,number,number],[number,number,number]]
@@ -75,12 +100,43 @@ function getCellEdges(m: MatDef): Edge[] {
   return edges
 }
 
+// ─── Three.js Components ──────────────────────────────────────
+
 function Atom({ pos, color }: { pos:[number,number,number]; color:string }) {
   return (
     <mesh position={pos}>
-      <sphereGeometry args={[0.27,14,14]} />
-      <meshStandardMaterial color={color} metalness={0.8} roughness={0.18} />
+      <sphereGeometry args={[0.20, 16, 16]} />
+      <meshStandardMaterial color={color} metalness={0.75} roughness={0.20} />
     </mesh>
+  )
+}
+
+// 全結合を単一 LineSegments で描画 (描画コール1回)
+function BondMesh({ segs, color }: { segs: number[]; color: string }) {
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(segs, 3))
+    return geo
+  }, [segs])
+  return (
+    <lineSegments geometry={geometry}>
+      <lineBasicMaterial color={color} opacity={0.45} transparent />
+    </lineSegments>
+  )
+}
+
+// 単位セル輪郭 (単一 LineSegments)
+function CellOutline({ edges, color }: { edges: Edge[]; color: string }) {
+  const geometry = useMemo(() => {
+    const pts = edges.flatMap(([a,b]) => [...a,...b])
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3))
+    return geo
+  }, [edges])
+  return (
+    <lineSegments geometry={geometry}>
+      <lineBasicMaterial color={color} linewidth={1} />
+    </lineSegments>
   )
 }
 
@@ -88,20 +144,26 @@ function Scene({ m, strain }: { m:MatDef; strain:number }) {
   const eff = useMemo(() => ({ ...m, a:m.a*(1+strain/100), c:m.c*(1+strain/100) }), [m,strain])
   const atoms = useMemo(() => getAtoms(eff), [eff])
   const edges = useMemo(() => getCellEdges(eff), [eff])
+  const bondSegs = useMemo(() => getBonds(atoms, getNNCutoff(eff)), [atoms, eff])
+
   const center = useMemo((): [number,number,number] => {
     if (!atoms.length) return [0,0,0]
     const s = atoms.reduce((acc,p) => [acc[0]+p[0],acc[1]+p[1],acc[2]+p[2]],[0,0,0])
     return [s[0]/atoms.length, s[1]/atoms.length, s[2]/atoms.length]
   }, [atoms])
+
+  const offset: [number,number,number] = [-center[0],-center[1],-center[2]]
+
   return (
-    <group position={[-center[0],-center[1],-center[2]]}>
+    <group position={offset}>
       {atoms.map((p,i) => <Atom key={i} pos={p} color={m.color} />)}
-      {edges.map(([p1,p2],i) => <Line key={i} points={[p1,p2]} color="#e8a000" lineWidth={1.2} />)}
+      <BondMesh segs={bondSegs} color={m.color} />
+      <CellOutline edges={edges} color="#e8a000" />
     </group>
   )
 }
 
-// ─── Design System ────────────────────────────────────────────
+// ─── Design Constants ─────────────────────────────────────────
 
 const C = {
   bg:     '#030912',
@@ -109,9 +171,9 @@ const C = {
   surf:   '#081828',
   border: '#0c2a3a',
   active: '#0b2033',
-  dim:    '#1e4a5a',
-  med:    '#4a7a90',
-  hi:     '#8ec8e0',
+  dim:    '#2a5060',
+  med:    '#5090a8',
+  hi:     '#90d0e8',
   bright: '#00cfff',
   gold:   '#e8a000',
   red:    '#ff6060',
@@ -133,21 +195,21 @@ const STRUCT_LABEL: Record<Structure, string> = {
 }
 
 const PROP_RANGE: Record<string,[number,number]> = {
-  density: [2, 9], E: [60, 220], ys: [200, 1200], uts: [500, 1500], hv: [100, 450], tm: [500, 1800],
+  density:[2,9], E:[60,220], ys:[200,1200], uts:[500,1500], hv:[100,450], tm:[500,1800],
 }
 
 function barPct(v:number, key:string): number {
   const [lo,hi] = PROP_RANGE[key]!
-  return Math.max(2, Math.min(98, ((v-lo)/(hi-lo))*100))
+  return Math.max(3, Math.min(97, ((v-lo)/(hi-lo))*100))
 }
 
 // ─── Panel Sub-Components ─────────────────────────────────────
 
 function PanelHeader({ children }: { children: string }) {
   return (
-    <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
-      <span style={{ color:C.dim, fontSize:8, fontFamily:MONO }}>▸</span>
-      <span style={{ color:C.med, fontSize:9, fontFamily:MONO, letterSpacing:'0.14em', textTransform:'uppercase' }}>
+    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+      <span style={{ color:C.dim, fontSize:12, fontFamily:MONO }}>▸</span>
+      <span style={{ color:C.med, fontSize:12, fontFamily:MONO, letterSpacing:'0.12em', textTransform:'uppercase' }}>
         {children}
       </span>
       <div style={{ flex:1, height:1, background:C.border }} />
@@ -161,28 +223,28 @@ function SpecimenCard({ m, active, onClick }: { m:MatDef; active:boolean; onClic
     <button
       onClick={onClick}
       style={{
-        width:'100%', textAlign:'left', padding:'7px 10px',
+        width:'100%', textAlign:'left', padding:'8px 12px',
         background: active ? C.active : 'transparent',
-        border: `1px solid ${active ? sc+'44' : C.border}`,
+        border: `1px solid ${active ? sc+'55' : C.border}`,
         borderLeft: `3px solid ${active ? sc : 'transparent'}`,
-        borderRadius:4, cursor:'pointer', marginBottom:4,
-        transition:'all 0.15s ease', position:'relative',
+        borderRadius:4, cursor:'pointer', marginBottom:6,
+        transition:'all 0.15s ease',
       }}
     >
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-        <span style={{ fontSize:14, lineHeight:1, color: active ? sc : C.dim, transition:'color 0.15s' }}>
+        <span style={{ fontSize:16, lineHeight:1, color: active ? sc : C.dim, transition:'color 0.15s' }}>
           {STRUCT_GLYPH[m.structure]}
         </span>
         <div style={{ flex:1 }}>
-          <div style={{ fontFamily:MONO, fontSize:12, fontWeight:600, color: active ? C.hi : C.med, letterSpacing:'0.02em' }}>
+          <div style={{ fontFamily:MONO, fontSize:13, fontWeight:600, color: active ? C.hi : C.med }}>
             {m.name}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color: active ? sc : C.dim, marginTop:1 }}>
+          <div style={{ fontFamily:MONO, fontSize:12, color: active ? sc : C.dim, marginTop:2 }}>
             {m.structure} · a={m.a}Å{m.structure==='HCP'?` · c=${m.c}Å`:''}
           </div>
         </div>
         {active && (
-          <div style={{ width:4, height:4, borderRadius:'50%', background:sc, boxShadow:`0 0 6px ${sc}` }} />
+          <div style={{ width:5, height:5, borderRadius:'50%', background:sc, boxShadow:`0 0 6px ${sc}`, flexShrink:0 }} />
         )}
       </div>
     </button>
@@ -195,16 +257,16 @@ function PropReadout({ sym, value, unit, rangeKey, color }: {
   const p = barPct(value, rangeKey)
   const display = value >= 100 ? value.toFixed(0) : value.toFixed(2)
   return (
-    <div style={{ marginBottom:8 }}>
+    <div style={{ marginBottom:10 }}>
       <div style={{ display:'flex', alignItems:'baseline', gap:0 }}>
-        <span style={{ fontFamily:MONO, fontSize:10, color:C.dim, width:28, flexShrink:0 }}>{sym}</span>
-        <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color, letterSpacing:'-0.02em', minWidth:52 }}>
+        <span style={{ fontFamily:MONO, fontSize:12, color:C.dim, width:28, flexShrink:0 }}>{sym}</span>
+        <span style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color, letterSpacing:'-0.02em', minWidth:54 }}>
           {display}
         </span>
-        <span style={{ fontFamily:MONO, fontSize:9, color:C.med }}>{unit}</span>
+        <span style={{ fontFamily:MONO, fontSize:12, color:C.med }}>{unit}</span>
       </div>
-      <div style={{ height:2, background:C.border, borderRadius:1, marginTop:4, marginLeft:28 }}>
-        <div style={{ height:'100%', width:`${p}%`, background:color, borderRadius:1, opacity:0.7,
+      <div style={{ height:2, background:C.border, borderRadius:1, marginTop:5, marginLeft:28 }}>
+        <div style={{ height:'100%', width:`${p}%`, background:color, borderRadius:1, opacity:0.65,
           transition:'width 0.6s cubic-bezier(0.4,0,0.2,1)' }} />
       </div>
     </div>
@@ -212,25 +274,25 @@ function PropReadout({ sym, value, unit, rangeKey, color }: {
 }
 
 function LatticeReadout({ m, strain }: { m:MatDef; strain:number }) {
-  const a = (m.a * (1 + strain/100)).toFixed(4)
-  const c = (m.c * (1 + strain/100)).toFixed(4)
-  const ca = (m.c / m.a).toFixed(4)
+  const a = (m.a * (1+strain/100)).toFixed(4)
+  const c = (m.c * (1+strain/100)).toFixed(4)
   return (
-    <div style={{ fontFamily:MONO, fontSize:11 }}>
-      <div style={{ display:'flex', justifyContent:'space-between', padding:'3px 0', borderBottom:`1px solid ${C.border}` }}>
-        <span style={{ color:C.med }}>a</span>
-        <span style={{ color:C.bright }}>{a} <span style={{ color:C.dim, fontSize:9 }}>Å</span></span>
-      </div>
-      {m.structure === 'HCP' && <>
-        <div style={{ display:'flex', justifyContent:'space-between', padding:'3px 0', borderBottom:`1px solid ${C.border}` }}>
-          <span style={{ color:C.med }}>c</span>
-          <span style={{ color:C.bright }}>{c} <span style={{ color:C.dim, fontSize:9 }}>Å</span></span>
+    <div style={{ fontFamily:MONO, fontSize:12 }}>
+      {[
+        { lbl:'a', val:a, unit:'Å', color:C.bright },
+        ...(m.structure==='HCP' ? [
+          { lbl:'c', val:c, unit:'Å', color:C.bright },
+          { lbl:'c/a', val:(m.c/m.a).toFixed(4), unit:'', color:STRUCT_COLOR['HCP'] },
+        ] : []),
+      ].map(row => (
+        <div key={row.lbl} style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline',
+          padding:'5px 0', borderBottom:`1px solid ${C.border}` }}>
+          <span style={{ color:C.med }}>{row.lbl}</span>
+          <span style={{ color:row.color, fontWeight:600 }}>
+            {row.val} <span style={{ color:C.dim, fontSize:12, fontWeight:400 }}>{row.unit}</span>
+          </span>
         </div>
-        <div style={{ display:'flex', justifyContent:'space-between', padding:'3px 0', borderBottom:`1px solid ${C.border}` }}>
-          <span style={{ color:C.med }}>c/a</span>
-          <span style={{ color:STRUCT_COLOR['HCP'] }}>{ca}</span>
-        </div>
-      </>}
+      ))}
     </div>
   )
 }
@@ -238,28 +300,29 @@ function LatticeReadout({ m, strain }: { m:MatDef; strain:number }) {
 // ─── Instrument Panel ─────────────────────────────────────────
 
 function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
-  mat: MatDef; strain: number; selId: string;
-  onSelect: (id:string)=>void; onStrain: (v:number)=>void
+  mat:MatDef; strain:number; selId:string;
+  onSelect:(id:string)=>void; onStrain:(v:number)=>void
 }) {
   const sc = STRUCT_COLOR[mat.structure]
-  const strainSign = strain > 0 ? '+' : ''
+  const strSign = strain > 0 ? '+' : ''
   return (
     <div style={{
-      width:220, flexShrink:0, height:'100%', overflowY:'auto',
+      width:240, flexShrink:0, height:'100%', overflowY:'auto',
       background:C.panel, borderRight:`1px solid ${C.border}`,
-      padding:'12px 10px', display:'flex', flexDirection:'column', gap:14,
+      padding:'16px 14px', display:'flex', flexDirection:'column', gap:20,
     }}>
       {/* Header */}
-      <div style={{ borderBottom:`1px solid ${C.border}`, paddingBottom:10 }}>
-        <div style={{ fontFamily:MONO, fontSize:9, color:C.dim, letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:4 }}>
+      <div style={{ borderBottom:`1px solid ${C.border}`, paddingBottom:14 }}>
+        <div style={{ fontFamily:MONO, fontSize:12, color:C.dim, letterSpacing:'0.18em',
+          textTransform:'uppercase', marginBottom:6 }}>
           Matlens / XRD Analyzer
         </div>
-        <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:C.hi, letterSpacing:'0.04em' }}>
+        <div style={{ fontFamily:MONO, fontSize:15, fontWeight:700, color:C.hi, letterSpacing:'0.04em' }}>
           結晶構造ビューア
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:5, marginTop:4 }}>
-          <div style={{ width:5, height:5, borderRadius:'50%', background:'#00ff7f', boxShadow:'0 0 8px #00ff7f' }} />
-          <span style={{ fontFamily:MONO, fontSize:9, color:'#00ff7f' }}>SPECIMEN LOADED</span>
+        <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:6 }}>
+          <div style={{ width:6, height:6, borderRadius:'50%', background:'#00ff7f', boxShadow:'0 0 8px #00ff7f' }} />
+          <span style={{ fontFamily:MONO, fontSize:12, color:'#00ff7f' }}>SPECIMEN LOADED</span>
         </div>
       </div>
 
@@ -272,16 +335,16 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
         ))}
       </div>
 
-      {/* Current specimen info */}
-      <div style={{ background:C.surf, border:`1px solid ${C.border}`, borderRadius:4, padding:'10px' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8 }}>
-          <span style={{ fontSize:18, color:sc }}>{STRUCT_GLYPH[mat.structure]}</span>
+      {/* Current specimen info card */}
+      <div style={{ background:C.surf, border:`1px solid ${C.border}`, borderRadius:6, padding:'12px 14px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+          <span style={{ fontSize:20, color:sc }}>{STRUCT_GLYPH[mat.structure]}</span>
           <div>
-            <div style={{ fontFamily:MONO, fontSize:11, fontWeight:700, color:C.hi }}>{mat.name}</div>
-            <div style={{ fontFamily:MONO, fontSize:9, color:sc }}>{STRUCT_LABEL[mat.structure]}</div>
+            <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:C.hi }}>{mat.name}</div>
+            <div style={{ fontFamily:MONO, fontSize:12, color:sc, marginTop:2 }}>{STRUCT_LABEL[mat.structure]}</div>
           </div>
         </div>
-        <div style={{ fontFamily:MONO, fontSize:9, color:C.med, lineHeight:1.6 }}>{mat.desc}</div>
+        <div style={{ fontFamily:MONO, fontSize:12, color:C.med, lineHeight:1.7 }}>{mat.desc}</div>
       </div>
 
       {/* Lattice parameters */}
@@ -289,9 +352,9 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
         <PanelHeader>LATTICE PARAMS</PanelHeader>
         <LatticeReadout m={mat} strain={strain} />
         {strain !== 0 && (
-          <div style={{ marginTop:6, fontFamily:MONO, fontSize:9, color: strain>0?C.red:C.blue,
-            padding:'3px 6px', background: strain>0?'#ff000012':'#4499ff12', borderRadius:3 }}>
-            ε = {strainSign}{strain.toFixed(1)}% {strain>0?'(引張)':'(圧縮)'}
+          <div style={{ marginTop:8, fontFamily:MONO, fontSize:12, color:strain>0?C.red:C.blue,
+            padding:'5px 8px', background:strain>0?'#ff000014':'#4499ff14', borderRadius:4 }}>
+            ε = {strSign}{strain.toFixed(1)}% {strain>0?'(引張)':'(圧縮)'}
           </div>
         )}
       </div>
@@ -310,24 +373,24 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
       {/* Strain control */}
       <div>
         <PanelHeader>STRAIN CONTROL</PanelHeader>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:6 }}>
-          <span style={{ fontFamily:MONO, fontSize:9, color:C.med }}>ε (lattice strain)</span>
-          <span style={{ fontFamily:MONO, fontSize:14, fontWeight:700,
-            color: strain>0?C.red : strain<0?C.blue : C.dim }}>
-            {strainSign}{strain.toFixed(1)}<span style={{ fontSize:10 }}>%</span>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline', marginBottom:8 }}>
+          <span style={{ fontFamily:MONO, fontSize:12, color:C.med }}>ε (lattice strain)</span>
+          <span style={{ fontFamily:MONO, fontSize:16, fontWeight:700,
+            color:strain>0?C.red : strain<0?C.blue : C.dim }}>
+            {strSign}{strain.toFixed(1)}<span style={{ fontSize:12 }}>%</span>
           </span>
         </div>
         <input
           type="range" min={-10} max={10} step={0.5} value={strain}
           onChange={e => onStrain(Number(e.target.value))}
-          style={{ width:'100%', accentColor:strain>0?C.red:strain<0?C.blue:C.med, marginBottom:4 }}
+          style={{ width:'100%', accentColor:strain>0?C.red:strain<0?C.blue:C.med, marginBottom:6 }}
         />
-        <div style={{ display:'flex', justifyContent:'space-between', fontFamily:MONO, fontSize:8, color:C.dim }}>
+        <div style={{ display:'flex', justifyContent:'space-between', fontFamily:MONO, fontSize:12, color:C.dim }}>
           <span>−10%</span>
           <button
             onClick={() => onStrain(0)}
             style={{ background:'none', border:'none', color:C.med, cursor:'pointer',
-              fontFamily:MONO, fontSize:8, padding:0 }}
+              fontFamily:MONO, fontSize:12, padding:0 }}
           >
             ZERO
           </button>
@@ -336,63 +399,66 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
       </div>
 
       {/* Legend */}
-      <div style={{ marginTop:'auto', borderTop:`1px solid ${C.border}`, paddingTop:10 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:4 }}>
-          <div style={{ width:16, height:1, background:C.gold }} />
-          <span style={{ fontFamily:MONO, fontSize:8, color:C.dim }}>UNIT CELL</span>
+      <div style={{ marginTop:'auto', borderTop:`1px solid ${C.border}`, paddingTop:14 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
+          <div style={{ width:18, height:1, background:C.gold }} />
+          <span style={{ fontFamily:MONO, fontSize:12, color:C.dim }}>UNIT CELL</span>
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
           <div style={{ width:8, height:8, borderRadius:'50%', background:mat.color }} />
-          <span style={{ fontFamily:MONO, fontSize:8, color:C.dim }}>
-            {mat.name} · {N}³ supercell
-          </span>
+          <span style={{ fontFamily:MONO, fontSize:12, color:C.dim }}>{mat.name} atoms</span>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ width:18, height:1, background:mat.color, opacity:0.45 }} />
+          <span style={{ fontFamily:MONO, fontSize:12, color:C.dim }}>bonds ({N}³ supercell)</span>
         </div>
       </div>
     </div>
   )
 }
 
-// ─── Canvas HUD Overlays ──────────────────────────────────────
+// ─── Canvas HUD ───────────────────────────────────────────────
 
 function CanvasHUD({ mat, strain }: { mat:MatDef; strain:number }) {
   const sc = STRUCT_COLOR[mat.structure]
-  const hudStyle: React.CSSProperties = {
-    position:'absolute', pointerEvents:'none', fontFamily:MONO,
-    textShadow:'0 0 10px currentColor',
+  const hud: React.CSSProperties = {
+    position:'absolute', pointerEvents:'none',
+    fontFamily:MONO, textShadow:'0 0 12px currentColor',
   }
-  const aEff = (mat.a * (1 + strain/100)).toFixed(3)
-  const cEff = (mat.c * (1 + strain/100)).toFixed(3)
+  const aEff = (mat.a*(1+strain/100)).toFixed(3)
+  const cEff = (mat.c*(1+strain/100)).toFixed(3)
+  const atomCount = N*N*N * (mat.structure==='FCC'?4:2)
   return <>
-    {/* Top-left: axes info */}
-    <div style={{ ...hudStyle, top:12, left:12, fontSize:9, color:C.dim, lineHeight:1.8 }}>
+    {/* Top-left: axes */}
+    <div style={{ ...hud, top:14, left:14, fontSize:12, color:C.dim, lineHeight:2 }}>
       <div>X ─── [100]</div>
       <div>Y ─── [010]</div>
       <div>Z ─── [001]</div>
     </div>
 
     {/* Top-right: structure badge */}
-    <div style={{ ...hudStyle, top:12, right:12, textAlign:'right' }}>
-      <div style={{ fontSize:22, color:sc, lineHeight:1 }}>{STRUCT_GLYPH[mat.structure]}</div>
-      <div style={{ fontSize:10, fontWeight:700, color:sc, letterSpacing:'0.1em' }}>{mat.structure}</div>
-      <div style={{ fontSize:9, color:C.med, marginTop:2 }}>{mat.name}</div>
+    <div style={{ ...hud, top:14, right:14, textAlign:'right' }}>
+      <div style={{ fontSize:24, color:sc, lineHeight:1 }}>{STRUCT_GLYPH[mat.structure]}</div>
+      <div style={{ fontSize:13, fontWeight:700, color:sc, letterSpacing:'0.1em', marginTop:2 }}>{mat.structure}</div>
+      <div style={{ fontSize:12, color:C.med, marginTop:2 }}>{mat.name}</div>
     </div>
 
     {/* Bottom-left: live lattice */}
-    <div style={{ ...hudStyle, bottom:28, left:12, fontSize:9, color:C.bright, lineHeight:1.8 }}>
+    <div style={{ ...hud, bottom:30, left:14, fontSize:12, color:C.bright, lineHeight:2 }}>
       <div>a = {aEff} Å</div>
-      {mat.structure === 'HCP' && <div>c = {cEff} Å</div>}
+      {mat.structure==='HCP' && <div>c = {cEff} Å</div>}
     </div>
 
     {/* Bottom-center: controls */}
-    <div style={{ ...hudStyle, bottom:10, left:'50%', transform:'translateX(-50%)',
-      fontSize:9, color:'rgba(255,255,255,0.2)', whiteSpace:'nowrap' }}>
+    <div style={{ ...hud, bottom:12, left:'50%', transform:'translateX(-50%)',
+      fontSize:12, color:'rgba(255,255,255,0.22)', whiteSpace:'nowrap' }}>
       DRAG · ROTATE &nbsp;|&nbsp; SCROLL · ZOOM &nbsp;|&nbsp; RIGHT-DRAG · PAN
     </div>
 
-    {/* Bottom-right: atom count */}
-    <div style={{ ...hudStyle, bottom:28, right:12, fontSize:9, color:C.dim, textAlign:'right' }}>
+    {/* Bottom-right: stats */}
+    <div style={{ ...hud, bottom:30, right:14, fontSize:12, color:C.dim, textAlign:'right', lineHeight:2 }}>
       <div>{N}³ supercell</div>
-      <div style={{ color:C.med }}>{N*N*N * (mat.structure==='BCC'?2:mat.structure==='HCP'?2:4)} atoms</div>
+      <div style={{ color:C.med }}>{atomCount} atoms</div>
     </div>
   </>
 }
@@ -407,26 +473,26 @@ export function Crystal3DPage() {
   return (
     <div style={{ display:'flex', height:'100%', minHeight:0, background:C.bg,
       borderRadius:8, overflow:'hidden', border:`1px solid ${C.border}` }}>
-      {/* ── Instrument Panel ── */}
+      {/* Instrument Panel */}
       <InstrumentPanel
         mat={mat} strain={strain} selId={selId}
         onSelect={setSelId} onStrain={setStrain}
       />
 
-      {/* ── 3D Viewport ── */}
+      {/* 3D Viewport */}
       <div style={{ flex:1, position:'relative', minHeight:400 }}>
         <Canvas
-          camera={{ position:[8,6,8], fov:45 }}
+          camera={{ position:[7,5,9], fov:48 }}
           gl={{ antialias:true }}
           dpr={[1,2]}
           style={{ width:'100%', height:'100%' }}
         >
           <color attach="background" args={['#030912']} />
-          <fog attach="fog" args={['#030912', 18, 42]} />
-          <ambientLight intensity={0.3} />
-          <directionalLight position={[10,15,5]} intensity={1.6} />
-          <directionalLight position={[-8,-5,-10]} intensity={0.5} color="#4499ff" />
-          <pointLight position={[0,0,0]} intensity={0.2} color={mat.color} />
+          <fog attach="fog" args={['#030912', 16, 38]} />
+          <ambientLight intensity={0.30} />
+          <directionalLight position={[10,14,6]} intensity={1.6} />
+          <directionalLight position={[-8,-6,-10]} intensity={0.5} color="#4499ff" />
+          <pointLight position={[0,0,0]} intensity={0.25} color={mat.color} />
           <Suspense fallback={null}>
             <Scene m={mat} strain={strain} />
           </Suspense>
