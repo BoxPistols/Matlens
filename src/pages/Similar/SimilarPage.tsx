@@ -17,7 +17,7 @@ interface SimilarPageProps {
 // Build a "MAT-xxxx — name" label from an id or free-form text
 function resolveBase(input: string, db: Material[]): string {
   if (!input) return '';
-  const idMatch = input.match(/MAT-\d+/);
+  const idMatch = input.match(/(?:MAT|MT)-\d+/);
   if (idMatch) {
     const rec = db.find(r => r.id === idMatch[0]);
     if (rec) return `${rec.id} — ${rec.name}`;
@@ -27,11 +27,11 @@ function resolveBase(input: string, db: Material[]): string {
 
 export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBase }: SimilarPageProps) => {
   const { t } = useContext(AppCtx) as AppContextValue;
-  const [base, setBase] = useState(() => resolveBase(initialBase || 'MAT-0237', db));
+  const [base, setBase] = useState(() => resolveBase(initialBase || '', db));
   const autoRan = useRef(false);
   const [weight, setWeight] = useState('総合スコア');
   const [k, setK] = useState(10);
-  const [threshold, setThreshold] = useState(60);
+  const [threshold, setThreshold] = useState(40);
   const [results, setResults] = useState<MaterialWithScore[]>([]);
   const [aiComment, setAiComment] = useState('');
   const [running, setRunning] = useState(false);
@@ -39,7 +39,7 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
 
   const runWith = async (baseLabel: string) => {
     setRunning(true);
-    const baseId = (baseLabel.match(/MAT-\d+/)||[])[0];
+    const baseId = (baseLabel.match(/(?:MAT|MT)-\d+/)||[])[0];
     const baseRec = db.find(r=>r.id===baseId);
     const q = baseRec ? `${baseRec.name} ${baseRec.comp}` : baseLabel;
     const res = await embedding.search(q, k);
@@ -76,7 +76,7 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
       <Card className="p-4">
         <div className="grid grid-cols-2 gap-3 mb-3">
           <FormGroup label={t('基準材料（ID または名称）', 'Reference Material (ID or Name)')}>
-            <Input value={base} onChange={e=>setBase(e.target.value)} placeholder="例: MAT-0231 または SUS316L" />
+            <Input value={base} onChange={e=>setBase(e.target.value)} placeholder="例: MT-0001, MAT-0308, SUS316L" />
           </FormGroup>
           <FormGroup label={t('重み付け', 'Weighting')}>
             <Select value={weight} onChange={e=>setWeight(e.target.value)} className="w-full">
@@ -106,11 +106,24 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
             </AIInsightCard>
           )}
           {!aiComment && <div className="text-center py-4 text-text-lo"><Typing color="var(--ai-col)" /></div>}
+          {results.length === 0 && (
+            <Card className="p-4 border-dashed border-[var(--warn)]">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon name="info" size={14} className="text-warn" />
+                <span className="text-[13px] font-semibold text-warn">{t('該当する類似材料が見つかりませんでした', 'No similar materials found')}</span>
+              </div>
+              <ul className="text-[12px] text-text-md space-y-1 ml-5 list-disc">
+                <li>{t('しきい値を下げてみてください', 'Try lowering the similarity threshold')} ({t('現在', 'currently')} {threshold}%)</li>
+                <li>{t('有効な ID を使用してください', 'Use a valid material ID')} (MT-0001〜MT-0020, MAT-0301〜MAT-0368)</li>
+                <li>{t('材料名や組成で検索することもできます', 'You can also search by material name or composition')} ({t('例', 'e.g.')}: SUS316L, Ti-6Al-4V)</li>
+              </ul>
+            </Card>
+          )}
           {results.map((r,i) => (
             <Card key={r.id} className="p-3 hover:border-[var(--vec-mid)] transition-colors">
               <div className="flex items-center gap-2.5 mb-1.5">
                 <span className="text-[13px] font-bold text-text-lo">#{i+1}</span>
-                <span className="font-mono text-[12px] text-text-lo">{r.id}</span>
+                <span className="text-[12px] text-text-lo">{r.id}</span>
                 <span className="font-semibold flex-1">{r.name}</span>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] font-bold bg-vec-dim text-vec border border-[var(--border-default)]">
                   <Icon name="embed" size={11} />{Math.round((r.score||0)*100)}%

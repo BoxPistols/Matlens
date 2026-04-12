@@ -4,7 +4,19 @@ import type { Material, MaterialWithScore } from '../types';
 const EMBED_BATCH = 16;
 
 export function materialTextForEmbedding(m: Material): string {
-  return `${m.name} ${m.cat} ${m.comp} ${m.memo}`;
+  // 数値特性もテキスト化して Embedding に含める (ヒット率向上)
+  const parts = [
+    m.name,
+    m.cat,
+    m.comp,
+    `hardness ${m.hv} HV`,
+    `tensile ${m.ts} MPa`,
+    `density ${m.dn}`,
+    m.memo,
+    m.microstructure ? `microstructure ${m.microstructure}` : '',
+    m.testMethod ? `test ${m.testMethod}` : '',
+  ].filter(Boolean);
+  return parts.join(' ');
 }
 
 export function cosineSimilarity(a: ReadonlyArray<number>, b: ReadonlyArray<number>): number {
