@@ -148,6 +148,10 @@ export interface AppContextValue {
   addToast: (msg: string, type?: string) => void;
   toasts: Toast[];
   theme: string;
+  lang: 'ja' | 'en';
+  setLang: (l: 'ja' | 'en') => void;
+  /** シンプル翻訳ヘルパー: lang に応じて ja / en 文字列を返す */
+  t: (ja: string, en: string) => string;
 }
 
 export type DbAction =

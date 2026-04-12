@@ -8,11 +8,15 @@ import { isComposing } from '../../utils/keyboard';
 import { formatSearchEngineLabel } from '../../utils/searchEngine';
 import { DENSITY_META, VALID_DENSITIES, type Density } from '../../hooks/useDensity';
 
+type Lang = 'ja' | 'en';
+
 interface TopbarProps {
   theme: string;
   setTheme: (t: string) => void;
   density: Density;
   setDensity: (d: Density) => void;
+  lang: Lang;
+  setLang: (l: Lang) => void;
   onToggleSidebar: () => void;
   embStatus: string;
   embCount: number;
@@ -26,7 +30,7 @@ interface TopbarProps {
   onOpenNotifications?: () => void;
 }
 
-export const Topbar = ({ theme, setTheme, density, setDensity, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail, unreadNotifications = 0, onOpenNotifications }: TopbarProps) => {
+export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail, unreadNotifications = 0, onOpenNotifications }: TopbarProps) => {
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
@@ -191,6 +195,15 @@ export const Topbar = ({ theme, setTheme, density, setDensity, onToggleSidebar, 
         {THEMES.map(t => (
           <button key={t.id} className={`px-2.5 py-1 rounded text-[12px] font-medium transition-all duration-150 font-ui ${theme === t.id ? 'bg-white/18 text-white' : 'text-white/50 hover:text-white/80'}`} onClick={() => setTheme(t.id)} aria-pressed={theme === t.id}>
             {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* 言語切替 */}
+      <div className="hidden md:flex gap-0.5 bg-black/25 p-0.5 rounded-md border border-white/10 flex-shrink-0" role="group" aria-label="言語切替">
+        {([['ja', 'JP'], ['en', 'EN']] as const).map(([id, label]) => (
+          <button key={id} className={`px-2.5 py-1 rounded text-[12px] font-medium transition-all duration-150 font-ui ${lang === id ? 'bg-white/18 text-white' : 'text-white/50 hover:text-white/80'}`} onClick={() => setLang(id)} aria-pressed={lang === id}>
+            {label}
           </button>
         ))}
       </div>

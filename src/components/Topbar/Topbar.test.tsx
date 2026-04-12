@@ -8,6 +8,8 @@ const defaultProps = {
   setTheme: vi.fn(),
   density: 'regular' as const,
   setDensity: vi.fn(),
+  lang: 'ja' as const,
+  setLang: vi.fn(),
   onToggleSidebar: vi.fn(),
   embStatus: 'ready',
   embCount: 42,
