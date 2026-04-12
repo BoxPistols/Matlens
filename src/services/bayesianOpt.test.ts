@@ -8,6 +8,10 @@ import {
   normalize,
   denormalize,
   DEFAULT_HYPER,
+  rbfKernel2D,
+  fitGP2D,
+  predictGP2D,
+  suggestNext2D,
 } from './bayesianOpt'
 
 describe('rbfKernel', () => {
@@ -142,5 +146,63 @@ describe('normalize / denormalize', () => {
     const { normalized, min, max } = normalize([10, 20, 30])
     expect(denormalize(normalized[0]!, min, max)).toBe(10)
     expect(denormalize(normalized[2]!, min, max)).toBe(30)
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════
+// 2D GP
+// ═══════════════════════════════════════════════════════════════
+
+describe('rbfKernel2D', () => {
+  it('同じ点では variance', () => {
+    expect(rbfKernel2D([0, 0], [0, 0], DEFAULT_HYPER)).toBe(DEFAULT_HYPER.variance)
+  })
+
+  it('離れた点ほど値が小さい', () => {
+    const near = rbfKernel2D([0, 0], [0.3, 0.3], DEFAULT_HYPER)
+    const far  = rbfKernel2D([0, 0], [3, 3], DEFAULT_HYPER)
+    expect(near).toBeGreaterThan(far)
+  })
+})
+
+describe('fitGP2D + predictGP2D', () => {
+  const xs: [number, number][] = [[0,0],[1,0],[0,1],[1,1],[0.5,0.5]]
+  const ys = [0, 1, 1, 2, 1.5]
+
+  it('訓練点での予測は訓練値に近い', () => {
+    const model = fitGP2D(xs, ys)
+    for (let i = 0; i < xs.length; i++) {
+      const pred = predictGP2D(model, xs[i]!)
+      expect(pred.mean).toBeCloseTo(ys[i]!, 0)
+    }
+  })
+
+  it('訓練点での分散は小さい', () => {
+    const model = fitGP2D(xs, ys)
+    const pred = predictGP2D(model, [0.5, 0.5])
+    expect(pred.std).toBeLessThan(0.3)
+  })
+
+  it('遠点では分散が大きい', () => {
+    const model = fitGP2D(xs, ys)
+    const near = predictGP2D(model, [0.5, 0.5])
+    const far  = predictGP2D(model, [5, 5])
+    expect(far.std).toBeGreaterThan(near.std)
+  })
+})
+
+describe('suggestNext2D', () => {
+  it('提案点が範囲内かつ EI 非負', () => {
+    const xs: [number, number][] = [[0,0],[1,0],[0,1],[1,1]]
+    const ys = [0, 1, 1, 2]
+    const model = fitGP2D(xs, ys)
+    const { best, grid } = suggestNext2D(model, [0,0], [1,1], 10)
+    expect(best.x[0]).toBeGreaterThanOrEqual(0)
+    expect(best.x[0]).toBeLessThanOrEqual(1)
+    expect(best.x[1]).toBeGreaterThanOrEqual(0)
+    expect(best.x[1]).toBeLessThanOrEqual(1)
+    expect(best.ei).toBeGreaterThanOrEqual(0)
+    expect(grid).toHaveLength(100) // 10×10
+    for (const p of grid) expect(p.ei).toBeGreaterThanOrEqual(0)
   })
 })

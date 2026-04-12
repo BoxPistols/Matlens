@@ -272,3 +272,102 @@ export function normalize(values: number[]): { normalized: number[]; min: number
 export function denormalize(v: number, min: number, max: number): number {
   return min + v * (max - min)
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 2D ガウス過程回帰
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * 2D RBF カーネル (各次元で同一の lengthScale を使う等方カーネル)。
+ */
+export function rbfKernel2D(
+  x1: [number, number], x2: [number, number], h: GPHyperParams,
+): number {
+  const d0 = x1[0] - x2[0]
+  const d1 = x1[1] - x2[1]
+  return h.variance * Math.exp(-(d0 * d0 + d1 * d1) / (2 * h.lengthScale * h.lengthScale))
+}
+
+export interface GPModel2D {
+  xs: [number, number][]
+  ys: number[]
+  h: GPHyperParams
+  alpha: number[]
+  L: number[][]
+}
+
+export function fitGP2D(
+  xs: [number, number][],
+  ys: number[],
+  h: GPHyperParams = DEFAULT_HYPER,
+): GPModel2D {
+  const n = xs.length
+  if (n === 0) throw new Error('fitGP2D: empty training data')
+  if (xs.length !== ys.length) throw new Error('fitGP2D: xs/ys length mismatch')
+
+  const K: number[][] = Array.from({ length: n }, () => new Array<number>(n).fill(0))
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      const kij = rbfKernel2D(xs[i]!, xs[j]!, h)
+      K[i]![j] = i === j ? kij + h.noise : kij
+    }
+  }
+
+  const L = cholesky(K)
+  const z = forwardSolve(L, ys)
+  const alpha = backwardSolve(L, z)
+
+  return { xs: xs.map(p => [...p] as [number, number]), ys: [...ys], h, alpha, L }
+}
+
+export function predictGP2D(model: GPModel2D, x: [number, number]): GPPrediction {
+  const n = model.xs.length
+  const kStar: number[] = new Array(n).fill(0)
+  for (let i = 0; i < n; i++) {
+    kStar[i] = rbfKernel2D(x, model.xs[i]!, model.h)
+  }
+  let mean = 0
+  for (let i = 0; i < n; i++) mean += (kStar[i] ?? 0) * (model.alpha[i] ?? 0)
+  const kxx = rbfKernel2D(x, x, model.h)
+  const v = forwardSolve(model.L, kStar)
+  let vv = 0
+  for (let i = 0; i < n; i++) vv += (v[i] ?? 0) * (v[i] ?? 0)
+  return { mean, std: Math.sqrt(Math.max(kxx - vv, 0)) }
+}
+
+export interface Suggestion2D {
+  x: [number, number]
+  mean: number
+  std: number
+  ei: number
+}
+
+/**
+ * 2D グリッドスキャンで EI 最大点を返す。
+ * nGrid は各軸のグリッド数 (合計 nGrid² 点)。
+ */
+export function suggestNext2D(
+  model: GPModel2D,
+  xMin: [number, number],
+  xMax: [number, number],
+  nGrid = 20,
+  xi = 0.01,
+): { best: Suggestion2D; grid: Suggestion2D[] } {
+  const yBest = Math.max(...model.ys)
+  const grid: Suggestion2D[] = []
+  let best: Suggestion2D | null = null
+  const step0 = (xMax[0] - xMin[0]) / Math.max(nGrid - 1, 1)
+  const step1 = (xMax[1] - xMin[1]) / Math.max(nGrid - 1, 1)
+  for (let i = 0; i < nGrid; i++) {
+    for (let j = 0; j < nGrid; j++) {
+      const x: [number, number] = [xMin[0] + step0 * i, xMin[1] + step1 * j]
+      const pred = predictGP2D(model, x)
+      const ei = expectedImprovement(pred, yBest, xi)
+      const point: Suggestion2D = { x, mean: pred.mean, std: pred.std, ei }
+      grid.push(point)
+      if (best === null || ei > best.ei) best = point
+    }
+  }
+  if (!best) throw new Error('suggestNext2D: grid is empty')
+  return { best, grid }
+}
