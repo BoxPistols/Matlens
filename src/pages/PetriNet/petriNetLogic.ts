@@ -66,25 +66,43 @@ export function tokenReducer(state: TokenState, action: TokenAction): TokenState
  *   1. 全入力 place に ≥1 トークンがある
  *   2. 発火後の全 capped place が capacity 以内に収まる
  */
+/**
+ * Place の capacity 制約を O(1) ルックアップ用 Map に変換する。
+ * capacity 未定義の place は Map に含まれない。
+ */
+export function buildCapacityMap(places: readonly PlaceDef[]): Map<PlaceId, number> {
+  const m = new Map<PlaceId, number>()
+  for (const p of places) {
+    if (p.capacity !== undefined) m.set(p.id, p.capacity)
+  }
+  return m
+}
+
 export function isEnabled(
   t: TransitionDef,
   tokens: TokenState,
-  places: readonly PlaceDef[],
+  placesOrCapMap: readonly PlaceDef[] | Map<PlaceId, number>,
 ): boolean {
   // 1. 全入力に ≥1 トークン
   for (const pid of t.inputs) {
     if ((tokens[pid] ?? 0) <= 0) return false
   }
-  // 2. capacity 制約: t の出力側にある capped place のみ検査 (全 place 走査しない)
+  // 2. capacity 制約
   const uniqueOutputs = new Set(t.outputs)
   for (const outPid of uniqueOutputs) {
-    const place = places.find(p => p.id === outPid)
-    if (!place || place.capacity === undefined) continue
+    let cap: number | undefined
+    if (placesOrCapMap instanceof Map) {
+      cap = placesOrCapMap.get(outPid)
+    } else {
+      const place = placesOrCapMap.find(p => p.id === outPid)
+      cap = place?.capacity
+    }
+    if (cap === undefined) continue
     const outCount = t.outputs.filter(o => o === outPid).length
     const inCount  = t.inputs.filter(i => i === outPid).length
     const delta = outCount - inCount
     if (delta <= 0) continue
-    if (((tokens[outPid] ?? 0) + delta) > place.capacity) return false
+    if (((tokens[outPid] ?? 0) + delta) > cap) return false
   }
   return true
 }

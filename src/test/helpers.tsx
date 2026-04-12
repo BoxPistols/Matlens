@@ -11,6 +11,9 @@ const mockContext: AppContextValue = {
   addToast: vi.fn(),
   toasts: [],
   theme: 'light',
+  lang: 'ja',
+  setLang: vi.fn(),
+  t: (ja: string) => ja,
 };
 
 // Shape matches the AIHook interface — the hook has grown over time so we

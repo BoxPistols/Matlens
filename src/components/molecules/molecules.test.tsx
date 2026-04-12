@@ -26,6 +26,9 @@ const defaultCtx: AppContextValue = {
   addToast: vi.fn(),
   toasts: [],
   theme: 'light',
+  lang: 'ja',
+  setLang: vi.fn(),
+  t: (ja: string) => ja,
 };
 
 const makeWrapper = (overrides: Partial<AppContextValue> = {}) => {

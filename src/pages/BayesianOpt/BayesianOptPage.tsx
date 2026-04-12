@@ -90,7 +90,6 @@ export const BayesianOptPage = ({ db }: BayesianOptPageProps) => {
     const gridX = analysis.grid.map(g => denormalize(g.x, analysis.xMin, analysis.xMax))
     const meanY = analysis.grid.map(g => denormalize(g.mean, analysis.yMin, analysis.yMax))
     // 不確実性バンド (±2σ)
-    const yRange = analysis.yMax - analysis.yMin
     const upperY = analysis.grid.map(g => denormalize(g.mean + 2 * g.std, analysis.yMin, analysis.yMax))
     const lowerY = analysis.grid.map(g => denormalize(Math.max(g.mean - 2 * g.std, 0), analysis.yMin, analysis.yMax))
 
@@ -194,9 +193,6 @@ export const BayesianOptPage = ({ db }: BayesianOptPageProps) => {
         },
       },
     })
-    // yRange が 0 の場合のみ参照警告を避けるために touch
-    void yRange
-
     return () => {
       chartInstance.current?.destroy()
       chartInstance.current = null

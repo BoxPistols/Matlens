@@ -7,6 +7,7 @@ import { useDensity } from './hooks/useDensity';
 import { useEmbedding } from './hooks/useEmbedding';
 import { useAI } from './hooks/useAI';
 import { useVoice } from './hooks/useVoice';
+import { useLang } from './hooks/useLang';
 import { installMockAPI } from './services/mockApi';
 import { Icon } from './components/Icon';
 import { Topbar } from './components/Topbar';
@@ -82,6 +83,7 @@ export function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const { theme, setTheme } = useTheme();
+  const { lang, setLang, t } = useLang();
   const { density, setDensity } = useDensity();
   const embedding = useEmbedding(db);
   const ai = useAI();
@@ -222,12 +224,13 @@ export function App() {
   };
 
   return (
-    <AppCtx.Provider value={{ db, dispatch, addToast, toasts, theme } satisfies AppContextValue}>
+    <AppCtx.Provider value={{ db, dispatch, addToast, toasts, theme, lang, setLang, t } satisfies AppContextValue}>
       <a href="#main" className="skip-nav">コンテンツへスキップ</a>
       <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--bg-base)' }}>
         <Topbar
           theme={theme} setTheme={setTheme}
           density={density} setDensity={setDensity}
+          lang={lang} setLang={setLang}
           onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
           embStatus={embedding.status} embCount={embedding.embCount} embEngine={embedding.engine}
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}

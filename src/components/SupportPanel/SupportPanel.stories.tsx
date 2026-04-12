@@ -29,6 +29,9 @@ const mockCtx: AppContextValue = {
   addToast: fn(),
   toasts: [],
   theme: 'light',
+  lang: 'ja' as const,
+  setLang: fn(),
+  t: (ja: string) => ja,
 };
 
 const meta: Meta<typeof SupportPanel> = {
