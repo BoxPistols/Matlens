@@ -496,6 +496,143 @@ export const PAGE_GUIDES: PageGuide[] = [
     ],
     related: ['dash', 'list'],
   },
+  {
+    id: 'crystal', icon: 'embed',
+    title: '結晶構造 3D ビューア', titleEn: 'Crystal Structure 3D Viewer',
+    summary: 'BCC・FCC・HCP の結晶構造を Three.js で 3D 表示し、格子歪みスライダーで変形を可視化します。',
+    summaryEn: 'Visualize BCC/FCC/HCP crystal structures in 3D with Three.js and explore lattice strain with an interactive slider.',
+    features: [
+      'BCC（体心立方）・FCC（面心立方）・HCP（六方最密充填）の 3 構造を切替',
+      '格子歪みスライダーで一軸引張/圧縮の変形をリアルタイム表示',
+      '格子定数・結合距離・原子配置の詳細パネル',
+      'ダーク/ライト対応のカラーパレット',
+    ],
+    featuresEn: [
+      'Switch between BCC, FCC, HCP crystal structures',
+      'Real-time lattice strain visualization with slider',
+      'Detailed panel showing lattice constants, bond distances, atom positions',
+      'Dark/Light adaptive color palette',
+    ],
+    tips: [
+      'マウスドラッグで回転、スクロールでズーム',
+      '歪みスライダーを動かすと原子位置がリアルタイムに変化',
+      '材料のカテゴリ（金属合金）に関連する結晶構造を確認する用途',
+    ],
+    tipsEn: [
+      'Drag to rotate, scroll to zoom',
+      'Moving the strain slider updates atom positions in real-time',
+      'Use to understand crystal structures related to metal alloy categories',
+    ],
+    related: ['catalog', 'simulate'],
+  },
+  {
+    id: 'timeline', icon: 'report',
+    title: '加工タイムライン', titleEn: 'Process Timeline',
+    summary: '材料の加工・試験プロセスを時系列チャートで可視化。温度・振動などのセンサーデータを重ねて表示します。',
+    summaryEn: 'Visualize material processing and testing as a time-series chart. Overlay sensor data such as temperature and vibration.',
+    features: [
+      '温度・振動の 2 軸リアルタイムチャート（Chart.js）',
+      '工程イベントを時間軸上にマーキング',
+      'モックデータによるデモ表示',
+      'ペトリネットの「構造」に対して「時間軸」を補完',
+    ],
+    featuresEn: [
+      'Dual-axis real-time chart for temperature and vibration (Chart.js)',
+      'Process events marked on the timeline',
+      'Demo display with mock data',
+      'Complements Petri net structure view with a time perspective',
+    ],
+    tips: [
+      'ペトリネットと併用することで工程の構造と時間の両面を把握',
+      'センサーデータの異常検知パターンの確認に活用',
+    ],
+    tipsEn: [
+      'Use alongside Petri net to understand both process structure and timing',
+      'Useful for identifying anomaly patterns in sensor data',
+    ],
+    related: ['petri', 'overlay'],
+  },
+  {
+    id: 'overlay', icon: 'similar',
+    title: '予測 vs 実績オーバーレイ', titleEn: 'Prediction vs Actual',
+    summary: '経験式による理論予測値と実測データを同一グラフ上に重ねて表示。予測精度の評価や異常値検出に使用します。',
+    summaryEn: 'Overlay theoretical predictions from empirical formulas with actual measurement data on the same chart.',
+    features: [
+      'Hall-Petch 等の理論曲線と実測データの重ね表示',
+      '特徴量（硬度・引張強さ等）の選択',
+      '予測精度（理論値からの逸脱）の視覚的評価',
+      '異常値のスポット検出',
+    ],
+    featuresEn: [
+      'Overlay theoretical curves (Hall-Petch etc.) with measured data',
+      'Select features (hardness, tensile strength, etc.)',
+      'Visual assessment of prediction accuracy',
+      'Spot detection of outliers',
+    ],
+    tips: [
+      '経験式シミュレーションで得た理論値との比較に最適',
+      '理論線から大きく外れたデータ点は組成・加工条件の見直し候補',
+    ],
+    tipsEn: [
+      'Ideal for comparing with theoretical values from empirical simulations',
+      'Data points far from the theory line may need composition/processing review',
+    ],
+    related: ['simulate', 'bayes'],
+  },
+  {
+    id: 'multimodal', icon: 'embed',
+    title: 'マルチスケールビューア', titleEn: 'Multiscale Viewer',
+    summary: 'マクロ（部品形状）からミクロ（結晶組織）まで、複数の観察スケールを統合表示するビューアです。',
+    summaryEn: 'Integrated viewer displaying multiple observation scales from macro (part shape) to micro (crystal structure).',
+    features: [
+      'マクロ → メソ → ミクロのスケール階層表示',
+      '各スケールの材料情報を並列表示',
+      'スケール間の対応関係を視覚的に把握',
+      '材料特性と微視構造の関連探索',
+    ],
+    featuresEn: [
+      'Hierarchical display: macro → meso → micro scale',
+      'Parallel display of material info at each scale',
+      'Visual understanding of cross-scale relationships',
+      'Explore connections between material properties and microstructure',
+    ],
+    tips: [
+      'NDE（非破壊評価）の結果と組み合わせると効果的',
+      '各スケールの画像・データは今後の実データ連携で拡張予定',
+    ],
+    tipsEn: [
+      'Effective when combined with NDE results',
+      'Images and data at each scale planned for real data integration',
+    ],
+    related: ['crystal', 'detail'],
+  },
+  {
+    id: 'about', icon: 'about',
+    title: '技術スタック', titleEn: 'Tech Stack',
+    summary: 'Matlens を構成する技術の一覧。フロントエンド・AI/ML・データフォーマット・テスト・デプロイの全体像を確認できます。',
+    summaryEn: 'Overview of technologies used in Matlens: frontend, AI/ML, data formats, testing, and deployment.',
+    features: [
+      'React + TypeScript + Vite のフロントエンド構成',
+      'AI SDK v6 + TensorFlow.js の AI/ML スタック',
+      'MaiML (JIS K 0200:2024) + PNML (ISO/IEC 15909-2) のデータフォーマット',
+      'Vitest + Playwright のテスト構成',
+    ],
+    featuresEn: [
+      'React + TypeScript + Vite frontend stack',
+      'AI SDK v6 + TensorFlow.js AI/ML stack',
+      'MaiML and PNML data format support',
+      'Vitest + Playwright testing setup',
+    ],
+    tips: [
+      'プロジェクト構成のディレクトリツリーも表示',
+      '技術選定の背景は README.md に詳しく記載',
+    ],
+    tipsEn: [
+      'Directory tree of project structure also displayed',
+      'See README.md for detailed rationale behind tech choices',
+    ],
+    related: ['help'],
+  },
 ];
 
 export const FAQ_ITEMS: { q: string; a: string }[] = [
