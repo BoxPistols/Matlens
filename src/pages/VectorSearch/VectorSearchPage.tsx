@@ -115,7 +115,7 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
             <Card key={r.id} className="p-3 hover:border-[var(--vec-mid)] transition-colors cursor-pointer">
               <div className="flex items-center gap-2.5 mb-1.5">
                 <span className="text-[13px] font-bold text-text-lo">#{i+1}</span>
-                <span className="font-mono text-[12px] text-text-lo">{r.id}</span>
+                <span className="text-[12px] text-text-lo">{r.id}</span>
                 <span className="font-semibold flex-1">{r.name}</span>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] font-bold bg-vec-dim text-vec border border-[var(--border-default)]">
                   <Icon name="embed" size={11} />{Math.round((r.score||0)*100)}%

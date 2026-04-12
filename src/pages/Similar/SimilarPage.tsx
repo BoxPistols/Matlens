@@ -28,8 +28,8 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
   const [base, setBase] = useState(() => resolveBase(initialBase || 'MAT-0237', db));
   const autoRan = useRef(false);
   const [weight, setWeight] = useState('総合スコア');
-  const [k, setK] = useState(10);
-  const [threshold, setThreshold] = useState(60);
+  const [k, setK] = useState(15);
+  const [threshold, setThreshold] = useState(30);
   const [results, setResults] = useState<MaterialWithScore[]>([]);
   const [aiComment, setAiComment] = useState('');
   const [running, setRunning] = useState(false);
@@ -37,9 +37,11 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
 
   const runWith = async (baseLabel: string) => {
     setRunning(true);
-    const baseId = (baseLabel.match(/MAT-\d+/)||[])[0];
+    // MAT-XXXX と MT-XXXX の両方にマッチするよう正規表現を拡張
+    const baseId = (baseLabel.match(/(?:MAT|MT)-\d+/)||[])[0];
     const baseRec = db.find(r=>r.id===baseId);
-    const q = baseRec ? `${baseRec.name} ${baseRec.comp}` : baseLabel;
+    // 名称 + 組成 + カテゴリ + メモをクエリに含めて広い候補を得る
+    const q = baseRec ? `${baseRec.name} ${baseRec.cat} ${baseRec.comp} ${baseRec.memo}` : baseLabel;
     const res = await embedding.search(q, k);
     const filtered = res.filter(r => r.id !== baseId && (r.score||0) >= threshold/100);
     setResults(filtered);
@@ -108,7 +110,7 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
             <Card key={r.id} className="p-3 hover:border-[var(--vec-mid)] transition-colors">
               <div className="flex items-center gap-2.5 mb-1.5">
                 <span className="text-[13px] font-bold text-text-lo">#{i+1}</span>
-                <span className="font-mono text-[12px] text-text-lo">{r.id}</span>
+                <span className="text-[12px] text-text-lo">{r.id}</span>
                 <span className="font-semibold flex-1">{r.name}</span>
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] font-bold bg-vec-dim text-vec border border-[var(--border-default)]">
                   <Icon name="embed" size={11} />{Math.round((r.score||0)*100)}%
