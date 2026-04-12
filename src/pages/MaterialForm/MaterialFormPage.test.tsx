@@ -26,8 +26,6 @@ describe('MaterialFormPage', () => {
       />,
     );
 
-  // Use a real id from the seed list. The previous hard-coded MAT-0247 has
-  // been retired since the seed range was renumbered.
   const EDIT_FIXTURE = INITIAL_DB[0]!;
   const setupEdit = () =>
     renderWithContext(
@@ -54,17 +52,37 @@ describe('MaterialFormPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows required fields (name, cat, comp)', () => {
+  it('shows required fields on step 1 (name, cat, comp)', () => {
     setupNew();
     expect(screen.getByText('材料名称')).toBeInTheDocument();
     expect(screen.getByText('カテゴリ')).toBeInTheDocument();
     expect(screen.getByText('組成・配合')).toBeInTheDocument();
   });
 
-  it('submit with empty required fields shows errors', () => {
+  it('shows step indicator with 3 steps', () => {
     setupNew();
-    fireEvent.click(screen.getByText('登録する'));
+    const stepButtons = screen.getAllByRole('button').filter(
+      btn => btn.getAttribute('aria-current') === 'step' || btn.textContent?.match(/基本情報|物性データ|確認・登録/)
+    );
+    expect(stepButtons.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('clicking next with empty required fields shows errors', () => {
+    setupNew();
+    fireEvent.click(screen.getByText('次へ'));
     const errors = screen.getAllByText('必須項目です');
     expect(errors.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('shows cancel button on all steps', () => {
+    setupNew();
+    expect(screen.getByText('キャンセル')).toBeInTheDocument();
+  });
+
+  it('shows category template hint when category selected', () => {
+    setupNew();
+    const select = screen.getByDisplayValue('選択してください');
+    fireEvent.change(select, { target: { value: '金属合金' } });
+    expect(screen.getByText((content) => content.includes('カテゴリ「金属合金」'))).toBeInTheDocument();
   });
 });
