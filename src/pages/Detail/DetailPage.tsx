@@ -124,6 +124,19 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             <div className="flex items-center gap-2 flex-wrap mt-2">
               <Badge variant="gray">{r.cat}</Badge>
               <Badge>{r.status}</Badge>
+              {r.provenance && (
+                <Badge variant={
+                  r.provenance === 'instrument' ? 'green'
+                  : r.provenance === 'manual' ? 'blue'
+                  : r.provenance === 'ai' ? 'ai'
+                  : 'amber'
+                }>
+                  {r.provenance === 'instrument' ? '装置計測'
+                   : r.provenance === 'manual' ? '手入力'
+                   : r.provenance === 'ai' ? 'AI推定'
+                   : 'シミュレーション'}
+                </Badge>
+              )}
               <span className="text-[12px] text-text-lo">登録: {r.date} · {r.author}</span>
               {r.ai && <Badge variant="ai"><Icon name="warning" size={11} />AI検出</Badge>}
             </div>
@@ -149,6 +162,23 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             </div>
           ))}
         </div>
+        {/* Phase A 拡張フィールド */}
+        {(r.microstructure || r.testMethod) && (
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            {r.microstructure && (
+              <div className="bg-raised border border-[var(--border-faint)] rounded-md p-3">
+                <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.05em] mb-1">金属組織 / Microstructure</div>
+                <div className="text-[12px] text-text-md">{r.microstructure}</div>
+              </div>
+            )}
+            {r.testMethod && (
+              <div className="bg-raised border border-[var(--border-faint)] rounded-md p-3">
+                <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.05em] mb-1">試験方法 / Test Method</div>
+                <div className="text-[12px] font-mono text-text-md">{r.testMethod}</div>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
       <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 300px', alignItems: 'start' }}>
