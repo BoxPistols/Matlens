@@ -290,3 +290,16 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
 :root{
   --row-h:44px;--cell-py:8px;--card-py:16px;--table-fs:13px;
 }
+
+/* ─── UI 密度 (data-density) の実効化 ────────────────────────────────── */
+/* テーブル行の密度適用 */
+table tbody td,
+table tbody th { padding-top: var(--cell-py); padding-bottom: var(--cell-py); }
+table { font-size: var(--table-fs); }
+
+/* サイドバーリンクの密度適用 */
+.sidebar-nav button { padding-top: var(--cell-py); padding-bottom: var(--cell-py); }
+
+/* カード内パディング (Tailwind p-3/p-4 を上書き) */
+[data-density="compact"] .density-card { padding-top: 8px !important; padding-bottom: 8px !important; }
+[data-density="relaxed"] .density-card { padding-top: 20px !important; padding-bottom: 20px !important; }

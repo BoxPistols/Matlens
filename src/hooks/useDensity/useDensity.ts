@@ -16,10 +16,10 @@ const STORAGE_KEY = 'matlens:density'
 export const VALID_DENSITIES = ['compact', 'regular', 'relaxed'] as const
 export type Density = (typeof VALID_DENSITIES)[number]
 
-export const DENSITY_META: Record<Density, { label: string; rowH: number }> = {
-  compact:  { label: 'コンパクト', rowH: 36 },
-  regular:  { label: '標準',       rowH: 44 },
-  relaxed:  { label: 'ゆったり',   rowH: 56 },
+export const DENSITY_META: Record<Density, { label: string; labelEn: string; rowH: number }> = {
+  compact:  { label: 'コンパクト', labelEn: 'Compact', rowH: 36 },
+  regular:  { label: '標準',       labelEn: 'Regular', rowH: 44 },
+  relaxed:  { label: 'ゆったり',   labelEn: 'Relaxed', rowH: 56 },
 }
 
 function isValidDensity(d: string | null): d is Density {

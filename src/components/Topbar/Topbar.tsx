@@ -220,7 +220,7 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
               aria-pressed={density === d}
               className={`px-1.5 py-1 rounded text-[11px] font-medium transition-all duration-150 font-ui ${density === d ? 'bg-white/18 text-white' : 'text-white/50 hover:text-white/80'}`}
             >
-              {DENSITY_META[d].label}
+              {lang === 'en' ? DENSITY_META[d].labelEn : DENSITY_META[d].label}
             </button>
           ))}
         </div>
