@@ -98,6 +98,398 @@ export const HELP_TERMS: { id: string; term: string; en: string; cat: string; ca
   {id:'guide-about',term:'技術スタック',en:'Tech Stack',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'Matlens を構成する技術の一覧です。フロントエンド（React + TypeScript + Vite）、AI/ML（AI SDK + TensorFlow.js）、データフォーマット（MaiML + PNML）、テスト（Vitest + Playwright）などの技術選定とプロジェクト構成を確認できます。',related:'ヘルプ・用語集'},
 ];
 
+export interface PageGuide {
+  id: string;
+  icon: string;
+  title: string;
+  titleEn: string;
+  summary: string;
+  summaryEn: string;
+  features: string[];
+  featuresEn: string[];
+  tips: string[];
+  tipsEn: string[];
+  related: string[];
+}
+
+export const PAGE_GUIDES: PageGuide[] = [
+  {
+    id: 'dash', icon: 'dashboard',
+    title: 'ダッシュボード', titleEn: 'Dashboard',
+    summary: 'アプリを開いて最初に表示される概要画面です。登録データ全体の状況を俯瞰し、次のアクションを見つける起点になります。',
+    summaryEn: 'The overview screen shown when you open the app. Provides a bird\'s-eye view of all registered data and helps you decide what to do next.',
+    features: [
+      '登録データの総数・ステータス分布をグラフで確認',
+      'AI インサイトでデータ全体の傾向分析を自動生成',
+      '「レポート」ボタンでサマリーをダウンロード',
+      'カテゴリ別・ステータス別の 2 種類の円グラフ',
+    ],
+    featuresEn: [
+      'View total data count and status distribution in charts',
+      'Auto-generate trend analysis with AI Insights',
+      'Download a summary via the Report button',
+      'Two pie charts: by category and by status',
+    ],
+    tips: [
+      'グラフはカテゴリ別・ステータス別の2種類が表示される',
+      'AI インサイトはページ読込時に自動生成される',
+      'お知らせバナーから最新の更新情報を確認できる',
+    ],
+    tipsEn: [
+      'Two chart types are shown: by category and by status',
+      'AI Insights are auto-generated on page load',
+      'Check the announcement banner for latest updates',
+    ],
+    related: ['list', 'rag'],
+  },
+  {
+    id: 'list', icon: 'list',
+    title: '材料データ一覧', titleEn: 'Material List',
+    summary: '全登録材料をテーブル・カード・コンパクトの3表示モードで閲覧できる中核画面です。強力な検索・フィルタ機能で目的のデータに素早くアクセスできます。',
+    summaryEn: 'The central screen for browsing all registered materials in three view modes (table, card, compact). Powerful search and filter features help you find data quickly.',
+    features: [
+      'テーブル・カード・コンパクトの3表示モード切替',
+      '全文検索バーで名称・ID・組成・備考・登録者を横断検索',
+      'ファセット検索（カテゴリ・ステータス・バッチ・数値範囲）',
+      '検索プリセットの保存・呼び出し',
+      'チェックボックスで選択→一括削除・一括エクスポート',
+    ],
+    featuresEn: [
+      'Switch between table, card, and compact view modes',
+      'Full-text search across name, ID, composition, notes, and registrant',
+      'Faceted search (category, status, batch, numeric ranges)',
+      'Save and recall search presets',
+      'Select with checkboxes for bulk delete or export',
+    ],
+    tips: [
+      '行クリックで詳細ページに遷移',
+      '「詳細条件」パネルでファセットフィルタを展開',
+      'アクティブなフィルタはタグ表示され個別に解除可能',
+      '自然言語クエリにも対応（例:「ニッケル合金で硬度300以上」）',
+    ],
+    tipsEn: [
+      'Click a row to navigate to the detail page',
+      'Expand the Advanced Filters panel for faceted search',
+      'Active filters are shown as tags and can be removed individually',
+      'Natural language queries are supported (e.g., "nickel alloy with hardness over 300")',
+    ],
+    related: ['new', 'vsearch', 'detail'],
+  },
+  {
+    id: 'new', icon: 'plus',
+    title: '新規登録', titleEn: 'New Entry',
+    summary: '3ステップのウィザード形式で材料データを登録します。AI による物性値推定やカテゴリ別テンプレートで入力を効率化できます。',
+    summaryEn: 'Register material data in a 3-step wizard. AI property estimation and category templates streamline data entry.',
+    features: [
+      'Step1: 材料名・カテゴリ・組成の基本情報入力',
+      'Step2: 硬度・引張強さ等の物性データ入力',
+      'Step3: 全入力値を確認して登録',
+      '「AIで推定」ボタンで組成から物性値の目安を自動入力',
+      'カテゴリ選択でプレースホルダーが自動切替',
+    ],
+    featuresEn: [
+      'Step 1: Enter basic info — name, category, composition',
+      'Step 2: Enter properties — hardness, tensile strength, etc.',
+      'Step 3: Review all inputs and register',
+      'Auto-fill property estimates from composition via AI',
+      'Placeholders change automatically based on selected category',
+    ],
+    tips: [
+      '入力途中でもブラウザに自動保存（下書き機能）',
+      '各ステップにバリデーションあり、未入力項目はハイライト表示',
+      '確認画面で入力済み項目数が表示される',
+    ],
+    tipsEn: [
+      'Auto-saved to browser as you type (draft feature)',
+      'Each step has validation; unfilled fields are highlighted',
+      'The review screen shows the count of filled fields',
+    ],
+    related: ['list', 'detail'],
+  },
+  {
+    id: 'detail', icon: 'info',
+    title: '材料詳細', titleEn: 'Material Detail',
+    summary: '個別材料の物性値一覧、同カテゴリ比較グラフ、AI 特徴分析を表示するページです。他ページへの起点としても機能します。',
+    summaryEn: 'Displays property values, same-category comparison charts, and AI feature analysis for individual materials. Also serves as a hub for navigation.',
+    features: [
+      '物性値一覧をカード形式で表示',
+      '同カテゴリ内の硬度比較グラフ',
+      'AI が材料の特徴を自動分析・要約',
+      'CSV / JSON / MaiML 形式でダウンロード',
+      '「AIチャットで詳しく」「類似材料を探す」への遷移ボタン',
+    ],
+    featuresEn: [
+      'Property values displayed in card format',
+      'Hardness comparison chart within the same category',
+      'AI auto-analyzes and summarizes material characteristics',
+      'Download in CSV / JSON / MaiML formats',
+      'Navigation buttons to AI Chat and Similar Materials',
+    ],
+    tips: [
+      '前後レコードボタンで一覧を順に閲覧できる',
+      'ダウンロード前にプレビュー確認モーダルが表示される',
+      '編集ボタンでそのままフォーム画面に遷移',
+    ],
+    tipsEn: [
+      'Use prev/next buttons to browse records sequentially',
+      'A preview confirmation modal appears before download',
+      'Click the edit button to jump directly to the form',
+    ],
+    related: ['list', 'rag', 'sim'],
+  },
+  {
+    id: 'petri', icon: 'workflow',
+    title: '試験フロー可視化', titleEn: 'Workflow Visualization',
+    summary: '金属試験の 11 工程をペトリネット図で可視化するページです。トークン発火で工程を進行し、再加工ループも表現できます。',
+    summaryEn: 'Visualizes 11 metal testing steps as a Petri net diagram. Advance workflow by firing tokens, with support for rework loops.',
+    features: [
+      '丸（Place）が状態、四角（Transition）が工程を表現',
+      'トークンクリックで工程を発火・進行',
+      '再加工ループ（サイクル）に対応',
+      '各工程クリックで対応画面に直接遷移（ワークフロー連動ナビ）',
+      'PNML 形式でエクスポート・インポート可能',
+    ],
+    featuresEn: [
+      'Circles (Places) represent states; rectangles (Transitions) represent steps',
+      'Click tokens to fire and advance the workflow',
+      'Supports rework loops (cycles)',
+      'Click each step to navigate directly to the corresponding page',
+      'Export and import in PNML format',
+    ],
+    tips: [
+      '青枠の Transition がクリック可能（発火条件を満たしている）',
+      '「1手戻る」ボタンで直前の操作を Undo できる',
+      'Place をクリックすると関連ページに遷移する',
+    ],
+    tipsEn: [
+      'Blue-bordered Transitions are clickable (firing conditions met)',
+      'Use the Undo button to revert the last action',
+      'Clicking a Place navigates to the related page',
+    ],
+    related: ['new', 'simulate', 'bayes'],
+  },
+  {
+    id: 'bayes', icon: 'spark',
+    title: 'ベイズ最適化', titleEn: 'Bayesian Optimization',
+    summary: 'ガウス過程回帰（GP）で予測分布を推定し、Expected Improvement が最大の点を「次に試すべき実験」として提案します。',
+    summaryEn: 'Estimates predictive distributions via Gaussian Process regression and suggests the next experiment point by maximizing Expected Improvement.',
+    features: [
+      '特徴変数と目的変数を選択して最適化を実行',
+      'ガウス過程回帰による予測分布の可視化',
+      'Expected Improvement（EI）獲得関数で次実験候補を提示',
+      '1D / 2D の特徴量空間に対応',
+    ],
+    featuresEn: [
+      'Select feature and target variables to run optimization',
+      'Visualize predictive distributions via Gaussian Process regression',
+      'Suggest next experiment candidate using Expected Improvement (EI)',
+      'Supports 1D and 2D feature spaces',
+    ],
+    tips: [
+      '青帯は予測不確実性（±2σ）を表す',
+      'データ点が少なくても有効（少数データ向き）',
+      '赤い★マークが次実験の推奨ポイント',
+    ],
+    tipsEn: [
+      'The blue band represents prediction uncertainty (+-2 sigma)',
+      'Effective even with few data points (designed for small datasets)',
+      'The red star marks the recommended next experiment point',
+    ],
+    related: ['simulate', 'list'],
+  },
+  {
+    id: 'simulate', icon: 'info',
+    title: '経験式シミュレーション', titleEn: 'Empirical Simulation',
+    summary: '材料科学の代表的な 4 つの経験式を対話的にシミュレーションできます。パラメータをスライダーで調整し、即座にグラフで確認。',
+    summaryEn: 'Interactively simulate four classic empirical formulas in materials science. Adjust parameters with sliders and see results in real-time charts.',
+    features: [
+      'Hall-Petch 式: 結晶粒径 → 降伏応力',
+      'Larson-Miller パラメータ: 温度・時間 → クリープ破断寿命',
+      'JMAK 式: 変態分率の時間発展',
+      '複合則 ROM: 体積分率 → 弾性率',
+    ],
+    featuresEn: [
+      'Hall-Petch: grain size to yield stress',
+      'Larson-Miller: temperature and time to creep rupture life',
+      'JMAK: transformation fraction over time',
+      'Rule of Mixtures: volume fraction to elastic modulus',
+    ],
+    tips: [
+      'スライダーで各パラメータを調整するとグラフが即座に更新',
+      'プリセットボタンで代表的な材料の値に一括セット',
+      '全て参考値 — 実設計では実測データと照合してください',
+    ],
+    tipsEn: [
+      'Adjust each parameter with sliders for instant graph updates',
+      'Use preset buttons to load typical material values',
+      'All values are reference only — cross-check with measured data for real design',
+    ],
+    related: ['bayes', 'list'],
+  },
+  {
+    id: 'vsearch', icon: 'vecSearch',
+    title: '意味検索', titleEn: 'Semantic Search',
+    summary: '自然言語で材料を検索できるベクトル検索ページです。TensorFlow.js がブラウザ内で動作するため、サーバー通信は不要です。',
+    summaryEn: 'Search materials using natural language. TensorFlow.js runs in-browser, so no server communication is needed.',
+    features: [
+      '「耐熱性の高いニッケル合金」のような文章で検索可能',
+      'Embedding によるコサイン類似度ランキング表示',
+      '各結果にスコア（類似度）を表示',
+      '検索結果から AI チャットや詳細ページに遷移可能',
+    ],
+    featuresEn: [
+      'Search with natural sentences like "high heat-resistant nickel alloy"',
+      'Ranked by cosine similarity via Embeddings',
+      'Each result shows a similarity score',
+      'Navigate from results to AI Chat or Detail pages',
+    ],
+    tips: [
+      '初回ロード時にモデルをダウンロード（数秒かかる場合あり）',
+      'キーワードだけでなく文章で検索すると精度が上がる',
+      'スコアが低い場合は通常のフィルタ検索にフォールバック',
+    ],
+    tipsEn: [
+      'The model is downloaded on first load (may take a few seconds)',
+      'Full sentences yield better accuracy than single keywords',
+      'Falls back to standard filter search when scores are low',
+    ],
+    related: ['rag', 'list'],
+  },
+  {
+    id: 'rag', icon: 'rag',
+    title: 'AI チャット', titleEn: 'AI Chat',
+    summary: '材料データベースをコンテキストに AI と対話できる RAG（検索拡張生成）チャットです。登録データに基づいた根拠ある回答が得られます。',
+    summaryEn: 'A RAG (Retrieval-Augmented Generation) chat that uses your material database as context. Get grounded answers based on registered data.',
+    features: [
+      '質問するとベクトル検索で関連材料 4 件を自動取得',
+      '取得データをコンテキストとして AI に渡して回答生成',
+      'プロバイダー切替（GPT-5.4 nano / Gemini 2.5 Flash）',
+      'チャット履歴をセッション内で保持',
+    ],
+    featuresEn: [
+      'Automatically retrieves 4 related materials via vector search on each query',
+      'Injects retrieved data as context for AI-generated answers',
+      'Switch providers (GPT-5.4 nano / Gemini 2.5 Flash)',
+      'Chat history is kept within the session',
+    ],
+    tips: [
+      'Cmd+Enter / Ctrl+Enter で送信',
+      '具体的な材料名や特性値を含めると精度が上がる',
+      '詳細ページの「AIチャットで詳しく」から遷移すると初期クエリ付きで開く',
+    ],
+    tipsEn: [
+      'Send with Cmd+Enter / Ctrl+Enter',
+      'Including specific material names or property values improves accuracy',
+      'Navigating from Detail page\'s "Ask AI" opens with an initial query',
+    ],
+    related: ['vsearch', 'sim'],
+  },
+  {
+    id: 'sim', icon: 'similar',
+    title: '類似材料探索', titleEn: 'Similar Materials',
+    summary: '基準材料を指定して Embedding 類似度でランキングし、AI が選定ポイントと使い分けをアドバイスします。',
+    summaryEn: 'Specify a reference material, rank by Embedding similarity, and get AI advice on selection criteria and usage.',
+    features: [
+      '基準材料 ID または名称を入力して検索',
+      'Embedding 類似度でランキング表示',
+      'AI が選定ポイントと使い分けをアドバイス',
+      'しきい値スライダーで候補を絞り込み',
+    ],
+    featuresEn: [
+      'Enter a reference material ID or name to search',
+      'Results ranked by Embedding similarity',
+      'AI provides advice on selection criteria and usage',
+      'Filter candidates with the threshold slider',
+    ],
+    tips: [
+      '詳細ページの「類似材料を探す」ボタンから遷移すると基準材料が自動入力される',
+      'しきい値を下げると候補が増え、上げると厳選される',
+      '結果の各行をクリックで詳細ページに遷移',
+    ],
+    tipsEn: [
+      'Navigating from Detail\'s "Find Similar" auto-fills the reference material',
+      'Lowering the threshold shows more candidates; raising it narrows results',
+      'Click any result row to go to the detail page',
+    ],
+    related: ['vsearch', 'detail'],
+  },
+  {
+    id: 'catalog', icon: 'embed',
+    title: '材料カタログ', titleEn: 'Material Catalog',
+    summary: '登録材料をビジュアルカード形式で一覧表示するページです。CSS/SVG ビジュアルで材料の種類を直感的に把握できます。',
+    summaryEn: 'Browse registered materials as visual cards. CSS/SVG visuals help you intuitively grasp material types.',
+    features: [
+      '組成・カテゴリに応じた CSS/SVG ビジュアルカード',
+      'クリックで詳細ページに遷移',
+      'テーブル一覧よりも視覚的に把握しやすい',
+    ],
+    featuresEn: [
+      'Visual cards with CSS/SVG based on composition and category',
+      'Click to navigate to the detail page',
+      'More visual than the table list view',
+    ],
+    tips: [
+      'カードの色やパターンはカテゴリを反映している',
+      '多数のデータがある場合はスクロールして閲覧',
+    ],
+    tipsEn: [
+      'Card colors and patterns reflect the category',
+      'Scroll to browse when there are many entries',
+    ],
+    related: ['list', 'detail'],
+  },
+  {
+    id: 'help', icon: 'help',
+    title: 'ヘルプ・用語集', titleEn: 'Help / Glossary',
+    summary: 'このページです。専門用語解説、各ページの使い方ガイド、操作リファレンスを検索・閲覧できます。',
+    summaryEn: 'This page. Search and browse technical term explanations, page guides, and operation references.',
+    features: [
+      'カテゴリタブで絞り込み（ページガイド・材料工学・AI/ML・システム・操作ガイド）',
+      '検索ボックスでキーワード検索',
+      'FAQ セクションでよくある質問に回答',
+    ],
+    featuresEn: [
+      'Filter by category tab (Page Guide, Materials, AI/ML, System, Operations)',
+      'Keyword search via search box',
+      'FAQ section answers common questions',
+    ],
+    tips: [
+      '「ページガイド」タブで全画面の操作説明を確認',
+      '英語名も検索対象に含まれる',
+    ],
+    tipsEn: [
+      'Check the Page Guide tab for instructions on all screens',
+      'English names are also included in search results',
+    ],
+    related: ['about'],
+  },
+  {
+    id: 'settings', icon: 'settings',
+    title: 'カテゴリ・バッチ管理', titleEn: 'Categories & Batches',
+    summary: '登録データのカテゴリ別・ステータス別分布をプログレスバーで可視化し、データ管理状況の全体像を把握できます。',
+    summaryEn: 'Visualize category and status distributions with progress bars, providing an overview of data management status.',
+    features: [
+      'カテゴリ別・ステータス別の分布プログレスバー',
+      'バッチ番号ごとのデータ件数表示',
+      '登録者ごとの担当件数確認',
+    ],
+    featuresEn: [
+      'Distribution progress bars by category and status',
+      'Data count per batch number',
+      'Entry count per registrant',
+    ],
+    tips: [
+      'データの偏りや未処理件数の把握に便利',
+      'ダッシュボードのグラフと併せて管理状況を確認',
+    ],
+    tipsEn: [
+      'Useful for spotting data imbalances and unprocessed items',
+      'Check alongside dashboard charts for a complete management overview',
+    ],
+    related: ['dash', 'list'],
+  },
+];
+
 export const FAQ_ITEMS: { q: string; a: string }[] = [
   { q: '初めて使います。何から始めれば？', a: 'まず「ダッシュボード」で全体像を確認し、「材料データ一覧」でサンプルデータを閲覧。次に「新規登録」で自分のデータを登録し、「AIチャット」や「ベイズ最適化」を試してみてください。ヘルプの「ページガイド」タブに各画面の詳しい説明があります。' },
   { q: 'ページ間の移動方法は？', a: '左のサイドバーから各ページに移動できます。モバイルでは左上の ≡ メニューをタップ。ペトリネットの工程クリックからも対応ページに遷移できます。' },
