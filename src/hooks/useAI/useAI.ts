@@ -143,8 +143,7 @@ export function useAI(): AIHook {
       }
       setLastError(null);
       return d.choices?.[0]?.message?.content || '応答を取得できませんでした。';
-    } catch (e) {
-      const msg = (e as Error).message;
+    } catch {
       setLastError({ code: 'NETWORK', message: guidanceForCode('NETWORK') });
       return guidanceForCode('NETWORK');
     }
@@ -175,7 +174,7 @@ export function useAI(): AIHook {
       }
       setLastError(null);
       return d.text || '応答を取得できませんでした。';
-    } catch (e) {
+    } catch {
       setLastError({ code: 'NETWORK', message: guidanceForCode('NETWORK') });
       if (isDev) return devFallback(prompt);
       return guidanceForCode('NETWORK');
