@@ -531,24 +531,24 @@ export const PAGE_GUIDES: PageGuide[] = [
     summary: '材料の加工・試験プロセスを時系列チャートで可視化。温度・振動などのセンサーデータを重ねて表示します。',
     summaryEn: 'Visualize material processing and testing as a time-series chart. Overlay sensor data such as temperature and vibration.',
     features: [
-      '温度・振動の 2 軸リアルタイムチャート（Chart.js）',
+      '温度・振動の 2 軸チャート（Chart.js、デモ用モックデータ）',
       '工程イベントを時間軸上にマーキング',
       'モックデータによるデモ表示',
       'ペトリネットの「構造」に対して「時間軸」を補完',
     ],
     featuresEn: [
-      'Dual-axis real-time chart for temperature and vibration (Chart.js)',
+      'Dual-axis chart for temperature and vibration (Chart.js, demo mock data)',
       'Process events marked on the timeline',
       'Demo display with mock data',
       'Complements Petri net structure view with a time perspective',
     ],
     tips: [
       'ペトリネットと併用することで工程の構造と時間の両面を把握',
-      'センサーデータの異常検知パターンの確認に活用',
+      '将来的に実センサーデータとの連携を想定したデモ構成',
     ],
     tipsEn: [
       'Use alongside Petri net to understand both process structure and timing',
-      'Useful for identifying anomaly patterns in sensor data',
+      'Demo structure designed for future integration with real sensor data',
     ],
     related: ['petri', 'overlay'],
   },
@@ -598,11 +598,11 @@ export const PAGE_GUIDES: PageGuide[] = [
     ],
     tips: [
       'NDE（非破壊評価）の結果と組み合わせると効果的',
-      '各スケールの画像・データは今後の実データ連携で拡張予定',
+      '現在はデモ用の構造表示。実画像データとの連携は今後の検討課題',
     ],
     tipsEn: [
       'Effective when combined with NDE results',
-      'Images and data at each scale planned for real data integration',
+      'Currently demo structure. Real image data integration is a future consideration',
     ],
     related: ['crystal', 'detail'],
   },
