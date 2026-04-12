@@ -320,50 +320,11 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
   --row-h:44px;--cell-py:8px;--card-py:16px;--table-fs:13px;
 }
 
-/* ─── UI 密度 — 全テキスト・全コンポーネントへの統一適用 ────────────── */
+/* ─── UI 密度 — CSS transform scale による統一適用 ───────────────────
+   Tailwind の text-[Npx] がハードコードされた 400+ 箇所を個別変更せず、
+   メインコンテンツ領域全体を scale() で拡縮する。
+   Topbar・Sidebar は除外し、ページコンテンツのみスケーリング。 */
 
-/* ルートレベルのフォントサイズ・行間を密度で制御。
-   全ての相対サイズ (em, %) がこれに追従する。 */
-[data-density="compact"] { --d-fs: 12px; --d-lh: 1.4; --d-gap: 8px;  --d-py: 4px;  --d-px: 8px; }
-[data-density="regular"] { --d-fs: 13px; --d-lh: 1.5; --d-gap: 12px; --d-py: 8px;  --d-px: 12px; }
-[data-density="relaxed"] { --d-fs: 14px; --d-lh: 1.65; --d-gap: 16px; --d-py: 12px; --d-px: 16px; }
-:root { --d-fs: 13px; --d-lh: 1.5; --d-gap: 12px; --d-py: 8px; --d-px: 12px; }
-
-/* アプリ全体のベースフォント */
-#root {
-  font-size: var(--d-fs);
-  line-height: var(--d-lh);
-}
-
-/* テーブル */
-table tbody td,
-table tbody th {
-  padding-top: var(--d-py);
-  padding-bottom: var(--d-py);
-  font-size: var(--table-fs);
-}
-
-/* サイドバー */
-.sidebar-nav button {
-  padding-top: var(--d-py);
-  padding-bottom: var(--d-py);
-  font-size: var(--d-fs);
-}
-
-/* チャット・カード・パネルの行間と余白 */
-.flex.flex-col.gap-4 { gap: var(--d-gap); }
-.flex.flex-col.gap-3 { gap: calc(var(--d-gap) - 2px); }
-.flex.flex-col.gap-2 { gap: calc(var(--d-gap) - 4px); }
-
-/* 入力フォーム */
-input, select, textarea {
-  font-size: var(--d-fs);
-  padding-top: var(--d-py);
-  padding-bottom: var(--d-py);
-}
-
-/* ボタン */
-button { font-size: var(--d-fs); }
-
-/* バッジ・ラベルは少し小さく */
-.rounded-full { font-size: calc(var(--d-fs) - 1px); }
+[data-density="compact"] .density-scale { transform: scale(0.92); transform-origin: top left; width: 108.7%; }
+[data-density="regular"] .density-scale { transform: none; }
+[data-density="relaxed"] .density-scale { transform: scale(1.08); transform-origin: top left; width: 92.6%; }
