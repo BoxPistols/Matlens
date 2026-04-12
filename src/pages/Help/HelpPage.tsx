@@ -34,7 +34,7 @@ export const HelpPage = () => {
               onClick={()=>setOpenId(openId===t.id?null:t.id)} aria-expanded={openId===t.id}>
               <div>
                 <div className="text-[14px] font-bold text-text-hi">{t.term}</div>
-                {t.en && <div className="text-[12px] text-text-lo font-mono mt-0.5">{t.en}</div>}
+                {t.en && <div className="text-[12px] text-text-lo font-ui mt-0.5">{t.en}</div>}
               </div>
               <div className="flex items-center gap-1.5 flex-shrink-0">
                 <Badge variant={t.catVariant}>{t.catLabel}</Badge>
