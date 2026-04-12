@@ -212,7 +212,7 @@ export function App() {
       case 'api':     return lazyPage(<ApiDebugPage db={db} dispatch={dispatch} />);
       case 'tests':   return lazyPage(<TestSuitePage />);
       case 'uxdesign':return lazyPage(<UxDesignPage />);
-      case 'help':    return lazyPage(<HelpPage />);
+      case 'help':    return lazyPage(<HelpPage onNav={navTo} />);
       case 'settings': return lazyPage(<MasterSettingsPage db={db} />);
       case 'about':   return lazyPage(<AboutPage />);
       default:        return lazyPage(<DashboardPage {...commonProps} />);
