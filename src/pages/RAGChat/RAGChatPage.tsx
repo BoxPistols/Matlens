@@ -16,7 +16,14 @@ interface RAGChatPageProps {
 }
 
 export const RAGChatPage = ({ db, embedding, claude, initialQuery, clearInitialQuery }: RAGChatPageProps) => {
-  const { t } = useContext(AppCtx) as AppContextValue;
+  const { t, addToast } = useContext(AppCtx) as AppContextValue;
+
+  useEffect(() => {
+    if (claude.lastError) {
+      addToast(`AI: ${claude.lastError.message}`, 'warn');
+    }
+  }, [claude.lastError]);
+
   const [messages, setMessages] = useState<{ role: string; text: string; sources?: MaterialWithScore[] }[]>([
     { role: 'ai', text: 'Matlens の材料データベースについてなんでも聞いてください。ベクトル検索で関連データを取得し、根拠のある回答を提供します。' }
   ]);

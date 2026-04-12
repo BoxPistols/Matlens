@@ -76,8 +76,8 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
           <Select value={topK} onChange={e=>setTopK(parseInt(e.target.value))}>
             <option value={3}>Top 3</option><option value={5}>Top 5</option><option value={10}>Top 10</option>
           </Select>
-          <Button variant="vec" onClick={() => runSearch()} disabled={searching || !query.trim()}>
-            <Icon name="vecSearch" size={13} />{searching ? t('検索中...', 'Searching...') : t('検索', 'Search')}
+          <Button variant="vec" onClick={() => runSearch()} disabled={searching || !query.trim() || embedding.status !== 'ready'}>
+            <Icon name="vecSearch" size={13} />{searching ? t('検索中...', 'Searching...') : embedding.status !== 'ready' ? t('検索エンジン初期化中...', 'Initializing...') : t('検索', 'Search')}
           </Button>
         </div>
         <div className="flex gap-2 mt-2.5 flex-wrap">

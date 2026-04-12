@@ -26,7 +26,14 @@ function resolveBase(input: string, db: Material[]): string {
 }
 
 export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBase }: SimilarPageProps) => {
-  const { t } = useContext(AppCtx) as AppContextValue;
+  const { t, addToast } = useContext(AppCtx) as AppContextValue;
+
+  useEffect(() => {
+    if (claude.lastError) {
+      addToast(`AI: ${claude.lastError.message}`, 'warn');
+    }
+  }, [claude.lastError]);
+
   const [base, setBase] = useState(() => resolveBase(initialBase || '', db));
   const autoRan = useRef(false);
   const [weight, setWeight] = useState('総合スコア');

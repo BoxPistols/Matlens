@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Card, Input, Select, Textarea, UnitInput, FormGroup } from '../../components/atoms';
@@ -71,6 +71,12 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   const [compTimer, setCompTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [wizardStep, setWizardStep] = useState(0);
   const { addToast, t } = useContext(AppCtx) as AppContextValue;
+
+  useEffect(() => {
+    if (claude.lastError) {
+      addToast(`AI: ${claude.lastError.message}`, 'warn');
+    }
+  }, [claude.lastError]);
 
   const newId = getNextId();
   const tpl = form.cat ? CATEGORY_TEMPLATES[form.cat as MaterialCategory] : null;

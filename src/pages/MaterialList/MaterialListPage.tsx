@@ -427,7 +427,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
               <Button variant="default" size="xs" onClick={() => { dispatch({ type: 'BULK_APPROVE', ids: selected }); setSelected(new Set()); addToast(t('一括承認しました', 'Bulk approved')); }}>
                 <Icon name="check" size={11} />{t('承認', 'Approve')}
               </Button>
-              <Button variant="danger" size="xs" onClick={() => { dispatch({ type: 'BULK_DELETE', ids: selected }); setSelected(new Set()); addToast(t('削除しました', 'Deleted')); }}>
+              <Button variant="danger" size="xs" onClick={() => { if (!confirm(t(`選択した ${selected.size} 件を削除しますか？`, `Delete ${selected.size} selected items?`))) return; dispatch({ type: 'BULK_DELETE', ids: selected }); setSelected(new Set()); addToast(t('削除しました', 'Deleted')); }}>
                 <Icon name="trash" size={11} />{t('削除', 'Delete')}
               </Button>
             </div>

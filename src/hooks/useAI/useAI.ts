@@ -61,6 +61,24 @@ function codeFromStatus(status: number): AIErrorCode {
   return 'UNKNOWN';
 }
 
+// ユーザー向けのエラーガイダンスメッセージ
+function guidanceForCode(code: AIErrorCode): string {
+  switch (code) {
+    case 'RATE_LIMIT':
+      return 'レート制限に達しました。しばらくお待ちください。';
+    case 'UNAUTHORIZED':
+      return 'APIキーが無効です。設定を確認してください。';
+    case 'NETWORK':
+      return 'ネットワークエラーです。接続を確認してください。';
+    case 'SERVER_ERROR':
+      return 'サーバーエラーが発生しました。しばらく後に再試行してください。';
+    case 'TIMEOUT':
+      return 'リクエストがタイムアウトしました。';
+    default:
+      return 'AI リクエストに失敗しました。';
+  }
+}
+
 export function useAI(): AIHook {
   const [provider, setProvider] = useState<string>('openai-nano');
   const [ownKey, setOwnKeyState] = useState<string>(loadOwnKey);
@@ -115,20 +133,20 @@ export function useAI(): AIHook {
       });
       if (!res.ok) {
         const code = codeFromStatus(res.status);
-        setLastError({ code, message: `OpenAI ${res.status}` });
-        return `OpenAI エラー (${res.status})`;
+        setLastError({ code, message: guidanceForCode(code) });
+        return guidanceForCode(code);
       }
       const d = await res.json();
       if (d.error) {
         setLastError({ code: 'UNKNOWN', message: d.error.message });
-        return `OpenAI エラー: ${d.error.message}`;
+        return guidanceForCode('UNKNOWN');
       }
       setLastError(null);
       return d.choices?.[0]?.message?.content || '応答を取得できませんでした。';
     } catch (e) {
       const msg = (e as Error).message;
-      setLastError({ code: 'NETWORK', message: msg });
-      return `API接続エラー: ${msg}`;
+      setLastError({ code: 'NETWORK', message: guidanceForCode('NETWORK') });
+      return guidanceForCode('NETWORK');
     }
   }, []);
 
@@ -151,17 +169,16 @@ export function useAI(): AIHook {
       if (d.remaining !== undefined) setRateInfo({ remaining: d.remaining, limit: d.limit });
       if (d.error) {
         const code: AIErrorCode = d.code || codeFromStatus(res.status);
-        setLastError({ code, message: d.error });
+        setLastError({ code, message: guidanceForCode(code) });
         if (isDev) return devFallback(prompt);
-        return `APIエラー: ${d.error}`;
+        return guidanceForCode(code);
       }
       setLastError(null);
       return d.text || '応答を取得できませんでした。';
     } catch (e) {
-      const msg = (e as Error).message;
-      setLastError({ code: 'NETWORK', message: msg });
+      setLastError({ code: 'NETWORK', message: guidanceForCode('NETWORK') });
       if (isDev) return devFallback(prompt);
-      return `API接続エラー: ${msg}`;
+      return guidanceForCode('NETWORK');
     }
   }, [hasOwnKey, callWithOwnKey]);
 
@@ -203,9 +220,8 @@ export function useAI(): AIHook {
           // Body was empty or malformed; fall back to the default.
         }
         const code: AIErrorCode = errBody.code || codeFromStatus(res.status);
-        const message = errBody.error || `HTTP ${res.status}`;
-        setLastError({ code, message });
-        const fallback = isDev ? devFallback(prompt) : `APIエラー: ${message}`;
+        setLastError({ code, message: guidanceForCode(code) });
+        const fallback = isDev ? devFallback(prompt) : guidanceForCode(code);
         callbacks.onChunk(fallback);
         return fallback;
       }
@@ -249,9 +265,8 @@ export function useAI(): AIHook {
         setLastError({ code: 'TIMEOUT', message: 'Request aborted' });
         return '';
       }
-      const msg = err.message;
-      setLastError({ code: 'NETWORK', message: msg });
-      const fallback = isDev ? devFallback(prompt) : `API接続エラー: ${msg}`;
+      setLastError({ code: 'NETWORK', message: guidanceForCode('NETWORK') });
+      const fallback = isDev ? devFallback(prompt) : guidanceForCode('NETWORK');
       callbacks.onChunk(fallback);
       return fallback;
     }

@@ -37,7 +37,8 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
 
   useEffect(() => {
     claude.call(`材料DB: 総${db.length}件、レビュー待${db.filter(r=>r.status==='レビュー待').length}件、AI検出${db.filter(r=>r.ai).length}件。研究リーダーへ2〜3文サマリーと推奨アクション1つ。`)
-      .then(t => { setInsight(t); setInsightLoading(false); });
+      .then(t => { setInsight(t); setInsightLoading(false); })
+      .catch(() => { setInsight('AI インサイトを取得できませんでした。'); setInsightLoading(false); });
   }, []);
 
   useEffect(() => {
@@ -92,6 +93,12 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
 
   const { addToast, t } = useContext(AppCtx) as AppContextValue;
   const [exportOpen, setExportOpen] = useState(false);
+
+  useEffect(() => {
+    if (claude.lastError) {
+      addToast(`AI: ${claude.lastError.message}`, 'warn');
+    }
+  }, [claude.lastError]);
 
   return (
     <div className="flex flex-col gap-4">
