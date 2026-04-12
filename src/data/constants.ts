@@ -69,6 +69,14 @@ export const HELP_TERMS: { id: string; term: string; en: string; cat: string; ca
   {id:'workflow-nav',term:'ワークフロー連動ナビゲーション',en:'Workflow-Linked Navigation',cat:'ops',catLabel:'操作ガイド',catVariant:'amber',body:'ペトリネットの各工程 (Place) をクリックすると対応するシステム画面に直接遷移する機能。「計画中」→新規登録、「一次加工済」→シミュレーション、「評価済」→ベイズ最適化、「破面解析済」→類似検索など。研究者が「今この工程で使うべき画面」を直感的に把握できる。',related:'ペトリネット、ナビゲーション'},
   {id:'hall-petch',term:'Hall-Petch 式',en:'Hall-Petch Equation',cat:'mat',catLabel:'材料工学',catVariant:'blue',body:'結晶粒径と降伏応力の関係を記述する経験式。σ_y = σ_0 + k / √d。粒径が小さいほど降伏応力が高くなる。金属合金の微細化強化メカニズムの基礎。Matlens の経験式シミュレーション機能で対話的に計算可能。',related:'降伏応力、経験式シミュレーション'},
   {id:'larson-miller',term:'Larson-Miller パラメータ',en:'Larson-Miller Parameter',cat:'mat',catLabel:'材料工学',catVariant:'blue',body:'温度と時間からクリープ破断寿命を推定するパラメータ。LMP = T × (C + log₁₀(t))。高温環境での材料寿命予測に使用。航空機エンジンのタービンブレード等のクリープ設計に不可欠。',related:'クリープ試験、経験式シミュレーション'},
+  {id:'nl-query',term:'自然言語クエリ変換',en:'NL Query Compile',cat:'ai',catLabel:'AI / ML',catVariant:'ai',body:'「ニッケル合金で硬度300以上の承認済」のような自然言語を入力すると、カテゴリ・数値範囲・ステータスなどの構造化フィルタ条件に自動変換する機能。形態素解析とパターンマッチングで実現。',related:'ファセット検索、複合フィルタ検索'},
+  {id:'ui-density',term:'UI 密度',en:'UI Density',cat:'ops',catLabel:'操作ガイド',catVariant:'amber',body:'トップバーの密度トグルで UI 全体のサイズを Compact / Regular / Relaxed の 3 段階に切替可能。CSS transform scale で実装され、テーブル・カード・チャット・フォーム全てに適用される。設定は localStorage に永続化。',related:'テーマ、レスポンシブ'},
+  {id:'mobile-overlay',term:'モバイルオーバーレイ',en:'Mobile Overlay',cat:'ops',catLabel:'操作ガイド',catVariant:'amber',body:'画面幅が狭いとき、サイドバーがハンバーガーメニュー経由のオーバーレイ表示に切り替わるレスポンシブ対応。Topbar の設定メニューやレスポンシブカラムレイアウトと合わせて、スマートフォンでも操作可能。',related:'UI 密度、サイドバー'},
+  {id:'process-timeline',term:'加工タイムライン',en:'Process Timeline',cat:'ops',catLabel:'操作ガイド',catVariant:'amber',body:'材料の加工・試験履歴を時系列で可視化するページ。各工程のイベントをタイムライン上に表示し、進捗状況を俯瞰できる。',related:'ペトリネット、ワークフロー連動ナビゲーション'},
+  {id:'pred-vs-actual',term:'予測 vs 実績',en:'Prediction vs Actual Overlay',cat:'ai',catLabel:'AI / ML',catVariant:'ai',body:'シミュレーションや経験式による予測値と、実測データを同一グラフ上にオーバーレイ表示する機能。予測精度の評価や異常値の検出に使用する。',related:'経験式シミュレーション、ベイズ最適化'},
+  {id:'multiscale-viewer',term:'マルチスケールビューア',en:'Multiscale Viewer',cat:'ops',catLabel:'操作ガイド',catVariant:'amber',body:'マクロスケール（部品形状）からミクロスケール（結晶組織）まで、複数の観察スケールを統合的に表示するビューア。スケール間の対応関係を視覚的に把握できる。',related:'材料カタログ、NDE'},
+  {id:'jmak',term:'JMAK 式（Avrami 方程式）',en:'JMAK Equation (Avrami)',cat:'mat',catLabel:'材料工学',catVariant:'blue',body:'相変態の進行度合い（変態分率）を時間の関数として記述する経験式。X = 1 - exp(-k*t^n)。核生成・成長モデルに基づき、熱処理における変態速度の予測に使用。Matlens の経験式シミュレーション機能で対話的に計算可能。',related:'経験式シミュレーション、Hall-Petch 式'},
+  {id:'rom',term:'複合則 ROM',en:'Rule of Mixtures (ROM)',cat:'mat',catLabel:'材料工学',catVariant:'blue',body:'複合材料の特性を各構成材の体積分率と特性値の加重平均で推定する経験則。E_c = V_f*E_f + V_m*E_m。繊維強化複合材料の弾性率・引張強さの概算に広く使用される。上界・下界の推定にも応用。',related:'経験式シミュレーション、JMAK 式'},
 ];
 
 export const FAQ_ITEMS: { q: string; a: string }[] = [
@@ -83,6 +91,11 @@ export const FAQ_ITEMS: { q: string; a: string }[] = [
   { q: 'ファセット検索のプリセットとは？', a: '「プリセット」ボタンでよく使うフィルタ条件を保存・呼び出しできます。デフォルトで「承認済み金属合金」「高硬度材」「レビュー待ち」「CFRP 系」の 4 件が用意されています。カスタムプリセットも作成可能です。' },
   { q: 'ステップ式入力で途中のデータは保持されますか？', a: 'ステップ間の移動ではデータは保持されます。ただしページを離れるとリセットされます。下書き保存機能は今後のアップデートで追加予定です。' },
   { q: 'ワークフロー図から画面に遷移できますか？', a: 'はい。ペトリネットの各工程 (Place) をクリックすると対応するシステム画面に直接遷移します。クリック可能な工程はラベルが青色リンクで表示されます。' },
+  { q: '自然言語で検索できますか？', a: 'はい。材料一覧の検索バーに「ニッケル合金で硬度300以上の承認済」のように入力すると、カテゴリ・数値範囲・ステータスなどの構造化フィルタに自動変換されます。' },
+  { q: 'モバイルで使えますか？', a: 'はい。画面幅が狭い場合、サイドバーがオーバーレイ表示に切り替わり、Topbar に設定メニューが表示されます。レスポンシブカラムレイアウトにより、スマートフォンでも操作可能です。' },
+  { q: 'UI の文字サイズを変えたい', a: 'トップバーの密度トグルで Compact（小）/ Regular（標準）/ Relaxed（大）の 3 段階に切替できます。テーブル・カード・チャット・フォーム全てに適用されます。設定はブラウザに保存されます。' },
+  { q: '経験式シミュレーションの結果は正確ですか？', a: '経験式は理想条件下での近似値です。Hall-Petch・Larson-Miller・JMAK・ROM いずれも実用的な概算には有効ですが、実際の材料設計には実測データとの照合が不可欠です。パラメータ範囲外での外挿には注意してください。' },
+  { q: '2D ベイズ最適化とは？', a: '2 つの特徴量を同時に変化させて最適な実験点を探索する機能です。ガウス過程回帰で 2D 空間の予測分布を推定し、グリッドスキャンで Expected Improvement が最大の点を次の実験候補として提案します。' },
 ];
 
 export const SUPPORT_TABS: { id: string; label: string; icon: string }[] = [
