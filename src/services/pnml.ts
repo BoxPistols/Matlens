@@ -6,6 +6,7 @@
  */
 
 import type { PetriNetDef, PlaceId } from '../data/metalTestWorkflow'
+import { downloadTextFile } from './downloadFile'
 
 /**
  * Petri net 定義とトークン状態から PNML XML 文字列を生成する。
@@ -88,17 +89,7 @@ function esc(s: string): string {
  * @param xml      exportPnml() の戻り値
  * @param filename ダウンロードファイル名
  */
+/** PNML を Blob ダウンロード。downloadTextFile に委譲してパターン重複を解消。 */
 export function downloadPnml(xml: string, filename = 'workflow.pnml'): void {
-  const blob = new Blob([xml], { type: 'application/xml;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  // Firefox は <a> が DOM にないと click() を無視する。
-  // click 直後に revoke するとダウンロード開始前に URL が無効化されるため遅延 revoke
-  // (src/services/maiml.ts と同パターン)。
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
+  downloadTextFile(xml, filename, 'application/xml')
 }

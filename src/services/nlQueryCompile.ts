@@ -119,8 +119,10 @@ export function compileNlQuery(query: string): CompiledFilter {
     if (m?.[1]) {
       const val = parseFloat(m[1])
       if (Number.isFinite(val)) {
-        const key = `${field}${bound === 'min' ? 'Min' : 'Max'}` as keyof CompiledFilter
-        ;(result as unknown as Record<string, unknown>)[key] = val
+        if (field === 'hv') { if (bound === 'min') result.hvMin = val; else result.hvMax = val }
+        else if (field === 'ts') { if (bound === 'min') result.tsMin = val; else result.tsMax = val }
+        else if (field === 'el') { if (bound === 'min') result.elMin = val; else result.elMax = val }
+        else if (field === 'dn') { if (bound === 'min') result.dnMin = val; else result.dnMax = val }
         result.applied.push(`${field} ${bound === 'min' ? '≥' : '≤'} ${val}`)
         q = q.replace(m[0], '').trim()
       }
