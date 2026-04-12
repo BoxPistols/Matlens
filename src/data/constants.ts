@@ -505,13 +505,13 @@ export const PAGE_GUIDES: PageGuide[] = [
       'BCC（体心立方）・FCC（面心立方）・HCP（六方最密充填）の 3 構造を切替',
       '格子歪みスライダーで一軸引張/圧縮の変形をリアルタイム表示',
       '格子定数・結合距離・原子配置の詳細パネル',
-      'ダーク/ライト対応のカラーパレット',
+      '回転・ズーム操作で任意の角度から結晶構造を観察',
     ],
     featuresEn: [
       'Switch between BCC, FCC, HCP crystal structures',
       'Real-time lattice strain visualization with slider',
       'Detailed panel showing lattice constants, bond distances, atom positions',
-      'Dark/Light adaptive color palette',
+      'Rotate and zoom to observe crystal structure from any angle',
     ],
     tips: [
       'マウスドラッグで回転、スクロールでズーム',
