@@ -114,8 +114,8 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
       </div>
 
       <Card className="p-5">
-        <div className="flex items-start gap-4 mb-4">
-          <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={100} className="flex-shrink-0" showLabel={false} />
+        <div className="flex flex-col sm:flex-row items-start gap-4 mb-4">
+          <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={100} className="flex-shrink-0 hidden sm:block" showLabel={false} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="font-mono text-[11px] bg-raised px-2 py-1 rounded text-text-lo flex-shrink-0">{r.id}</span>
@@ -141,7 +141,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
               {r.ai && <Badge variant="ai"><Icon name="warning" size={11} />{t('AI検出', 'AI flagged')}</Badge>}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-shrink-0 flex-wrap">
             <Button
               variant="default"
               size="sm"
@@ -154,7 +154,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}><Icon name="trash" size={12} />{t('削除', 'Delete')}</Button>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {([[t('バッチ', 'Batch'),r.batch,false],[t('組成', 'Composition'),r.comp,true],[t('密度', 'Density'),r.dn?`${r.dn} g/cm³`:'—',false]] as [string,string,boolean][]).map(([lbl,val,mono])=>(
             <div key={lbl} className="bg-raised border border-[var(--border-faint)] rounded-md p-3">
               <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.05em] mb-1">{lbl}</div>
@@ -164,7 +164,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         </div>
         {/* Phase A 拡張フィールド */}
         {(r.microstructure || r.testMethod) && (
-          <div className="grid grid-cols-2 gap-3 mt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
             {r.microstructure && (
               <div className="bg-raised border border-[var(--border-faint)] rounded-md p-3">
                 <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.05em] mb-1">金属組織 / Microstructure</div>
@@ -181,7 +181,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
         )}
       </Card>
 
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 300px', alignItems: 'start' }}>
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-[1fr_300px] items-start">
         <div className="flex flex-col gap-4">
           <SectionCard title={t('物性データ', 'Properties')}>
             {[[t('硬度', 'Hardness'),r.hv?`${r.hv.toLocaleString()} HV`:'—'],[t('引張強さ', 'Tensile Str.'),r.ts?`${r.ts} MPa`:'—'],[t('弾性率', 'Elastic Mod.'),r.el?`${r.el} GPa`:'—'],[t('耐力 0.2%', '0.2% Proof'),r.pf?`${r.pf} MPa`:'—'],[t('伸び', 'Elongation'),r.el2!=null?`${r.el2} %`:'—']].map(([k,v])=>(

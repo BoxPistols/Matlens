@@ -169,7 +169,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   const renderStep1 = () => (
     <Card className="p-4">
       <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-4 pb-2.5 border-b border-[var(--border-faint)]">{t('基本情報', 'Basic Information')}</div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <FormGroup label={t('材料名称', 'Material Name')} required error={errors.name}>
           <Input value={form.name} onChange={setV('name')} placeholder="例: SUS304-L 改良型" error={!!errors.name} />
         </FormGroup>
@@ -191,7 +191,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
         <FormGroup label={t('試験温度', 'Test Temp.')}>
           <UnitInput unit="℃" inputProps={{ value: form.temp, onChange: setV('temp'), placeholder: '25' }} />
         </FormGroup>
-        <FormGroup label={t('組成・配合', 'Composition')} required error={errors.comp} className="col-span-2">
+        <FormGroup label={t('組成・配合', 'Composition')} required error={errors.comp} className="sm:col-span-2">
           <Input value={form.comp} onChange={e => onCompChange(e.target.value)} placeholder={tpl?.compHint || '例: Fe-18Cr-8Ni-0.03C (wt%)'} error={!!errors.comp} />
         </FormGroup>
       </div>
@@ -214,7 +214,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           </span>
         )}
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <FormGroup label={t('硬度', 'Hardness')} hint={anomalyHv ? '通常範囲外の値です' : undefined} error={errors.hv}>
           <UnitInput unit="HV" inputProps={{ value: form.hv, onChange: setV('hv'), placeholder: ph('hv') || '200', type: 'number' }} />
         </FormGroup>
@@ -236,7 +236,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
       </div>
       <div className="mt-4 pt-3 border-t border-[var(--border-faint)]">
         <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">{t('拡張情報', 'Extended Info')}</div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <FormGroup label={t('データ出所', 'Provenance')}>
             <Select value={form.provenance} onChange={setV('provenance')} className="w-full">
               <option value="">{t('未指定', 'Unspecified')}</option>
@@ -282,7 +282,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           <span className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase">{t('登録内容の確認', 'Confirm Registration')}</span>
           <span className="ml-auto text-[12px] text-text-lo">{filledCount} / {fields.length} {t('項目入力済み', 'fields filled')}</span>
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
           {fields.map(f => (
             <div key={f.label} className="flex items-baseline gap-2 py-1.5 border-b border-[var(--border-faint)]">
               <span className="text-[12px] text-text-lo w-24 flex-shrink-0">{f.label}</span>
@@ -321,7 +321,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           <p className="text-[12px] text-text-lo mt-0.5">{t('ステップ形式で入力 — AI が各ステップをリアルタイムサポートします', 'Step-by-step entry — AI provides real-time assistance')}</p>
         </div>
       </div>
-      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 320px', alignItems: 'start' }}>
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-[1fr_320px] items-start">
         <StepWizard
           steps={steps}
           current={wizardStep}

@@ -11,6 +11,91 @@ import { AppCtx } from '../../context/AppContext';
 
 type Lang = 'ja' | 'en';
 
+// Mobile-only dropdown for theme/language/density settings
+const MobileSettingsMenu = ({
+  theme, setTheme, density, setDensity, lang, setLang, themes,
+}: {
+  theme: string; setTheme: (t: string) => void;
+  density: Density; setDensity: (d: Density) => void;
+  lang: Lang; setLang: (l: Lang) => void;
+  themes: { id: string; label: string }[];
+}) => {
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  return (
+    <div className="md:hidden relative flex-shrink-0" ref={menuRef}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-8 h-8 flex items-center justify-center rounded bg-white/10 border border-white/20 text-white hover:bg-white/25 transition-all"
+        aria-label="設定メニュー"
+        aria-expanded={open}
+      >
+        <svg viewBox="0 0 16 16" fill="currentColor" width={14} height={14}>
+          <path d="M8 4.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM8 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM8 14.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 w-56 bg-surface border border-[var(--border-default)] rounded-lg shadow-lg z-[300] overflow-hidden">
+          <div className="px-3 py-2 border-b border-[var(--border-faint)]">
+            <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.06em] mb-1.5">Theme</div>
+            <div className="flex gap-0.5 bg-sunken p-0.5 rounded-md">
+              {themes.map(t => (
+                <button
+                  key={t.id}
+                  className={`flex-1 px-1.5 py-1 rounded text-[11px] font-medium transition-all ${theme === t.id ? 'bg-accent text-white' : 'text-text-md hover:bg-hover'}`}
+                  onClick={() => setTheme(t.id)}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="px-3 py-2 border-b border-[var(--border-faint)]">
+            <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.06em] mb-1.5">Language</div>
+            <div className="flex gap-0.5 bg-sunken p-0.5 rounded-md">
+              {([['ja', 'JP'], ['en', 'EN']] as const).map(([id, label]) => (
+                <button
+                  key={id}
+                  className={`flex-1 px-2 py-1 rounded text-[11px] font-medium transition-all ${lang === id ? 'bg-accent text-white' : 'text-text-md hover:bg-hover'}`}
+                  onClick={() => setLang(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="px-3 py-2">
+            <div className="text-[10px] font-bold text-text-lo uppercase tracking-[.06em] mb-1.5">Density</div>
+            <div className="flex gap-0.5 bg-sunken p-0.5 rounded-md">
+              {VALID_DENSITIES.map(d => (
+                <button
+                  key={d}
+                  className={`flex-1 px-1 py-1 rounded text-[10px] font-medium transition-all ${density === d ? 'bg-accent text-white' : 'text-text-md hover:bg-hover'}`}
+                  onClick={() => setDensity(d)}
+                >
+                  {DENSITY_META[d].label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 interface TopbarProps {
   theme: string;
   setTheme: (t: string) => void;
@@ -225,6 +310,15 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
           ))}
         </div>
       </Tooltip>
+
+      {/* Mobile settings menu */}
+      <MobileSettingsMenu
+        theme={theme} setTheme={setTheme}
+        density={density} setDensity={setDensity}
+        lang={lang} setLang={setLang}
+        themes={THEMES}
+      />
+
       <Tooltip label={unreadNotifications > 0 ? `お知らせ (未読 ${unreadNotifications} 件)` : 'お知らせ'} placement="bottom">
         <button
           type="button"

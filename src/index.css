@@ -216,6 +216,35 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
 .sidebar-nav{width:216px;transition:width .22s cubic-bezier(.4,0,.2,1)}
 .sidebar-nav.collapsed{width:48px}
 
+/* Mobile sidebar: overlay mode (< 768px) */
+@media (max-width:767.9px){
+  .sidebar-nav{
+    position:fixed;top:52px;left:0;bottom:0;z-index:100;
+    width:216px !important;
+    transform:translateX(-100%);
+    transition:transform .22s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar-nav.mobile-open{
+    transform:translateX(0);
+  }
+  .sidebar-nav.collapsed{
+    width:216px !important;
+    transform:translateX(-100%);
+  }
+  .sidebar-nav.collapsed.mobile-open{
+    transform:translateX(0);
+  }
+  .sidebar-backdrop{
+    position:fixed;top:52px;left:0;right:0;bottom:0;z-index:99;
+    background:rgba(0,0,0,.45);
+    opacity:0;pointer-events:none;
+    transition:opacity .22s ease;
+  }
+  .sidebar-backdrop.visible{
+    opacity:1;pointer-events:auto;
+  }
+}
+
 /* chart canvas */
 .chart-container{position:relative;height:160px;width:100%}
 
