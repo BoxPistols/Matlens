@@ -447,7 +447,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <th className="border-b border-[var(--border-faint)]">
                     <label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={slice.length > 0 && slice.every(r => selected.has(r.id))} onChange={(e: React.ChangeEvent<HTMLInputElement>) => toggleAll(e.target.checked)} aria-label="全選択" /></label>
                   </th>
-                  {[['ID', 'font-mono'], ['材料名称', ''], ['カテゴリ', ''], ['硬度 HV', ''], ['組成', ''], ['登録日', ''], ['ステータス', ''], ['AI', 'text-center'], ['操作', 'text-center']].map(([l, cls]) => (
+                  {[['ID', ''], ['材料名称', ''], ['カテゴリ', ''], ['硬度 HV', ''], ['組成', ''], ['登録日', ''], ['ステータス', ''], ['AI', 'text-center'], ['操作', 'text-center']].map(([l, cls]) => (
                     <th key={l} className={`px-3.5 py-2.5 text-left text-[11px] font-bold text-text-lo tracking-[.05em] uppercase border-b border-[var(--border-faint)] ${cls}`}>{l}</th>
                   ))}
                 </tr>
@@ -458,11 +458,11 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                 ) : slice.map(r => (
                   <tr key={r.id} className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`} onClick={e => { if ((e.target as HTMLElement).tagName === 'BUTTON' || (e.target as HTMLElement).tagName === 'INPUT') return; onDetail(r.id); }}>
                     <td onClick={e => e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} aria-label={`${r.name} を選択`} /></label></td>
-                    <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] text-text-lo"><Hl text={r.id} query={filters.q} /></span></td>
+                    <td className="px-3.5 py-2.5"><span className="text-[12px] text-text-lo tabular-nums"><Hl text={r.id} query={filters.q} /></span></td>
                     <td className="px-3.5 py-2.5"><span className="font-semibold"><Hl text={r.name} query={filters.q} /></span></td>
                     <td className="px-3.5 py-2.5"><Badge variant="gray">{r.cat}</Badge></td>
-                    <td className="px-3.5 py-2.5 font-mono">{r.hv.toLocaleString()}</td>
-                    <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] block truncate text-text-md"><Hl text={r.comp} query={filters.q} /></span></td>
+                    <td className="px-3.5 py-2.5 tabular-nums">{r.hv.toLocaleString()}</td>
+                    <td className="px-3.5 py-2.5"><span className="text-[12px] block truncate text-text-md"><Hl text={r.comp} query={filters.q} /></span></td>
                     <td className="px-3.5 py-2.5 text-[12px] text-text-lo">{r.date}</td>
                     <td className="px-3.5 py-2.5"><Badge>{r.status}</Badge></td>
                     <td className="px-3.5 py-2.5 text-center">{r.ai && <Badge variant="ai">検出</Badge>}</td>
@@ -492,7 +492,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={80} />
                 </div>
                 <div className="p-3 flex flex-col gap-1 flex-1">
-                  <div className="text-[10px] font-mono text-text-lo"><Hl text={r.id} query={filters.q} /></div>
+                  <div className="text-[10px] text-text-lo tabular-nums"><Hl text={r.id} query={filters.q} /></div>
                   <div className="text-[13px] font-bold text-text-hi group-hover:text-accent transition-colors leading-tight"><Hl text={r.name} query={filters.q} /></div>
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                     <Badge variant="gray">{r.cat}</Badge>
@@ -500,9 +500,9 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                     {r.ai && <Badge variant="ai">AI</Badge>}
                   </div>
                   <div className="grid grid-cols-3 gap-1 mt-2 text-[10px]">
-                    <div><span className="text-text-lo">硬度</span><div className="font-mono font-bold">{r.hv.toLocaleString()}</div></div>
-                    <div><span className="text-text-lo">引張</span><div className="font-mono font-bold">{r.ts.toLocaleString()}</div></div>
-                    <div><span className="text-text-lo">弾性</span><div className="font-mono font-bold">{r.el}</div></div>
+                    <div><span className="text-text-lo">硬度</span><div className="font-bold tabular-nums">{r.hv.toLocaleString()}</div></div>
+                    <div><span className="text-text-lo">引張</span><div className="font-bold tabular-nums">{r.ts.toLocaleString()}</div></div>
+                    <div><span className="text-text-lo">弾性</span><div className="font-bold tabular-nums">{r.el}</div></div>
                   </div>
                 </div>
               </button>
@@ -519,10 +519,10 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
               <button key={r.id} onClick={() => onDetail(r.id)}
                 className="group flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-faint)] last:border-b-0 hover:bg-hover transition-colors text-left">
                 <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={36} className="flex-shrink-0" />
-                <span className="font-mono text-[11px] text-text-lo w-16 flex-shrink-0"><Hl text={r.id} query={filters.q} /></span>
+                <span className="text-[11px] tabular-nums text-text-lo w-16 flex-shrink-0"><Hl text={r.id} query={filters.q} /></span>
                 <span className="text-[13px] font-semibold text-text-hi group-hover:text-accent flex-1 truncate"><Hl text={r.name} query={filters.q} /></span>
                 <Badge variant="gray">{r.cat}</Badge>
-                <span className="font-mono text-[12px] text-text-md w-16 text-right flex-shrink-0">{r.hv.toLocaleString()} HV</span>
+                <span className="text-[12px] text-text-md tabular-nums w-16 text-right flex-shrink-0">{r.hv.toLocaleString()} HV</span>
                 <Badge>{r.status}</Badge>
                 {r.ai && <Badge variant="ai">AI</Badge>}
                 <Icon name="chevronRight" size={12} className="text-text-lo group-hover:text-accent flex-shrink-0" />

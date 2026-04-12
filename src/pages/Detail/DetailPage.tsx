@@ -103,7 +103,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             <Icon name="chevronLeft" size={12} />
             {prevId && <span className="hidden sm:inline text-text-md truncate max-w-[80px]">{db[currentIndex - 1]?.name}</span>}
           </button>
-          <span className="text-[11px] text-text-lo font-mono px-1">{currentIndex + 1} / {db.length}</span>
+          <span className="text-[11px] text-text-lo tabular-nums px-1">{currentIndex + 1} / {db.length}</span>
           <button onClick={() => goTo(nextId)} disabled={!nextId}
             className="flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-[var(--border-default)] bg-raised hover:bg-hover hover:border-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-[11px]"
             title="次の材料">
@@ -118,7 +118,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
           <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={100} className="flex-shrink-0" showLabel={false} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-mono text-[11px] bg-raised px-2 py-1 rounded text-text-lo flex-shrink-0">{r.id}</span>
+              <span className="text-[11px] bg-raised tabular-nums px-2 py-1 rounded text-text-lo flex-shrink-0">{r.id}</span>
             </div>
             <h1 className="text-[19px] font-bold tracking-tight">{r.name}</h1>
             <div className="flex items-center gap-2 flex-wrap mt-2">
@@ -194,11 +194,11 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
           <SectionCard title="同カテゴリ 硬度比較">
             {cmpData.map((x,i) => (
               <div key={x.id} className="flex items-center gap-2.5 text-[12px] py-1">
-                <span className="w-16 text-right text-text-lo font-mono flex-shrink-0">{x.id.slice(-4)}</span>
+                <span className="w-16 text-right text-text-lo tabular-nums flex-shrink-0">{x.id.slice(-4)}</span>
                 <div className="flex-1 h-1.5 bg-raised rounded-full overflow-hidden">
                   <div className="h-full rounded-full transition-all duration-500" style={{ width:`${Math.round(x.hv/maxHv*100)}%`, background: colors[i] }} />
                 </div>
-                <span className="w-14 font-mono text-text-lo text-right">{x.hv.toLocaleString()} HV</span>
+                <span className="w-14 tabular-nums text-text-lo text-right">{x.hv.toLocaleString()} HV</span>
               </div>
             ))}
           </SectionCard>
@@ -229,7 +229,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             <div className="text-[12px] font-bold text-vec uppercase tracking-[.04em] mb-2">Embedding 近傍</div>
             {vecNear.length === 0 ? <p className="text-[12px]">—</p> : vecNear.map(x=>(
               <div key={x.id} className="flex items-center gap-2 py-1 border-b border-[var(--border-faint)] last:border-b-0 text-[12px]">
-                <span className="font-mono text-text-lo">{x.id}</span>
+                <span className="text-text-lo">{x.id}</span>
                 <span className="flex-1 truncate">{x.name}</span>
                 <span className="text-[11px] font-bold text-vec">{Math.round((x.score||0)*100)}%</span>
               </div>
@@ -240,7 +240,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             {db.filter(x=>x.batch===r.batch&&x.id!==r.id).slice(0,4).map(x=>(
               <div key={x.id} className="flex items-center gap-2 py-1.5 border-b border-[var(--border-faint)] last:border-b-0 text-[13px]">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                <div className="flex-1 min-w-0"><div className="font-semibold truncate">{x.name}</div><div className="text-[12px] text-text-lo font-mono">{x.id}</div></div>
+                <div className="flex-1 min-w-0"><div className="font-semibold truncate">{x.name}</div><div className="text-[12px] text-text-lo">{x.id}</div></div>
                 <Badge>{x.status}</Badge>
               </div>
             ))}

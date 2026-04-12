@@ -197,7 +197,7 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: ['var(--accent)','var(--ok)','var(--warn)','var(--ai-mid)','#D4537E'][i] }} />
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] font-semibold truncate">{r.name}</div>
-                <div className="text-[12px] text-text-lo font-mono">{r.id} · {r.batch}</div>
+                <div className="text-[12px] text-text-lo">{r.id} · {r.batch}</div>
               </div>
               <Badge>{r.status}</Badge>
             </div>
@@ -208,7 +208,7 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
             <div key={lbl} className="flex items-center gap-2.5 py-1.5 text-[12px]">
               <span className="w-20 text-text-md flex-shrink-0">{lbl}</span>
               <ProgressBar value={val} color={col} className="flex-1 h-1.5" />
-              <span className="w-7 text-right font-mono text-text-lo">{val}%</span>
+              <span className="w-7 text-right tabular-nums text-text-lo">{val}%</span>
             </div>
           ))}
         </SectionCard>

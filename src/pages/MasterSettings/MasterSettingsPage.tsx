@@ -38,7 +38,7 @@ export const MasterSettingsPage = ({ db }: MasterSettingsPageProps) => {
                 <div className="flex-1">
                   <ProgressBar value={Math.round(count / db.length * 100)} color="var(--accent)" />
                 </div>
-                <span className="text-[12px] text-text-lo font-mono w-10 text-right">{count}件</span>
+                <span className="text-[12px] text-text-lo tabular-nums w-10 text-right">{count}件</span>
               </div>
             );
           })}
@@ -61,7 +61,7 @@ export const MasterSettingsPage = ({ db }: MasterSettingsPageProps) => {
                   <div className="text-[11px] text-text-lo">{desc}</div>
                 </div>
                 <Badge>{s}</Badge>
-                <span className="text-[12px] text-text-lo font-mono w-8 text-right">{count}</span>
+                <span className="text-[12px] text-text-lo tabular-nums w-8 text-right">{count}</span>
               </div>
             );
           })}
@@ -74,11 +74,11 @@ export const MasterSettingsPage = ({ db }: MasterSettingsPageProps) => {
               const count = db.filter(r => r.batch === batch).length;
               return (
                 <div key={batch} className="flex items-center gap-3 py-1.5 border-b border-[var(--border-faint)] last:border-b-0 text-[13px]">
-                  <span className="font-mono text-accent">{batch}</span>
+                  <span className="text-accent">{batch}</span>
                   <div className="flex-1">
                     <ProgressBar value={Math.round(count / db.length * 100)} color="var(--accent)" />
                   </div>
-                  <span className="text-[12px] text-text-lo font-mono w-8 text-right">{count}</span>
+                  <span className="text-[12px] text-text-lo tabular-nums w-8 text-right">{count}</span>
                 </div>
               );
             })}
@@ -95,7 +95,7 @@ export const MasterSettingsPage = ({ db }: MasterSettingsPageProps) => {
                   {author.slice(0,1)}
                 </div>
                 <span className="text-[13px] font-semibold flex-1">{author}</span>
-                <span className="text-[12px] text-text-lo font-mono">{count}件担当</span>
+                <span className="text-[12px] text-text-lo tabular-nums">{count}件担当</span>
               </div>
             );
           })}
