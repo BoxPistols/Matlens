@@ -262,3 +262,20 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
   right:100%;top:50%;transform:translateY(-50%);
   border-right-color:rgba(15,20,30,.92);
 }
+
+/* ─── UI 密度 (data-density) ───────────────────────────── */
+/* BtoB では行高さの好みが人によって異なる。
+   compact = 高密度、regular = 標準、relaxed = ゆったり。 */
+[data-density="compact"]{
+  --row-h:36px;--cell-py:4px;--card-py:12px;--table-fs:11px;
+}
+[data-density="regular"]{
+  --row-h:44px;--cell-py:8px;--card-py:16px;--table-fs:13px;
+}
+[data-density="relaxed"]{
+  --row-h:56px;--cell-py:12px;--card-py:24px;--table-fs:13px;
+}
+/* フォールバック (data-density 未設定時 = regular 相当) */
+:root{
+  --row-h:44px;--cell-py:8px;--card-py:16px;--table-fs:13px;
+}
