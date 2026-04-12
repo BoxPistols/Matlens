@@ -3,10 +3,11 @@
  * PoC: Three.js + @react-three/fiber / BCC · FCC · HCP 原子配置可視化
  * 修正: min-font 12px / 余白改善 / N=2 + 結合線追加
  */
-import { Suspense, useState, useMemo } from 'react'
+import { Suspense, useState, useMemo, createContext, useContext } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
+import { useTheme } from '../../hooks/useTheme/useTheme'
 
 // ─── Types & Data ─────────────────────────────────────────────
 
@@ -139,7 +140,7 @@ function Atom({ pos, color }: { pos:[number,number,number]; color:string }) {
 }
 
 // 全結合を単一 LineSegments で描画 (描画コール1回)
-function BondMesh({ segs, color }: { segs: number[]; color: string }) {
+function BondMesh({ segs, color, opacity }: { segs: number[]; color: string; opacity: number }) {
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry()
     geo.setAttribute('position', new THREE.Float32BufferAttribute(segs, 3))
@@ -147,7 +148,7 @@ function BondMesh({ segs, color }: { segs: number[]; color: string }) {
   }, [segs])
   return (
     <lineSegments geometry={geometry}>
-      <lineBasicMaterial color={color} opacity={0.45} transparent />
+      <lineBasicMaterial color={color} opacity={opacity} transparent />
     </lineSegments>
   )
 }
@@ -167,7 +168,7 @@ function CellOutline({ edges, color }: { edges: Edge[]; color: string }) {
   )
 }
 
-function Scene({ m, strain }: { m:MatDef; strain:number }) {
+function Scene({ m, strain, bondOpacity, cellEdgeColor }: { m:MatDef; strain:number; bondOpacity:number; cellEdgeColor:string }) {
   // 一軸ひずみ: Z 伸長 + ポアソン収縮 (ν≈0.3) で形状変化が視覚的に明確に
   const eff = useMemo(() => ({
     ...m,
@@ -198,8 +199,8 @@ function Scene({ m, strain }: { m:MatDef; strain:number }) {
     <>
       <group position={offset}>
         {atoms.map((p,i) => <Atom key={i} pos={p} color={m.color} />)}
-        <BondMesh segs={bondSegs} color={m.color} />
-        <CellOutline edges={edges} color="#e8a000" />
+        <BondMesh segs={bondSegs} color={m.color} opacity={bondOpacity} />
+        <CellOutline edges={edges} color={cellEdgeColor} />
       </group>
       {/* 一軸ひずみ方向矢印 (引張=赤, 圧縮=青) */}
       <StrainArrows strain={strain} halfZ={halfZ} />
@@ -209,25 +210,61 @@ function Scene({ m, strain }: { m:MatDef; strain:number }) {
 
 // ─── Design Constants ─────────────────────────────────────────
 
-const C = {
+type Palette = {
+  bg: string; panel: string; surf: string; border: string; active: string;
+  dim: string; med: string; hi: string; bright: string; gold: string;
+  red: string; blue: string; cellEdge: string; fogNear: number; fogFar: number;
+  ambient: number; dirMain: number; dirFill: number; bondOpacity: number;
+}
+
+const DARK: Palette = {
   bg:     '#030912',
   panel:  '#050e1c',
-  surf:   '#081828',
-  border: '#0c2a3a',
-  active: '#0b2033',
-  dim:    '#2a5060',
-  med:    '#5090a8',
-  hi:     '#90d0e8',
-  bright: '#00cfff',
-  gold:   '#e8a000',
-  red:    '#ff6060',
-  blue:   '#4499ff',
+  surf:   '#0b1e2e',
+  border: '#1a3d54',
+  active: '#0f2740',
+  dim:    '#8aa5b8',
+  med:    '#b0cfe0',
+  hi:     '#e5f4fb',
+  bright: '#38d9ff',
+  gold:   '#ffc04a',
+  red:    '#ff7a7a',
+  blue:   '#6bb0ff',
+  cellEdge: '#ffc04a',
+  fogNear: 16, fogFar: 38,
+  ambient: 0.30, dirMain: 1.6, dirFill: 0.5, bondOpacity: 0.55,
+}
+
+const LIGHT: Palette = {
+  bg:     '#eef2f7',
+  panel:  '#ffffff',
+  surf:   '#f3f6fa',
+  border: '#c8d2dd',
+  active: '#e3ecf5',
+  dim:    '#6a7888',
+  med:    '#344152',
+  hi:     '#0b1b2a',
+  bright: '#0369a1',
+  gold:   '#a16207',
+  red:    '#b91c1c',
+  blue:   '#1d4ed8',
+  cellEdge: '#92400e',
+  fogNear: 22, fogFar: 60,
+  ambient: 0.85, dirMain: 1.1, dirFill: 0.35, bondOpacity: 0.55,
+}
+
+const PaletteCtx = createContext<Palette>(DARK)
+const useC = () => useContext(PaletteCtx)
+
+function usePalette(): Palette {
+  const { theme } = useTheme()
+  return theme === 'light' ? LIGHT : DARK
 }
 
 const MONO = "'JetBrains Mono','IBM Plex Mono','Fira Code',monospace"
 
 const STRUCT_COLOR: Record<Structure, string> = {
-  BCC: C.gold, FCC: C.bright, HCP: '#a78bfa',
+  BCC: '#ffc04a', FCC: '#0ea5e9', HCP: '#a78bfa',
 }
 const STRUCT_GLYPH: Record<Structure, string> = {
   BCC: '⊕', FCC: '⊞', HCP: '⬡',
@@ -250,6 +287,7 @@ function barPct(v:number, key:string): number {
 // ─── Panel Sub-Components ─────────────────────────────────────
 
 function PanelHeader({ children }: { children: string }) {
+  const C = useC()
   return (
     <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
       <span style={{ color:C.dim, fontSize:12, fontFamily:MONO }}>▸</span>
@@ -262,6 +300,7 @@ function PanelHeader({ children }: { children: string }) {
 }
 
 function SpecimenCard({ m, active, onClick }: { m:MatDef; active:boolean; onClick:()=>void }) {
+  const C = useC()
   const sc = STRUCT_COLOR[m.structure]
   return (
     <button
@@ -298,6 +337,7 @@ function SpecimenCard({ m, active, onClick }: { m:MatDef; active:boolean; onClic
 function PropReadout({ sym, value, unit, rangeKey, color }: {
   sym:string; value:number; unit:string; rangeKey:string; color:string
 }) {
+  const C = useC()
   const p = barPct(value, rangeKey)
   const display = value >= 100 ? value.toFixed(0) : value.toFixed(2)
   return (
@@ -318,6 +358,7 @@ function PropReadout({ sym, value, unit, rangeKey, color }: {
 }
 
 function LatticeReadout({ m, strain }: { m:MatDef; strain:number }) {
+  const C = useC()
   const aEff = m.a * (1 - 0.30 * strain / 100)
   const cEff = m.c * (1 + strain / 100)
   const showC = m.structure === 'HCP' || strain !== 0
@@ -348,6 +389,7 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
   mat:MatDef; strain:number; selId:string;
   onSelect:(id:string)=>void; onStrain:(v:number)=>void
 }) {
+  const C = useC()
   const sc = STRUCT_COLOR[mat.structure]
   const strSign = strain > 0 ? '+' : ''
   return (
@@ -465,6 +507,7 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
 // ─── Canvas HUD ───────────────────────────────────────────────
 
 function CanvasHUD({ mat, strain }: { mat:MatDef; strain:number }) {
+  const C = useC()
   const sc = STRUCT_COLOR[mat.structure]
   const hud: React.CSSProperties = {
     position:'absolute', pointerEvents:'none',
@@ -496,7 +539,7 @@ function CanvasHUD({ mat, strain }: { mat:MatDef; strain:number }) {
 
     {/* Bottom-center: controls */}
     <div style={{ ...hud, bottom:12, left:'50%', transform:'translateX(-50%)',
-      fontSize:12, color:'rgba(255,255,255,0.22)', whiteSpace:'nowrap' }}>
+      fontSize:12, color:C.med, whiteSpace:'nowrap' }}>
       DRAG · ROTATE &nbsp;|&nbsp; SCROLL · ZOOM &nbsp;|&nbsp; RIGHT-DRAG · PAN
     </div>
 
@@ -514,37 +557,40 @@ export function Crystal3DPage() {
   const [selId, setSelId] = useState('ti64')
   const [strain, setStrain] = useState(0)
   const mat = MATS.find(m => m.id === selId)!
+  const C = usePalette()
 
   return (
-    <div style={{ display:'flex', height:'100%', minHeight:0, background:C.bg,
-      borderRadius:8, overflow:'hidden', border:`1px solid ${C.border}` }}>
-      {/* Instrument Panel */}
-      <InstrumentPanel
-        mat={mat} strain={strain} selId={selId}
-        onSelect={setSelId} onStrain={setStrain}
-      />
+    <PaletteCtx.Provider value={C}>
+      <div style={{ display:'flex', height:'100%', minHeight:0, background:C.bg,
+        borderRadius:8, overflow:'hidden', border:`1px solid ${C.border}` }}>
+        {/* Instrument Panel */}
+        <InstrumentPanel
+          mat={mat} strain={strain} selId={selId}
+          onSelect={setSelId} onStrain={setStrain}
+        />
 
-      {/* 3D Viewport */}
-      <div style={{ flex:1, position:'relative', minHeight:400 }}>
-        <Canvas
-          camera={{ position:[7,5,9], fov:48 }}
-          gl={{ antialias:true }}
-          dpr={[1,2]}
-          style={{ width:'100%', height:'100%' }}
-        >
-          <color attach="background" args={['#030912']} />
-          <fog attach="fog" args={['#030912', 16, 38]} />
-          <ambientLight intensity={0.30} />
-          <directionalLight position={[10,14,6]} intensity={1.6} />
-          <directionalLight position={[-8,-6,-10]} intensity={0.5} color="#4499ff" />
-          <pointLight position={[0,0,0]} intensity={0.25} color={mat.color} />
-          <Suspense fallback={null}>
-            <Scene m={mat} strain={strain} />
-          </Suspense>
-          <OrbitControls autoRotate autoRotateSpeed={0.3} enableDamping dampingFactor={0.07} />
-        </Canvas>
-        <CanvasHUD mat={mat} strain={strain} />
+        {/* 3D Viewport */}
+        <div style={{ flex:1, position:'relative', minHeight:400 }}>
+          <Canvas
+            camera={{ position:[7,5,9], fov:48 }}
+            gl={{ antialias:true }}
+            dpr={[1,2]}
+            style={{ width:'100%', height:'100%' }}
+          >
+            <color attach="background" args={[C.bg]} />
+            <fog attach="fog" args={[C.bg, C.fogNear, C.fogFar]} />
+            <ambientLight intensity={C.ambient} />
+            <directionalLight position={[10,14,6]} intensity={C.dirMain} />
+            <directionalLight position={[-8,-6,-10]} intensity={C.dirFill} color={C.blue} />
+            <pointLight position={[0,0,0]} intensity={0.25} color={mat.color} />
+            <Suspense fallback={null}>
+              <Scene m={mat} strain={strain} bondOpacity={C.bondOpacity} cellEdgeColor={C.cellEdge} />
+            </Suspense>
+            <OrbitControls autoRotate autoRotateSpeed={0.3} enableDamping dampingFactor={0.07} />
+          </Canvas>
+          <CanvasHUD mat={mat} strain={strain} />
+        </div>
       </div>
-    </div>
+    </PaletteCtx.Provider>
   )
 }
