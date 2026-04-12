@@ -216,7 +216,10 @@ export function App() {
       case 'catalog': return lazyPage(<CatalogPage db={db} onNav={navTo} onDetail={showDetail} />);
       case 'petri':   return lazyPage(<PetriNetPage onNav={navTo} />);
       case 'bayes':   return lazyPage(<BayesianOptPage db={db} />);
-      case 'simulate': return lazyPage(<SimulationPage />);
+      case 'simulate':   return lazyPage(<SimulationPage />);
+      case 'timeline':   return lazyPage(<ProcessTimelinePage />);
+      case 'overlay':    return lazyPage(<OverlayPage db={db} />);
+      case 'multimodal': return lazyPage(<MultiModalPage db={db} />);
       case 'voice':   return lazyPage(<VoicePage />);
       case 'api':     return lazyPage(<ApiDebugPage db={db} dispatch={dispatch} />);
       case 'tests':   return lazyPage(<TestSuitePage />);
