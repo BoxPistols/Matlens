@@ -25,6 +25,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'new',     label:'新規登録',         icon:'plus' },
   { section: 'ワークフロー' },
   { id:'petri',   label:'試験フロー可視化', icon:'workflow' },
+  { id:'bayes',   label:'ベイズ最適化',    icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
   { section: 'AI 分析・検索' },
   { id:'vsearch', label:'意味検索',         icon:'vecSearch', badgeLabel:'AI', badgeVariant:'vec', cls:'vec-nav' },
   { id:'rag',     label:'AI チャット',      icon:'rag',     badgeLabel:'AI',  badgeVariant:'ai',  cls:'ai-nav' },

@@ -1,0 +1,1 @@
+export { BayesianOptPage } from './BayesianOptPage'
