@@ -20,7 +20,7 @@ export const NAV_ITEMS: NavItem[] = [
   { section: '概要', sectionEn: 'Overview' },
   { id:'dash',    label:'ダッシュボード',    labelEn:'Dashboard',    icon:'dashboard' },
   { id:'list',    label:'材料データ一覧',    labelEn:'Material List', icon:'list',    badge: true },
-  { id:'catalog', label:'材料カタログ',      labelEn:'Catalog',      icon:'embed',   badgeLabel:'3D', badgeVariant:'vec' },
+  { id:'catalog', label:'材料カタログ',      labelEn:'Catalog',      icon:'embed' },
   { section: 'データ入力', sectionEn: 'Data Entry' },
   { id:'new',     label:'新規登録',         labelEn:'New Entry',    icon:'plus' },
   { section: 'ワークフロー', sectionEn: 'Workflow' },

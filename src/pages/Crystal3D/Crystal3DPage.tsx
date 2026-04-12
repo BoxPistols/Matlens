@@ -36,13 +36,14 @@ function getAtoms(m: MatDef): [number,number,number][] {
   const { structure:s, a, c } = m
   const pts: [number,number,number][] = []
   if (s === 'BCC') {
+    // z 方向は c を使用 (ひずみ時に a≠c の正方晶になる)
     const basis: [number,number,number][] = [[0,0,0],[.5,.5,.5]]
     for (let i=0;i<N;i++) for (let j=0;j<N;j++) for (let k=0;k<N;k++)
-      for (const [fx,fy,fz] of basis) pts.push([(i+fx)*a,(j+fy)*a,(k+fz)*a])
+      for (const [fx,fy,fz] of basis) pts.push([(i+fx)*a,(j+fy)*a,(k+fz)*c])
   } else if (s === 'FCC') {
     const basis: [number,number,number][] = [[0,0,0],[.5,.5,0],[.5,0,.5],[0,.5,.5]]
     for (let i=0;i<N;i++) for (let j=0;j<N;j++) for (let k=0;k<N;k++)
-      for (const [fx,fy,fz] of basis) pts.push([(i+fx)*a,(j+fy)*a,(k+fz)*a])
+      for (const [fx,fy,fz] of basis) pts.push([(i+fx)*a,(j+fy)*a,(k+fz)*c])
   } else {
     for (let i=0;i<N;i++) for (let j=0;j<N;j++) for (let k=0;k<N;k++) {
       const ox=i*a+j*a/2, oy=j*a*SQRT3/2, oz=k*c
@@ -53,11 +54,12 @@ function getAtoms(m: MatDef): [number,number,number][] {
   return pts
 }
 
-// 最近傍距離カットオフ (構造ごとに適切な値)
+// 最近傍距離カットオフ (ひずみ後の a,c を考慮して大きい方基準)
 function getNNCutoff(m: MatDef): number {
-  if (m.structure === 'BCC') return m.a * Math.sqrt(3) / 2 * 1.10  // 体対角線
-  if (m.structure === 'FCC') return m.a / Math.sqrt(2) * 1.10       // 面対角線
-  return m.a * 1.22  // HCP: 面内(a) + 層間(≈1.18a) の両方を含む
+  const aMax = Math.max(m.a, m.c)
+  if (m.structure === 'BCC') return aMax * Math.sqrt(3) / 2 * 1.15
+  if (m.structure === 'FCC') return aMax / Math.sqrt(2) * 1.15
+  return aMax * 1.25  // HCP
 }
 
 // 結合ペアを列挙
@@ -81,8 +83,9 @@ type Edge = [[number,number,number],[number,number,number]]
 function getCellEdges(m: MatDef): Edge[] {
   const { structure:s, a, c } = m
   if (s !== 'HCP') {
+    // ひずみ時は z 方向が c (≠ a) になる
     const v: [number,number,number][] = [
-      [0,0,0],[a,0,0],[a,a,0],[0,a,0],[0,0,a],[a,0,a],[a,a,a],[0,a,a],
+      [0,0,0],[a,0,0],[a,a,0],[0,a,0],[0,0,c],[a,0,c],[a,a,c],[0,a,c],
     ]
     return [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]]
       .map(([i,j]) => [v[i!]!, v[j!]!] as Edge)
@@ -141,7 +144,12 @@ function CellOutline({ edges, color }: { edges: Edge[]; color: string }) {
 }
 
 function Scene({ m, strain }: { m:MatDef; strain:number }) {
-  const eff = useMemo(() => ({ ...m, a:m.a*(1+strain/100), c:m.c*(1+strain/100) }), [m,strain])
+  // 一軸ひずみ: Z 伸長 + ポアソン収縮 (ν≈0.3) で形状変化が視覚的に明確に
+  const eff = useMemo(() => ({
+    ...m,
+    a: m.a * (1 - 0.30 * strain / 100),  // 横方向: 収縮
+    c: m.c * (1 + strain / 100),           // Z軸: 伸長/圧縮
+  }), [m, strain])
   const atoms = useMemo(() => getAtoms(eff), [eff])
   const edges = useMemo(() => getCellEdges(eff), [eff])
   const bondSegs = useMemo(() => getBonds(atoms, getNNCutoff(eff)), [atoms, eff])
@@ -274,15 +282,16 @@ function PropReadout({ sym, value, unit, rangeKey, color }: {
 }
 
 function LatticeReadout({ m, strain }: { m:MatDef; strain:number }) {
-  const a = (m.a * (1+strain/100)).toFixed(4)
-  const c = (m.c * (1+strain/100)).toFixed(4)
+  const aEff = m.a * (1 - 0.30 * strain / 100)
+  const cEff = m.c * (1 + strain / 100)
+  const showC = m.structure === 'HCP' || strain !== 0
   return (
     <div style={{ fontFamily:MONO, fontSize:12 }}>
       {[
-        { lbl:'a', val:a, unit:'Å', color:C.bright },
-        ...(m.structure==='HCP' ? [
-          { lbl:'c', val:c, unit:'Å', color:C.bright },
-          { lbl:'c/a', val:(m.c/m.a).toFixed(4), unit:'', color:STRUCT_COLOR['HCP'] },
+        { lbl:'a', val:aEff.toFixed(4), unit:'Å', color:C.bright },
+        ...(showC ? [
+          { lbl:'c', val:cEff.toFixed(4), unit:'Å', color:C.bright },
+          { lbl:'c/a', val:(cEff/aEff).toFixed(4), unit:'', color:STRUCT_COLOR[m.structure] },
         ] : []),
       ].map(row => (
         <div key={row.lbl} style={{ display:'flex', justifyContent:'space-between', alignItems:'baseline',
