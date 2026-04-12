@@ -6,7 +6,7 @@ import {
 } from '../../services/maiml';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, SectionCard } from '../../components/atoms';
-import { Modal, AIInsightCard, VecCard } from '../../components/molecules';
+import { Modal, AIInsightCard, VecCard, DownloadPreviewModal } from '../../components/molecules';
 import { MaterialVisual } from '../../components/MaterialVisual';
 import { DataDisclaimer } from '../../components/DataDisclaimer';
 import { AppCtx } from '../../context/AppContext';
@@ -29,7 +29,21 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
   const [aiLoading, setAiLoading] = useState(true);
   const [vecNear, setVecNear] = useState<MaterialWithScore[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [maimlPreviewOpen, setMaimlPreviewOpen] = useState(false);
   const { addToast } = useContext(AppCtx) as AppContextValue;
+
+  // 単一材料の MaiML プレビュー内容を memoize（モーダルを閉じるまで再計算しない）
+  const singleMaimlXml = useMemo(
+    () => (maimlPreviewOpen && r ? serializeMaterialToMaiml(r) : ''),
+    [maimlPreviewOpen, r],
+  );
+
+  const handleMaimlDownloadConfirm = () => {
+    if (!r) return;
+    downloadMaimlFile(singleMaimlXml, `${r.id}.maiml`);
+    addToast('MaiML ファイルをダウンロードしました');
+    setMaimlPreviewOpen(false);
+  };
 
   // Prev/Next navigation (via on-screen buttons only — no global arrow-key shortcut)
   const currentIndex = useMemo(() => db.findIndex(x => x.id === recordId), [db, recordId]);
@@ -64,6 +78,18 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
       }>
         <p><strong>{r.name}</strong>（{r.id}）を削除します。この操作は元に戻せません。</p>
       </Modal>
+
+      <DownloadPreviewModal
+        open={maimlPreviewOpen}
+        onClose={() => setMaimlPreviewOpen(false)}
+        onConfirm={handleMaimlDownloadConfirm}
+        title="MaiML エクスポート プレビュー（単一材料）"
+        filename={`${r.id}.maiml`}
+        content={singleMaimlXml}
+        language="xml"
+        description={`${r.name}（${r.id}）を JIS K 0200:2024 準拠の MaiML 形式で書き出します。`}
+      />
+
 
       {/* Breadcrumb + prev/next navigation */}
       <div className="flex items-center gap-1.5 text-[12px] text-text-lo">
@@ -106,11 +132,7 @@ export const DetailPage = ({ db, recordId, dispatch, onBack, onEdit, claude, emb
             <Button
               variant="default"
               size="sm"
-              onClick={() => {
-                const xml = serializeMaterialToMaiml(r);
-                downloadMaimlFile(xml, `${r.id}.maiml`);
-                addToast('MaiML ファイルをダウンロードしました');
-              }}
+              onClick={() => setMaimlPreviewOpen(true)}
               title="この材料を MaiML (JIS K 0200:2024) で書き出す"
             >
               <Icon name="download" size={12} />MaiML

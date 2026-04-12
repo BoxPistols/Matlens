@@ -54,7 +54,13 @@ export interface UseChatResult {
     source?: ChatMessage['source'],
   ) => void
   clearMessages: () => void
+  /** 会話履歴を即ダウンロード (内部 API — 通常は getExportPayload + DownloadPreviewModal を使う) */
   downloadMessages: () => void
+  /**
+   * エクスポート内容とファイル名を生成して返す (ダウンロードはしない)。
+   * 呼出側でプレビューモーダルに渡してから実ダウンロードへ繋げる用途。
+   */
+  getExportPayload: () => { content: string; filename: string }
   hasMessages: boolean
 }
 
@@ -107,33 +113,45 @@ export function useChat(): UseChatResult {
     }
   }, [])
 
-  const downloadMessages = useCallback(() => {
+  /** エクスポートペイロード生成（ダウンロードはしない） */
+  const getExportPayload = useCallback(() => {
     const snapshot = {
       exportedAt: new Date().toISOString(),
       source: 'matlens-storybook-chatsupport',
       messages: messagesRef.current,
     }
-    const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
-      type: 'application/json',
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
     // ISO date in filename for easy sorting. Colons are illegal on
     // Windows filenames, so strip them.
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-    a.download = `matlens-chat-${timestamp}.json`
+    return {
+      content: JSON.stringify(snapshot, null, 2),
+      filename: `matlens-chat-${timestamp}.json`,
+    }
+  }, [])
+
+  /**
+   * 下位互換用: 即ダウンロード (プレビューなし)。
+   * 新しい呼出側は getExportPayload + DownloadPreviewModal を使うことを推奨。
+   */
+  const downloadMessages = useCallback(() => {
+    const { content, filename } = getExportPayload()
+    const blob = new Blob([content], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }, [])
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+  }, [getExportPayload])
 
   return {
     messages,
     addMessage,
     clearMessages,
     downloadMessages,
+    getExportPayload,
     hasMessages: messages.length > 0,
   }
 }

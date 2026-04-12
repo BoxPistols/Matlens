@@ -11,6 +11,8 @@ import { Tooltip } from '../Tooltip';
 import { Button, Badge, Card, Input, SectionCard } from '../atoms';
 import { AppCtx } from '../../context/AppContext';
 import { Material, AppContextValue } from '../../types';
+import { DownloadPreviewModal, type DownloadPreviewLanguage } from './DownloadPreviewModal';
+import { downloadTextFile } from '../../services/downloadFile';
 
 interface ModalProps {
   open: boolean;
@@ -186,6 +188,7 @@ export const FilterChip = ({ label, onRemove }: FilterChipProps) => (
 // is enough — no custom equality function needed.
 export const MarkdownBubble = memo(function MarkdownBubble({ text, onSpeak }: MarkdownBubbleProps) {
   const [copied, setCopied] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const html = useMemo(() => renderSafeMarkdown(text), [text]);
 
   const handleCopy = async () => {
@@ -193,10 +196,10 @@ export const MarkdownBubble = memo(function MarkdownBubble({ text, onSpeak }: Ma
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  const handleDownload = () => {
-    const a = document.createElement('a');
-    a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
-    a.download = `matlens-ai-${Date.now()}.txt`; a.click();
+  const openDownloadPreview = () => setPreviewOpen(true);
+  const handleConfirmDownload = () => {
+    downloadTextFile(text, `matlens-ai-${Date.now()}.txt`, 'text/plain');
+    setPreviewOpen(false);
   };
 
   return (
@@ -214,28 +217,74 @@ export const MarkdownBubble = memo(function MarkdownBubble({ text, onSpeak }: Ma
           </Tooltip>
         )}
         <Tooltip label="テキストをファイルに保存" placement="top">
-          <button onClick={handleDownload} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] border border-[var(--border-faint)] text-text-lo hover:text-text-hi hover:bg-hover transition-all duration-150 font-ui">
+          <button onClick={openDownloadPreview} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] border border-[var(--border-faint)] text-text-lo hover:text-text-hi hover:bg-hover transition-all duration-150 font-ui">
             <Icon name="download" size={11} />保存
           </button>
         </Tooltip>
       </div>
+      <DownloadPreviewModal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        onConfirm={handleConfirmDownload}
+        title="AI テキスト保存 プレビュー"
+        filename={`matlens-ai-${Date.now()}.txt`}
+        content={text}
+        language="text"
+        description="AI の回答テキストをプレーンテキストファイルとして保存します。"
+      />
     </div>
   );
 });
 
+/**
+ * ExportModal 内のダウンロードプレビュー状態。各「開く」アクションがこれを埋め、
+ * DownloadPreviewModal を介してユーザーが確認した後に実際のダウンロードを行う。
+ */
+interface ExportPreviewState {
+  title: string;
+  filename: string;
+  content: string;
+  language: DownloadPreviewLanguage;
+  mime: string;
+  description: string;
+  /** MaiML は既存 downloadMaimlFile() を経由させたいのでフック可能にする */
+  downloader?: (content: string, filename: string) => void;
+}
+
 export const ExportModal = ({ open, onClose, db, filtered }: ExportModalProps) => {
-  const exportCSV = () => {
+  const [preview, setPreview] = useState<ExportPreviewState | null>(null);
+  const today = new Date().toISOString().slice(0, 10);
+  const targetRows = filtered.length > 0 ? filtered : db;
+
+  // ─── プレビュー内容の生成 ───
+  const buildCSV = (): string => {
     const h = ['ID','名称','カテゴリ','硬度HV','引張MPa','弾性GPa','組成','バッチ','登録日','ステータス','備考'];
     const rows = filtered.map(r => [r.id,`"${r.name}"`,r.cat,r.hv,r.ts,r.el,`"${r.comp}"`,r.batch,r.date,r.status,`"${r.memo||''}"`]);
-    const csv = [h,...rows].map(r => r.join(',')).join('\n');
-    const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-    a.download = `matdb_${new Date().toISOString().slice(0,10)}.csv`; a.click(); onClose();
+    return [h,...rows].map(r => r.join(',')).join('\n');
   };
-  const exportJSON = () => {
-    const a = document.createElement('a');
-    a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify({exported:new Date().toISOString(),count:db.length,data:db},null,2));
-    a.download = `matdb_${new Date().toISOString().slice(0,10)}.json`; a.click(); onClose();
-  };
+  const buildJSON = (): string => JSON.stringify({
+    exported: new Date().toISOString(),
+    count: db.length,
+    data: db,
+  }, null, 2);
+
+  // ─── 各「開く」アクション ───
+  const exportCSV = () => setPreview({
+    title: 'CSV エクスポート プレビュー',
+    filename: `matdb_${today}.csv`,
+    content: buildCSV(),
+    language: 'csv',
+    mime: 'text/csv',
+    description: `Excel で開ける CSV 形式。${filtered.length} 件を出力します。`,
+  });
+  const exportJSON = () => setPreview({
+    title: 'JSON エクスポート プレビュー',
+    filename: `matdb_${today}.json`,
+    content: buildJSON(),
+    language: 'json',
+    mime: 'application/json',
+    description: `システム連携用の JSON 形式。DB 全 ${db.length} 件を出力します。`,
+  });
   const exportPDF = () => {
     const rows = db.map(r => `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.cat}</td><td>${r.hv}</td><td>${r.ts}</td><td>${r.status}</td></tr>`).join('');
     const win = window.open('','_blank');
@@ -243,22 +292,47 @@ export const ExportModal = ({ open, onClose, db, filtered }: ExportModalProps) =
     win.document.write(`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>Matlens レポート</title><style>body{font-family:sans-serif;font-size:11px;padding:20px}h1{font-size:16px;margin-bottom:4px}.meta{color:#666;font-size:11px;margin-bottom:16px}table{width:100%;border-collapse:collapse}th{background:#1e3050;color:#fff;padding:6px 8px;text-align:left;font-size:10px}td{padding:5px 8px;border-bottom:1px solid #e0e0e0;font-size:10px}tr:nth-child(even) td{background:#f7f7f5}</style></head><body><h1>Matlens 材料データレポート</h1><div class="meta">出力: ${new Date().toLocaleString('ja-JP')} ／ 総件数: ${db.length}件</div><table><thead><tr><th>ID</th><th>名称</th><th>カテゴリ</th><th>硬度HV</th><th>引張MPa</th><th>ステータス</th></tr></thead><tbody>${rows}</tbody></table></body></html>`);
     win.document.close(); setTimeout(() => win.print(), 400); onClose();
   };
-  const exportMaiML = () => {
-    const xml = serializeMaterialsToMaiml(filtered.length > 0 ? filtered : db);
-    downloadMaimlFile(xml, defaultMaimlFilename('matlens'));
-    onClose();
-  };
-  const exportMaiMLAll = () => {
-    const xml = serializeMaterialsToMaiml(db);
-    downloadMaimlFile(xml, `matlens_all_${new Date().toISOString().slice(0, 10)}.maiml`);
-    onClose();
-  };
+  const exportMaiML = () => setPreview({
+    title: 'MaiML エクスポート プレビュー（推奨）',
+    filename: defaultMaimlFilename('matlens'),
+    content: serializeMaterialsToMaiml(targetRows),
+    language: 'xml',
+    mime: 'application/xml',
+    description: `JIS K 0200:2024 準拠の MaiML XML。${targetRows.length} 件を出力します。`,
+    downloader: downloadMaimlFile,
+  });
+  const exportMaiMLAll = () => setPreview({
+    title: 'MaiML エクスポート プレビュー（全件）',
+    filename: `matlens_all_${today}.maiml`,
+    content: serializeMaterialsToMaiml(db),
+    language: 'xml',
+    mime: 'application/xml',
+    description: `JIS K 0200:2024 準拠の MaiML XML。DB 全 ${db.length} 件を出力します。`,
+    downloader: downloadMaimlFile,
+  });
   const exportMarkdown = () => {
     const rows = filtered.map(r => `| ${r.id} | ${r.name} | ${r.cat} | ${r.hv} | ${r.ts} | ${r.comp} | ${r.status} |`).join('\n');
     const md = `# Matlens 材料データ\n\n出力日時: ${new Date().toLocaleString('ja-JP')}  \n件数: ${filtered.length}件\n\n| ID | 名称 | カテゴリ | 硬度HV | 引張MPa | 組成 | ステータス |\n| --- | --- | --- | --- | --- | --- | --- |\n${rows}\n`;
-    const a = document.createElement('a');
-    a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
-    a.download = `matdb_${new Date().toISOString().slice(0, 10)}.md`; a.click(); onClose();
+    setPreview({
+      title: 'Markdown エクスポート プレビュー',
+      filename: `matdb_${today}.md`,
+      content: md,
+      language: 'markdown',
+      mime: 'text/markdown',
+      description: `ドキュメント共有用の Markdown テーブル形式。${filtered.length} 件を出力します。`,
+    });
+  };
+
+  // プレビュー「ダウンロード実行」押下時の処理
+  const handleConfirmDownload = () => {
+    if (!preview) return;
+    if (preview.downloader) {
+      preview.downloader(preview.content, preview.filename);
+    } else {
+      downloadTextFile(preview.content, preview.filename, preview.mime);
+    }
+    setPreview(null);
+    onClose();
   };
 
   // MaiML is the platform's primary data format (JIS K 0200:2024), so it is
@@ -278,36 +352,51 @@ export const ExportModal = ({ open, onClose, db, filtered }: ExportModalProps) =
   ];
 
   return (
-    <Modal open={open} onClose={onClose} title="データエクスポート" footer={<Button variant="default" onClick={onClose}>閉じる</Button>}>
-      <div className="flex flex-col gap-3">
-        <button
-          onClick={primary.action}
-          className="flex items-center gap-3 p-4 rounded-md border-2 border-accent bg-accent-dim hover:bg-hover transition-all duration-150 text-left font-ui"
-        >
-          <div className="w-10 h-10 rounded-md bg-accent text-white flex items-center justify-center flex-shrink-0">
-            <Icon name="embed" size={18} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <div className="text-[14px] font-bold text-text-hi">{primary.label}</div>
-              <Badge variant="blue" className="text-[10px]">PRIMARY</Badge>
+    <>
+      <Modal open={open} onClose={onClose} title="データエクスポート" footer={<Button variant="default" onClick={onClose}>閉じる</Button>}>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={primary.action}
+            className="flex items-center gap-3 p-4 rounded-md border-2 border-accent bg-accent-dim hover:bg-hover transition-all duration-150 text-left font-ui"
+          >
+            <div className="w-10 h-10 rounded-md bg-accent text-white flex items-center justify-center flex-shrink-0">
+              <Icon name="embed" size={18} />
             </div>
-            <div className="text-[12px] text-text-md mt-0.5">{primary.desc}</div>
-          </div>
-        </button>
-        <div className="grid grid-cols-2 gap-2.5">
-          {secondary.map(item => (
-            <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-2 p-3 bg-raised border border-[var(--border-default)] rounded-md cursor-pointer hover:border-accent hover:bg-hover transition-all duration-150 text-center font-ui">
-              <Icon name={item.icon} size={20} className="text-text-md" />
-              <div>
-                <div className="text-[12px] font-bold text-text-hi">{item.label}</div>
-                <div className="text-[11px] text-text-lo mt-0.5">{item.desc}</div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <div className="text-[14px] font-bold text-text-hi">{primary.label}</div>
+                <Badge variant="blue" className="text-[10px]">PRIMARY</Badge>
               </div>
-            </button>
-          ))}
+              <div className="text-[12px] text-text-md mt-0.5">{primary.desc}</div>
+            </div>
+          </button>
+          <div className="grid grid-cols-2 gap-2.5">
+            {secondary.map(item => (
+              <button key={item.label} onClick={item.action} className="flex flex-col items-center gap-2 p-3 bg-raised border border-[var(--border-default)] rounded-md cursor-pointer hover:border-accent hover:bg-hover transition-all duration-150 text-center font-ui">
+                <Icon name={item.icon} size={20} className="text-text-md" />
+                <div>
+                  <div className="text-[12px] font-bold text-text-hi">{item.label}</div>
+                  <div className="text-[11px] text-text-lo mt-0.5">{item.desc}</div>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+      {/* Download Preview — 全フォーマット共通 */}
+      {preview && (
+        <DownloadPreviewModal
+          open={!!preview}
+          onClose={() => setPreview(null)}
+          onConfirm={handleConfirmDownload}
+          title={preview.title}
+          filename={preview.filename}
+          content={preview.content}
+          language={preview.language}
+          description={preview.description}
+        />
+      )}
+    </>
   );
 };
 
