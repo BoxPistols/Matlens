@@ -30,7 +30,7 @@ export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embS
       {NAV_ITEMS.map((item, i) => {
         if (item.section) {
           return (
-            <div key={`s${i}`} className={`pt-5 pb-1.5 text-[11px] font-semibold text-text-md tracking-[.08em] uppercase overflow-hidden whitespace-nowrap border-t border-[var(--border-faint)] mt-1 first:border-t-0 first:mt-0 ${collapsed ? 'px-0 text-center' : 'px-3.5'}`}>
+            <div key={`s${i}`} className={`pt-4 pb-1 text-[11px] font-bold text-text-hi opacity-50 tracking-[.08em] uppercase whitespace-nowrap border-t border-[var(--border-default)] mt-2 ${collapsed ? 'px-0 text-center' : 'px-3.5'}`}>
               {!collapsed && (isEn && item.sectionEn ? item.sectionEn : item.section)}
               {collapsed && <span className="block w-4 h-px bg-[var(--border-faint)] mx-auto mt-1" />}
             </div>
