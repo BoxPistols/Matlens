@@ -1,4 +1,5 @@
 import type { Material } from '../types';
+import { METAL_TEST_SAMPLES } from './metalTestSamples';
 
 /**
  * DISCLAIMER / 免責事項
@@ -20,7 +21,7 @@ export const DATA_DISCLAIMER = {
   en: 'Sample data for demonstration only. Verify with primary sources before use in design or research.',
 };
 
-export const INITIAL_DB: Material[] = [
+const INITIAL_DB_BASE: Material[] = [
   // === 金属合金 — 鉄鋼 ===
   {id:'MAT-0301',name:'SS400 一般構造用圧延鋼',cat:'金属合金',hv:155,ts:400,el:206,pf:245,el2:21,dn:7.85,comp:'Fe-0.27C-1.5Mn (max)',batch:'B-040',date:'2026-04-08',author:'田中 実',status:'承認済',ai:false,memo:'最も汎用的な構造用鋼材'},
   {id:'MAT-0302',name:'S45C 機械構造用炭素鋼',cat:'金属合金',hv:220,ts:570,el:210,pf:345,el2:17,dn:7.85,comp:'Fe-0.45C-0.7Mn-0.25Si',batch:'B-040',date:'2026-04-08',author:'山田 研',status:'承認済',ai:false,memo:'焼入れ焼戻し鋼'},
@@ -103,6 +104,12 @@ export const INITIAL_DB: Material[] = [
   {id:'MAT-0367',name:'GLARE ガラスアルミ積層材',cat:'複合材料',hv:95,ts:450,el:55,pf:null,el2:4,dn:2.45,comp:'Al 2024 + S2-glass/epoxy',batch:'B-025',date:'2026-03-05',author:'鈴木 誠',status:'承認済',ai:false,memo:'A380 上部胴体。耐疲労'},
   {id:'MAT-0368',name:'FRM チタン基複合材',cat:'複合材料',hv:400,ts:1500,el:200,pf:null,el2:0.8,dn:4.10,comp:'Ti-6Al-4V + SiC fiber',batch:'B-024',date:'2026-03-04',author:'山田 研',status:'レビュー待',ai:true,memo:'次世代航空エンジン構造材'},
 ];
+
+// Phase A: 金属試験ドメインのサンプルデータ (20 件) を既存 DB に結合
+// 既存 68 件 + 金属試験 20 件 = 88 件のデモデータ
+const COMBINED_DB: Material[] = [...INITIAL_DB_BASE, ...METAL_TEST_SAMPLES];
+// 名前衝突を避けるため内部変数から公開変数へ
+export { COMBINED_DB as INITIAL_DB };
 
 export let nextId: number = 369;
 export function getNextId(): string {

@@ -1,6 +1,9 @@
 export type MaterialCategory = '金属合金' | 'セラミクス' | 'ポリマー' | '複合材料';
 export type MaterialStatus = '登録済' | 'レビュー待' | '承認済' | '要修正';
 
+/** データの出所を示す Provenance 情報 */
+export type Provenance = 'instrument' | 'manual' | 'ai' | 'simulation';
+
 export interface Material {
   id: string;
   name: string;
@@ -18,6 +21,13 @@ export interface Material {
   status: MaterialStatus;
   ai: boolean;
   memo: string;
+  // ─── Phase A 拡張フィールド (optional — 既存データとの後方互換性を保つ) ───
+  /** データの出所 — 装置計測 / 手入力 / AI 推定 / シミュレーション */
+  provenance?: Provenance;
+  /** 金属組織の記述 (組織観察結果テキスト) */
+  microstructure?: string;
+  /** 試験方法 (JIS/ASTM 規格番号 等) */
+  testMethod?: string;
 }
 
 export interface MaterialWithScore extends Material {
