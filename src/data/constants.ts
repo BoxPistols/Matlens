@@ -28,7 +28,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'bayes',   label:'ベイズ最適化',    labelEn:'Bayesian Opt', icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
   { id:'simulate',label:'経験式シミュレーション', labelEn:'Simulation', icon:'info' },
   { section: 'デジタル解析', sectionEn: 'Digital Analysis' },
-  { id:'crystal',    label:'結晶構造 3D',             labelEn:'Crystal 3D',       icon:'catalog', badgeLabel:'3D', badgeVariant:'vec' },
+  { id:'crystal',    label:'結晶構造 3D',             labelEn:'Crystal 3D',       icon:'atom', badgeLabel:'3D', badgeVariant:'vec' },
   { id:'timeline',   label:'加工タイムライン',       labelEn:'Process Timeline', icon:'report' },
   { id:'overlay',    label:'予測 vs 実績',            labelEn:'Prediction vs Actual', icon:'similar' },
   { id:'multimodal', label:'マルチスケールビューア',  labelEn:'Multiscale Viewer', icon:'embed' },
