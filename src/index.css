@@ -145,10 +145,22 @@ body{
 
 /* ─── Theme-aware scrollbar ───────────────────────────────
    Firefox: scrollbar-color on body; Webkit: pseudo-element rules. */
-[data-theme="light"] body,[data-theme="light"] *{scrollbar-color:#b8c4d0 #dde1e7}
-[data-theme="dark"]  body,[data-theme="dark"]  *{scrollbar-color:#2e3c52 #0c1018}
-[data-theme="eng"]   body,[data-theme="eng"]   *{scrollbar-color:#2e3c48 #141820}
-[data-theme="cae"]   body,[data-theme="cae"]   *{scrollbar-color:#2e2a1e #0a0c10}
+[data-theme="light"] body,
+[data-theme="light"] [class*="overflow-"],
+[data-theme="light"] pre,
+[data-theme="light"] textarea{scrollbar-color:#b8c4d0 #dde1e7}
+[data-theme="dark"]  body,
+[data-theme="dark"]  [class*="overflow-"],
+[data-theme="dark"]  pre,
+[data-theme="dark"]  textarea{scrollbar-color:#2e3c52 #0c1018}
+[data-theme="eng"]   body,
+[data-theme="eng"]   [class*="overflow-"],
+[data-theme="eng"]   pre,
+[data-theme="eng"]   textarea{scrollbar-color:#2e3c48 #141820}
+[data-theme="cae"]   body,
+[data-theme="cae"]   [class*="overflow-"],
+[data-theme="cae"]   pre,
+[data-theme="cae"]   textarea{scrollbar-color:#2e2a1e #0a0c10}
 
 [data-theme="light"] ::-webkit-scrollbar{width:8px;height:8px}
 [data-theme="light"] ::-webkit-scrollbar-track{background:#dde1e7}
