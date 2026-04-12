@@ -303,3 +303,18 @@ table { font-size: var(--table-fs); }
 /* カード内パディング (Tailwind p-3/p-4 を上書き) */
 [data-density="compact"] .density-card { padding-top: 8px !important; padding-bottom: 8px !important; }
 [data-density="relaxed"] .density-card { padding-top: 20px !important; padding-bottom: 20px !important; }
+
+/* カードビューの密度適用 */
+[data-density="compact"] .grid { gap: 8px; }
+[data-density="relaxed"] .grid { gap: 16px; }
+
+/* カード内パディング */
+[data-density="compact"] .bg-surface { padding: 8px; }
+
+/* リスト項目の密度 */
+[data-density="compact"] .sidebar-nav button { font-size: 12px; }
+[data-density="relaxed"] .sidebar-nav button { font-size: 14px; }
+
+/* ページ本文の基本フォントサイズ */
+[data-density="compact"] main { font-size: var(--body-fs, 12px); }
+[data-density="relaxed"] main { font-size: var(--body-fs, 14px); }

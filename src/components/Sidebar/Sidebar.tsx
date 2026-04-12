@@ -19,8 +19,8 @@ export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embS
   return (
     <nav className={`sidebar-nav flex-shrink-0 flex flex-col border-r border-[var(--border-faint)] overflow-y-auto overflow-x-hidden transition-all duration-[220ms] ${collapsed ? 'collapsed' : ''}`} style={{ background: 'var(--sidebar-bg)' }} aria-label="メインナビゲーション">
       <div className={`flex items-center border-b border-[var(--border-faint)] h-[42px] flex-shrink-0 ${collapsed ? 'justify-center px-0' : 'px-3 gap-2'}`}>
-        <Tooltip label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'} placement="right">
-          <button onClick={onToggle} aria-label={collapsed ? 'サイドバーを展開' : 'サイドバーを折り畳む'} className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded text-text-lo hover:bg-hover hover:text-text-hi transition-colors">
+        <Tooltip label={collapsed ? (isEn ? 'Expand sidebar' : 'サイドバーを展開') : (isEn ? 'Collapse sidebar' : 'サイドバーを折り畳む')} placement="right">
+          <button onClick={onToggle} aria-label={collapsed ? (isEn ? 'Expand sidebar' : 'サイドバーを展開') : (isEn ? 'Collapse sidebar' : 'サイドバーを折り畳む')} className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded text-text-lo hover:bg-hover hover:text-text-hi transition-colors">
             <Icon name={collapsed ? 'chevronRight' : 'chevronLeft'} size={14} />
           </button>
         </Tooltip>
@@ -70,10 +70,10 @@ export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embS
             )}
           </a>
         </Tooltip>
-        <Tooltip label={embStatus === 'ready' ? `Embedding ${embCount}件インデックス済み` : embStatus === 'fallback' ? 'キーワード検索モードで動作中' : embStatus === 'indexing' ? 'ベクトルインデックスを構築中...' : '検索エンジンを初期化中...'} placement="right">
+        <Tooltip label={embStatus === 'ready' ? (isEn ? `${embCount} items indexed` : `${embCount}件インデックス済み`) : embStatus === 'fallback' ? (isEn ? 'Keyword search active' : 'キーワード検索モード') : embStatus === 'indexing' ? (isEn ? 'Building index...' : 'インデックス構築中...') : (isEn ? 'Initializing...' : '初期化中...')} placement="right">
           <div className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-[12px] font-semibold cursor-default ${embStatus === 'ready' ? 'bg-vec-dim text-vec' : 'bg-raised text-text-lo'} ${collapsed ? 'justify-center px-0' : ''}`}>
             <Icon name="embed" size={12} className="flex-shrink-0" />
-            {!collapsed && <span className="truncate text-left">{embStatus === 'ready' ? `${embCount}件 Ready` : embStatus === 'fallback' ? 'キーワード検索' : '初期化中...'}</span>}
+            {!collapsed && <span className="truncate text-left">{embStatus === 'ready' ? (isEn ? `${embCount} Ready` : `${embCount}件 Ready`) : embStatus === 'fallback' ? (isEn ? 'Keyword' : 'キーワード検索') : (isEn ? 'Loading...' : '初期化中...')}</span>}
           </div>
         </Tooltip>
       </div>

@@ -200,8 +200,20 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   const allBatches = useMemo(() => [...new Set(db.map(r => r.batch))].sort(), [db]);
   const allProvenances = useMemo(() => [...new Set(db.map(r => r.provenance).filter(Boolean))] as string[], [db]);
 
+  const CAT_EN: Record<string, string> = {
+    '金属合金': 'Metal Alloy', 'セラミクス': 'Ceramics',
+    'ポリマー': 'Polymer', '複合材料': 'Composite',
+  };
+  const STATUS_EN: Record<string, string> = {
+    '登録済': 'Registered', 'レビュー待': 'Review Pending',
+    '承認済': 'Approved', '要修正': 'Needs Revision',
+  };
+  const catLabel = (cat: string) => t(cat, CAT_EN[cat] || cat);
+  const statusLabel = (status: string) => t(status, STATUS_EN[status] || status);
+
   const PROVENANCE_LABELS: Record<string, string> = {
-    instrument: '装置計測', manual: '手入力', ai: 'AI推定', simulation: 'シミュレーション',
+    instrument: t('装置計測', 'Instrument'), manual: t('手入力', 'Manual'),
+    ai: t('AI推定', 'AI Est.'), simulation: t('シミュレーション', 'Simulation'),
   };
 
   // ─── Filtering ─────────────────────────────────────────────────────────
@@ -264,8 +276,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
     (filters.hvMin || filters.hvMax) && { label: `HV:${filters.hvMin || '*'}〜${filters.hvMax || '*'}`, clear: () => { setF('hvMin', ''); setF('hvMax', ''); } },
     (filters.tsMin || filters.tsMax) && { label: `MPa:${filters.tsMin || '*'}〜${filters.tsMax || '*'}`, clear: () => { setF('tsMin', ''); setF('tsMax', ''); } },
     (filters.elMin || filters.elMax) && { label: `GPa:${filters.elMin || '*'}〜${filters.elMax || '*'}`, clear: () => { setF('elMin', ''); setF('elMax', ''); } },
-    (filters.dnMin || filters.dnMax) && { label: `密度:${filters.dnMin || '*'}〜${filters.dnMax || '*'}`, clear: () => { setF('dnMin', ''); setF('dnMax', ''); } },
-    filters.aiOnly && { label: 'AI検出のみ', clear: () => setF('aiOnly', false) },
+    (filters.dnMin || filters.dnMax) && { label: `${t('密度', 'Density')}:${filters.dnMin || '*'}〜${filters.dnMax || '*'}`, clear: () => { setF('dnMin', ''); setF('dnMax', ''); } },
+    filters.aiOnly && { label: t('AI検出のみ', 'AI-flagged only'), clear: () => setF('aiOnly', false) },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
   // ─── Saved queries ─────────────────────────────────────────────────────
@@ -300,7 +312,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
         onImport={(records) => {
           const existing = new Set(db.map(r => r.id));
           const fresh = records.filter(r => r.id && !existing.has(r.id));
-          if (fresh.length === 0) { addToast('取り込めるデータがありません（ID が既に存在します）', 'warn'); return; }
+          if (fresh.length === 0) { addToast(t('取り込めるデータがありません', 'No importable data (IDs already exist)'), 'warn'); return; }
           dispatch({ type: 'IMPORT', records: fresh });
           addToast(`${fresh.length}件を取り込みました`);
         }}
@@ -367,9 +379,11 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
           <div className="mt-2.5 pt-2.5 border-t border-[var(--border-faint)] flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <FacetGroup label={t('カテゴリ', 'Category')} options={['金属合金', 'セラミクス', 'ポリマー', '複合材料']}
-                selected={filters.cats} counts={facets.cats} onChange={v => setF('cats', v)} />
+                selected={filters.cats} counts={facets.cats} onChange={v => setF('cats', v)}
+                displayMap={Object.fromEntries(['金属合金','セラミクス','ポリマー','複合材料'].map(c => [c, catLabel(c)]))} />
               <FacetGroup label={t('ステータス', 'Status')} options={['登録済', 'レビュー待', '承認済', '要修正']}
-                selected={filters.statuses} counts={facets.statuses} onChange={v => setF('statuses', v)} />
+                selected={filters.statuses} counts={facets.statuses} onChange={v => setF('statuses', v)}
+                displayMap={Object.fromEntries(['登録済','レビュー待','承認済','要修正'].map(s => [s, statusLabel(s)]))} />
             </div>
             {allBatches.length > 0 && (
               <FacetGroup label={t('バッチ', 'Batch')} options={allBatches}
@@ -410,23 +424,27 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
           {selected.size > 0 && (
             <div className="flex items-center gap-2 ml-2">
               <span className="text-[12px] text-text-md">{selected.size}{t('件選択中', ' selected')}</span>
-              <Button variant="default" size="xs" onClick={() => { dispatch({ type: 'BULK_APPROVE', ids: selected }); setSelected(new Set()); addToast('一括承認しました'); }}>
+              <Button variant="default" size="xs" onClick={() => { dispatch({ type: 'BULK_APPROVE', ids: selected }); setSelected(new Set()); addToast(t('一括承認しました', 'Bulk approved')); }}>
                 <Icon name="check" size={11} />{t('承認', 'Approve')}
               </Button>
-              <Button variant="danger" size="xs" onClick={() => { dispatch({ type: 'BULK_DELETE', ids: selected }); setSelected(new Set()); addToast('削除しました'); }}>
+              <Button variant="danger" size="xs" onClick={() => { dispatch({ type: 'BULK_DELETE', ids: selected }); setSelected(new Set()); addToast(t('削除しました', 'Deleted')); }}>
                 <Icon name="trash" size={11} />{t('削除', 'Delete')}
               </Button>
             </div>
           )}
           <div className="ml-auto flex items-center gap-2">
-            <Select aria-label="並び順" value={sortKey} onChange={e => setSortKey(e.target.value)} className="text-[12px] py-1">
-              {[['id-desc', 'ID降順'], ['id-asc', 'ID昇順'], ['hv-desc', '硬度高'], ['hv-asc', '硬度低'], ['dt-desc', '日付新'], ['nm-asc', '名称']].map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            <Select aria-label={t('並び順', 'Sort order')} value={sortKey} onChange={e => setSortKey(e.target.value)} className="text-[12px] py-1">
+              {[[
+                'id-desc', t('ID降順', 'ID Desc')], ['id-asc', t('ID昇順', 'ID Asc')],
+                ['hv-desc', t('硬度高', 'HV High')], ['hv-asc', t('硬度低', 'HV Low')],
+                ['dt-desc', t('日付新', 'Newest')], ['nm-asc', t('名称', 'Name')]
+              ].map(([v, l]) => <option key={v} value={v}>{l}</option>)}
             </Select>
             <div className="flex bg-raised rounded-md border border-[var(--border-faint)] p-0.5">
               {([['table', 'list'], ['card', 'dashboard'], ['compact', 'sort']] as const).map(([mode, icon]) => (
                 <button key={mode} onClick={() => setViewMode(mode)}
                   className={`p-1.5 rounded transition-colors ${viewMode === mode ? 'bg-accent-dim text-accent' : 'text-text-lo hover:text-text-md'}`}
-                  title={mode === 'table' ? 'テーブル表示' : mode === 'card' ? 'カード表示' : 'コンパクト表示'}>
+                  title={mode === 'table' ? t('テーブル表示', 'Table view') : mode === 'card' ? t('カード表示', 'Card view') : t('コンパクト表示', 'Compact view')}>
                   <Icon name={icon} size={13} />
                 </button>
               ))}
@@ -460,17 +478,17 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                     <td onClick={e => e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} aria-label={`${r.name} を選択`} /></label></td>
                     <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] text-text-lo"><Hl text={r.id} query={filters.q} /></span></td>
                     <td className="px-3.5 py-2.5"><span className="font-semibold"><Hl text={r.name} query={filters.q} /></span></td>
-                    <td className="px-3.5 py-2.5"><Badge variant="gray">{r.cat}</Badge></td>
+                    <td className="px-3.5 py-2.5"><Badge variant="gray">{catLabel(r.cat)}</Badge></td>
                     <td className="px-3.5 py-2.5 font-mono">{r.hv.toLocaleString()}</td>
                     <td className="px-3.5 py-2.5"><span className="font-mono text-[12px] block truncate text-text-md"><Hl text={r.comp} query={filters.q} /></span></td>
                     <td className="px-3.5 py-2.5 text-[12px] text-text-lo">{r.date}</td>
-                    <td className="px-3.5 py-2.5"><Badge>{r.status}</Badge></td>
-                    <td className="px-3.5 py-2.5 text-center">{r.ai && <Badge variant="ai">検出</Badge>}</td>
+                    <td className="px-3.5 py-2.5"><Badge>{statusLabel(r.status)}</Badge></td>
+                    <td className="px-3.5 py-2.5 text-center">{r.ai && <Badge variant="ai">{t('検出', 'Detected')}</Badge>}</td>
                     <td className="px-3.5 py-2.5">
                       <div className="flex gap-1 justify-center" onClick={e => e.stopPropagation()}>
-                        <Tooltip label="詳細を見る" placement="top"><Button variant="default" size="xs" onClick={() => onDetail(r.id)} aria-label="詳細"><Icon name="info" size={11} /></Button></Tooltip>
-                        <Tooltip label="編集する" placement="top"><Button variant="default" size="xs" onClick={() => onNav('edit_' + r.id)} aria-label="編集"><Icon name="edit" size={11} /></Button></Tooltip>
-                        <Tooltip label="削除する" placement="top"><Button variant="danger" size="xs" onClick={() => setDeleteTarget(r.id)} aria-label="削除"><Icon name="trash" size={11} /></Button></Tooltip>
+                        <Tooltip label={t('詳細を見る', 'View details')} placement="top"><Button variant="default" size="xs" onClick={() => onDetail(r.id)} aria-label={t('詳細', 'Details')}><Icon name="info" size={11} /></Button></Tooltip>
+                        <Tooltip label={t('編集する', 'Edit')} placement="top"><Button variant="default" size="xs" onClick={() => onNav('edit_' + r.id)} aria-label={t('編集', 'Edit')}><Icon name="edit" size={11} /></Button></Tooltip>
+                        <Tooltip label={t('削除する', 'Delete')} placement="top"><Button variant="danger" size="xs" onClick={() => setDeleteTarget(r.id)} aria-label={t('削除', 'Delete')}><Icon name="trash" size={11} /></Button></Tooltip>
                       </div>
                     </td>
                   </tr>
@@ -495,8 +513,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <div className="text-[10px] font-mono text-text-lo"><Hl text={r.id} query={filters.q} /></div>
                   <div className="text-[13px] font-bold text-text-hi group-hover:text-accent transition-colors leading-tight"><Hl text={r.name} query={filters.q} /></div>
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                    <Badge variant="gray">{r.cat}</Badge>
-                    <Badge>{r.status}</Badge>
+                    <Badge variant="gray">{catLabel(r.cat)}</Badge>
+                    <Badge>{statusLabel(r.status)}</Badge>
                     {r.ai && <Badge variant="ai">AI</Badge>}
                   </div>
                   <div className="grid grid-cols-3 gap-1 mt-2 text-[10px]">
@@ -521,9 +539,9 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                 <MaterialVisual name={r.name} cat={r.cat} hv={r.hv} size={36} className="flex-shrink-0" />
                 <span className="font-mono text-[11px] text-text-lo w-16 flex-shrink-0"><Hl text={r.id} query={filters.q} /></span>
                 <span className="text-[13px] font-semibold text-text-hi group-hover:text-accent flex-1 truncate"><Hl text={r.name} query={filters.q} /></span>
-                <Badge variant="gray">{r.cat}</Badge>
+                <Badge variant="gray">{catLabel(r.cat)}</Badge>
                 <span className="font-mono text-[12px] text-text-md w-16 text-right flex-shrink-0">{r.hv.toLocaleString()} HV</span>
-                <Badge>{r.status}</Badge>
+                <Badge>{statusLabel(r.status)}</Badge>
                 {r.ai && <Badge variant="ai">AI</Badge>}
                 <Icon name="chevronRight" size={12} className="text-text-lo group-hover:text-accent flex-shrink-0" />
               </button>
@@ -544,8 +562,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
               return <Button key={p} variant={p === page ? 'primary' : 'default'} size="xs" onClick={() => setPage(p)}>{p}</Button>;
             })}
             <Button variant="default" size="xs" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages} aria-label="次のページ"><Icon name="chevronRight" size={10} /></Button>
-            <Select aria-label="1ページあたりの件数" value={pageSize} onChange={e => { setPageSize(parseInt(e.target.value)); setPage(1); }} className="text-[12px] py-1 ml-2">
-              {[10, 25, 50].map(n => <option key={n} value={n}>{n}件</option>)}
+            <Select aria-label={t('1ページあたりの件数', 'Items per page')} value={pageSize} onChange={e => { setPageSize(parseInt(e.target.value)); setPage(1); }} className="text-[12px] py-1 ml-2">
+              {[10, 25, 50].map(n => <option key={n} value={n}>{n}{t('件', ' items')}</option>)}
             </Select>
           </div>
         </div>
