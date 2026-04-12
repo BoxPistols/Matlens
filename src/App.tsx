@@ -3,6 +3,7 @@ import type { Toast, AppContextValue } from './types';
 import { AppCtx, dbReducer } from './context/AppContext';
 import { INITIAL_DB } from './data/initialDb';
 import { useTheme } from './hooks/useTheme';
+import { useDensity } from './hooks/useDensity';
 import { useEmbedding } from './hooks/useEmbedding';
 import { useAI } from './hooks/useAI';
 import { useVoice } from './hooks/useVoice';
@@ -80,6 +81,7 @@ export function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const { theme, setTheme } = useTheme();
+  const { density, setDensity } = useDensity();
   const embedding = useEmbedding(db);
   const ai = useAI();
   const claude = ai;
@@ -223,6 +225,7 @@ export function App() {
       <div className="flex flex-col h-screen overflow-hidden" style={{ background: 'var(--bg-base)' }}>
         <Topbar
           theme={theme} setTheme={setTheme}
+          density={density} setDensity={setDensity}
           onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
           embStatus={embedding.status} embCount={embedding.embCount} embEngine={embedding.engine}
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}

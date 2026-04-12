@@ -6,6 +6,8 @@ import { Topbar } from './Topbar';
 const defaultProps = {
   theme: 'light',
   setTheme: vi.fn(),
+  density: 'regular' as const,
+  setDensity: vi.fn(),
   onToggleSidebar: vi.fn(),
   embStatus: 'ready',
   embCount: 42,

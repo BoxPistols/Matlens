@@ -6,10 +6,13 @@ import type { Material } from '../../types';
 import { STORYBOOK_URL } from '../../data/constants';
 import { isComposing } from '../../utils/keyboard';
 import { formatSearchEngineLabel } from '../../utils/searchEngine';
+import { DENSITY_META, VALID_DENSITIES, type Density } from '../../hooks/useDensity';
 
 interface TopbarProps {
   theme: string;
   setTheme: (t: string) => void;
+  density: Density;
+  setDensity: (d: Density) => void;
   onToggleSidebar: () => void;
   embStatus: string;
   embCount: number;
@@ -23,7 +26,7 @@ interface TopbarProps {
   onOpenNotifications?: () => void;
 }
 
-export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail, unreadNotifications = 0, onOpenNotifications }: TopbarProps) => {
+export const Topbar = ({ theme, setTheme, density, setDensity, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail, unreadNotifications = 0, onOpenNotifications }: TopbarProps) => {
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
@@ -191,6 +194,22 @@ export const Topbar = ({ theme, setTheme, onToggleSidebar, embStatus, embCount, 
           </button>
         ))}
       </div>
+
+      {/* UI 密度トグル */}
+      <Tooltip label="UI 密度 (行間隔)" placement="bottom">
+        <div className="hidden lg:flex gap-0.5 bg-black/25 p-0.5 rounded-md border border-white/10 flex-shrink-0" role="group" aria-label="UI 密度切替">
+          {VALID_DENSITIES.map(d => (
+            <button
+              key={d}
+              onClick={() => setDensity(d)}
+              aria-pressed={density === d}
+              className={`px-1.5 py-1 rounded text-[11px] font-medium transition-all duration-150 font-ui ${density === d ? 'bg-white/18 text-white' : 'text-white/50 hover:text-white/80'}`}
+            >
+              {DENSITY_META[d].label}
+            </button>
+          ))}
+        </div>
+      </Tooltip>
       <Tooltip label={unreadNotifications > 0 ? `お知らせ (未読 ${unreadNotifications} 件)` : 'お知らせ'} placement="bottom">
         <button
           type="button"
