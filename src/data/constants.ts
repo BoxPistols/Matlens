@@ -90,6 +90,12 @@ export const HELP_TERMS: { id: string; term: string; en: string; cat: string; ca
   {id:'guide-similar',term:'類似材料探索',en:'Similar Materials',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'基準材料IDまたは名称を入力して類似材料をEmbedding類似度でランキング。AIが選定ポイントと使い分けをアドバイス。しきい値スライダーで候補絞り込み可能。詳細ページの「類似材料を探す」からも遷移可能。',related:'コサイン類似度'},
   {id:'guide-help',term:'ヘルプ・用語集',en:'Help & Glossary',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'このページです。専門用語解説、各ページの使い方ガイド、操作リファレンスを検索・閲覧できます。カテゴリタブで絞り込み、検索ボックスでキーワード検索が可能。',related:'FAQ'},
   {id:'guide-settings',term:'カテゴリ・バッチ管理',en:'Categories & Batches',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'登録データのカテゴリ別・ステータス別分布をプログレスバーで可視化。バッチ番号ごとのデータ件数、登録者ごとの担当件数も確認できます。データ管理状況の全体像把握に便利。',related:'材料データ一覧'},
+  {id:'guide-catalog',term:'材料カタログ（3D）',en:'Material Catalog (3D)',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'登録材料をビジュアルカード形式で一覧表示するページです。各材料は組成・カテゴリに応じた CSS/SVG ビジュアルで表現されます。クリックで詳細ページに遷移。テーブルよりも視覚的に材料の種類を把握したい場合に便利です。',related:'材料データ一覧、材料詳細'},
+  {id:'guide-crystal',term:'結晶構造 3D ビューア',en:'Crystal Structure 3D Viewer',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'BCC（体心立方）・FCC（面心立方）・HCP（六方最密充填）の結晶構造を 3D で表示し、格子歪みスライダーで変形を可視化できます。材料の結晶構造を直感的に理解するための教育・探索ツールです。',related:'材料カタログ、弾性率'},
+  {id:'guide-timeline',term:'加工タイムライン',en:'Process Timeline',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'材料の加工・試験履歴を時系列で可視化するページです。各工程のイベントをタイムライン上にプロットし、全体の進捗状況や所要時間を俯瞰できます。ペトリネットが「構造」を示すのに対し、タイムラインは「時間軸」を示します。',related:'試験フロー可視化、ペトリネット'},
+  {id:'guide-overlay',term:'予測 vs 実績オーバーレイ',en:'Prediction vs Actual',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'経験式やシミュレーションによる予測値と、実測データを同一グラフ上に重ねて表示するページです。予測精度の評価や、理論値からの逸脱（異常値）の検出に使用します。Hall-Petch 式の理論曲線と実データの比較などが可能です。',related:'経験式シミュレーション、ベイズ最適化'},
+  {id:'guide-multimodal',term:'マルチスケールビューア',en:'Multiscale Viewer',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'マクロスケール（部品形状）からミクロスケール（結晶組織）まで、複数の観察スケールを統合的に表示するビューアです。異なるスケール間の対応関係を視覚的に把握し、材料特性と微視構造の関連を探索できます。',related:'材料カタログ、NDE'},
+  {id:'guide-about',term:'技術スタック',en:'Tech Stack',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'Matlens を構成する技術の一覧です。フロントエンド（React + TypeScript + Vite）、AI/ML（AI SDK + TensorFlow.js）、データフォーマット（MaiML + PNML）、テスト（Vitest + Playwright）などの技術選定とプロジェクト構成を確認できます。',related:'ヘルプ・用語集'},
 ];
 
 export const FAQ_ITEMS: { q: string; a: string }[] = [
