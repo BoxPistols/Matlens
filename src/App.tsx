@@ -40,6 +40,7 @@ const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => (
 const PetriNetPage = lazy(() => import('./pages/PetriNet').then(m => ({ default: m.PetriNetPage })));
 const BayesianOptPage = lazy(() => import('./pages/BayesianOpt').then(m => ({ default: m.BayesianOptPage })));
 const SimulationPage = lazy(() => import('./pages/Simulation').then(m => ({ default: m.SimulationPage })));
+const Crystal3DPage = lazy(() => import('./pages/Crystal3D').then(m => ({ default: m.Crystal3DPage })));
 const ProcessTimelinePage = lazy(() => import('./pages/ProcessTimeline').then(m => ({ default: m.ProcessTimelinePage })));
 const OverlayPage = lazy(() => import('./pages/Overlay').then(m => ({ default: m.OverlayPage })));
 const MultiModalPage = lazy(() => import('./pages/MultiModal').then(m => ({ default: m.MultiModalPage })));
@@ -217,6 +218,7 @@ export function App() {
       case 'petri':   return lazyPage(<PetriNetPage onNav={navTo} />);
       case 'bayes':   return lazyPage(<BayesianOptPage db={db} />);
       case 'simulate':   return lazyPage(<SimulationPage />);
+      case 'crystal':    return lazyPage(<Crystal3DPage />);
       case 'timeline':   return lazyPage(<ProcessTimelinePage />);
       case 'overlay':    return lazyPage(<OverlayPage db={db} />);
       case 'multimodal': return lazyPage(<MultiModalPage db={db} />);
