@@ -26,7 +26,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.61",
+    "@ai-sdk/google": "^3.0.62",
     "@ai-sdk/openai": "^3.0.52",
     "@react-three/drei": "^9.117.3",
     "@react-three/fiber": "^8.17.14",
@@ -36,7 +36,7 @@
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.37.0",
     "@upstash/vector": "^1.2.3",
-    "ai": "^6.0.156",
+    "ai": "^6.0.158",
     "chart.js": "^4.4.0",
     "fuse.js": "^7.3.0",
     "isomorphic-dompurify": "^3.8.0",
