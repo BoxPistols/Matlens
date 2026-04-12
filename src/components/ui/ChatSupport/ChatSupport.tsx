@@ -8,7 +8,7 @@
 // localStorage so the user's preference survives page reloads and
 // story switches. When `closed`, only the FAB is visible.
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import type { StoryContext } from './chatSupportTypes'
 import { getStoryGuide } from './storyGuideMap'
 import { useChat } from './hooks/useChat'
@@ -22,6 +22,8 @@ import { ChatInput } from './components/ChatInput'
 import { ChatSettings } from './components/ChatSettings'
 import { ChatPanel } from './components/ChatPanel'
 import { ChatSidebar } from './components/ChatSidebar'
+import { DownloadPreviewModal } from '../../molecules/DownloadPreviewModal'
+import { downloadTextFile } from '../../../services/downloadFile'
 
 interface ChatSupportProps {
   currentStory: StoryContext | null
@@ -47,6 +49,24 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
   const chat = useChat()
   const [input, setInput] = useState('')
   const [showSettings, setShowSettings] = useState(false)
+  const [downloadPreviewOpen, setDownloadPreviewOpen] = useState(false)
+
+  // プレビュー表示用のエクスポートペイロードを memoize
+  // （モーダルが開いている間だけ生成して再計算を抑える）
+  const exportPayload = useMemo(
+    () => (downloadPreviewOpen ? chat.getExportPayload() : null),
+    [downloadPreviewOpen, chat],
+  )
+
+  const handleDownloadPreview = useCallback(() => {
+    setDownloadPreviewOpen(true)
+  }, [])
+
+  const handleConfirmDownload = useCallback(() => {
+    if (!exportPayload) return
+    downloadTextFile(exportPayload.content, exportPayload.filename, 'application/json')
+    setDownloadPreviewOpen(false)
+  }, [exportPayload])
 
   const message = useChatMessage({
     provider: config.provider,
@@ -114,7 +134,7 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
         layoutMode={config.layoutMode === 'sidebar' ? 'sidebar' : 'floating'}
         onToggleLayout={handleToggleLayout}
         onOpenSettings={() => setShowSettings(true)}
-        onDownload={chat.downloadMessages}
+        onDownload={handleDownloadPreview}
         onClear={chat.clearMessages}
         onClose={handleClose}
         showSettings={showSettings}
@@ -151,12 +171,12 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
     </>
   )
 
+  // 現在のレイアウトモードに対応する本体要素
+  let layoutEl: React.ReactNode
   if (config.layoutMode === 'closed') {
-    return <ChatFab onOpen={handleOpen} />
-  }
-
-  if (config.layoutMode === 'sidebar') {
-    return (
+    layoutEl = <ChatFab onOpen={handleOpen} />
+  } else if (config.layoutMode === 'sidebar') {
+    layoutEl = (
       <ChatSidebar
         width={config.sidebarWidth}
         onResizeStart={sidebarResize.handleSidebarResize}
@@ -164,14 +184,33 @@ export const ChatSupport = ({ currentStory }: ChatSupportProps) => {
         {body}
       </ChatSidebar>
     )
+  } else {
+    layoutEl = (
+      <ChatPanel
+        size={widgetResize.widgetSize}
+        onResizeStart={widgetResize.handleResizeStart}
+      >
+        {body}
+      </ChatPanel>
+    )
   }
 
   return (
-    <ChatPanel
-      size={widgetResize.widgetSize}
-      onResizeStart={widgetResize.handleResizeStart}
-    >
-      {body}
-    </ChatPanel>
+    <>
+      {layoutEl}
+      {/* 会話履歴ダウンロードはプレビューを挟んでから実行 */}
+      {exportPayload && (
+        <DownloadPreviewModal
+          open={downloadPreviewOpen}
+          onClose={() => setDownloadPreviewOpen(false)}
+          onConfirm={handleConfirmDownload}
+          title="会話履歴エクスポート プレビュー"
+          filename={exportPayload.filename}
+          content={exportPayload.content}
+          language="json"
+          description={`Storybook チャットの会話履歴を JSON でダウンロードします（${chat.messages.length} 件のメッセージ）。`}
+        />
+      )}
+    </>
   )
 }
