@@ -27,6 +27,7 @@ import type { AppContextValue } from '../../types'
 import {
   tokenReducer,
   isEnabled,
+  getDisabledReason,
   straightArcPath,
   reworkArcPath,
   PETRI_GEOMETRY,
@@ -147,9 +148,10 @@ interface TransitionNodeProps {
   transition: TransitionDef
   enabled: boolean
   onFire: () => void
+  onDisabledClick?: () => void
 }
 
-function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
+function TransitionNode({ transition, enabled, onFire, onDisabledClick }: TransitionNodeProps) {
   const [focused, setFocused] = useState(false)
   const isRework = transition.isRework
   const isReject = transition.isReject
@@ -165,10 +167,10 @@ function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
   const labelY = isRework ? -TRANS_H - 4 : TRANS_H + 12
 
   const handleKeyDown = (e: KeyboardEvent<SVGGElement>) => {
-    if (!enabled) return
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      onFire()
+      if (enabled) onFire()
+      else onDisabledClick?.()
     }
   }
 
@@ -180,13 +182,13 @@ function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
   return (
     <g
       transform={`translate(${transition.x},${transition.y})`}
-      onClick={enabled ? onFire : undefined}
-      onKeyDown={enabled ? handleKeyDown : undefined}
-      onFocus={enabled ? () => setFocused(true) : undefined}
+      onClick={enabled ? onFire : onDisabledClick}
+      onKeyDown={handleKeyDown}
+      onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
-      tabIndex={enabled ? 0 : undefined}
-      style={{ cursor: enabled ? 'pointer' : 'default', outline: 'none' }}
-      role={enabled ? 'button' : undefined}
+      tabIndex={0}
+      style={{ cursor: enabled ? 'pointer' : 'not-allowed', outline: 'none' }}
+      role="button"
       aria-label={ariaLabel}
       aria-disabled={!enabled}
     >
@@ -293,7 +295,7 @@ interface PetriNetPageProps {
 }
 
 export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
-  const { t } = useContext(AppCtx) as AppContextValue
+  const { t, addToast } = useContext(AppCtx) as AppContextValue
   const [tokens, dispatch] = useReducer(tokenReducer, { ...INITIAL_TOKENS })
   const [history, setHistory] = useState<string[]>([])
   // Undo 用の過去状態スタック。UI レベルの「1 手戻る」用で、
@@ -497,12 +499,16 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
           ))}
 
           {/* Transition ノード */}
-          {net.transitions.map(t => (
+          {net.transitions.map(tr => (
             <TransitionNode
-              key={t.id}
-              transition={t}
-              enabled={isEnabled(t, tokens, net.places)}
-              onFire={() => handleFire(t)}
+              key={tr.id}
+              transition={tr}
+              enabled={isEnabled(tr, tokens, net.places)}
+              onFire={() => handleFire(tr)}
+              onDisabledClick={() => {
+                const reason = getDisabledReason(tr, tokens, net.places)
+                addToast(`${tr.label}: ${reason}`, 'warn')
+              }}
             />
           ))}
 

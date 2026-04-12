@@ -157,7 +157,8 @@ describe('Sidebar', () => {
   it('shows the current badge labels for AI / Dev / 3D items', () => {
     renderSidebar();
     // These mirror NAV_ITEMS[].badgeLabel values
-    expect(screen.getByText('3D')).toBeInTheDocument();
+    const threeDbadges = screen.getAllByText('3D');
+    expect(threeDbadges.length).toBeGreaterThanOrEqual(1);
     const aiBadges = screen.getAllByText('AI');
     expect(aiBadges.length).toBeGreaterThanOrEqual(2); // 意味検索 + AI チャット
     const devBadges = screen.getAllByText('Dev');

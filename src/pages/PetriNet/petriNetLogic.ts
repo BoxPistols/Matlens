@@ -108,6 +108,30 @@ export function isEnabled(
 }
 
 /**
+ * 無効トランジションの理由を人間向けテキストで返す。
+ * 入力トークン不足 → capacity 超過 の順で最初に見つかった原因を返す。
+ */
+export function getDisabledReason(
+  t: TransitionDef,
+  tokens: TokenState,
+  places: readonly PlaceDef[],
+): string {
+  for (const pid of t.inputs) {
+    if ((tokens[pid] ?? 0) <= 0) {
+      const place = places.find(p => p.id === pid)
+      return `${place?.label ?? pid} にトークンがありません`
+    }
+  }
+  for (const outPid of new Set(t.outputs)) {
+    const place = places.find(p => p.id === outPid)
+    if (place?.capacity && (tokens[outPid] ?? 0) >= place.capacity) {
+      return `${place.label} が容量上限 (${place.capacity}) です`
+    }
+  }
+  return '発火条件を満たしていません'
+}
+
+/**
  * 2 ノード間の直線弧パス (M...L...) を計算する。
  * ノード境界（Place: 円、Transition: 矩形）を考慮して開始・終了点を調整する。
  *
