@@ -686,7 +686,7 @@ function MaterialCombobox({ db, value, onChange }: {
                 {items.map(m => (
                   <button key={m.id} onClick={() => { onChange(m.id); setOpen(false); setQ('') }}
                     className={`w-full px-3 py-1.5 text-left text-[12px] hover:bg-hover flex items-center gap-2 ${m.id === value ? 'bg-accent-dim' : ''}`}>
-                    <span className="font-mono text-text-lo text-[10px] w-[74px] flex-shrink-0">{m.id}</span>
+                    <span className="text-text-lo text-[10px] tabular-nums w-[74px] flex-shrink-0">{m.id}</span>
                     <span className="flex-1 truncate">{m.name}</span>
                     {m.id === value && <Icon name="check" size={10} className="text-accent" />}
                   </button>
@@ -797,7 +797,7 @@ export const MultiModalPage = ({ db }: MultiModalPageProps) => {
               ].map(([k,v]) => (
                 <div key={k} className="flex justify-between">
                   <span className="text-text-lo">{k}</span>
-                  <span className="font-semibold truncate max-w-[130px] font-mono text-[11px]">{v}</span>
+                  <span className="font-semibold truncate max-w-[130px] tabular-nums text-[11px]">{v}</span>
                 </div>
               ))}
             </div>

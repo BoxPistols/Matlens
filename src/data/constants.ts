@@ -598,11 +598,11 @@ export const PAGE_GUIDES: PageGuide[] = [
     ],
     tips: [
       'NDE（非破壊評価）の結果と組み合わせると効果的',
-      '現在はデモ用の構造表示。実画像データとの連携は今後の検討課題',
+      '材料名から結晶構造を自動推定し、マクロ→ミクロ→ナノの模式図を生成。実画像との連携は今後の検討課題',
     ],
     tipsEn: [
       'Effective when combined with NDE results',
-      'Currently demo structure. Real image data integration is a future consideration',
+      'Crystal structure auto-detected from material name. Macro→Micro→Nano schematics generated. Real image integration is a future consideration',
     ],
     related: ['crystal', 'detail'],
   },
