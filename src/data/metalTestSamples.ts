@@ -1,0 +1,173 @@
+/**
+ * 金属試験ドメイン想定のサンプルデータ — Phase A モックデータ刷新
+ *
+ * IIC-HQ 的な試験ラボで扱う金属材料の特性値を再現。
+ * 拡張フィールド (provenance / microstructure / testMethod) の使用例を含む。
+ *
+ * 既存 INITIAL_DB (68 件) と共存する。App.tsx で結合して使用。
+ */
+
+import type { Material } from '../types'
+
+export const METAL_TEST_SAMPLES: Material[] = [
+  {
+    id: 'MT-0001', name: 'SUS304 冷延鋼板', cat: '金属合金',
+    hv: 187, ts: 520, el: 193, pf: 240, el2: 40, dn: 7.93,
+    comp: 'Fe-18Cr-8Ni', batch: 'MT-B001', date: '2026-03-15', author: '試験員A',
+    status: '承認済', ai: false,
+    memo: 'JIS G 4305 準拠。L 方向引張試験。',
+    provenance: 'instrument', microstructure: 'オーステナイト単相', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0002', name: 'SUS316L 板材', cat: '金属合金',
+    hv: 170, ts: 485, el: 193, pf: 210, el2: 45, dn: 7.98,
+    comp: 'Fe-17Cr-12Ni-2.5Mo', batch: 'MT-B001', date: '2026-03-15', author: '試験員A',
+    status: '承認済', ai: false,
+    memo: '耐食性評価用。モリブデン添加による耐孔食性。',
+    provenance: 'instrument', microstructure: 'オーステナイト + δフェライト微量', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0003', name: 'Ti-6Al-4V 鍛造材', cat: '金属合金',
+    hv: 349, ts: 950, el: 114, pf: 510, el2: 14, dn: 4.43,
+    comp: 'Ti-6Al-4V', batch: 'MT-B002', date: '2026-03-18', author: '試験員B',
+    status: '承認済', ai: false,
+    memo: '航空機構造材。β 焼鈍後 STA 処理。',
+    provenance: 'instrument', microstructure: 'α+β 二相組織 (等軸 α + 変態 β)', testMethod: 'ASTM E8',
+  },
+  {
+    id: 'MT-0004', name: 'Inconel 718 鍛造材', cat: '金属合金',
+    hv: 420, ts: 1240, el: 211, pf: 680, el2: 12, dn: 8.19,
+    comp: 'Ni-19Cr-18Fe-5Nb-3Mo', batch: 'MT-B003', date: '2026-03-20', author: '試験員B',
+    status: '承認済', ai: false,
+    memo: 'ガスタービン用。γ" 強化型 Ni 基超合金。クリープ試験予定。',
+    provenance: 'instrument', microstructure: 'γ マトリックス + γ"(Ni3Nb) 析出', testMethod: 'ASTM E21',
+  },
+  {
+    id: 'MT-0005', name: 'A7075-T6 アルミ合金', cat: '金属合金',
+    hv: 175, ts: 572, el: 72, pf: 159, el2: 11, dn: 2.81,
+    comp: 'Al-5.6Zn-2.5Mg-1.6Cu', batch: 'MT-B004', date: '2026-03-22', author: '試験員C',
+    status: 'レビュー待', ai: false,
+    memo: '超々ジュラルミン。SCC 感受性に注意。',
+    provenance: 'instrument', microstructure: 'GP ゾーン + η\' 析出相', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0006', name: 'SCM440 焼入焼戻', cat: '金属合金',
+    hv: 320, ts: 980, el: 206, pf: 490, el2: 15, dn: 7.85,
+    comp: 'Fe-0.4C-1Cr-0.2Mo', batch: 'MT-B005', date: '2026-03-25', author: '試験員A',
+    status: '承認済', ai: false,
+    memo: '機械構造用合金鋼。焼入温度 860℃ 油冷 + 580℃ 焼戻。',
+    provenance: 'instrument', microstructure: '焼戻マルテンサイト', testMethod: 'JIS Z 2243',
+  },
+  {
+    id: 'MT-0007', name: 'S45C 調質材', cat: '金属合金',
+    hv: 240, ts: 690, el: 206, pf: 340, el2: 20, dn: 7.85,
+    comp: 'Fe-0.45C-0.7Mn', batch: 'MT-B005', date: '2026-03-25', author: '試験員A',
+    status: '承認済', ai: false,
+    memo: '機械構造用炭素鋼。汎用性高い。',
+    provenance: 'instrument', microstructure: 'フェライト + パーライト', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0008', name: 'Cu-Be (C17200) 時効硬化', cat: '金属合金',
+    hv: 380, ts: 1280, el: 131, pf: null, el2: 2, dn: 8.25,
+    comp: 'Cu-1.9Be-0.2Co', batch: 'MT-B006', date: '2026-03-28', author: '試験員C',
+    status: '要修正', ai: false,
+    memo: 'バネ材。導電率 22% IACS。疲労データ未取得。',
+    provenance: 'instrument', microstructure: 'γ\' (CuBe) 析出', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0009', name: 'Hastelloy X 板材', cat: '金属合金',
+    hv: 230, ts: 785, el: 205, pf: null, el2: 43, dn: 8.22,
+    comp: 'Ni-22Cr-18Fe-9Mo', batch: 'MT-B007', date: '2026-04-01', author: '試験員B',
+    status: '登録済', ai: false,
+    memo: '高温耐酸化性に優れる Ni 基合金。燃焼器部品用。',
+    provenance: 'instrument', microstructure: 'γ 固溶体 + M6C 炭化物', testMethod: 'ASTM E21',
+  },
+  {
+    id: 'MT-0010', name: 'SUS430 フェライト系', cat: '金属合金',
+    hv: 160, ts: 450, el: 200, pf: null, el2: 25, dn: 7.70,
+    comp: 'Fe-17Cr', batch: 'MT-B008', date: '2026-04-02', author: '試験員A',
+    status: '承認済', ai: false,
+    memo: 'フェライト系ステンレス。磁性あり。',
+    provenance: 'instrument', microstructure: 'フェライト単相', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0011', name: 'A2024-T3 アルミ合金', cat: '金属合金',
+    hv: 137, ts: 483, el: 73, pf: 138, el2: 18, dn: 2.78,
+    comp: 'Al-4.4Cu-1.5Mg-0.6Mn', batch: 'MT-B009', date: '2026-04-03', author: '試験員C',
+    status: '承認済', ai: false,
+    memo: 'ジュラルミン。航空機外板。',
+    provenance: 'instrument', microstructure: 'S\' (Al2CuMg) 析出', testMethod: 'ASTM E8',
+  },
+  {
+    id: 'MT-0012', name: 'SKD61 金型鋼', cat: '金属合金',
+    hv: 510, ts: 1580, el: 215, pf: null, el2: 8, dn: 7.76,
+    comp: 'Fe-0.4C-5Cr-1.3Mo-1V', batch: 'MT-B010', date: '2026-04-05', author: '試験員A',
+    status: '承認済', ai: false,
+    memo: '熱間金型鋼。ヒートチェック耐性評価中。',
+    provenance: 'instrument', microstructure: '焼戻マルテンサイト + MC/M7C3 炭化物', testMethod: 'JIS Z 2244',
+  },
+  {
+    id: 'MT-0013', name: 'C1020 無酸素銅', cat: '金属合金',
+    hv: 50, ts: 220, el: 117, pf: null, el2: 50, dn: 8.94,
+    comp: 'Cu-99.96', batch: 'MT-B011', date: '2026-04-06', author: '試験員C',
+    status: '登録済', ai: false,
+    memo: '高純度銅。電子部品用。導電率 101% IACS。',
+    provenance: 'instrument', microstructure: '再結晶粒', testMethod: 'JIS Z 2241',
+  },
+  {
+    id: 'MT-0014', name: 'Waspaloy 鍛造ディスク', cat: '金属合金',
+    hv: 370, ts: 1100, el: 215, pf: 560, el2: 14, dn: 8.19,
+    comp: 'Ni-19Cr-13Co-4Mo-3Ti-1.4Al', batch: 'MT-B012', date: '2026-04-07', author: '試験員B',
+    status: 'レビュー待', ai: false,
+    memo: 'ジェットエンジンタービンディスク。700℃クリープ試験進行中。',
+    provenance: 'instrument', microstructure: 'γ\' (Ni3(Al,Ti)) 析出強化', testMethod: 'ASTM E139',
+  },
+  {
+    id: 'MT-0015', name: 'Mg-AZ91D ダイカスト', cat: '金属合金',
+    hv: 63, ts: 230, el: 45, pf: null, el2: 3, dn: 1.81,
+    comp: 'Mg-9Al-0.7Zn', batch: 'MT-B013', date: '2026-04-08', author: '試験員C',
+    status: '登録済', ai: false,
+    memo: 'マグネシウム合金。軽量部品。腐食対策必須。',
+    provenance: 'instrument', microstructure: 'α-Mg + β-Mg17Al12', testMethod: 'ASTM B557M',
+  },
+  {
+    id: 'MT-0016', name: 'SUS304 — AI 物性推定', cat: '金属合金',
+    hv: 190, ts: 530, el: 195, pf: 245, el2: 38, dn: 7.93,
+    comp: 'Fe-18Cr-8Ni (推定)', batch: 'AI-B001', date: '2026-04-09', author: 'AI推定',
+    status: '要修正', ai: true,
+    memo: '組成から Hall-Petch 式で推定した参考値。検証未了。',
+    provenance: 'ai', testMethod: '(推定値 — 未試験)',
+  },
+  {
+    id: 'MT-0017', name: '熱処理シミュレーション — S45C', cat: '金属合金',
+    hv: 580, ts: 1800, el: 210, pf: null, el2: 5, dn: 7.85,
+    comp: 'Fe-0.45C-0.7Mn', batch: 'SIM-B001', date: '2026-04-10', author: 'シミュレーション',
+    status: '登録済', ai: true,
+    memo: '水焼入の JMAK シミュレーション結果。マルテンサイト 100% 想定。実測で検証要。',
+    provenance: 'simulation', microstructure: 'マルテンサイト (シミュレーション)', testMethod: '(シミュレーション)',
+  },
+  {
+    id: 'MT-0018', name: 'SUS316L 溶接部 HAZ', cat: '金属合金',
+    hv: 195, ts: 510, el: 193, pf: null, el2: 35, dn: 7.98,
+    comp: 'Fe-17Cr-12Ni-2.5Mo (HAZ)', batch: 'MT-B014', date: '2026-04-10', author: '試験員A',
+    status: '登録済', ai: false,
+    memo: 'TIG 溶接 HAZ 部の特性。母材比 TS -5%。鋭敏化の兆候なし。',
+    provenance: 'instrument', microstructure: 'オーステナイト + δフェライト増加', testMethod: 'JIS Z 3121',
+  },
+  {
+    id: 'MT-0019', name: '手入力 — 文献値 A7075', cat: '金属合金',
+    hv: 180, ts: 580, el: 72, pf: 160, el2: 10, dn: 2.81,
+    comp: 'Al-5.6Zn-2.5Mg-1.6Cu', batch: 'LIT-B001', date: '2026-04-11', author: '研究員X',
+    status: '登録済', ai: false,
+    memo: '文献値。ASM Handbook Vol.2 より転記。',
+    provenance: 'manual', testMethod: '(文献値)',
+  },
+  {
+    id: 'MT-0020', name: 'Inconel 625 肉盛溶接', cat: '金属合金',
+    hv: 260, ts: 830, el: 205, pf: null, el2: 30, dn: 8.44,
+    comp: 'Ni-22Cr-9Mo-3.5Nb', batch: 'MT-B015', date: '2026-04-12', author: '試験員B',
+    status: 'レビュー待', ai: false,
+    memo: '耐食肉盛。CMT 溶接法。希釈率 5% 以下確認済。',
+    provenance: 'instrument', microstructure: 'デンドライト (柱状晶)', testMethod: 'AWS D1.6',
+  },
+]

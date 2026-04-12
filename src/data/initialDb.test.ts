@@ -24,8 +24,8 @@ describe('INITIAL_DB', () => {
     }
   });
 
-  it('all IDs match the MAT-XXXX pattern', () => {
-    const pattern = /^MAT-\d{4}$/;
+  it('all IDs match the MAT-XXXX or MT-XXXX pattern', () => {
+    const pattern = /^(MAT-\d{4}|MT-\d{4})$/;
     for (const record of INITIAL_DB) {
       expect(record.id).toMatch(pattern);
     }
@@ -78,14 +78,14 @@ describe('getNextId', () => {
     expect(id).toMatch(/^MAT-0\d+$/);
   });
 
-  it('returns an id beyond the last INITIAL_DB record', () => {
-    // getNextId is seeded one past the last seed row; the exact number
-    // drifts as we add more samples, so assert the invariant rather than
-    // a hard-coded value.
+  it('returns an id beyond the last MAT-XXXX record', () => {
+    // getNextId is seeded one past the last MAT-prefixed seed row.
+    // MT-XXXX (金属試験サンプル) は別系統なので比較対象外。
     const next = getNextId();
     const nextNum = parseInt(next.replace('MAT-0', ''), 10);
+    const matRecords = INITIAL_DB.filter(r => r.id.startsWith('MAT-'));
     const maxSeedNum = Math.max(
-      ...INITIAL_DB.map(r => parseInt(r.id.replace('MAT-0', ''), 10))
+      ...matRecords.map(r => parseInt(r.id.replace('MAT-0', ''), 10))
     );
     expect(nextNum).toBeGreaterThan(maxSeedNum);
   });
