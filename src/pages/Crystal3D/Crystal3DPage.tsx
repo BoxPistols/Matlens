@@ -105,6 +105,30 @@ function getCellEdges(m: MatDef): Edge[] {
 
 // ─── Three.js Components ──────────────────────────────────────
 
+// 引張/圧縮方向を示す矢印 (Z軸上下)
+function StrainArrows({ strain, halfZ }: { strain: number; halfZ: number }) {
+  if (strain === 0) return null
+  const isTension = strain > 0
+  const col = isTension ? '#ff6060' : '#4499ff'
+  const r = 0.18, h = 0.55, gap = 0.7
+  const zPos = halfZ + gap + h / 2
+  // tension: top→+Z out, bottom→-Z out  /  compression: top→-Z in, bottom→+Z in
+  const topRot: [number, number, number] = isTension ? [-Math.PI / 2, 0, 0] : [Math.PI / 2, 0, 0]
+  const botRot: [number, number, number] = isTension ? [Math.PI / 2, 0, 0] : [-Math.PI / 2, 0, 0]
+  return (
+    <group>
+      <mesh position={[0, 0, zPos]} rotation={topRot}>
+        <coneGeometry args={[r, h, 10]} />
+        <meshStandardMaterial color={col} emissive={col} emissiveIntensity={0.7} />
+      </mesh>
+      <mesh position={[0, 0, -zPos]} rotation={botRot}>
+        <coneGeometry args={[r, h, 10]} />
+        <meshStandardMaterial color={col} emissive={col} emissiveIntensity={0.7} />
+      </mesh>
+    </group>
+  )
+}
+
 function Atom({ pos, color }: { pos:[number,number,number]; color:string }) {
   return (
     <mesh position={pos}>
@@ -160,14 +184,26 @@ function Scene({ m, strain }: { m:MatDef; strain:number }) {
     return [s[0]/atoms.length, s[1]/atoms.length, s[2]/atoms.length]
   }, [atoms])
 
+  // セル中心から最遠原子の Z 距離 (矢印配置用)
+  const halfZ = useMemo(() => {
+    if (!atoms.length) return 3
+    const zs = atoms.map(p => p[2])
+    const mean = zs.reduce((a, b) => a + b, 0) / zs.length
+    return Math.max(...zs.map(z => Math.abs(z - mean))) + 0.25
+  }, [atoms])
+
   const offset: [number,number,number] = [-center[0],-center[1],-center[2]]
 
   return (
-    <group position={offset}>
-      {atoms.map((p,i) => <Atom key={i} pos={p} color={m.color} />)}
-      <BondMesh segs={bondSegs} color={m.color} />
-      <CellOutline edges={edges} color="#e8a000" />
-    </group>
+    <>
+      <group position={offset}>
+        {atoms.map((p,i) => <Atom key={i} pos={p} color={m.color} />)}
+        <BondMesh segs={bondSegs} color={m.color} />
+        <CellOutline edges={edges} color="#e8a000" />
+      </group>
+      {/* 一軸ひずみ方向矢印 (引張=赤, 圧縮=青) */}
+      <StrainArrows strain={strain} halfZ={halfZ} />
+    </>
   )
 }
 
@@ -390,12 +426,12 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
           </span>
         </div>
         <input
-          type="range" min={-10} max={10} step={0.5} value={strain}
+          type="range" min={-30} max={30} step={1} value={strain}
           onChange={e => onStrain(Number(e.target.value))}
           style={{ width:'100%', accentColor:strain>0?C.red:strain<0?C.blue:C.med, marginBottom:6 }}
         />
         <div style={{ display:'flex', justifyContent:'space-between', fontFamily:MONO, fontSize:12, color:C.dim }}>
-          <span>−10%</span>
+          <span>−30%</span>
           <button
             onClick={() => onStrain(0)}
             style={{ background:'none', border:'none', color:C.med, cursor:'pointer',
@@ -403,7 +439,7 @@ function InstrumentPanel({ mat, strain, selId, onSelect, onStrain }: {
           >
             ZERO
           </button>
-          <span>+10%</span>
+          <span>+30%</span>
         </div>
       </div>
 
@@ -455,7 +491,7 @@ function CanvasHUD({ mat, strain }: { mat:MatDef; strain:number }) {
     {/* Bottom-left: live lattice */}
     <div style={{ ...hud, bottom:30, left:14, fontSize:12, color:C.bright, lineHeight:2 }}>
       <div>a = {aEff} Å</div>
-      {mat.structure==='HCP' && <div>c = {cEff} Å</div>}
+      {(mat.structure==='HCP' || strain !== 0) && <div>c = {cEff} Å</div>}
     </div>
 
     {/* Bottom-center: controls */}
@@ -505,7 +541,7 @@ export function Crystal3DPage() {
           <Suspense fallback={null}>
             <Scene m={mat} strain={strain} />
           </Suspense>
-          <OrbitControls autoRotate autoRotateSpeed={0.5} enableDamping dampingFactor={0.07} />
+          <OrbitControls autoRotate autoRotateSpeed={0.3} enableDamping dampingFactor={0.07} />
         </Canvas>
         <CanvasHUD mat={mat} strain={strain} />
       </div>
