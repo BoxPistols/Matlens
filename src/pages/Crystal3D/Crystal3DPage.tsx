@@ -1,4 +1,3 @@
-/// <reference types="@react-three/fiber" />
 /**
  * 結晶構造 3D ビューア (PoC / モックデータ)
  * Three.js + @react-three/fiber で BCC / FCC / HCP 原子配置をインタラクティブ可視化。
