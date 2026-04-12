@@ -113,11 +113,7 @@ export const METAL_TEST_WORKFLOW: PetriNetDef = {
   ],
 }
 
-export const ALL_PLACE_IDS: PlaceId[] = [
-  'p0','p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','p11',
-]
-
-export const INITIAL_TOKENS: Record<PlaceId, number> = {
+export const INITIAL_TOKENS: Readonly<Record<PlaceId, number>> = {
   p0: 1, p1: 0, p2: 0, p3: 0, p4: 0,
   p5: 0, p6: 0, p7: 0, p8: 0, p9: 0,
   p10: 0, p11: 0,

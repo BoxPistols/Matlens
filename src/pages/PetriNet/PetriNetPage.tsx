@@ -20,21 +20,20 @@ import {
   type TransitionDef,
 } from '../../data/metalTestWorkflow'
 import { exportPnml, downloadPnml } from '../../services/pnml'
+import { DownloadPreviewModal } from '../../components/molecules'
 import {
   tokenReducer,
   isEnabled,
   straightArcPath,
   reworkArcPath,
+  PETRI_GEOMETRY,
   type TokenState,
 } from './petriNetLogic'
 
 const UNDO_MAX = 20
 
 // ─── 定数 ──────────────────────────────────────────────────────────────────
-const PLACE_R  = 22   // Place 半径 (px)
-const TRANS_W  = 14   // Transition 半幅
-const TRANS_H  = 26   // Transition 半高
-const TOKEN_R  = 5    // トークンドット半径
+const { placeR: PLACE_R, transW: TRANS_W, transH: TRANS_H, tokenR: TOKEN_R } = PETRI_GEOMETRY
 const SVG_W    = 760
 const SVG_H    = 430
 const LABEL_OFFSET = 32  // ノード中心からラベルまでの距離
@@ -116,6 +115,7 @@ interface TransitionNodeProps {
 }
 
 function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
+  const [focused, setFocused] = useState(false)
   const isRework = transition.isRework
   const isReject = transition.isReject
 
@@ -137,17 +137,39 @@ function TransitionNode({ transition, enabled, onFire }: TransitionNodeProps) {
     }
   }
 
+  // disabled 時も aria-label を出す（screen reader が全トランジションを認識できるように）
+  const ariaLabel = enabled
+    ? `${transition.label}を実行`
+    : `${transition.label}（現在発火できません）`
+
   return (
     <g
       transform={`translate(${transition.x},${transition.y})`}
       onClick={enabled ? onFire : undefined}
       onKeyDown={enabled ? handleKeyDown : undefined}
+      onFocus={enabled ? () => setFocused(true) : undefined}
+      onBlur={() => setFocused(false)}
       tabIndex={enabled ? 0 : undefined}
       style={{ cursor: enabled ? 'pointer' : 'default', outline: 'none' }}
       role={enabled ? 'button' : undefined}
-      aria-label={enabled ? `${transition.label}を実行` : undefined}
+      aria-label={ariaLabel}
       aria-disabled={!enabled}
     >
+      {/* フォーカスリング（WCAG 2.4.7 Focus Visible）— ブラウザデフォルトの outline を
+          隠す代わりに独自リングを描画して、キーボードユーザーに現在位置を明示する */}
+      {focused && (
+        <rect
+          x={-TRANS_W - 4}
+          y={-TRANS_H - 4}
+          width={TRANS_W * 2 + 8}
+          height={TRANS_H * 2 + 8}
+          rx={4}
+          fill="none"
+          stroke="var(--border-focus)"
+          strokeWidth={2}
+          strokeDasharray="3,2"
+        />
+      )}
       <rect
         x={-TRANS_W}
         y={-TRANS_H}
@@ -215,6 +237,8 @@ export const PetriNetPage = () => {
   // Undo 用の過去状態スタック。UI レベルの「1 手戻る」用で、
   // ペトリネット本来の順方向発火とは独立した巻き戻し機能。
   const [undoStack, setUndoStack] = useState<TokenState[]>([])
+  // ダウンロードプレビューモーダルの開閉
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   const net = METAL_TEST_WORKFLOW
 
@@ -255,9 +279,8 @@ export const PetriNetPage = () => {
   }
 
   const handleFire = (t: TransitionDef) => {
-    // 呼出側（TransitionNode の enabled ガード）で発火可能性は保証されているが
-    // ロジック破損時の安全のため二重チェック。
-    if (!isEnabled(t, tokens, net.places)) return
+    // 親コンポーネントで TransitionNode の enabled prop を計算済みのため、
+    // ここでの二重チェックは不要（onClick は enabled のときだけ呼ばれる）。
     pushUndo()
     dispatch({ type: 'fire', transition: t })
     setHistory(prev => [`${t.label} (${t.id}) 発火`, ...prev.slice(0, 19)])
@@ -284,9 +307,20 @@ export const PetriNetPage = () => {
     setUndoStack([])
   }
 
+  // 「PNML」ボタン: プレビューモーダルを開く（ダウンロードはユーザー確認後）
   const handleExport = () => {
-    const xml = exportPnml(net, tokens)
-    downloadPnml(xml, 'metal-test-workflow.pnml')
+    setPreviewOpen(true)
+  }
+
+  // プレビューの PNML 内容を memoize（モーダル開閉のたびに再計算させない）
+  const previewXml = useMemo(
+    () => (previewOpen ? exportPnml(net, tokens) : ''),
+    [previewOpen, net, tokens],
+  )
+
+  const handleDownloadConfirm = () => {
+    downloadPnml(previewXml, 'metal-test-workflow.pnml')
+    setPreviewOpen(false)
   }
 
   const enabledCount = net.transitions.filter(t => isEnabled(t, tokens, net.places)).length
@@ -470,6 +504,18 @@ export const PetriNetPage = () => {
           合流/分岐も一つのモデルで記述できる。PNML エクスポートで PIPE・GreatSPN などの解析ツールと連携可能。
         </p>
       </Card>
+
+      {/* PNML ダウンロードプレビュー */}
+      <DownloadPreviewModal
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        onConfirm={handleDownloadConfirm}
+        title="PNML エクスポート プレビュー"
+        filename="metal-test-workflow.pnml"
+        content={previewXml}
+        language="xml"
+        description="ISO/IEC 15909-2 準拠の PNML XML。PIPE・GreatSPN・CPN Tools などの外部解析ツールで読み込めます。現在のトークン配置が initialMarking として含まれます。"
+      />
     </div>
   )
 }

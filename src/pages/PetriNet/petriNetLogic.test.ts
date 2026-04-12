@@ -4,6 +4,7 @@ import {
   isEnabled,
   straightArcPath,
   reworkArcPath,
+  PETRI_GEOMETRY,
   type TokenState,
 } from './petriNetLogic'
 import {
@@ -11,6 +12,9 @@ import {
   INITIAL_TOKENS,
   type TransitionDef,
 } from '../../data/metalTestWorkflow'
+
+// 定数はロジック層から取得して重複を避ける
+const { placeR: PLACE_R, transW: TW, transH: TH } = PETRI_GEOMETRY
 
 const net = METAL_TEST_WORKFLOW
 const t = (id: string): TransitionDef => {
@@ -95,9 +99,6 @@ describe('isEnabled', () => {
 })
 
 describe('straightArcPath', () => {
-  // 定数は PetriNetPage と同じ値
-  const PLACE_R = 22, TW = 14, TH = 26
-
   it('place → transition (horizontal right): 正しく境界オフセットされる', () => {
     // p0(50,90) → t0(130,90): 右向き水平
     // 始点: (50+22, 90) = (72, 90)
@@ -128,8 +129,6 @@ describe('straightArcPath', () => {
 })
 
 describe('reworkArcPath', () => {
-  const PLACE_R = 22, TW = 14
-
   it('place → transition: cubic bezier の M コマンドが place 上端から開始', () => {
     // p4(690,90) → t4(530,28)
     const d = reworkArcPath({ x: 690, y: 90 }, { x: 530, y: 28 }, true, PLACE_R, TW)

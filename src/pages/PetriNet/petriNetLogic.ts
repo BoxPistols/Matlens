@@ -14,6 +14,17 @@ import {
   type TransitionDef,
 } from '../../data/metalTestWorkflow'
 
+/**
+ * Petri net 描画ジオメトリ定数（単一情報源）。
+ * テスト / 描画コンポーネント / ロジック層から参照される。
+ */
+export const PETRI_GEOMETRY = {
+  placeR: 22,   // Place 半径 (px)
+  transW: 14,   // Transition 半幅
+  transH: 26,   // Transition 半高
+  tokenR: 5,    // トークンドット半径
+} as const
+
 export type TokenState = Record<PlaceId, number>
 
 export type TokenAction =
@@ -64,14 +75,16 @@ export function isEnabled(
   for (const pid of t.inputs) {
     if ((tokens[pid] ?? 0) <= 0) return false
   }
-  // 2. capacity 制約: 発火後に超過しない
-  for (const place of places) {
-    if (place.capacity === undefined) continue
-    const outCount = t.outputs.filter(o => o === place.id).length
-    const inCount  = t.inputs.filter(i => i === place.id).length
+  // 2. capacity 制約: t の出力側にある capped place のみ検査 (全 place 走査しない)
+  const uniqueOutputs = new Set(t.outputs)
+  for (const outPid of uniqueOutputs) {
+    const place = places.find(p => p.id === outPid)
+    if (!place || place.capacity === undefined) continue
+    const outCount = t.outputs.filter(o => o === outPid).length
+    const inCount  = t.inputs.filter(i => i === outPid).length
     const delta = outCount - inCount
     if (delta <= 0) continue
-    if (((tokens[place.id] ?? 0) + delta) > place.capacity) return false
+    if (((tokens[outPid] ?? 0) + delta) > place.capacity) return false
   }
   return true
 }
