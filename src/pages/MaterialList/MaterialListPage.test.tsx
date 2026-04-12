@@ -26,9 +26,6 @@ describe('MaterialListPage', () => {
 
   it('shows material data in table', () => {
     setup();
-    // Default sort is id-desc, so the newest seed row is guaranteed to be
-    // on page 1. Pick it by id rather than by hard-coded name so renaming
-    // records in initialDb.ts doesn't break this test.
     const firstRow = [...INITIAL_DB].sort((a, b) => b.id.localeCompare(a.id))[0]!;
     expect(screen.getByText(firstRow.name)).toBeInTheDocument();
   });
@@ -40,18 +37,15 @@ describe('MaterialListPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('filter by category removes non-matching rows', () => {
+  it('faceted filter by category removes non-matching rows', () => {
     setup();
-    const selects = screen.getAllByRole('combobox');
-    const catSelect = selects.find(
-      (s) => s.querySelector('option[value=""]')?.textContent === '全カテゴリ',
+    fireEvent.click(screen.getByText('詳細条件'));
+    const ceramicsBtn = screen.getAllByRole('button').find(
+      btn => btn.textContent?.startsWith('セラミクス')
     );
-    expect(catSelect).toBeTruthy();
-    // Pick a non-matching material from a different category to assert the
-    // filter actually excluded it. "金属合金" record disappears when we
-    // filter by セラミクス.
+    expect(ceramicsBtn).toBeTruthy();
+    fireEvent.click(ceramicsBtn!);
     const metalRow = INITIAL_DB.find(r => r.cat === '金属合金')!;
-    fireEvent.change(catSelect!, { target: { value: 'セラミクス' } });
     expect(screen.queryByText(metalRow.name)).not.toBeInTheDocument();
   });
 
@@ -60,21 +54,28 @@ describe('MaterialListPage', () => {
     const searchInput = screen.getByPlaceholderText(
       '名称・ID・組成・備考で全文検索...',
     );
-    // Search by a distinctive substring taken from an actual seed row so
-    // that renaming materials later does not break this test.
     const target = INITIAL_DB.find(r => r.name.includes('PEEK'));
-    if (!target) {
-      // If the seed no longer has a PEEK row, just skip rather than fail.
-      return;
-    }
+    if (!target) return;
     fireEvent.change(searchInput, { target: { value: 'PEEK' } });
-    // The match is highlighted by wrapping the keyword in <mark>, which
-    // splits the text node, so getByText won't find the full label.
-    // Use a flexible matcher that joins the children's text content. The
-    // helper returns multiple matches because the same name appears in
-    // both table and card view markup; one or more is enough.
     expect(
       screen.getAllByText((_, node) => node?.textContent === target.name).length,
     ).toBeGreaterThan(0);
+  });
+
+  it('shows preset panel with default presets', () => {
+    setup();
+    fireEvent.click(screen.getByText('プリセット'));
+    expect(screen.getByText('承認済み金属合金')).toBeInTheDocument();
+    expect(screen.getByText('高硬度材 (HV≥500)')).toBeInTheDocument();
+    expect(screen.getByText('レビュー待ち')).toBeInTheDocument();
+  });
+
+  it('advanced panel toggle works', () => {
+    setup();
+    // Initially no AI checkbox visible
+    expect(screen.queryByLabelText(/AI検出のみ/)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('詳細条件'));
+    // After opening, AI checkbox should be visible
+    expect(screen.getByText('AI検出のみ')).toBeInTheDocument();
   });
 });
