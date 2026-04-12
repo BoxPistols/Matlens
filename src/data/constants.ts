@@ -446,9 +446,12 @@ export const PAGE_GUIDES: PageGuide[] = [
     summary: 'このページです。専門用語解説、各ページの使い方ガイド、操作リファレンスを検索・閲覧できます。',
     summaryEn: 'This page. Search and browse technical term explanations, page guides, and operation references.',
     features: [
-      'カテゴリタブで絞り込み（ページガイド・材料工学・AI/ML・システム・操作ガイド）',
-      '検索ボックスでキーワード検索',
-      'FAQ セクションでよくある質問に回答',
+      '6つのカテゴリタブ: ページガイド / 材料工学 / AI・ML / システム / 操作ガイド / すべて',
+      '上部の検索ボックスで用語名・英語名・説明文をキーワード検索',
+      '「ページガイド」タブで全20ページの詳細ドキュメント（概要・できること・操作のヒント・関連ページ）',
+      '各ページガイドから「このページを開く」ボタンで直接遷移',
+      'サポートパネル（右下の ? ボタン）でFAQ・お知らせ・AI設定にアクセス',
+      'FAQ は24件の質問と回答を収録（初めての使い方から技術的な質問まで）',
     ],
     featuresEn: [
       'Filter by category tab (Page Guide, Materials, AI/ML, System, Operations)',
@@ -456,8 +459,11 @@ export const PAGE_GUIDES: PageGuide[] = [
       'FAQ section answers common questions',
     ],
     tips: [
-      '「ページガイド」タブで全画面の操作説明を確認',
-      '英語名も検索対象に含まれる',
+      '初めて使う方は「ページガイド」タブから各画面の概要を確認してください',
+      '英語名・日本語名の両方が検索対象。例: 「hardness」で「硬度」がヒット',
+      'カードをクリックすると詳細な説明が展開されます',
+      '右下の ? ボタンからも FAQ やお知らせにアクセスできます',
+      '用語集は現在46エントリ、FAQ は24件を収録',
     ],
     tipsEn: [
       'Check the Page Guide tab for instructions on all screens',
