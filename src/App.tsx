@@ -38,6 +38,7 @@ const TestSuitePage = lazy(() => import('./pages/TestSuite').then(m => ({ defaul
 const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => ({ default: m.CatalogPage })));
 const PetriNetPage = lazy(() => import('./pages/PetriNet').then(m => ({ default: m.PetriNetPage })));
 const BayesianOptPage = lazy(() => import('./pages/BayesianOpt').then(m => ({ default: m.BayesianOptPage })));
+const SimulationPage = lazy(() => import('./pages/Simulation').then(m => ({ default: m.SimulationPage })));
 
 const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
@@ -208,6 +209,7 @@ export function App() {
       case 'catalog': return lazyPage(<CatalogPage db={db} onNav={navTo} onDetail={showDetail} />);
       case 'petri':   return lazyPage(<PetriNetPage />);
       case 'bayes':   return lazyPage(<BayesianOptPage db={db} />);
+      case 'simulate': return lazyPage(<SimulationPage />);
       case 'voice':   return lazyPage(<VoicePage />);
       case 'api':     return lazyPage(<ApiDebugPage db={db} dispatch={dispatch} />);
       case 'tests':   return lazyPage(<TestSuitePage />);
