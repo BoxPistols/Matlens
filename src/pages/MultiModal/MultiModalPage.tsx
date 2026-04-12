@@ -18,13 +18,24 @@ const SCALE_LEVELS = [
   { label: 'L3 — 粒界スケール', unit: 'nm', desc: '粒界偏析・析出物。腐食・き裂進展の起点。' },
 ]
 
+/**
+ * 結晶構造推定 (名称ベース簡易判定)
+ * FCC: Al/Cu/Ni/Au/Ag 基合金、オーステナイト系ステンレス (SUS2xx/3xx 系)
+ * HCP: Ti/Mg/Zn/Zr/Co/Be
+ * BCC: α-Fe (炭素鋼・工具鋼・軸受鋼)、フェライト/マルテンサイト系ステンレス (SUS4xx/6xx)、W/Mo/Cr、Kovar
+ */
 function detectLattice(m: Material): Lattice {
   if (m.cat === '複合材料') return 'COMPOSITE'
   if (m.cat === 'ポリマー')  return 'AMORPHOUS'
   if (m.cat === 'セラミクス') return 'CERAMIC'
   const n = m.name
-  if (/SUS3|オーステナイト|Inconel|Hastelloy|Monel|インコネル|ニッケル|純アルミ|純銅|A\d{4}|Cu|黄銅|青銅|Au|Ag/.test(n)) return 'FCC'
-  if (/チタン|Ti[- ]|Ti\d|マグネシウム|Mg|亜鉛|Zn|コバルト|Co[- ]|ジルコ|Zr|Be/.test(n)) return 'HCP'
+  // HCP を先に判定 (BeCu は後段 FCC で上書き)
+  if (/BeCu|ベリリウム銅/.test(n)) return 'FCC'
+  // FCC: Cu 合金 / Al 合金 / Ni 基超合金 / オーステナイト系 / 貴金属
+  if (/SUS2|SUS3|オーステナイト|Inconel|Hastelloy|Monel|インコネル|純ニッケル|ニッケル超合金|純アルミ|A\d{4}|純銅|無酸素銅|黄銅|青銅|真鍮|C\d{4}|Cu[- ]|Au|Ag|白金|Pt/.test(n)) return 'FCC'
+  // HCP: Ti/Mg/Zn/Zr/Co/Be (SUS329 二相は α+γ 混合だが FCC 側で既判定)
+  if (/チタン|Ti[- ]|Ti\d|マグネシウム|Mg[- ]|AZ\d+|亜鉛|Zn[- ]|コバルト|Co[- ]|ジルコ|Zr[- ]|ベリリウム|Be[- ]/.test(n)) return 'HCP'
+  // 残り (炭素鋼 / 工具鋼 / SUS4xx / SUS6xx / W / Mo / Cr / Kovar) → BCC
   return 'BCC'
 }
 
@@ -47,69 +58,267 @@ function usePalette(): Palette {
 
 // ─── L1 Macro ──────────────────────────────────────────────────
 
+type MacroShape = 'turbine' | 'disc' | 'shaft' | 'plate' | 'pipe' | 'gear' | 'tool' |
+                  'bladeAirfoil' | 'ring' | 'insulator' | 'substrate' |
+                  'housing' | 'gasket' | 'film' | 'laminate' | 'honeycomb'
+
+function detectMacroShape(m: Material): { shape: MacroShape; label: string } {
+  const n = m.name
+  const cat = m.cat
+  if (cat === '金属合金') {
+    if (/Ti[- ]|チタン/.test(n)) return { shape:'bladeAirfoil', label:'エアフォイル翼' }
+    if (/Inconel|Ni[- ]|ニッケル|Hastelloy|Monel|インコネル/.test(n)) return { shape:'turbine', label:'タービンディスク' }
+    if (/SKH|SKD|ハイス|工具|高速度/.test(n)) return { shape:'tool', label:'切削工具' }
+    if (/SCM|クロモリ|SNCM|SNC/.test(n)) return { shape:'shaft', label:'駆動シャフト' }
+    if (/SUS3|オーステナイト|ステンレス/.test(n)) return { shape:'pipe', label:'ステンレス管' }
+    if (/SUS4|フェライト|マルテンサイト/.test(n)) return { shape:'gear', label:'歯車' }
+    if (/S[ABCES]\d{2}C|炭素鋼|SS\d/.test(n)) return { shape:'plate', label:'構造用鋼板' }
+    if (/A\d{4}|アルミ|Al[- ]|純アルミ|ジュラ/.test(n)) return { shape:'plate', label:'アルミパネル' }
+    if (/黄銅|青銅|Cu|銅|真鍮|brass/i.test(n)) return { shape:'pipe', label:'銅管' }
+    if (/Mg|マグネシウム|AZ31/.test(n)) return { shape:'housing', label:'Mg 筐体' }
+    return { shape:'disc', label:'汎用部品' }
+  }
+  if (cat === 'セラミクス') {
+    if (/Al2O3|アルミナ|ZrO2|ジルコニア/.test(n)) return { shape:'ring', label:'セラミックリング' }
+    if (/窒化|SiC|Si3N4|BN|SiAlON/.test(n)) return { shape:'bladeAirfoil', label:'セラミック翼' }
+    if (/PZT|BaTiO|圧電/.test(n)) return { shape:'substrate', label:'圧電素子' }
+    return { shape:'insulator', label:'絶縁碍子' }
+  }
+  if (cat === 'ポリマー') {
+    if (/PTFE|テフロン|シリコン|フッ素/.test(n)) return { shape:'gasket', label:'ガスケット' }
+    if (/PE|ポリエチ|PP|ポリプロ/.test(n)) return { shape:'film', label:'ポリマーフィルム' }
+    if (/ABS|PC|ポリカ|PA|ナイロン|POM/.test(n)) return { shape:'housing', label:'樹脂筐体' }
+    return { shape:'housing', label:'樹脂部品' }
+  }
+  if (cat === '複合材料') {
+    if (/CFRP|炭素繊維/.test(n)) return { shape:'laminate', label:'CFRP 積層板' }
+    if (/GFRP|ガラス繊維/.test(n)) return { shape:'laminate', label:'GFRP 積層板' }
+    if (/ハニカム|サンド/.test(n)) return { shape:'honeycomb', label:'ハニカムコア' }
+    return { shape:'laminate', label:'複合材料板' }
+  }
+  return { shape:'plate', label:'汎用部品' }
+}
+
 function MacroView({ material, c }: { material: Material; c: Palette }) {
-  const cat = material.cat
+  const { shape, label } = detectMacroShape(material)
   return (
-    <svg viewBox="0 0 300 220" width="100%" style={{ background: c.bg, borderRadius: 6 }}>
-      {cat === '金属合金' && <MacroTurbine c={c} />}
-      {cat === 'セラミクス' && <MacroRing c={c} />}
-      {cat === 'ポリマー' && <MacroHousing c={c} />}
-      {cat === '複合材料' && <MacroLaminate c={c} />}
-      <text x={150} y={24} textAnchor="middle" fontSize={11} fontWeight="bold" fill={c.fg}>
-        {material.name.slice(0, 22)}
+    <svg viewBox="0 0 300 240" width="100%" style={{ background: c.bg, borderRadius: 6 }}>
+      <text x={150} y={22} textAnchor="middle" fontSize={11} fontWeight="bold" fill={c.fg}>
+        {material.name.slice(0, 24)}
       </text>
-      <text x={150} y={208} textAnchor="middle" fontSize={10} fill={c.muted} fontFamily="monospace">
-        ρ={material.dn} g/cm³ · {cat}
+      <g transform="translate(0 10)">
+        {shape === 'turbine' && <ShapeTurbine c={c} />}
+        {shape === 'disc' && <ShapeDisc c={c} />}
+        {shape === 'shaft' && <ShapeShaft c={c} />}
+        {shape === 'plate' && <ShapePlate c={c} />}
+        {shape === 'pipe' && <ShapePipe c={c} />}
+        {shape === 'gear' && <ShapeGear c={c} />}
+        {shape === 'tool' && <ShapeTool c={c} />}
+        {shape === 'bladeAirfoil' && <ShapeAirfoil c={c} />}
+        {shape === 'ring' && <ShapeRing c={c} />}
+        {shape === 'insulator' && <ShapeInsulator c={c} />}
+        {shape === 'substrate' && <ShapeSubstrate c={c} />}
+        {shape === 'housing' && <ShapeHousing c={c} />}
+        {shape === 'gasket' && <ShapeGasket c={c} />}
+        {shape === 'film' && <ShapeFilm c={c} />}
+        {shape === 'laminate' && <ShapeLaminate c={c} />}
+        {shape === 'honeycomb' && <ShapeHoneycomb c={c} />}
+      </g>
+      <text x={10} y={230} textAnchor="start" fontSize={10} fill={c.muted} fontFamily="monospace">
+        {label}
+      </text>
+      <text x={290} y={230} textAnchor="end" fontSize={10} fill={c.muted} fontFamily="monospace">
+        ρ={material.dn} g/cm³
       </text>
     </svg>
   )
 }
-function MacroTurbine({ c }: { c: Palette }) {
+
+function ShapeTurbine({ c }: { c: Palette }) {
   const blades = Array.from({ length: 12 }, (_, i) => i * 30)
   return (
-    <g transform="translate(150 115)">
-      <circle r={26} fill={c.accent2} opacity={0.3} stroke={c.accent} strokeWidth={1.5} />
+    <g transform="translate(150 110)">
+      <circle r={55} fill="none" stroke={c.accent} strokeWidth={1} opacity={0.5} />
+      <circle r={28} fill={c.accent2} opacity={0.35} stroke={c.accent} strokeWidth={1.5} />
       <circle r={10} fill={c.accent} />
       {blades.map(a => (
         <g key={a} transform={`rotate(${a})`}>
-          <path d="M 22 -5 Q 55 -12 70 0 Q 55 12 22 5 Z" fill={c.accent} opacity={0.6} stroke={c.accent} strokeWidth={0.8} />
+          <path d="M 22 -5 Q 50 -10 62 0 Q 50 10 22 5 Z" fill={c.accent} opacity={0.65} stroke={c.accent} strokeWidth={0.6} />
         </g>
       ))}
-      <text y={95} textAnchor="middle" fontSize={9} fill={c.muted} fontFamily="monospace">タービンブレード</text>
     </g>
   )
 }
-function MacroRing({ c }: { c: Palette }) {
+function ShapeDisc({ c }: { c: Palette }) {
   return (
-    <g transform="translate(150 115)">
-      <circle r={55} fill="none" stroke={c.accent} strokeWidth={2} />
-      <circle r={30} fill="none" stroke={c.accent} strokeWidth={2} />
-      {[0,60,120,180,240,300].map(a => (
-        <circle key={a} cx={Math.cos(a*Math.PI/180)*42} cy={Math.sin(a*Math.PI/180)*42} r={4} fill={c.accent} />
-      ))}
-      <text y={85} textAnchor="middle" fontSize={9} fill={c.muted} fontFamily="monospace">軸受リング</text>
+    <g transform="translate(150 110)">
+      <ellipse rx={80} ry={18} fill={c.accent2} opacity={0.5} stroke={c.accent} strokeWidth={1.2} />
+      <ellipse rx={80} ry={18} cy={20} fill={c.accent} opacity={0.8} stroke={c.accent} strokeWidth={1.2} />
+      <ellipse rx={80} ry={18} fill="none" stroke={c.accent} strokeWidth={1.5} />
+      <line x1={-80} y1={0} x2={-80} y2={20} stroke={c.accent} strokeWidth={1.5} />
+      <line x1={80} y1={0} x2={80} y2={20} stroke={c.accent} strokeWidth={1.5} />
     </g>
   )
 }
-function MacroHousing({ c }: { c: Palette }) {
+function ShapeShaft({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(30 100)">
+      <rect x={0} y={0} width={240} height={24} fill={c.accent} opacity={0.7} stroke={c.accent} strokeWidth={1}/>
+      <rect x={40} y={-8} width={30} height={40} fill={c.accent2} stroke={c.accent} strokeWidth={1}/>
+      <rect x={160} y={-8} width={30} height={40} fill={c.accent2} stroke={c.accent} strokeWidth={1}/>
+    </g>
+  )
+}
+function ShapePlate({ c }: { c: Palette }) {
   return (
     <g>
-      <rect x={70} y={70} width={160} height={90} rx={14} fill={c.accent2} opacity={0.4} stroke={c.accent} strokeWidth={2} />
-      <rect x={90} y={90} width={50} height={50} rx={3} fill="none" stroke={c.accent} strokeWidth={1} />
-      <rect x={160} y={90} width={50} height={50} rx={3} fill="none" stroke={c.accent} strokeWidth={1} />
-      <text x={150} y={180} textAnchor="middle" fontSize={9} fill={c.muted} fontFamily="monospace">樹脂筐体</text>
+      <rect x={50} y={60} width={200} height={100} fill={c.accent} opacity={0.5} stroke={c.accent} strokeWidth={1.5}/>
+      <line x1={50} y1={60} x2={60} y2={50} stroke={c.accent} strokeWidth={1}/>
+      <line x1={250} y1={60} x2={260} y2={50} stroke={c.accent} strokeWidth={1}/>
+      <line x1={60} y1={50} x2={260} y2={50} stroke={c.accent} strokeWidth={1}/>
+      <circle cx={80} cy={80} r={5} fill={c.bg} stroke={c.accent} strokeWidth={1}/>
+      <circle cx={220} cy={80} r={5} fill={c.bg} stroke={c.accent} strokeWidth={1}/>
+      <circle cx={80} cy={140} r={5} fill={c.bg} stroke={c.accent} strokeWidth={1}/>
+      <circle cx={220} cy={140} r={5} fill={c.bg} stroke={c.accent} strokeWidth={1}/>
     </g>
   )
 }
-function MacroLaminate({ c }: { c: Palette }) {
+function ShapePipe({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(150 110)">
+      <ellipse cx={-90} rx={14} ry={36} fill={c.accent2} stroke={c.accent} strokeWidth={1.2}/>
+      <ellipse cx={90} rx={14} ry={36} fill={c.accent} opacity={0.7} stroke={c.accent} strokeWidth={1.2}/>
+      <rect x={-90} y={-36} width={180} height={72} fill={c.accent} opacity={0.45}/>
+      <line x1={-90} y1={-36} x2={90} y2={-36} stroke={c.accent} strokeWidth={1.5}/>
+      <line x1={-90} y1={36} x2={90} y2={36} stroke={c.accent} strokeWidth={1.5}/>
+      <ellipse cx={-90} rx={14} ry={36} fill="none" stroke={c.accent} strokeWidth={1.5}/>
+      <ellipse cx={-90} rx={8} ry={22} fill={c.bg} stroke={c.accent} strokeWidth={1}/>
+    </g>
+  )
+}
+function ShapeGear({ c }: { c: Palette }) {
+  const teeth = 16
+  const pts: string[] = []
+  for (let i = 0; i < teeth * 2; i++) {
+    const a = (i / (teeth * 2)) * Math.PI * 2
+    const r = i % 2 === 0 ? 60 : 48
+    pts.push(`${Math.cos(a)*r},${Math.sin(a)*r}`)
+  }
+  return (
+    <g transform="translate(150 110)">
+      <polygon points={pts.join(' ')} fill={c.accent} opacity={0.65} stroke={c.accent} strokeWidth={1.2}/>
+      <circle r={20} fill={c.bg} stroke={c.accent} strokeWidth={1.2}/>
+      <circle r={8} fill={c.accent}/>
+    </g>
+  )
+}
+function ShapeTool({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(60 110)">
+      <rect x={0} y={-8} width={100} height={16} fill={c.accent} opacity={0.7} stroke={c.accent}/>
+      <polygon points="100,-8 180,-12 180,12 100,8" fill={c.accent2} stroke={c.accent} strokeWidth={1}/>
+      {[0,1,2,3,4].map(i => (
+        <line key={i} x1={105+i*15} y1={-10} x2={100+i*15} y2={10} stroke={c.accent} strokeWidth={0.8}/>
+      ))}
+    </g>
+  )
+}
+function ShapeAirfoil({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(150 110)">
+      <path d="M -80 5 Q -40 -35 30 -25 Q 70 -10 80 10 Q 70 18 30 20 Q -30 22 -80 10 Z"
+        fill={c.accent} opacity={0.7} stroke={c.accent} strokeWidth={1.5}/>
+      <path d="M -80 5 Q -40 -35 30 -25 Q 70 -10 80 10" stroke={c.fg} strokeWidth={0.8} fill="none" opacity={0.6}/>
+    </g>
+  )
+}
+function ShapeRing({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(150 110)">
+      <circle r={62} fill="none" stroke={c.accent} strokeWidth={2}/>
+      <circle r={32} fill="none" stroke={c.accent} strokeWidth={2}/>
+      <circle r={62} fill={c.accent} opacity={0.25}/>
+      <circle r={32} fill={c.bg}/>
+      {[0,60,120,180,240,300].map(a => (
+        <circle key={a} cx={Math.cos(a*Math.PI/180)*47} cy={Math.sin(a*Math.PI/180)*47} r={4} fill={c.accent} />
+      ))}
+    </g>
+  )
+}
+function ShapeInsulator({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(150 110)">
+      {[-40,-20,0,20,40].map(y => (
+        <ellipse key={y} cy={y} rx={36} ry={8} fill={c.accent} opacity={0.55} stroke={c.accent} strokeWidth={0.8}/>
+      ))}
+      <rect x={-6} y={-55} width={12} height={110} fill={c.accent2}/>
+    </g>
+  )
+}
+function ShapeSubstrate({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(70 70)">
+      <rect width={160} height={90} fill={c.accent2} opacity={0.5} stroke={c.accent} strokeWidth={1.2}/>
+      {[0,1,2,3].map(r => [0,1,2,3,4,5].map(col => (
+        <rect key={`${r}-${col}`} x={12 + col*24} y={12 + r*20} width={16} height={12}
+          fill={c.accent} opacity={0.8} stroke={c.accent} strokeWidth={0.4}/>
+      )))}
+    </g>
+  )
+}
+function ShapeHousing({ c }: { c: Palette }) {
+  return (
+    <g>
+      <rect x={70} y={70} width={160} height={90} rx={14} fill={c.accent2} opacity={0.5} stroke={c.accent} strokeWidth={2} />
+      <rect x={90} y={90} width={50} height={50} rx={3} fill="none" stroke={c.accent} strokeWidth={1} />
+      <rect x={160} y={90} width={50} height={50} rx={3} fill="none" stroke={c.accent} strokeWidth={1} />
+    </g>
+  )
+}
+function ShapeGasket({ c }: { c: Palette }) {
+  return (
+    <g transform="translate(150 110)">
+      <circle r={62} fill={c.accent} opacity={0.55} stroke={c.accent} strokeWidth={1.5}/>
+      <circle r={32} fill={c.bg}/>
+      {[0,45,90,135,180,225,270,315].map(a => (
+        <circle key={a} cx={Math.cos(a*Math.PI/180)*47} cy={Math.sin(a*Math.PI/180)*47} r={4} fill={c.bg} stroke={c.accent} strokeWidth={0.6}/>
+      ))}
+    </g>
+  )
+}
+function ShapeFilm({ c }: { c: Palette }) {
+  return (
+    <g>
+      <path d="M 40 80 Q 90 60 150 80 T 260 80 L 260 160 Q 210 180 150 160 T 40 160 Z"
+        fill={c.accent} opacity={0.45} stroke={c.accent} strokeWidth={1.2}/>
+    </g>
+  )
+}
+function ShapeLaminate({ c }: { c: Palette }) {
   return (
     <g>
       {[0,1,2,3,4,5].map(i => (
-        <rect key={i} x={60} y={65 + i*14} width={180} height={10} fill={i%2? c.accent : c.accent2} opacity={0.7} />
+        <rect key={i} x={60} y={60 + i*14} width={180} height={10} fill={i%2? c.accent : c.accent2} opacity={0.75} />
       ))}
-      <text x={150} y={180} textAnchor="middle" fontSize={9} fill={c.muted} fontFamily="monospace">
-        積層板 (0°/90°)
-      </text>
+    </g>
+  )
+}
+function ShapeHoneycomb({ c }: { c: Palette }) {
+  const cells: string[] = []
+  const hx = 16, hy = 14
+  for (let r = 0; r < 6; r++) {
+    for (let col = 0; col < 9; col++) {
+      const cx = 70 + col * hx * 1.5 + (r%2)*(hx*0.75)
+      const cy = 70 + r * hy * 1.5
+      const pts = [0,60,120,180,240,300].map(a => `${cx+Math.cos(a*Math.PI/180)*hx},${cy+Math.sin(a*Math.PI/180)*hx}`).join(' ')
+      cells.push(pts)
+    }
+  }
+  return (
+    <g>
+      {cells.map((p, i) => (
+        <polygon key={i} points={p} fill="none" stroke={c.accent} strokeWidth={0.9} opacity={0.7}/>
+      ))}
     </g>
   )
 }
@@ -371,23 +580,35 @@ function MaterialCombobox({ db, value, onChange }: {
 }) {
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
+  const [catFilter, setCatFilter] = useState<string | null>(null)
+  const [latFilter, setLatFilter] = useState<Lattice | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
   const current = db.find(m => m.id === value)
+
+  const catCounts = useMemo(() => {
+    const c: Record<string, number> = {}
+    for (const m of db) c[m.cat] = (c[m.cat] || 0) + 1
+    return c
+  }, [db])
+
   const filtered = useMemo(() => {
     const qq = q.trim().toLowerCase()
-    const match = qq
-      ? db.filter(m =>
-          m.name.toLowerCase().includes(qq) ||
-          m.id.toLowerCase().includes(qq) ||
-          m.comp.toLowerCase().includes(qq))
-      : db
+    const match = db.filter(m => {
+      if (catFilter && m.cat !== catFilter) return false
+      if (latFilter && detectLattice(m) !== latFilter) return false
+      if (!qq) return true
+      return m.name.toLowerCase().includes(qq) ||
+        m.id.toLowerCase().includes(qq) ||
+        m.comp.toLowerCase().includes(qq) ||
+        (m.memo || '').toLowerCase().includes(qq)
+    })
     const groups = new Map<string, Material[]>()
     for (const m of match) {
       if (!groups.has(m.cat)) groups.set(m.cat, [])
       groups.get(m.cat)!.push(m)
     }
-    return [...groups.entries()]
-  }, [db, q])
+    return { groups: [...groups.entries()], total: match.length }
+  }, [db, q, catFilter, latFilter])
 
   useEffect(() => {
     if (!open) return
@@ -409,15 +630,54 @@ function MaterialCombobox({ db, value, onChange }: {
         <Icon name="chevronDown" size={12} className="text-text-lo flex-shrink-0" />
       </button>
       {open && (
-        <div className="absolute z-20 mt-1 w-full bg-surface border border-[var(--border-default)] rounded shadow-lg max-h-[380px] flex flex-col">
-          <div className="p-2 border-b border-[var(--border-faint)]">
-            <input autoFocus value={q} onChange={e => setQ(e.target.value)}
-              placeholder="材料名・ID・組成で検索..."
-              className="w-full px-2 py-1 text-[12px] bg-raised rounded border border-[var(--border-faint)] outline-none focus:border-accent"/>
+        <div className="absolute z-20 mt-1 w-full bg-surface border border-[var(--border-default)] rounded shadow-lg max-h-[440px] flex flex-col">
+          <div className="p-2 border-b border-[var(--border-faint)] flex flex-col gap-2">
+            <div className="relative">
+              <Icon name="search" size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-text-lo pointer-events-none" />
+              <input autoFocus value={q} onChange={e => setQ(e.target.value)}
+                placeholder="材料名・ID・組成・メモで検索 (例: ステンレス, Inconel, Ti)"
+                className="w-full pl-7 pr-7 py-1.5 text-[12px] bg-raised rounded border border-[var(--border-faint)] outline-none focus:border-accent"/>
+              {q && (
+                <button onClick={() => setQ('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-text-lo hover:text-text-hi">
+                  <Icon name="close" size={12} />
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-1">
+              <button onClick={() => setCatFilter(null)}
+                className={`px-2 py-0.5 text-[10px] rounded-full border transition-colors ${
+                  catFilter === null ? 'bg-accent text-white border-accent' : 'bg-raised border-[var(--border-faint)] hover:bg-hover text-text-md'
+                }`}>
+                全カテゴリ ({db.length})
+              </button>
+              {(['金属合金','セラミクス','ポリマー','複合材料'] as const).map(cat => (
+                <button key={cat} onClick={() => setCatFilter(catFilter === cat ? null : cat)}
+                  className={`px-2 py-0.5 text-[10px] rounded-full border transition-colors ${
+                    catFilter === cat ? 'bg-accent text-white border-accent' : 'bg-raised border-[var(--border-faint)] hover:bg-hover text-text-md'
+                  }`}>
+                  {cat} ({catCounts[cat] || 0})
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-1">
+              <span className="text-[10px] text-text-lo self-center pr-1">結晶構造:</span>
+              {(['FCC','BCC','HCP','AMORPHOUS','COMPOSITE','CERAMIC'] as const).map(lat => (
+                <button key={lat} onClick={() => setLatFilter(latFilter === lat ? null : lat)}
+                  className={`px-2 py-0.5 text-[10px] rounded-full border transition-colors ${
+                    latFilter === lat ? 'bg-accent text-white border-accent' : 'bg-raised border-[var(--border-faint)] hover:bg-hover text-text-md'
+                  }`}>
+                  {lat}
+                </button>
+              ))}
+            </div>
+            <div className="text-[10px] text-text-lo">
+              {filtered.total} 件ヒット {q && `· "${q}"`}
+            </div>
           </div>
           <div className="overflow-y-auto flex-1">
-            {filtered.length === 0 && <div className="p-3 text-[11px] text-text-lo text-center">該当なし</div>}
-            {filtered.map(([cat, items]) => (
+            {filtered.groups.length === 0 && <div className="p-3 text-[11px] text-text-lo text-center">該当なし</div>}
+            {filtered.groups.map(([cat, items]) => (
               <div key={cat}>
                 <div className="sticky top-0 px-3 py-1 bg-sunken text-[10px] font-bold uppercase tracking-wider text-text-lo flex items-center justify-between">
                   <span>{cat}</span>
