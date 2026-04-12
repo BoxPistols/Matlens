@@ -291,30 +291,50 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
   --row-h:44px;--cell-py:8px;--card-py:16px;--table-fs:13px;
 }
 
-/* ─── UI 密度 (data-density) の実効化 ────────────────────────────────── */
-/* テーブル行の密度適用 */
+/* ─── UI 密度 — 全テキスト・全コンポーネントへの統一適用 ────────────── */
+
+/* ルートレベルのフォントサイズ・行間を密度で制御。
+   全ての相対サイズ (em, %) がこれに追従する。 */
+[data-density="compact"] { --d-fs: 12px; --d-lh: 1.4; --d-gap: 8px;  --d-py: 4px;  --d-px: 8px; }
+[data-density="regular"] { --d-fs: 13px; --d-lh: 1.5; --d-gap: 12px; --d-py: 8px;  --d-px: 12px; }
+[data-density="relaxed"] { --d-fs: 14px; --d-lh: 1.65; --d-gap: 16px; --d-py: 12px; --d-px: 16px; }
+:root { --d-fs: 13px; --d-lh: 1.5; --d-gap: 12px; --d-py: 8px; --d-px: 12px; }
+
+/* アプリ全体のベースフォント */
+#root {
+  font-size: var(--d-fs);
+  line-height: var(--d-lh);
+}
+
+/* テーブル */
 table tbody td,
-table tbody th { padding-top: var(--cell-py); padding-bottom: var(--cell-py); }
-table { font-size: var(--table-fs); }
+table tbody th {
+  padding-top: var(--d-py);
+  padding-bottom: var(--d-py);
+  font-size: var(--table-fs);
+}
 
-/* サイドバーリンクの密度適用 */
-.sidebar-nav button { padding-top: var(--cell-py); padding-bottom: var(--cell-py); }
+/* サイドバー */
+.sidebar-nav button {
+  padding-top: var(--d-py);
+  padding-bottom: var(--d-py);
+  font-size: var(--d-fs);
+}
 
-/* カード内パディング (Tailwind p-3/p-4 を上書き) */
-[data-density="compact"] .density-card { padding-top: 8px !important; padding-bottom: 8px !important; }
-[data-density="relaxed"] .density-card { padding-top: 20px !important; padding-bottom: 20px !important; }
+/* チャット・カード・パネルの行間と余白 */
+.flex.flex-col.gap-4 { gap: var(--d-gap); }
+.flex.flex-col.gap-3 { gap: calc(var(--d-gap) - 2px); }
+.flex.flex-col.gap-2 { gap: calc(var(--d-gap) - 4px); }
 
-/* カードビューの密度適用 */
-[data-density="compact"] .grid { gap: 8px; }
-[data-density="relaxed"] .grid { gap: 16px; }
+/* 入力フォーム */
+input, select, textarea {
+  font-size: var(--d-fs);
+  padding-top: var(--d-py);
+  padding-bottom: var(--d-py);
+}
 
-/* カード内パディング */
-[data-density="compact"] .bg-surface { padding: 8px; }
+/* ボタン */
+button { font-size: var(--d-fs); }
 
-/* リスト項目の密度 */
-[data-density="compact"] .sidebar-nav button { font-size: 12px; }
-[data-density="relaxed"] .sidebar-nav button { font-size: 14px; }
-
-/* ページ本文の基本フォントサイズ */
-[data-density="compact"] main { font-size: var(--body-fs, 12px); }
-[data-density="relaxed"] main { font-size: var(--body-fs, 14px); }
+/* バッジ・ラベルは少し小さく */
+.rounded-full { font-size: calc(var(--d-fs) - 1px); }
