@@ -2,6 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Topbar } from './Topbar';
+import { AppCtx } from '../../context/AppContext';
+import type { AppContextValue } from '../../types';
+
+const mockCtx: AppContextValue = {
+  db: [], dispatch: vi.fn(), addToast: vi.fn(), toasts: [],
+  theme: 'light', lang: 'ja', setLang: vi.fn(),
+  t: (ja: string) => ja,
+};
 
 const defaultProps = {
   theme: 'light',
@@ -21,7 +29,7 @@ const defaultProps = {
 };
 
 const renderTopbar = (overrides = {}) =>
-  render(<Topbar {...defaultProps} {...overrides} />);
+  render(<AppCtx.Provider value={mockCtx}><Topbar {...defaultProps} {...overrides} /></AppCtx.Provider>);
 
 describe('Topbar', () => {
   it('renders Matlens logo text', () => {

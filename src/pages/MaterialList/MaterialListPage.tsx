@@ -187,7 +187,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
   const [savedQueries, setSavedQueries] = useState<SavedQuery[]>(loadSavedQueries);
   const [presetOpen, setPresetOpen] = useState(false);
   const [saveName, setSaveName] = useState('');
-  const { addToast } = useContext(AppCtx) as AppContextValue;
+  const { addToast, t } = useContext(AppCtx) as AppContextValue;
 
   const setF = useCallback(<K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -305,39 +305,39 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
           addToast(`${fresh.length}件を取り込みました`);
         }}
       />
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="削除の確認" footer={
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title={t('削除の確認', 'Confirm Deletion')} footer={
         <>
-          <Button variant="default" onClick={() => setDeleteTarget(null)}>キャンセル</Button>
-          <Button variant="danger" onClick={() => { dispatch({ type: 'DELETE', id: deleteTarget! }); setDeleteTarget(null); addToast('削除しました'); }}>削除する</Button>
+          <Button variant="default" onClick={() => setDeleteTarget(null)}>{t('キャンセル', 'Cancel')}</Button>
+          <Button variant="danger" onClick={() => { dispatch({ type: 'DELETE', id: deleteTarget! }); setDeleteTarget(null); addToast(t('削除しました', 'Deleted')); }}>{t('削除する', 'Delete')}</Button>
         </>
       }>
-        <p>このデータを削除します。この操作は元に戻せません。</p>
+        <p>{t('このデータを削除します。この操作は元に戻せません。', 'This data will be deleted. This action cannot be undone.')}</p>
       </Modal>
 
       <DataDisclaimer />
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="ptitle text-[19px] font-bold tracking-tight">材料データ一覧</h1>
-          <p className="text-[12px] text-text-lo mt-0.5">{filtered.length}件 (DB: {db.length}件)</p>
+          <h1 className="ptitle text-[19px] font-bold tracking-tight">{t('材料データ一覧', 'Material List')}</h1>
+          <p className="text-[12px] text-text-lo mt-0.5">{filtered.length}{t('件', ' items')} (DB: {db.length}{t('件', ' items')})</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="default" size="sm" onClick={() => setImportOpen(true)} title="MaiML / JSON ファイルをインポート"><Icon name="upload" size={13} />インポート</Button>
-          <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />エクスポート</Button>
-          <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />登録</Button>
+          <Button variant="default" size="sm" onClick={() => setImportOpen(true)} title="MaiML / JSON ファイルをインポート"><Icon name="upload" size={13} />{t('インポート', 'Import')}</Button>
+          <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />{t('エクスポート', 'Export')}</Button>
+          <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />{t('登録', 'Register')}</Button>
         </div>
       </div>
 
       {/* ─── Search & Filter Panel ─────────────────────────────────────── */}
       <Card className="p-3">
         <div className="flex gap-2 flex-wrap items-center">
-          <SearchBox value={filters.q} onChange={v => setF('q', v)} placeholder="名称・ID・組成・備考で全文検索..." className="min-w-48 flex-1" />
+          <SearchBox value={filters.q} onChange={v => setF('q', v)} placeholder={t('名称・ID・組成・備考で全文検索...', 'Search by name, ID, composition, notes...')} className="min-w-48 flex-1" />
           <Button variant={presetOpen ? 'primary' : 'outline'} size="sm" onClick={() => setPresetOpen(v => !v)}>
-            <Icon name="report" size={12} />プリセット
+            <Icon name="report" size={12} />{t('プリセット', 'Presets')}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setAdvOpen(v => !v)}>
-            <Icon name="filter" size={12} />{advOpen ? '詳細を閉じる' : '詳細条件'}
+            <Icon name="filter" size={12} />{advOpen ? t('詳細を閉じる', 'Close Filters') : t('詳細条件', 'Advanced')}
           </Button>
-          {hasActiveFilters && <Button variant="ghost" size="sm" onClick={clearAll}><Icon name="close" size={11} />クリア</Button>}
+          {hasActiveFilters && <Button variant="ghost" size="sm" onClick={clearAll}><Icon name="close" size={11} />{t('クリア', 'Clear')}</Button>}
         </div>
 
         {/* ─── Preset panel ───────────────────────────────────────────── */}
@@ -356,8 +356,8 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
               ))}
             </div>
             <div className="flex gap-2 items-center">
-              <Input value={saveName} onChange={e => setSaveName(e.target.value)} placeholder="現在のフィルタを保存..." className="flex-1 text-[12px] py-1" />
-              <Button variant="default" size="xs" onClick={saveCurrentQuery} disabled={!saveName.trim()}>保存</Button>
+              <Input value={saveName} onChange={e => setSaveName(e.target.value)} placeholder={t('現在のフィルタを保存...', 'Save current filter...')} className="flex-1 text-[12px] py-1" />
+              <Button variant="default" size="xs" onClick={saveCurrentQuery} disabled={!saveName.trim()}>{t('保存', 'Save')}</Button>
             </div>
           </div>
         )}
@@ -366,32 +366,32 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
         {advOpen && (
           <div className="mt-2.5 pt-2.5 border-t border-[var(--border-faint)] flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <FacetGroup label="カテゴリ" options={['金属合金', 'セラミクス', 'ポリマー', '複合材料']}
+              <FacetGroup label={t('カテゴリ', 'Category')} options={['金属合金', 'セラミクス', 'ポリマー', '複合材料']}
                 selected={filters.cats} counts={facets.cats} onChange={v => setF('cats', v)} />
-              <FacetGroup label="ステータス" options={['登録済', 'レビュー待', '承認済', '要修正']}
+              <FacetGroup label={t('ステータス', 'Status')} options={['登録済', 'レビュー待', '承認済', '要修正']}
                 selected={filters.statuses} counts={facets.statuses} onChange={v => setF('statuses', v)} />
             </div>
             {allBatches.length > 0 && (
-              <FacetGroup label="バッチ" options={allBatches}
+              <FacetGroup label={t('バッチ', 'Batch')} options={allBatches}
                 selected={filters.batches} counts={facets.batches} onChange={v => setF('batches', v)} />
             )}
             {allProvenances.length > 0 && (
-              <FacetGroup label="データ出所" options={allProvenances}
+              <FacetGroup label={t('データ出所', 'Provenance')} options={allProvenances}
                 selected={filters.provenances} counts={facets.provenances} onChange={v => setF('provenances', v)}
                 displayMap={PROVENANCE_LABELS} />
             )}
             <div className="grid grid-cols-2 gap-2">
-              <RangeFilter label="硬度 HV" unit="HV" min={filters.hvMin} max={filters.hvMax}
+              <RangeFilter label={t('硬度 HV', 'Hardness HV')} unit="HV" min={filters.hvMin} max={filters.hvMax}
                 onMinChange={v => setF('hvMin', v)} onMaxChange={v => setF('hvMax', v)} />
-              <RangeFilter label="引張強さ" unit="MPa" min={filters.tsMin} max={filters.tsMax}
+              <RangeFilter label={t('引張強さ', 'Tensile Str.')} unit="MPa" min={filters.tsMin} max={filters.tsMax}
                 onMinChange={v => setF('tsMin', v)} onMaxChange={v => setF('tsMax', v)} />
-              <RangeFilter label="弾性率" unit="GPa" min={filters.elMin} max={filters.elMax}
+              <RangeFilter label={t('弾性率', 'Elastic Mod.')} unit="GPa" min={filters.elMin} max={filters.elMax}
                 onMinChange={v => setF('elMin', v)} onMaxChange={v => setF('elMax', v)} />
-              <RangeFilter label="密度" unit="g/cm³" min={filters.dnMin} max={filters.dnMax}
+              <RangeFilter label={t('密度', 'Density')} unit="g/cm³" min={filters.dnMin} max={filters.dnMax}
                 onMinChange={v => setF('dnMin', v)} onMaxChange={v => setF('dnMax', v)} />
             </div>
             <label className="flex items-center gap-1.5 text-[12px] text-text-md cursor-pointer">
-              <Checkbox checked={filters.aiOnly} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setF('aiOnly', e.target.checked)} />AI検出のみ
+              <Checkbox checked={filters.aiOnly} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setF('aiOnly', e.target.checked)} />{t('AI検出のみ', 'AI-flagged only')}
             </label>
           </div>
         )}
@@ -406,15 +406,15 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
 
       <Card className="overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-2.5 bg-raised border-b border-[var(--border-faint)]">
-          <span className="text-[12px] font-semibold text-text-md">{filtered.length === db.length ? '全件表示' : `フィルタ: ${filtered.length}件`}</span>
+          <span className="text-[12px] font-semibold text-text-md">{filtered.length === db.length ? t('全件表示', 'All items') : `${t('フィルタ', 'Filtered')}: ${filtered.length}${t('件', ' items')}`}</span>
           {selected.size > 0 && (
             <div className="flex items-center gap-2 ml-2">
-              <span className="text-[12px] text-text-md">{selected.size}件選択中</span>
+              <span className="text-[12px] text-text-md">{selected.size}{t('件選択中', ' selected')}</span>
               <Button variant="default" size="xs" onClick={() => { dispatch({ type: 'BULK_APPROVE', ids: selected }); setSelected(new Set()); addToast('一括承認しました'); }}>
-                <Icon name="check" size={11} />承認
+                <Icon name="check" size={11} />{t('承認', 'Approve')}
               </Button>
               <Button variant="danger" size="xs" onClick={() => { dispatch({ type: 'BULK_DELETE', ids: selected }); setSelected(new Set()); addToast('削除しました'); }}>
-                <Icon name="trash" size={11} />削除
+                <Icon name="trash" size={11} />{t('削除', 'Delete')}
               </Button>
             </div>
           )}
@@ -447,14 +447,14 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                   <th className="border-b border-[var(--border-faint)]">
                     <label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={slice.length > 0 && slice.every(r => selected.has(r.id))} onChange={(e: React.ChangeEvent<HTMLInputElement>) => toggleAll(e.target.checked)} aria-label="全選択" /></label>
                   </th>
-                  {[['ID', 'font-mono'], ['材料名称', ''], ['カテゴリ', ''], ['硬度 HV', ''], ['組成', ''], ['登録日', ''], ['ステータス', ''], ['AI', 'text-center'], ['操作', 'text-center']].map(([l, cls]) => (
+                  {[['ID', 'font-mono'], [t('材料名称', 'Name'), ''], [t('カテゴリ', 'Category'), ''], [t('硬度 HV', 'HV'), ''], [t('組成', 'Composition'), ''], [t('登録日', 'Date'), ''], [t('ステータス', 'Status'), ''], ['AI', 'text-center'], [t('操作', 'Actions'), 'text-center']].map(([l, cls]) => (
                     <th key={l} className={`px-3.5 py-2.5 text-left text-[11px] font-bold text-text-lo tracking-[.05em] uppercase border-b border-[var(--border-faint)] ${cls}`}>{l}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {slice.length === 0 ? (
-                  <tr><td colSpan={10} className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></td></tr>
+                  <tr><td colSpan={10} className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>{t('該当データなし', 'No data found')}</div></td></tr>
                 ) : slice.map(r => (
                   <tr key={r.id} className={`border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer transition-colors duration-75 ${selected.has(r.id) ? 'bg-accent-dim' : 'hover:bg-hover'}`} onClick={e => { if ((e.target as HTMLElement).tagName === 'BUTTON' || (e.target as HTMLElement).tagName === 'INPUT') return; onDetail(r.id); }}>
                     <td onClick={e => e.stopPropagation()}><label className="flex items-center justify-center p-2.5 cursor-pointer"><Checkbox checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} aria-label={`${r.name} を選択`} /></label></td>
@@ -484,7 +484,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
         {viewMode === 'card' && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-3">
             {slice.length === 0 ? (
-              <div className="col-span-full text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></div>
+              <div className="col-span-full text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>{t('該当データなし', 'No data found')}</div></div>
             ) : slice.map(r => (
               <button key={r.id} onClick={() => onDetail(r.id)}
                 className="group flex flex-col bg-surface border border-[var(--border-faint)] rounded-lg overflow-hidden hover:border-accent hover:shadow-md transition-all text-left">
@@ -500,9 +500,9 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
                     {r.ai && <Badge variant="ai">AI</Badge>}
                   </div>
                   <div className="grid grid-cols-3 gap-1 mt-2 text-[10px]">
-                    <div><span className="text-text-lo">硬度</span><div className="font-mono font-bold">{r.hv.toLocaleString()}</div></div>
-                    <div><span className="text-text-lo">引張</span><div className="font-mono font-bold">{r.ts.toLocaleString()}</div></div>
-                    <div><span className="text-text-lo">弾性</span><div className="font-mono font-bold">{r.el}</div></div>
+                    <div><span className="text-text-lo">{t('硬度', 'HV')}</span><div className="font-mono font-bold">{r.hv.toLocaleString()}</div></div>
+                    <div><span className="text-text-lo">{t('引張', 'TS')}</span><div className="font-mono font-bold">{r.ts.toLocaleString()}</div></div>
+                    <div><span className="text-text-lo">{t('弾性', 'E')}</span><div className="font-mono font-bold">{r.el}</div></div>
                   </div>
                 </div>
               </button>
@@ -514,7 +514,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
         {viewMode === 'compact' && (
           <div className="flex flex-col">
             {slice.length === 0 ? (
-              <div className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>該当データなし</div></div>
+              <div className="text-center py-10 text-text-lo"><Icon name="info" size={24} className="mx-auto mb-2 opacity-30" /><div>{t('該当データなし', 'No data found')}</div></div>
             ) : slice.map(r => (
               <button key={r.id} onClick={() => onDetail(r.id)}
                 className="group flex items-center gap-3 px-4 py-2.5 border-b border-[var(--border-faint)] last:border-b-0 hover:bg-hover transition-colors text-left">
@@ -531,7 +531,7 @@ export const MaterialListPage = ({ db, dispatch, onNav, onDetail, search }: Mate
           </div>
         )}
         <div className="flex items-center justify-between px-4 py-2.5 bg-raised border-t border-[var(--border-faint)]">
-          <span className="text-[12px] text-text-lo">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} / {filtered.length}件</span>
+          <span className="text-[12px] text-text-lo">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} / {filtered.length}{t('件', ' items')}</span>
           <div className="flex items-center gap-1">
             <Button variant="default" size="xs" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1} aria-label="前のページ"><Icon name="chevronLeft" size={10} /></Button>
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {

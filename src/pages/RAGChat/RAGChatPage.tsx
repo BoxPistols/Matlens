@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Typing } from '../../components/atoms';
 import { MarkdownBubble, VecCard } from '../../components/molecules';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
-import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
+import type { Material, EmbeddingHook, AIHook, MaterialWithScore, AppContextValue } from '../../types';
 import { isSubmitShortcut, submitShortcutLabel } from '../../utils/keyboard';
+import { AppCtx } from '../../context/AppContext';
 
 interface RAGChatPageProps {
   db: Material[];
@@ -15,6 +16,7 @@ interface RAGChatPageProps {
 }
 
 export const RAGChatPage = ({ db, embedding, claude, initialQuery, clearInitialQuery }: RAGChatPageProps) => {
+  const { t } = useContext(AppCtx) as AppContextValue;
   const [messages, setMessages] = useState<{ role: string; text: string; sources?: MaterialWithScore[] }[]>([
     { role: 'ai', text: 'Matlens の材料データベースについてなんでも聞いてください。ベクトル検索で関連データを取得し、根拠のある回答を提供します。' }
   ]);
@@ -88,9 +90,9 @@ ${ctxText}`;
       <div className="flex items-start gap-3 flex-shrink-0">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">
-            AI チャット <Badge variant="ai">AI</Badge>
+            {t('AI チャット', 'AI Chat')} <Badge variant="ai">AI</Badge>
           </h1>
-          <p className="text-[12px] text-text-lo mt-0.5">登録済みの材料データを元に、AIが質問に回答します</p>
+          <p className="text-[12px] text-text-lo mt-0.5">{t('登録済みの材料データを元に、AIが質問に回答します', 'AI answers questions based on registered material data')}</p>
         </div>
       </div>
 
@@ -190,14 +192,14 @@ ${ctxText}`;
               disabled={sending || !input.trim()}
               aria-label={sending ? '送信中' : '質問を送信'}
             >
-              送信 <Icon name="chevronRight" size={12} />
+              {t('送信', 'Send')} <Icon name="chevronRight" size={12} />
             </Button>
           </form>
         </Card>
 
         <div className="flex flex-col gap-3">
           <Card className="p-3">
-            <div className="text-[12px] font-bold text-text-lo uppercase tracking-[.04em] mb-2">よく使われる質問</div>
+            <div className="text-[12px] font-bold text-text-lo uppercase tracking-[.04em] mb-2">{t('よく使われる質問', 'Common Questions')}</div>
             {PRESETS.slice(0,4).map(p => (
               <button key={p} onClick={() => send(p)}
                 className="w-full text-left px-2.5 py-1.5 rounded-md text-[12px] text-text-md hover:bg-hover hover:text-text-hi transition-colors font-ui mb-0.5">
@@ -206,8 +208,8 @@ ${ctxText}`;
             ))}
           </Card>
           <VecCard>
-            <div className="text-[12px] font-bold text-vec uppercase tracking-[.04em] mb-2">最後のRAG取得</div>
-            {ctxSources.length === 0 ? <p className="text-[12px] text-text-lo">質問を送信すると、関連する材料データが表示されます。</p> : ctxSources.map(s=>(
+            <div className="text-[12px] font-bold text-vec uppercase tracking-[.04em] mb-2">{t('最後のRAG取得', 'Last RAG Retrieval')}</div>
+            {ctxSources.length === 0 ? <p className="text-[12px] text-text-lo">{t('質問を送信すると、関連する材料データが表示されます。', 'Send a question to see related material data.')}</p> : ctxSources.map(s=>(
               <div key={s.id} className="flex items-center gap-2 text-[12px] text-text-md font-mono py-1 border-b border-[var(--border-faint)] last:border-b-0">
                 <span className="flex-1 truncate">▸ {s.id}: {s.name}</span>
                 <span className="text-[10px] text-vec flex-shrink-0">{(s.score * 100).toFixed(0)}%</span>

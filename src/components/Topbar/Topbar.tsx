@@ -1,12 +1,13 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useContext } from 'react';
 import { Icon } from '../Icon';
 import { Tooltip } from '../Tooltip';
 import { Typing, Badge } from '../atoms';
-import type { Material } from '../../types';
+import type { Material, AppContextValue } from '../../types';
 import { STORYBOOK_URL } from '../../data/constants';
 import { isComposing } from '../../utils/keyboard';
 import { formatSearchEngineLabel } from '../../utils/searchEngine';
 import { DENSITY_META, VALID_DENSITIES, type Density } from '../../hooks/useDensity';
+import { AppCtx } from '../../context/AppContext';
 
 type Lang = 'ja' | 'en';
 
@@ -31,6 +32,7 @@ interface TopbarProps {
 }
 
 export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, onToggleSidebar, embStatus, embCount, embEngine, onGlobalSearch, globalQuery, setGlobalQuery, db, onDetail, unreadNotifications = 0, onOpenNotifications }: TopbarProps) => {
+  const { t } = useContext(AppCtx) as AppContextValue;
   const THEMES = [
     { id: 'light', label: 'Light' },
     { id: 'dark',  label: 'Dark' },
@@ -39,7 +41,7 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
   ];
   const engineLabel = formatSearchEngineLabel(embEngine);
   const engineSuffix = engineLabel ? ` (${engineLabel})` : '';
-  const vecStatusLabel = { idle:'初期化中', loading:'モデル読込中', indexing:'索引構築中', ready:`${embCount}件${engineSuffix}`, fallback:'キーワード検索' }[embStatus] || '—';
+  const vecStatusLabel = { idle:t('初期化中','Initializing'), loading:t('モデル読込中','Loading model'), indexing:t('索引構築中','Building index'), ready:`${embCount}${t('件','')}${engineSuffix}`, fallback:t('キーワード検索','Keyword search') }[embStatus] || '—';
 
   // Highlight matched text with yellow marker
   const highlight = (text: string, query: string) => {
@@ -126,7 +128,7 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
         <span className="text-[15px] font-bold tracking-tight">Matlens</span>
       </div>
       <div className="w-px h-4 bg-white/20 hidden md:block flex-shrink-0" />
-      <span className="text-[12px] text-white/60 leading-none hidden lg:inline flex-shrink-0">研究・実験データ管理 v3</span>
+      <span className="text-[12px] text-white/60 leading-none hidden lg:inline flex-shrink-0">{t('研究・実験データ管理 v3', 'R&D Data Management v3')}</span>
 
       {/* Global search with live results */}
       <div className="flex-1 min-w-[160px] max-w-lg mx-1 md:mx-3 relative">
@@ -138,7 +140,7 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
             onChange={e => setGlobalQuery(e.target.value)}
             onFocus={() => setFocused(true)}
             onKeyDown={handleKeyDown}
-            placeholder="材料名・ID・組成を検索..."
+            placeholder={t('材料名・ID・組成を検索...', 'Search by name, ID, composition...')}
             className="w-full pl-8 pr-8 py-1.5 rounded-md bg-white/10 border border-white/15 text-white text-[12px] placeholder-white/35 outline-none focus:bg-white/15 focus:border-white/30 transition-all font-ui"
           />
           {globalQuery && (
@@ -154,8 +156,8 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
             {results.length > 0 ? (
               <>
                 <div className="px-3 py-1.5 text-[11px] text-text-lo border-b border-[var(--border-faint)] flex items-center justify-between">
-                  <span>{results.length}件の候補{results.length === 8 ? '（上位8件）' : ''}</span>
-                  <span className="text-[10px]">Enter: 一覧表示 / 上下: 選択</span>
+                  <span>{results.length}{t('件の候補', ' results')}{results.length === 8 ? t('（上位8件）', ' (top 8)') : ''}</span>
+                  <span className="text-[10px]">{t('Enter: 一覧表示 / 上下: 選択', 'Enter: list / ↑↓: select')}</span>
                 </div>
                 {results.map((r, i) => (
                   <button
@@ -177,14 +179,14 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
                   className="w-full px-3 py-2 text-[12px] text-accent font-semibold text-left border-t border-[var(--border-faint)] hover:bg-hover transition-colors flex items-center gap-1.5"
                 >
                   <Icon name="search" size={12} />
-                  「{globalQuery}」で一覧を絞り込み
+                  {t(`「${globalQuery}」で一覧を絞り込み`, `Filter list by "${globalQuery}"`)}
                 </button>
               </>
             ) : (
               <div className="px-3 py-4 text-center">
                 <Icon name="search" size={20} className="mx-auto mb-2 text-text-lo opacity-40" />
-                <div className="text-[13px] font-semibold text-text-md">「{globalQuery}」に一致する材料はありません</div>
-                <div className="text-[11px] text-text-lo mt-1">名称・ID・組成・備考で検索しています</div>
+                <div className="text-[13px] font-semibold text-text-md">{t(`「${globalQuery}」に一致する材料はありません`, `No materials match "${globalQuery}"`)}</div>
+                <div className="text-[11px] text-text-lo mt-1">{t('名称・ID・組成・備考で検索しています', 'Searching name, ID, composition, notes')}</div>
               </div>
             )}
           </div>

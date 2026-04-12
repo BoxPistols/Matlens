@@ -8,7 +8,7 @@
  *   フィードバックループ (再加工 t4) は DAG で表現不可 → Petri net 採用の決定理由。
  */
 
-import { useState, useReducer, useMemo, useRef, type KeyboardEvent } from 'react'
+import { useState, useReducer, useMemo, useRef, useContext, type KeyboardEvent } from 'react'
 import { Button, Badge, Card } from '../../components/atoms'
 import { Icon } from '../../components/Icon'
 import {
@@ -22,6 +22,8 @@ import {
 import { exportPnml, downloadPnml } from '../../services/pnml'
 import { importPnml } from '../../services/pnmlImport'
 import { DownloadPreviewModal } from '../../components/molecules'
+import { AppCtx } from '../../context/AppContext'
+import type { AppContextValue } from '../../types'
 import {
   tokenReducer,
   isEnabled,
@@ -291,6 +293,7 @@ interface PetriNetPageProps {
 }
 
 export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
+  const { t } = useContext(AppCtx) as AppContextValue
   const [tokens, dispatch] = useReducer(tokenReducer, { ...INITIAL_TOKENS })
   const [history, setHistory] = useState<string[]>([])
   // Undo 用の過去状態スタック。UI レベルの「1 手戻る」用で、
@@ -422,19 +425,19 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
         <div>
           <h1 className="text-[16px] font-bold text-text-hi flex items-center gap-2">
             <Icon name="workflow" size={16} />
-            ペトリネット ワークフロー
+            {t('ペトリネット ワークフロー', 'Petri Net Workflow')}
           </h1>
           <p className="text-[12px] text-text-lo mt-0.5">
-            金属試験プロセスの P/T ネット可視化。
-            トークン (●) がサンプルの進行状況を表す。発火可能なトランジション（青/橙枠）をクリックまたは Enter/Space で工程を進める。
+            {t('金属試験プロセスの P/T ネット可視化。', 'P/T net visualization of metal testing process.')}
+            {t('トークン (●) がサンプルの進行状況を表す。発火可能なトランジション（青/橙枠）をクリックまたは Enter/Space で工程を進める。', 'Tokens (●) represent sample progress. Click or press Enter/Space on enabled transitions (blue/amber) to advance.')}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <Badge variant={enabledCount > 0 ? 'green' : 'gray'}>
-            {enabledCount} 件 発火可能
+            {enabledCount} {t('件 発火可能', 'fireable')}
           </Badge>
           <Button size="sm" variant="default" onClick={handleAdd}>
-            <Icon name="plus" size={13} /> サンプル追加
+            <Icon name="plus" size={13} /> {t('サンプル追加', 'Add Sample')}
           </Button>
           <Button
             size="sm"
@@ -443,18 +446,18 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
             disabled={undoStack.length === 0}
             title={undoStack.length === 0 ? '巻き戻せる履歴がありません' : `直前の操作を取り消す (残り ${undoStack.length})`}
           >
-            <Icon name="chevronLeft" size={13} /> 1 手戻る
+            <Icon name="chevronLeft" size={13} /> {t('1 手戻る', 'Undo')}
             {undoStack.length > 0 && <span className="ml-1 text-[10px] text-text-lo">({undoStack.length})</span>}
           </Button>
           <Button size="sm" variant="default" onClick={handleExport}>
             <Icon name="download" size={13} /> PNML
           </Button>
           <Button size="sm" variant="default" onClick={handleImport} title="PNML ファイルからトークン配置を読み込む">
-            <Icon name="upload" size={13} /> インポート
+            <Icon name="upload" size={13} /> {t('インポート', 'Import')}
           </Button>
           <input ref={fileInputRef} type="file" accept=".pnml,.xml" className="hidden" onChange={handleFileChange} />
           <Button size="sm" variant="default" onClick={handleReset}>
-            <Icon name="refresh" size={13} /> リセット
+            <Icon name="refresh" size={13} /> {t('リセット', 'Reset')}
           </Button>
         </div>
       </div>
@@ -530,22 +533,22 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {/* トークンサマリー */}
         <Card className="p-3">
-          <p className="text-[11px] font-bold text-text-lo mb-2">サンプル状況</p>
+          <p className="text-[11px] font-bold text-text-lo mb-2">{t('サンプル状況', 'Sample Status')}</p>
           <div className="flex flex-col gap-1">
             <div className="flex justify-between text-[12px]">
-              <span className="text-text-md">総サンプル数</span>
+              <span className="text-text-md">{t('総サンプル数', 'Total Samples')}</span>
               <span className="font-bold text-text-hi">{totalTokens}</span>
             </div>
             <div className="flex justify-between text-[12px]">
-              <span className="text-text-md">完了</span>
+              <span className="text-text-md">{t('完了', 'Completed')}</span>
               <span className="font-bold" style={{ color: 'var(--ok)' }}>{completed}</span>
             </div>
             <div className="flex justify-between text-[12px]">
-              <span className="text-text-md">廃棄/不合格</span>
+              <span className="text-text-md">{t('廃棄/不合格', 'Rejected')}</span>
               <span className="font-bold" style={{ color: 'var(--warn)' }}>{rejected}</span>
             </div>
             <div className="flex justify-between text-[12px]">
-              <span className="text-text-md">進行中</span>
+              <span className="text-text-md">{t('進行中', 'In Progress')}</span>
               <span className="font-bold text-text-hi">{totalTokens - completed - rejected}</span>
             </div>
           </div>
@@ -553,7 +556,7 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
 
         {/* Place トークン詳細 */}
         <Card className="p-3 sm:col-span-2">
-          <p className="text-[11px] font-bold text-text-lo mb-2">各工程のトークン数</p>
+          <p className="text-[11px] font-bold text-text-lo mb-2">{t('各工程のトークン数', 'Tokens per Stage')}</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             {net.places.map(p => {
               const count = tokens[p.id] ?? 0
@@ -580,7 +583,7 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
       {/* 発火履歴 */}
       {history.length > 0 && (
         <Card className="p-3">
-          <p className="text-[11px] font-bold text-text-lo mb-2">発火ログ</p>
+          <p className="text-[11px] font-bold text-text-lo mb-2">{t('発火ログ', 'Firing Log')}</p>
           <ol className="flex flex-col gap-0.5">
             {history.map((h, i) => (
               <li key={i} className="text-[11px] text-text-md font-mono">
@@ -594,7 +597,7 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
 
       {/* 技術ノート */}
       <Card className="p-3 border-dashed" style={{ borderColor: 'var(--border-faint)' }}>
-        <p className="text-[11px] font-bold text-text-lo mb-1">なぜペトリネットか</p>
+        <p className="text-[11px] font-bold text-text-lo mb-1">{t('なぜペトリネットか', 'Why Petri Nets?')}</p>
         <p className="text-[11px] text-text-md leading-relaxed">
           再加工ループ（後加工済 → 一次加工済）は有向非巡回グラフ (DAG) では表現できない。
           ペトリネットはサイクルを自然に扱い、複数サンプルの並行進行・place 容量制約（長時間試験の並行ステーション数）・

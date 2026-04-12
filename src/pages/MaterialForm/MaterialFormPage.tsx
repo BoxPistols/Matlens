@@ -70,7 +70,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   const [aiLoading, setAiLoading] = useState(false);
   const [compTimer, setCompTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [wizardStep, setWizardStep] = useState(0);
-  const { addToast } = useContext(AppCtx) as AppContextValue;
+  const { addToast, t } = useContext(AppCtx) as AppContextValue;
 
   const newId = getNextId();
   const tpl = form.cat ? CATEGORY_TEMPLATES[form.cat as MaterialCategory] : null;
@@ -108,9 +108,9 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
 
   const validateStep1 = (): boolean => {
     const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = '必須項目です';
-    if (!form.cat) e.cat = '必須項目です';
-    if (!form.comp.trim()) e.comp = '必須項目です';
+    if (!form.name.trim()) e.name = t('必須項目です', 'Required');
+    if (!form.cat) e.cat = t('必須項目です', 'Required');
+    if (!form.comp.trim()) e.comp = t('必須項目です', 'Required');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -119,8 +119,8 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
     const e: Record<string, string> = {};
     const hv = parseFloat(String(form.hv));
     const ts = parseFloat(String(form.ts));
-    if (hv > 5000) e.hv = '硬度が異常に高い値です';
-    if (ts > 5000) e.ts = '引張強さが異常に高い値です';
+    if (hv > 5000) e.hv = t('硬度が異常に高い値です', 'Hardness value is abnormally high');
+    if (ts > 5000) e.ts = t('引張強さが異常に高い値です', 'Tensile strength is abnormally high');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -156,9 +156,9 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   // ─── Wizard steps ──────────────────────────────────────────────────────
 
   const steps: WizardStep[] = [
-    { id: 'basic', label: '基本情報', validate: validateStep1 },
-    { id: 'props', label: '物性データ', validate: validateStep2 },
-    { id: 'confirm', label: '確認・登録' },
+    { id: 'basic', label: t('基本情報', 'Basic Info'), validate: validateStep1 },
+    { id: 'props', label: t('物性データ', 'Properties'), validate: validateStep2 },
+    { id: 'confirm', label: t('確認・登録', 'Confirm') },
   ];
 
   const anomalyHv = parseFloat(String(form.hv)) > 3500;
@@ -168,37 +168,37 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
 
   const renderStep1 = () => (
     <Card className="p-4">
-      <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-4 pb-2.5 border-b border-[var(--border-faint)]">基本情報</div>
+      <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-4 pb-2.5 border-b border-[var(--border-faint)]">{t('基本情報', 'Basic Information')}</div>
       <div className="grid grid-cols-2 gap-3">
-        <FormGroup label="材料名称" required error={errors.name}>
+        <FormGroup label={t('材料名称', 'Material Name')} required error={errors.name}>
           <Input value={form.name} onChange={setV('name')} placeholder="例: SUS304-L 改良型" error={!!errors.name} />
         </FormGroup>
-        <FormGroup label="カテゴリ" required error={errors.cat}>
+        <FormGroup label={t('カテゴリ', 'Category')} required error={errors.cat}>
           <Select value={form.cat} onChange={setV('cat')} className={`w-full ${errors.cat ? 'border-err' : ''}`}>
-            <option value="">選択してください</option>
+            <option value="">{t('選択してください', 'Select...')}</option>
             {(['金属合金', 'セラミクス', 'ポリマー', '複合材料'] as MaterialCategory[]).map(c => <option key={c}>{c}</option>)}
           </Select>
         </FormGroup>
-        <FormGroup label="サンプルID" hint="自動採番">
+        <FormGroup label={t('サンプルID', 'Sample ID')} hint={t('自動採番', 'Auto-assigned')}>
           <Input value={editing ? editId! : newId} readOnly className="bg-sunken text-text-lo cursor-default" />
         </FormGroup>
-        <FormGroup label="バッチ番号">
+        <FormGroup label={t('バッチ番号', 'Batch No.')}>
           <Input value={form.batch} onChange={setV('batch')} placeholder="例: B-038" />
         </FormGroup>
-        <FormGroup label="登録者">
+        <FormGroup label={t('登録者', 'Author')}>
           <Input value="木村 研一" readOnly className="bg-sunken text-text-lo cursor-default" />
         </FormGroup>
-        <FormGroup label="試験温度">
+        <FormGroup label={t('試験温度', 'Test Temp.')}>
           <UnitInput unit="℃" inputProps={{ value: form.temp, onChange: setV('temp'), placeholder: '25' }} />
         </FormGroup>
-        <FormGroup label="組成・配合" required error={errors.comp} className="col-span-2">
+        <FormGroup label={t('組成・配合', 'Composition')} required error={errors.comp} className="col-span-2">
           <Input value={form.comp} onChange={e => onCompChange(e.target.value)} placeholder={tpl?.compHint || '例: Fe-18Cr-8Ni-0.03C (wt%)'} error={!!errors.comp} />
         </FormGroup>
       </div>
       {form.cat && (
         <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-md bg-accent-dim text-[12px] text-accent">
           <Icon name="info" size={14} />
-          <span>カテゴリ「{form.cat}」を選択 — 物性データのプレースホルダーが自動調整されます</span>
+          <span>{t(`カテゴリ「${form.cat}」を選択 — 物性データのプレースホルダーが自動調整されます`, `Category "${form.cat}" selected — property placeholders adjusted automatically`)}</span>
         </div>
       )}
     </Card>
@@ -207,51 +207,51 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   const renderStep2 = () => (
     <Card className="p-4">
       <div className="flex items-center mb-4 pb-2.5 border-b border-[var(--border-faint)]">
-        <span className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase">物性データ</span>
+        <span className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase">{t('物性データ', 'Property Data')}</span>
         {(anomalyHv || anomalyTs) && (
           <span className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] bg-err-dim text-err">
-            <Icon name="warning" size={12} />AI: 異常値候補
+            <Icon name="warning" size={12} />{t('AI: 異常値候補', 'AI: Anomaly candidate')}
           </span>
         )}
       </div>
       <div className="grid grid-cols-3 gap-3">
-        <FormGroup label="硬度" hint={anomalyHv ? '通常範囲外の値です' : undefined} error={errors.hv}>
+        <FormGroup label={t('硬度', 'Hardness')} hint={anomalyHv ? '通常範囲外の値です' : undefined} error={errors.hv}>
           <UnitInput unit="HV" inputProps={{ value: form.hv, onChange: setV('hv'), placeholder: ph('hv') || '200', type: 'number' }} />
         </FormGroup>
-        <FormGroup label="引張強さ" hint={anomalyTs ? '標準範囲を超えています' : undefined} error={errors.ts}>
+        <FormGroup label={t('引張強さ', 'Tensile Str.')} hint={anomalyTs ? '標準範囲を超えています' : undefined} error={errors.ts}>
           <UnitInput unit="MPa" inputProps={{ value: form.ts, onChange: setV('ts'), placeholder: ph('ts') || '520', type: 'number' }} />
         </FormGroup>
-        <FormGroup label="弾性率">
+        <FormGroup label={t('弾性率', 'Elastic Mod.')}>
           <UnitInput unit="GPa" inputProps={{ value: form.el, onChange: setV('el'), placeholder: ph('el') || '190', type: 'number' }} />
         </FormGroup>
-        <FormGroup label="疲労強度">
+        <FormGroup label={t('疲労強度', 'Fatigue Str.')}>
           <UnitInput unit="MPa" inputProps={{ value: form.pf, onChange: setV('pf'), placeholder: ph('pf') || '170', type: 'number' }} />
         </FormGroup>
-        <FormGroup label="伸び">
+        <FormGroup label={t('伸び', 'Elongation')}>
           <UnitInput unit="%" inputProps={{ value: form.el2, onChange: setV('el2'), placeholder: ph('el2') || '40', type: 'number' }} />
         </FormGroup>
-        <FormGroup label="密度">
+        <FormGroup label={t('密度', 'Density')}>
           <UnitInput unit="g/cm³" inputProps={{ value: form.dn, onChange: setV('dn'), placeholder: ph('dn') || '7.9', type: 'number', step: '0.1' }} />
         </FormGroup>
       </div>
       <div className="mt-4 pt-3 border-t border-[var(--border-faint)]">
-        <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">拡張情報</div>
+        <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">{t('拡張情報', 'Extended Info')}</div>
         <div className="grid grid-cols-3 gap-3">
-          <FormGroup label="データ出所">
+          <FormGroup label={t('データ出所', 'Provenance')}>
             <Select value={form.provenance} onChange={setV('provenance')} className="w-full">
-              <option value="">未指定</option>
+              <option value="">{t('未指定', 'Unspecified')}</option>
               {PROVENANCE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
             </Select>
           </FormGroup>
-          <FormGroup label="試験方法">
+          <FormGroup label={t('試験方法', 'Test Method')}>
             <Input value={form.testMethod} onChange={setV('testMethod')} placeholder="例: JIS Z 2244, ASTM E8" />
           </FormGroup>
-          <FormGroup label="金属組織">
+          <FormGroup label={t('金属組織', 'Microstructure')}>
             <Input value={form.microstructure} onChange={setV('microstructure')} placeholder="例: オーステナイト組織" />
           </FormGroup>
         </div>
       </div>
-      <FormGroup label="備考" className="mt-3">
+      <FormGroup label={t('備考', 'Notes')} className="mt-3">
         <Textarea value={form.memo} onChange={setV('memo')} placeholder="試験条件、観察事項など..." rows={2} />
       </FormGroup>
     </Card>
@@ -279,8 +279,8 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
     return (
       <Card className="p-4">
         <div className="flex items-center mb-4 pb-2.5 border-b border-[var(--border-faint)]">
-          <span className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase">登録内容の確認</span>
-          <span className="ml-auto text-[12px] text-text-lo">{filledCount} / {fields.length} 項目入力済み</span>
+          <span className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase">{t('登録内容の確認', 'Confirm Registration')}</span>
+          <span className="ml-auto text-[12px] text-text-lo">{filledCount} / {fields.length} {t('項目入力済み', 'fields filled')}</span>
         </div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-2">
           {fields.map(f => (
@@ -317,8 +317,8 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="ptitle text-[19px] font-bold tracking-tight">{editing ? `データ編集 — ${editId}` : '材料データ 新規登録'}</h1>
-          <p className="text-[12px] text-text-lo mt-0.5">ステップ形式で入力 — AI が各ステップをリアルタイムサポートします</p>
+          <h1 className="ptitle text-[19px] font-bold tracking-tight">{editing ? `${t('データ編集', 'Edit Data')} — ${editId}` : t('材料データ 新規登録', 'Register New Material')}</h1>
+          <p className="text-[12px] text-text-lo mt-0.5">{t('ステップ形式で入力 — AI が各ステップをリアルタイムサポートします', 'Step-by-step entry — AI provides real-time assistance')}</p>
         </div>
       </div>
       <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 320px', alignItems: 'start' }}>
@@ -328,15 +328,15 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           onStepChange={setWizardStep}
           onSubmit={submit}
           onCancel={onCancel}
-          submitLabel={editing ? '更新する' : '登録する'}
+          submitLabel={editing ? t('更新する', 'Update') : t('登録する', 'Register')}
         >
           {stepContent[wizardStep]!()}
         </StepWizard>
 
         <div className="flex flex-col gap-3 sticky top-0">
-          <AIInsightCard loading={aiLoading} subtitle="組成やカテゴリから、AIが物性値を推定・組成例を提案します。入力補助のみで、必ず実測値で検証してください。" chips={[
-            { label: '物性値をAIで推定', onClick: aiAutofill },
-            { label: '組成例を表示', onClick: async () => {
+          <AIInsightCard loading={aiLoading} subtitle={t('組成やカテゴリから、AIが物性値を推定・組成例を提案します。入力補助のみで、必ず実測値で検証してください。', 'AI estimates properties from composition/category. For reference only — verify with measured data.')} chips={[
+            { label: t('物性値をAIで推定', 'Estimate with AI'), onClick: aiAutofill },
+            { label: t('組成例を表示', 'Show compositions'), onClick: async () => {
               setAiLoading(true);
               const res = await claude.call(`${form.cat||'金属合金'}の代表的な組成式を3種類、材料名付きで各1行で教えてください。`);
               setAiBody(res); setAiLoading(false);
@@ -345,12 +345,12 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
             {renderAiContent()}
           </AIInsightCard>
           <Card className="p-4">
-            <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">登録フロー</div>
+            <div className="text-[12px] font-bold text-text-lo tracking-[.04em] uppercase mb-3">{t('登録フロー', 'Registration Flow')}</div>
             {[
-              { label: '基本情報・組成を入力', step: 0 },
-              { label: '物性値・拡張情報を入力', step: 1 },
-              { label: '確認して登録', step: 2 },
-              { label: '担当者レビュー → 承認', step: -1 },
+              { label: t('基本情報・組成を入力', 'Enter basic info'), step: 0 },
+              { label: t('物性値・拡張情報を入力', 'Enter properties'), step: 1 },
+              { label: t('確認して登録', 'Confirm & register'), step: 2 },
+              { label: t('担当者レビュー → 承認', 'Review & approve'), step: -1 },
             ].map((item, i) => {
               const active = item.step === wizardStep;
               const done = item.step >= 0 && item.step < wizardStep;

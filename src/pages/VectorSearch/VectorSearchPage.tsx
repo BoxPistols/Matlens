@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Select, Typing } from '../../components/atoms';
 import { VecCard } from '../../components/molecules';
-import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
+import type { Material, EmbeddingHook, AIHook, MaterialWithScore, AppContextValue } from '../../types';
 import { isPlainEnter } from '../../utils/keyboard';
 import { formatSearchEngineLabel } from '../../utils/searchEngine';
+import { AppCtx } from '../../context/AppContext';
 
 interface VectorSearchPageProps {
   db: Material[];
@@ -13,6 +14,7 @@ interface VectorSearchPageProps {
 }
 
 export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProps) => {
+  const { t } = useContext(AppCtx) as AppContextValue;
   const [query, setQuery] = useState('');
   const [topK, setTopK] = useState(5);
   const [results, setResults] = useState<MaterialWithScore[]>([]);
@@ -41,9 +43,9 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
       <div className="flex items-start gap-3">
         <div className="flex-1">
           <h1 className="ptitle text-[19px] font-bold tracking-tight flex items-center gap-2">
-            ベクトル検索 <Badge variant="vec">VSS</Badge>
+            {t('ベクトル検索', 'Vector Search')} <Badge variant="vec">VSS</Badge>
           </h1>
-          <p className="text-[12px] text-text-lo mt-0.5">自然言語の説明で意味的に近い材料を検索します</p>
+          <p className="text-[12px] text-text-lo mt-0.5">{t('自然言語の説明で意味的に近い材料を検索します', 'Search semantically similar materials using natural language')}</p>
         </div>
       </div>
 
@@ -75,7 +77,7 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
             <option value={3}>Top 3</option><option value={5}>Top 5</option><option value={10}>Top 10</option>
           </Select>
           <Button variant="vec" onClick={() => runSearch()} disabled={searching || !query.trim()}>
-            <Icon name="vecSearch" size={13} />{searching ? '検索中...' : '検索'}
+            <Icon name="vecSearch" size={13} />{searching ? t('検索中...', 'Searching...') : t('検索', 'Search')}
           </Button>
         </div>
         <div className="flex gap-2 mt-2.5 flex-wrap">
@@ -88,14 +90,14 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
         </div>
       </Card>
 
-      {searching && <div className="text-center py-8 text-text-lo"><Typing color="var(--vec)" /><p className="mt-2 text-[13px]">ベクトル計算中...</p></div>}
+      {searching && <div className="text-center py-8 text-text-lo"><Typing color="var(--vec)" /><p className="mt-2 text-[13px]">{t('ベクトル計算中...', 'Computing vectors...')}</p></div>}
 
       {searched && !searching && (
         <div className="flex flex-col gap-2">
           {/* Score viz */}
           {results.length > 0 && (
             <Card className="p-3">
-              <div className="text-[12px] font-bold text-text-lo tracking-[.05em] uppercase mb-2">類似度スコア分布</div>
+              <div className="text-[12px] font-bold text-text-lo tracking-[.05em] uppercase mb-2">{t('類似度スコア分布', 'Similarity Score Distribution')}</div>
               <div className="flex items-end gap-1.5 h-10">
                 {results.map((r, i) => (
                   <div key={r.id} className="flex-1 flex flex-col items-center gap-1">
@@ -128,7 +130,7 @@ export const VectorSearchPage = ({ db, embedding, claude }: VectorSearchPageProp
             </Card>
           ))}
 
-          {results.length === 0 && <div className="text-center py-8 text-text-lo"><Icon name="search" size={28} className="mx-auto mb-2 opacity-30" /><p>該当なし</p></div>}
+          {results.length === 0 && <div className="text-center py-8 text-text-lo"><Icon name="search" size={28} className="mx-auto mb-2 opacity-30" /><p>{t('該当なし', 'No results')}</p></div>}
         </div>
       )}
     </div>

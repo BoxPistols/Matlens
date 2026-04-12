@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
-import { render } from '@testing-library/react';
 import { HelpPage } from './HelpPage';
+import { renderWithContext } from '../../test/helpers';
 
 describe('HelpPage', () => {
-  const setup = () => render(<HelpPage />);
+  const setup = () => renderWithContext(<HelpPage />);
 
   it('renders title', () => {
     setup();

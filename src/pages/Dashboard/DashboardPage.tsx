@@ -90,7 +90,7 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
     return () => { Object.values(chartInstances.current as any).forEach((c: any) => c.destroy()); chartInstances.current={}; };
   }, [db]);
 
-  const { addToast } = useContext(AppCtx) as AppContextValue;
+  const { addToast, t } = useContext(AppCtx) as AppContextValue;
   const [exportOpen, setExportOpen] = useState(false);
 
   return (
@@ -98,20 +98,20 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} db={db} filtered={db} />
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="ptitle text-[19px] font-bold tracking-tight">ダッシュボード</h1>
-          <p className="text-[12px] text-text-lo mt-0.5">2026年4月 · 概況サマリー</p>
+          <h1 className="ptitle text-[19px] font-bold tracking-tight">{t('ダッシュボード', 'Dashboard')}</h1>
+          <p className="text-[12px] text-text-lo mt-0.5">{t('2026年4月 · 概況サマリー', 'Apr 2026 · Overview')}</p>
         </div>
         <div className="flex gap-2 items-center">
-          <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />レポート</Button>
-          <Button variant="ai" size="sm" onClick={() => onNav('rag')}><Icon name="spark" size={13} />AI 分析</Button>
-          <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />登録</Button>
+          <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />{t('レポート', 'Report')}</Button>
+          <Button variant="ai" size="sm" onClick={() => onNav('rag')}><Icon name="spark" size={13} />{t('AI 分析', 'AI Analysis')}</Button>
+          <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />{t('登録', 'Register')}</Button>
         </div>
       </div>
       <div className={`grid grid-cols-1 ${announcements && announcements.all.length > 0 ? 'lg:grid-cols-[2fr_1fr]' : ''} gap-3 items-start`}>
-        <AIInsightCard loading={insightLoading} subtitle="登録データ全体の傾向やレビュー優先度をAIが分析します。" chips={[
-          { label:'今月の傾向を詳しく', onClick: () => onNav(`rag:今月登録された材料データの傾向を分析してください。カテゴリ分布や物性値の特徴を教えてください。`) },
-          { label:'レビュー待ちを確認', onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
-          { label:'AI検出の詳細', onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },
+        <AIInsightCard loading={insightLoading} subtitle={t('登録データ全体の傾向やレビュー優先度をAIが分析します。', 'AI analyzes trends and review priorities across all registered data.')} chips={[
+          { label: t('今月の傾向を詳しく', 'Monthly trends'), onClick: () => onNav(`rag:今月登録された材料データの傾向を分析してください。カテゴリ分布や物性値の特徴を教えてください。`) },
+          { label: t('レビュー待ちを確認', 'Review pending items'), onClick: () => onNav(`rag:現在レビュー待ちの材料データを一覧し、優先的にレビューすべきものとその理由を教えてください。`) },
+          { label: t('AI検出の詳細', 'AI detection details'), onClick: () => onNav(`rag:AI検出フラグが付いた材料データについて、何が検出されたのか、注意すべき点を教えてください。`) },
         ]}>
           {!insightLoading && <div className="md-preview" dangerouslySetInnerHTML={{ __html: renderSafeMarkdown(insight) }} />}
         </AIInsightCard>
@@ -119,7 +119,7 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
           <Card className="p-4">
             <div className="flex items-center gap-2 mb-3">
               <Icon name="info" size={13} className="text-accent flex-shrink-0" />
-              <span className="text-[12px] font-bold text-text-lo tracking-[.05em] uppercase">お知らせ</span>
+              <span className="text-[12px] font-bold text-text-lo tracking-[.05em] uppercase">{t('お知らせ', 'Announcements')}</span>
               {announcements.unreadCount > 0 && (
                 <span className="text-[12px] font-bold text-accent bg-accent-dim px-1.5 py-0.5 rounded-full leading-none">
                   {announcements.unreadCount}
@@ -128,7 +128,7 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
               {onOpenAnnouncements && (
                 <div className="ml-auto">
                   <Button variant="ghost" size="xs" onClick={onOpenAnnouncements}>
-                    一覧へ <Icon name="chevronRight" size={10} />
+                    {t('一覧へ', 'View all')} <Icon name="chevronRight" size={10} />
                   </Button>
                 </div>
               )}
@@ -177,21 +177,21 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
         )}
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <KpiCard label="総データ件数" value={db.length} delta="▲ 12件（今月）" deltaUp={true} />
-        <KpiCard label="実験バッチ数" value={38} delta="▲ 3バッチ" deltaUp={true} />
-        <KpiCard label="レビュー待ち" value={db.filter(r=>r.status==='レビュー待').length} delta="▼ 要対応" deltaUp={false} />
-        <KpiCard label="AI 検出" value={db.filter(r=>r.ai).length} delta="異常値候補あり" color="var(--ai-col)" />
+        <KpiCard label={t('総データ件数', 'Total Records')} value={db.length} delta={t('▲ 12件（今月）', '▲ 12 this month')} deltaUp={true} />
+        <KpiCard label={t('実験バッチ数', 'Batch Count')} value={38} delta={t('▲ 3バッチ', '▲ 3 batches')} deltaUp={true} />
+        <KpiCard label={t('レビュー待ち', 'Pending Review')} value={db.filter(r=>r.status==='レビュー待').length} delta={t('▼ 要対応', '▼ Action needed')} deltaUp={false} />
+        <KpiCard label={t('AI 検出', 'AI Flagged')} value={db.filter(r=>r.ai).length} delta={t('異常値候補あり', 'Anomaly candidates')} color="var(--ai-col)" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <SectionCard title="月次登録件数トレンド（12ヶ月）"><div className="chart-container"><canvas ref={chartRefs.trend} /></div></SectionCard>
-        <SectionCard title="カテゴリ別件数構成"><div className="chart-container"><canvas ref={chartRefs.donut} /></div></SectionCard>
+        <SectionCard title={t('月次登録件数トレンド（12ヶ月）', 'Monthly Registrations (12 mo)')}><div className="chart-container"><canvas ref={chartRefs.trend} /></div></SectionCard>
+        <SectionCard title={t('カテゴリ別件数構成', 'Category Distribution')}><div className="chart-container"><canvas ref={chartRefs.donut} /></div></SectionCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <SectionCard title="バッチ別ステータス内訳"><div className="chart-container"><canvas ref={chartRefs.status} /></div></SectionCard>
-        <SectionCard title="硬度 vs 引張強さ 散布図"><div className="chart-container"><canvas ref={chartRefs.scatter} /></div></SectionCard>
+        <SectionCard title={t('バッチ別ステータス内訳', 'Status by Batch')}><div className="chart-container"><canvas ref={chartRefs.status} /></div></SectionCard>
+        <SectionCard title={t('硬度 vs 引張強さ 散布図', 'Hardness vs Tensile Scatter')}><div className="chart-container"><canvas ref={chartRefs.scatter} /></div></SectionCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <SectionCard title="最近登録されたデータ" action={<Button variant="ghost" size="xs" onClick={() => onNav('list')}>一覧へ <Icon name="chevronRight" size={10} /></Button>}>
+        <SectionCard title={t('最近登録されたデータ', 'Recently Registered')} action={<Button variant="ghost" size="xs" onClick={() => onNav('list')}>{t('一覧へ', 'View all')} <Icon name="chevronRight" size={10} /></Button>}>
           {db.slice(0,5).map((r, i) => (
             <div key={r.id} className="flex items-center gap-2.5 py-1.5 border-b border-[var(--border-faint)] last:border-b-0 cursor-pointer hover:bg-hover rounded px-1 transition-colors">
               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: ['var(--accent)','var(--ok)','var(--warn)','var(--ai-mid)','#D4537E'][i] }} />
@@ -203,8 +203,8 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
             </div>
           ))}
         </SectionCard>
-        <SectionCard title="実験フェーズ進捗">
-          {([['データ収集','var(--accent)',88],['一次評価','var(--ok)',74],['解析・検証','var(--warn)',51],['報告書作成','var(--ai-mid)',32]] as [string, string, number][]).map(([lbl,col,val]) => (
+        <SectionCard title={t('実験フェーズ進捗', 'Experiment Phase Progress')}>
+          {([[t('データ収集', 'Data Collection'),'var(--accent)',88],[t('一次評価', 'Initial Eval'),'var(--ok)',74],[t('解析・検証', 'Analysis'),'var(--warn)',51],[t('報告書作成', 'Report'),'var(--ai-mid)',32]] as [string, string, number][]).map(([lbl,col,val]) => (
             <div key={lbl} className="flex items-center gap-2.5 py-1.5 text-[12px]">
               <span className="w-20 text-text-md flex-shrink-0">{lbl}</span>
               <ProgressBar value={val} color={col} className="flex-1 h-1.5" />

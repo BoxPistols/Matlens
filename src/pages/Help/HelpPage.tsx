@@ -1,23 +1,26 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Icon } from '../../components/Icon';
 import { Badge, Card, Input } from '../../components/atoms';
 import { SearchBox } from '../../components/molecules';
 import { HELP_TERMS } from '../../data/constants';
+import { AppCtx } from '../../context/AppContext';
+import type { AppContextValue } from '../../types';
 
 export const HelpPage = () => {
+  const { t } = useContext(AppCtx) as AppContextValue;
   const [cat, setCat] = useState('all');
   const [q, setQ] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
-  const CATS = [{id:'all',label:'すべて'},{id:'mat',label:'材料工学'},{id:'ai',label:'AI / ML'},{id:'sys',label:'システム'},{id:'ops',label:'操作ガイド'}];
+  const CATS = [{id:'all',label:t('すべて', 'All')},{id:'mat',label:t('材料工学', 'Materials')},{id:'ai',label:'AI / ML'},{id:'sys',label:t('システム', 'System')},{id:'ops',label:t('操作ガイド', 'Operations')}];
   const filtered = HELP_TERMS.filter(t => (cat==='all'||t.cat===cat) && (!q||`${t.term} ${t.en} ${t.body}`.toLowerCase().includes(q.toLowerCase())));
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="ptitle text-[19px] font-bold tracking-tight">ヘルプ・用語集</h1>
-          <p className="text-[12px] text-text-lo mt-0.5">Matlens で使われる専門用語・操作ガイドのリファレンス</p>
+          <h1 className="ptitle text-[19px] font-bold tracking-tight">{t('ヘルプ・用語集', 'Help / Glossary')}</h1>
+          <p className="text-[12px] text-text-lo mt-0.5">{t('Matlens で使われる専門用語・操作ガイドのリファレンス', 'Reference for technical terms and operations used in Matlens')}</p>
         </div>
-        <div style={{width:220}}><SearchBox value={q} onChange={setQ} placeholder="用語を検索..." /></div>
+        <div style={{width:220}}><SearchBox value={q} onChange={setQ} placeholder={t('用語を検索...', 'Search terms...')} /></div>
       </div>
       <div className="flex gap-1.5 flex-wrap" role="tablist">
         {CATS.map(c=>(
@@ -49,7 +52,7 @@ export const HelpPage = () => {
             )}
           </Card>
         ))}
-        {filtered.length===0 && <div className="col-span-full text-center py-10 text-text-lo"><Icon name="search" size={24} className="mx-auto mb-2 opacity-30" /><p>該当する用語が見つかりません</p></div>}
+        {filtered.length===0 && <div className="col-span-full text-center py-10 text-text-lo"><Icon name="search" size={24} className="mx-auto mb-2 opacity-30" /><p>{t('該当する用語が見つかりません', 'No matching terms found')}</p></div>}
       </div>
     </div>
   );

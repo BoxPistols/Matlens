@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Button, Badge, Card, Input, Select, FormGroup, UnitInput, Typing } from '../../components/atoms';
 import { AIInsightCard, VecCard } from '../../components/molecules';
-import type { Material, EmbeddingHook, AIHook, MaterialWithScore } from '../../types';
+import type { Material, EmbeddingHook, AIHook, MaterialWithScore, AppContextValue } from '../../types';
+import { AppCtx } from '../../context/AppContext';
 
 interface SimilarPageProps {
   db: Material[];
@@ -25,6 +26,7 @@ function resolveBase(input: string, db: Material[]): string {
 }
 
 export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBase }: SimilarPageProps) => {
+  const { t } = useContext(AppCtx) as AppContextValue;
   const [base, setBase] = useState(() => resolveBase(initialBase || 'MAT-0237', db));
   const autoRan = useRef(false);
   const [weight, setWeight] = useState('総合スコア');
@@ -67,32 +69,32 @@ export const SimilarPage = ({ db, embedding, claude, initialBase, clearInitialBa
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="ptitle text-[19px] font-bold tracking-tight">類似材料探索</h1>
-          <p className="text-[12px] text-text-lo mt-0.5">Embedding コサイン類似度で類似材料を発見します</p>
+          <h1 className="ptitle text-[19px] font-bold tracking-tight">{t('類似材料探索', 'Similar Materials')}</h1>
+          <p className="text-[12px] text-text-lo mt-0.5">{t('Embedding コサイン類似度で類似材料を発見します', 'Discover similar materials via embedding cosine similarity')}</p>
         </div>
       </div>
       <Card className="p-4">
         <div className="grid grid-cols-2 gap-3 mb-3">
-          <FormGroup label="基準材料（ID または名称）">
+          <FormGroup label={t('基準材料（ID または名称）', 'Reference Material (ID or Name)')}>
             <Input value={base} onChange={e=>setBase(e.target.value)} placeholder="例: MAT-0231 または SUS316L" />
           </FormGroup>
-          <FormGroup label="重み付け">
+          <FormGroup label={t('重み付け', 'Weighting')}>
             <Select value={weight} onChange={e=>setWeight(e.target.value)} className="w-full">
               {['総合スコア（推奨）','組成を優先','硬度を優先'].map(o=><option key={o}>{o}</option>)}
             </Select>
           </FormGroup>
-          <FormGroup label="最大表示件数">
+          <FormGroup label={t('最大表示件数', 'Max Results')}>
             <Select value={k} onChange={e=>setK(parseInt(e.target.value))} className="w-full">
               <option value={5}>5件</option><option value={10}>10件</option><option value={20}>20件</option>
             </Select>
           </FormGroup>
-          <FormGroup label="類似度しきい値">
+          <FormGroup label={t('類似度しきい値', 'Similarity Threshold')}>
             <UnitInput unit="% 以上" inputProps={{ value: threshold, onChange: e=>setThreshold(parseInt(e.target.value)||0), type:'number',min:0,max:100 }} />
           </FormGroup>
         </div>
         <div className="flex gap-2">
-          <Button variant="vec" onClick={run} disabled={running}><Icon name="vecSearch" size={13} />{running?'探索中...':'探索実行'}</Button>
-          <Button variant="default" size="sm" onClick={() => { setResults([]); setRan(false); setAiComment(''); }}>クリア</Button>
+          <Button variant="vec" onClick={run} disabled={running}><Icon name="vecSearch" size={13} />{running ? t('探索中...', 'Searching...') : t('探索実行', 'Search')}</Button>
+          <Button variant="default" size="sm" onClick={() => { setResults([]); setRan(false); setAiComment(''); }}>{t('クリア', 'Clear')}</Button>
         </div>
       </Card>
 
