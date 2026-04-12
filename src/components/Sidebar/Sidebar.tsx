@@ -12,12 +12,13 @@ interface SidebarProps {
   embStatus: string;
   embCount: number;
   lang?: 'ja' | 'en';
+  mobileOpen?: boolean;
 }
 
-export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embStatus, embCount, lang = 'ja' }: SidebarProps) => {
+export const Sidebar = ({ currentPage, onNav, collapsed, onToggle, dbCount, embStatus, embCount, lang = 'ja', mobileOpen = false }: SidebarProps) => {
   const isEn = lang === 'en';
   return (
-    <nav className={`sidebar-nav flex-shrink-0 flex flex-col border-r border-[var(--border-faint)] overflow-y-auto overflow-x-hidden transition-all duration-[220ms] ${collapsed ? 'collapsed' : ''}`} style={{ background: 'var(--sidebar-bg)' }} aria-label="メインナビゲーション">
+    <nav className={`sidebar-nav flex-shrink-0 flex flex-col border-r border-[var(--border-faint)] overflow-y-auto overflow-x-hidden transition-all duration-[220ms] ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`} style={{ background: 'var(--sidebar-bg)' }} aria-label="メインナビゲーション">
       <div className={`flex items-center border-b border-[var(--border-faint)] h-[42px] flex-shrink-0 ${collapsed ? 'justify-center px-0' : 'px-3 gap-2'}`}>
         <Tooltip label={collapsed ? (isEn ? 'Expand sidebar' : 'サイドバーを展開') : (isEn ? 'Collapse sidebar' : 'サイドバーを折り畳む')} placement="right">
           <button onClick={onToggle} aria-label={collapsed ? (isEn ? 'Expand sidebar' : 'サイドバーを展開') : (isEn ? 'Collapse sidebar' : 'サイドバーを折り畳む')} className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded text-text-lo hover:bg-hover hover:text-text-hi transition-colors">

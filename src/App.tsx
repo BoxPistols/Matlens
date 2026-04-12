@@ -40,6 +40,9 @@ const CatalogPage = lazy(() => import('./pages/Catalog/CatalogPage').then(m => (
 const PetriNetPage = lazy(() => import('./pages/PetriNet').then(m => ({ default: m.PetriNetPage })));
 const BayesianOptPage = lazy(() => import('./pages/BayesianOpt').then(m => ({ default: m.BayesianOptPage })));
 const SimulationPage = lazy(() => import('./pages/Simulation').then(m => ({ default: m.SimulationPage })));
+const ProcessTimelinePage = lazy(() => import('./pages/ProcessTimeline').then(m => ({ default: m.ProcessTimelinePage })));
+const OverlayPage = lazy(() => import('./pages/Overlay').then(m => ({ default: m.OverlayPage })));
+const MultiModalPage = lazy(() => import('./pages/MultiModal').then(m => ({ default: m.MultiModalPage })));
 
 const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
@@ -81,6 +84,7 @@ export function App() {
   const navDepth = useRef(0);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const { theme, setTheme } = useTheme();
   const { lang, setLang, t } = useLang();
@@ -170,6 +174,7 @@ export function App() {
   }, []);
 
   const navTo = (p: string) => {
+    setMobileSidebarOpen(false);
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
     if (p.startsWith('detail_')) { setDetailId(p.slice(7)); setPage('detail'); return; }
     if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
@@ -231,7 +236,13 @@ export function App() {
           theme={theme} setTheme={setTheme}
           density={density} setDensity={setDensity}
           lang={lang} setLang={setLang}
-          onToggleSidebar={() => setSidebarCollapsed(c=>!c)}
+          onToggleSidebar={() => {
+            if (window.innerWidth < 768) {
+              setMobileSidebarOpen(o => !o);
+            } else {
+              setSidebarCollapsed(c => !c);
+            }
+          }}
           embStatus={embedding.status} embCount={embedding.embCount} embEngine={embedding.engine}
           onGlobalSearch={handleGlobalSearch} globalQuery={globalQuery} setGlobalQuery={setGlobalQuery}
           db={db} onDetail={showDetail}
@@ -247,12 +258,18 @@ export function App() {
           />
         )}
         <div className="flex flex-1 overflow-hidden">
+          <div
+            className={`sidebar-backdrop ${mobileSidebarOpen ? 'visible' : ''}`}
+            onClick={() => setMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
           <Sidebar
             currentPage={page} onNav={navTo} lang={lang}
             collapsed={sidebarCollapsed}
             onToggle={() => setSidebarCollapsed(c => !c)}
             dbCount={db.length}
             embStatus={embedding.status} embCount={embedding.embCount}
+            mobileOpen={mobileSidebarOpen}
           />
           <main id="main" className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 flex flex-col min-h-0" role="main" aria-label="メインコンテンツ">
             {renderPage()}

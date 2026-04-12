@@ -96,12 +96,12 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
   return (
     <div className="flex flex-col gap-4">
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} db={db} filtered={db} />
-      <div className="flex items-start gap-3">
-        <div className="flex-1">
+      <div className="flex flex-col sm:flex-row items-start gap-3">
+        <div className="flex-1 min-w-0">
           <h1 className="ptitle text-[19px] font-bold tracking-tight">{t('ダッシュボード', 'Dashboard')}</h1>
           <p className="text-[12px] text-text-lo mt-0.5">{t('2026年4月 · 概況サマリー', 'Apr 2026 · Overview')}</p>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center flex-shrink-0 flex-wrap">
           <Button variant="default" size="sm" onClick={() => setExportOpen(true)}><Icon name="download" size={13} />{t('レポート', 'Report')}</Button>
           <Button variant="ai" size="sm" onClick={() => onNav('rag')}><Icon name="spark" size={13} />{t('AI 分析', 'AI Analysis')}</Button>
           <Button variant="primary" size="sm" onClick={() => onNav('new')}><Icon name="plus" size={13} />{t('登録', 'Register')}</Button>
@@ -176,7 +176,7 @@ export const DashboardPage = ({ db, onNav, claude, announcements, onOpenAnnounce
           </Card>
         )}
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <KpiCard label={t('総データ件数', 'Total Records')} value={db.length} delta={t('▲ 12件（今月）', '▲ 12 this month')} deltaUp={true} />
         <KpiCard label={t('実験バッチ数', 'Batch Count')} value={38} delta={t('▲ 3バッチ', '▲ 3 batches')} deltaUp={true} />
         <KpiCard label={t('レビュー待ち', 'Pending Review')} value={db.filter(r=>r.status==='レビュー待').length} delta={t('▼ 要対応', '▼ Action needed')} deltaUp={false} />
