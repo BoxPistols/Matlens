@@ -17,6 +17,27 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-13-help-guide',
+    date: '2026-04-13',
+    type: 'feature',
+    title: 'ヘルプにページガイドを追加',
+    body: '「ヘルプ・用語集」に新カテゴリ「ページガイド」を追加。全12ページの使い方ガイドと操作手順FAQを網羅しました。初めて使う方は「ページガイド」タブからご確認ください。',
+  },
+  {
+    id: '2026-04-13-sidebar-labels',
+    date: '2026-04-13',
+    type: 'fix',
+    title: 'サイドバーのセクションラベル改善',
+    body: 'サイドバーのグルーピングラベル（概要/データ入力/ワークフロー等）が見えにくかった問題を修正。区切り線とコントラストを改善しました。',
+  },
+  {
+    id: '2026-04-13-css-perf',
+    date: '2026-04-13',
+    type: 'fix',
+    title: 'CSSレンダリングパフォーマンス改善',
+    body: 'スクロールバーのテーマ適用で全要素 (*) セレクタを使用していた問題を修正。overflow 要素のみに限定し、レンダリング負荷を軽減しました。',
+  },
+  {
     id: '2026-04-12-mobile-responsive',
     date: '2026-04-12',
     type: 'feature',
