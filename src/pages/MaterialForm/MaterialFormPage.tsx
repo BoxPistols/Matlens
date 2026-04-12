@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Card, Input, Select, Textarea, UnitInput, FormGroup } from '../../components/atoms';
@@ -51,10 +51,30 @@ const PROVENANCE_OPTIONS: { value: Provenance; label: string }[] = [
   { value: 'simulation', label: 'シミュレーション' },
 ];
 
+// ─── Draft persistence ───────────────────────────────────────────────────
+
+const DRAFT_KEY = 'matlens:draft-form';
+
+function loadDraft(): Record<string, string> | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function saveDraft(data: Record<string, string>) {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); } catch { /* ignore */ }
+}
+
+function clearDraft() {
+  try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+}
+
 // ─── Component ────────────────────────────────────────────────────────────
 
 export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, claude, embedding }: MaterialFormPageProps) => {
   const editing = editId ? db.find(r => r.id === editId) : null;
+  const isNew = !editId;
   const [form, setForm] = useState({
     name: editing?.name || '', cat: editing?.cat || '',
     comp: editing?.comp || '', batch: editing?.batch || '',
@@ -70,7 +90,42 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   const [aiLoading, setAiLoading] = useState(false);
   const [compTimer, setCompTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [wizardStep, setWizardStep] = useState(0);
+  const [draftBanner, setDraftBanner] = useState(false);
   const { addToast, t } = useContext(AppCtx) as AppContextValue;
+
+  // ─── Draft: 復元バナー表示 ──────────────────────────────────────────────
+  useEffect(() => {
+    if (!isNew) return;
+    const draft = loadDraft();
+    if (draft && Object.values(draft).some(v => v !== '')) {
+      setDraftBanner(true);
+    }
+  }, [isNew]);
+
+  const restoreDraft = useCallback(() => {
+    const draft = loadDraft();
+    if (draft) {
+      setForm(f => ({ ...f, ...draft }));
+      setDraftBanner(false);
+      addToast(t('下書きを復元しました', 'Draft restored'));
+    }
+  }, [addToast, t]);
+
+  const dismissDraft = useCallback(() => {
+    clearDraft();
+    setDraftBanner(false);
+  }, []);
+
+  // ─── Draft: 自動保存 (debounce 1s) ────────────────────────────────────
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!isNew) return;
+    if (draftTimer.current) clearTimeout(draftTimer.current);
+    draftTimer.current = setTimeout(() => {
+      saveDraft(form as unknown as Record<string, string>);
+    }, 1000);
+    return () => { if (draftTimer.current) clearTimeout(draftTimer.current); };
+  }, [form, isNew]);
 
   useEffect(() => {
     if (claude.lastError) {
@@ -154,6 +209,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
       dispatch({ type: 'ADD', record });
       incrementNextId();
       embedding.addToIndex(record);
+      clearDraft();
       addToast(`${newId} を登録しました`);
     }
     onSuccess();
@@ -327,6 +383,18 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           <p className="text-[12px] text-text-lo mt-0.5">{t('ステップ形式で入力 — AI が各ステップをリアルタイムサポートします', 'Step-by-step entry — AI provides real-time assistance')}</p>
         </div>
       </div>
+      {draftBanner && (
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-md bg-accent-dim border border-accent text-[13px]">
+          <Icon name="info" size={14} className="text-accent flex-shrink-0" />
+          <span className="text-accent font-medium flex-1">{t('前回の入力途中データがあります。復元しますか？', 'A draft was found. Restore it?')}</span>
+          <button type="button" onClick={restoreDraft} className="px-3 py-1 rounded bg-accent text-white text-[12px] font-semibold hover:brightness-110 transition-all">
+            {t('復元する', 'Restore')}
+          </button>
+          <button type="button" onClick={dismissDraft} className="px-3 py-1 rounded bg-raised text-text-md text-[12px] font-semibold border border-[var(--border-default)] hover:bg-hover transition-all">
+            {t('破棄する', 'Discard')}
+          </button>
+        </div>
+      )}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-[1fr_320px] items-start">
         <StepWizard
           steps={steps}
