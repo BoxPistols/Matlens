@@ -8,7 +8,7 @@
  *   フィードバックループ (再加工 t4) は DAG で表現不可 → Petri net 採用の決定理由。
  */
 
-import { useState, useReducer, useMemo, type KeyboardEvent } from 'react'
+import { useState, useReducer, useMemo, useRef, type KeyboardEvent } from 'react'
 import { Button, Badge, Card } from '../../components/atoms'
 import { Icon } from '../../components/Icon'
 import {
@@ -20,6 +20,7 @@ import {
   type TransitionDef,
 } from '../../data/metalTestWorkflow'
 import { exportPnml, downloadPnml } from '../../services/pnml'
+import { importPnml } from '../../services/pnmlImport'
 import { DownloadPreviewModal } from '../../components/molecules'
 import {
   tokenReducer,
@@ -60,7 +61,14 @@ function Tokens({ count }: { count: number }) {
 }
 
 // ─── Place ノード ────────────────────────────────────────────────────────────
-function PlaceNode({ place, tokens }: { place: PlaceDef; tokens: number }) {
+interface PlaceNodeProps {
+  place: PlaceDef
+  tokens: number
+  navLink?: WorkflowLink
+  onNavigate?: () => void
+}
+
+function PlaceNode({ place, tokens, navLink, onNavigate }: PlaceNodeProps) {
   const stroke = place.isInitial
     ? 'var(--ok)'
     : place.isFinal
@@ -71,13 +79,24 @@ function PlaceNode({ place, tokens }: { place: PlaceDef; tokens: number }) {
   const strokeWidth = place.isInitial || place.isFinal ? 2.5 : 1.5
   const atCapacity = place.capacity !== undefined && tokens >= place.capacity
 
+  const clickable = !!navLink && !!onNavigate
+
   return (
-    <g transform={`translate(${place.x},${place.y})`}>
+    <g
+      transform={`translate(${place.x},${place.y})`}
+      onClick={clickable ? onNavigate : undefined}
+      style={clickable ? { cursor: 'pointer' } : undefined}
+      role={clickable ? 'link' : undefined}
+      aria-label={clickable ? navLink!.label : place.fullLabel}
+    >
+      {/* クリック領域拡大用の透明円 */}
+      {clickable && <circle r={PLACE_R + 4} fill="transparent" />}
       <circle
         r={PLACE_R}
         fill="var(--bg-raised)"
         stroke={stroke}
         strokeWidth={strokeWidth}
+        className={clickable ? 'hover:brightness-90 transition-all' : ''}
       />
       <Tokens count={tokens} />
       <text
@@ -85,11 +104,25 @@ function PlaceNode({ place, tokens }: { place: PlaceDef; tokens: number }) {
         textAnchor="middle"
         dominantBaseline="hanging"
         fontSize={9}
-        fill="var(--text-md)"
+        fill={clickable ? 'var(--accent)' : 'var(--text-md)'}
+        fontWeight={clickable ? 'bold' : 'normal'}
         style={{ userSelect: 'none' }}
+        textDecoration={clickable ? 'underline' : 'none'}
       >
         {place.label}
       </text>
+      {clickable && (
+        <text
+          y={LABEL_OFFSET + (place.capacity !== undefined ? 22 : 11)}
+          textAnchor="middle"
+          dominantBaseline="hanging"
+          fontSize={7}
+          fill="var(--accent)"
+          style={{ userSelect: 'none' }}
+        >
+          → {navLink!.label}
+        </text>
+      )}
       {place.capacity !== undefined && (
         <text
           y={LABEL_OFFSET + 11}
@@ -231,7 +264,33 @@ type ArcDef = {
   isReject?: boolean
 }
 
-export const PetriNetPage = () => {
+// ─── 工程 → 画面マッピング ───────────────────────────────────────────────────
+// Petri net の各 place をクリックすると対応するシステム画面にナビゲーションする。
+// 研究者が「今この工程ではどの画面を使うべきか」を直感的に把握できる。
+interface WorkflowLink {
+  page: string    // navTo() に渡すページ識別子
+  label: string   // ツールチップ表示
+}
+
+const PLACE_NAV_MAP: Partial<Record<PlaceId, WorkflowLink>> = {
+  p0:  { page: 'new',     label: '新規登録へ' },
+  p1:  { page: 'list',    label: '材料一覧へ' },
+  p2:  { page: 'list',    label: '材料一覧へ' },
+  p3:  { page: 'simulate', label: '経験式シミュレーションへ' },
+  p4:  { page: 'simulate', label: '経験式シミュレーションへ' },
+  p5:  { page: 'new',     label: 'データ登録へ' },
+  p6:  { page: 'bayes',   label: 'ベイズ最適化へ' },
+  p7:  { page: 'list',    label: '試験結果一覧へ' },
+  p8:  { page: 'list',    label: '試験結果一覧へ' },
+  p9:  { page: 'vsearch', label: '類似材料検索へ' },
+  p10: { page: 'list',    label: '完了データ一覧へ' },
+}
+
+interface PetriNetPageProps {
+  onNav?: (page: string) => void
+}
+
+export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
   const [tokens, dispatch] = useReducer(tokenReducer, { ...INITIAL_TOKENS })
   const [history, setHistory] = useState<string[]>([])
   // Undo 用の過去状態スタック。UI レベルの「1 手戻る」用で、
@@ -323,6 +382,34 @@ export const PetriNetPage = () => {
     setPreviewOpen(false)
   }
 
+  // PNML インポート: ファイル選択 → パース → トークン復元
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const handleImport = () => fileInputRef.current?.click()
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const xml = reader.result as string
+        const result = importPnml(xml)
+        pushUndo()
+        const restored = { ...INITIAL_TOKENS } as Record<PlaceId, number>
+        for (const [pid, count] of Object.entries(result.tokens)) {
+          if (pid in restored && typeof count === 'number') {
+            restored[pid as PlaceId] = count
+          }
+        }
+        dispatch({ type: 'restore', state: restored })
+        setHistory(prev => [`PNML インポート: ${result.placeCount} place / ${result.transitionCount} transition`, ...prev.slice(0, 19)])
+      } catch (err) {
+        setHistory(prev => [`インポートエラー: ${err instanceof Error ? err.message : '不明'}`, ...prev.slice(0, 19)])
+      }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
   const enabledCount = net.transitions.filter(t => isEnabled(t, tokens, net.places)).length
   const totalTokens = Object.values(tokens).reduce((a, b) => a + b, 0)
   const completed = tokens['p10'] ?? 0
@@ -362,6 +449,10 @@ export const PetriNetPage = () => {
           <Button size="sm" variant="default" onClick={handleExport}>
             <Icon name="download" size={13} /> PNML
           </Button>
+          <Button size="sm" variant="default" onClick={handleImport} title="PNML ファイルからトークン配置を読み込む">
+            <Icon name="upload" size={13} /> インポート
+          </Button>
+          <input ref={fileInputRef} type="file" accept=".pnml,.xml" className="hidden" onChange={handleFileChange} />
           <Button size="sm" variant="default" onClick={handleReset}>
             <Icon name="refresh" size={13} /> リセット
           </Button>
@@ -412,9 +503,15 @@ export const PetriNetPage = () => {
             />
           ))}
 
-          {/* Place ノード（最前面） */}
+          {/* Place ノード（最前面） — クリックで対応画面にナビゲーション */}
           {net.places.map(p => (
-            <PlaceNode key={p.id} place={p} tokens={tokens[p.id] ?? 0} />
+            <PlaceNode
+              key={p.id}
+              place={p}
+              tokens={tokens[p.id] ?? 0}
+              navLink={onNav ? PLACE_NAV_MAP[p.id] : undefined}
+              onNavigate={onNav && PLACE_NAV_MAP[p.id] ? () => onNav(PLACE_NAV_MAP[p.id]!.page) : undefined}
+            />
           ))}
 
           {/* 凡例 */}
