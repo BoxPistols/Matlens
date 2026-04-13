@@ -72,6 +72,9 @@ function buildHash(page: string, detailId: string | null): string {
   return `#/${page}`;
 }
 
+const TOAST_DURATION_MS = 3200;
+const MOBILE_BREAKPOINT_PX = 768; // index.css @media max-width:767.9px と同値
+
 export function App() {
   const [db, dispatch] = useReducer(dbReducer, INITIAL_DB);
   const initialRoute = parseHash();
@@ -113,7 +116,7 @@ export function App() {
   const addToast = useCallback((msg: string, type = 'ok') => {
     const id = Date.now();
     setToasts(t => [...t, { id, msg, type }]);
-    setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), 3200);
+    setTimeout(() => setToasts(t => t.filter(x => x.id !== id)), TOAST_DURATION_MS);
   }, []);
 
   // Write state back to location.hash so reload / back-forward buttons work.
@@ -242,7 +245,7 @@ export function App() {
           density={density} setDensity={setDensity}
           lang={lang} setLang={setLang}
           onToggleSidebar={() => {
-            if (window.innerWidth < 768) {
+            if (window.innerWidth < MOBILE_BREAKPOINT_PX) {
               setMobileSidebarOpen(o => !o);
             } else {
               setSidebarCollapsed(c => !c);

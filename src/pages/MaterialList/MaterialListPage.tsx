@@ -4,13 +4,13 @@ import { DataDisclaimer } from '../../components/DataDisclaimer';
 import { MaterialVisual } from '../../components/MaterialVisual';
 import { Tooltip } from '../../components/Tooltip';
 import { Button, Badge, Card, Input, Select, Checkbox } from '../../components/atoms';
-import { Modal, SearchBox, FilterChip, ExportModal, ImportModal } from '../../components/molecules';
+import { Modal, SearchBox, FilterChip, ExportModal, ImportModal, FacetGroup, RangeFilter } from '../../components/molecules';
 import { AppCtx } from '../../context/AppContext';
-import type { Material, MaterialCategory, Provenance, AppContextValue, MaterialWithScore } from '../../types';
+import type { Material, MaterialCategory, Provenance, AppContextValue, MaterialWithScore, DbAction } from '../../types';
 
 interface MaterialListPageProps {
   db: Material[];
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<DbAction>;
   onNav: (page: string) => void;
   onDetail: (id: string) => void;
   search: (q: string, topK?: number) => Promise<MaterialWithScore[]>;
@@ -98,78 +98,6 @@ const computeFacets = (rows: Material[]): FacetCounts => {
   }
   return counts;
 };
-
-// ─── Multi-select chip group ─────────────────────────────────────────────
-
-interface FacetGroupProps {
-  label: string;
-  options: string[];
-  selected: string[];
-  counts: Record<string, number>;
-  onChange: (values: string[]) => void;
-  displayMap?: Record<string, string>;
-}
-
-const FacetGroup = ({ label, options, selected, counts, onChange, displayMap }: FacetGroupProps) => {
-  const toggle = (val: string) => {
-    onChange(selected.includes(val) ? selected.filter(v => v !== val) : [...selected, val]);
-  };
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[12px] font-semibold text-text-lo">{label}</span>
-      <div className="flex gap-1 flex-wrap">
-        {options.map(opt => {
-          const active = selected.includes(opt);
-          const count = counts[opt] || 0;
-          const display = displayMap?.[opt] || opt;
-          return (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => toggle(opt)}
-              className={`
-                inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] font-medium
-                transition-all duration-150 border select-none
-                ${active
-                  ? 'bg-accent-dim text-accent border-accent'
-                  : 'bg-raised text-text-md border-[var(--border-faint)] hover:border-[var(--border-default)]'
-                }
-              `}
-            >
-              {display}
-              <span className={`text-[10px] ${active ? 'text-accent opacity-70' : 'text-text-lo'}`}>
-                {count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-// ─── Range filter ────────────────────────────────────────────────────────
-
-interface RangeFilterProps {
-  label: string;
-  unit: string;
-  min: string;
-  max: string;
-  onMinChange: (v: string) => void;
-  onMaxChange: (v: string) => void;
-}
-
-const RangeFilter = ({ label, unit, min, max, onMinChange, onMaxChange }: RangeFilterProps) => (
-  <div className="flex items-center gap-1.5 text-[12px] text-text-md">
-    <span className="w-14 flex-shrink-0">{label}</span>
-    <input type="number" value={min} onChange={e => onMinChange(e.target.value)} placeholder="min"
-      className="w-16 px-2 py-1 border border-[var(--border-default)] rounded text-[12px] bg-raised text-text-hi outline-none focus:border-[var(--accent-mid)]" />
-    <span>〜</span>
-    <input type="number" value={max} onChange={e => onMaxChange(e.target.value)} placeholder="max"
-      className="w-16 px-2 py-1 border border-[var(--border-default)] rounded text-[12px] bg-raised text-text-hi outline-none focus:border-[var(--accent-mid)]" />
-    <span className="text-text-lo text-[10px]">{unit}</span>
-  </div>
-);
 
 // ─── Main Component ──────────────────────────────────────────────────────
 

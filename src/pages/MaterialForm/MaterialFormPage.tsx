@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { renderSafeMarkdown } from '../../services/safeMarkdown';
 import { Icon } from '../../components/Icon';
 import { Card, Input, Select, Textarea, UnitInput, FormGroup } from '../../components/atoms';
@@ -6,17 +6,19 @@ import { AIInsightCard, StepWizard } from '../../components/molecules';
 import type { WizardStep } from '../../components/molecules';
 import { AppCtx } from '../../context/AppContext';
 import { getNextId, incrementNextId } from '../../data/initialDb';
-import type { Material, MaterialCategory, Provenance, AIHook, EmbeddingHook, AppContextValue } from '../../types';
+import type { Material, MaterialCategory, Provenance, AIHook, EmbeddingHook, AppContextValue, DbAction } from '../../types';
 
 interface MaterialFormPageProps {
   db: Material[];
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<DbAction>;
   editId: string | null;
   onCancel: () => void;
   onSuccess: () => void;
   claude: AIHook;
   embedding: EmbeddingHook;
 }
+
+const DEFAULT_AUTHOR = 'デモユーザー';  // PoC — 実運用では認証情報から取得
 
 // ─── カテゴリ別テンプレート ────────────────────────────────────────────────
 
@@ -68,7 +70,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [aiBody, setAiBody] = useState('組成式を入力すると物性値の目安を提案します。');
   const [aiLoading, setAiLoading] = useState(false);
-  const [compTimer, setCompTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const compTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [wizardStep, setWizardStep] = useState(0);
   const { addToast, t } = useContext(AppCtx) as AppContextValue;
 
@@ -87,14 +89,13 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
 
   const onCompChange = (v: string) => {
     set('comp')(v);
-    if (compTimer) clearTimeout(compTimer);
+    if (compTimer.current) clearTimeout(compTimer.current);
     if (v.length < 3) return;
-    const t = setTimeout(async () => {
+    compTimer.current = setTimeout(async () => {
       setAiLoading(true);
       const res = await claude.call(`材料組成「${v}」の典型的な硬度・引張強さ・弾性率を3行（各「硬度: 180〜220 HV」形式）で教えてください。`);
       setAiBody(res); setAiLoading(false);
     }, 700);
-    setCompTimer(t);
   };
 
   const aiAutofill = async () => {
@@ -141,7 +142,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
       pf: parseFloat(String(form.pf))||null, el2: parseFloat(String(form.el2))||0, dn: parseFloat(String(form.dn))||0,
       batch: form.batch || 'B-未分類',
       date: new Date().toISOString().slice(0,10),
-      author: '木村 研一', status: editing?.status || '登録済' as Material['status'], ai: editing?.ai || false,
+      author: DEFAULT_AUTHOR, status: editing?.status || '登録済' as Material['status'], ai: editing?.ai || false,
       memo: form.memo,
       provenance: (form.provenance || undefined) as Provenance | undefined,
       microstructure: form.microstructure || undefined,
@@ -192,7 +193,7 @@ export const MaterialFormPage = ({ db, dispatch, editId, onCancel, onSuccess, cl
           <Input value={form.batch} onChange={setV('batch')} placeholder="例: B-038" />
         </FormGroup>
         <FormGroup label={t('登録者', 'Author')}>
-          <Input value="木村 研一" readOnly className="bg-sunken text-text-lo cursor-default" />
+          <Input value={DEFAULT_AUTHOR} readOnly className="bg-sunken text-text-lo cursor-default" />
         </FormGroup>
         <FormGroup label={t('試験温度', 'Test Temp.')}>
           <UnitInput unit="℃" inputProps={{ value: form.temp, onChange: setV('temp'), placeholder: '25' }} />

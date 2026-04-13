@@ -2,9 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =====================================================
-   THEME TOKENS — 4テーマ CSS Variables
-===================================================== */
+/* ─── 目次 ───
+   1. テーマトークン (4テーマ CSS Variables)
+   2. ベースリセット
+   3. テーマ対応スクロールバー
+   4. UI 密度
+   5. モバイル対応
+   6. ユーティリティ
+─── */
+
+/* ─── 1. テーマトークン (4テーマ CSS Variables) ─── */
 [data-theme="light"]{
   --bg-base:#eef0f3; --bg-surface:#ffffff; --bg-raised:#f5f6f8;
   --bg-sunken:#e4e6ea; --bg-hover:#e8eef7; --bg-active:#d4e2f4;
@@ -112,9 +119,7 @@
   --topbar-bg:#0a0c10; --sidebar-bg:#0e1014;
 }
 
-/* =====================================================
-   BASE RESET & GLOBAL
-===================================================== */
+/* ─── 2. ベースリセット ─── */
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:14px}
 
@@ -143,8 +148,7 @@ body{
 .no-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
 .no-scrollbar::-webkit-scrollbar{display:none}
 
-/* ─── Theme-aware scrollbar ───────────────────────────────
-   Firefox: scrollbar-color on body; Webkit: pseudo-element rules. */
+/* ─── 3. テーマ対応スクロールバー ─── */
 [data-theme="light"] body,
 [data-theme="light"] [class*="overflow-"],
 [data-theme="light"] pre,
@@ -281,6 +285,8 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
 [data-theme="light"] .token.important,
 [data-theme="light"] .token.variable{color:#e36209}
 
+/* ─── 5. モバイル対応 ─── */
+
 /* sidebar transition */
 .sidebar-nav{width:216px;transition:width .22s cubic-bezier(.4,0,.2,1)}
 .sidebar-nav.collapsed{width:48px}
@@ -313,6 +319,8 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
     opacity:1;pointer-events:auto;
   }
 }
+
+/* ─── 6. ユーティリティ ─── */
 
 /* chart canvas */
 .chart-container{position:relative;height:160px;width:100%}
@@ -372,7 +380,7 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
   border-right-color:rgba(15,20,30,.92);
 }
 
-/* ─── UI 密度 (data-density) ───────────────────────────── */
+/* ─── 4. UI 密度 ─── */
 /* BtoB では行高さの好みが人によって異なる。
    compact = 高密度、regular = 標準、relaxed = ゆったり。 */
 [data-density="compact"]{
@@ -389,7 +397,7 @@ code[class*="language-"] .token,pre[class*="language-"] .token{
   --row-h:44px;--cell-py:8px;--card-py:16px;--table-fs:13px;
 }
 
-/* ─── UI 密度 — CSS transform scale による統一適用 ───────────────────
+/* ─── UI 密度 — CSS transform scale による統一適用 ──────────────
    Tailwind の text-[Npx] がハードコードされた 400+ 箇所を個別変更せず、
    メインコンテンツ領域全体を scale() で拡縮する。
    Topbar・Sidebar は除外し、ページコンテンツのみスケーリング。 */

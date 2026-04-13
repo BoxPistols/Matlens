@@ -4,11 +4,11 @@ import { Tooltip } from '../../components/Tooltip';
 import { Button, Badge, Card, SectionCard, Input, Select, Textarea, FormGroup, UnitInput } from '../../components/atoms';
 import { AIInsightCard } from '../../components/molecules';
 import { onApiLog, getApiLogs, MOCK_CONFIG, clearApiLogs } from '../../services/mockApi';
-import type { Material, ApiLog } from '../../types';
+import type { Material, ApiLog, DbAction } from '../../types';
 
 interface ApiDebugPageProps {
   db: Material[];
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<DbAction>;
 }
 
 const statusColor = (s: number) => s >= 500 ? 'text-err' : s >= 400 ? 'text-warn' : s >= 200 ? 'text-ok' : 'text-text-lo';

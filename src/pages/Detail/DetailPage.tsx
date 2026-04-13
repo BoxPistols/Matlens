@@ -10,12 +10,12 @@ import { Modal, AIInsightCard, VecCard, DownloadPreviewModal } from '../../compo
 import { MaterialVisual } from '../../components/MaterialVisual';
 import { DataDisclaimer } from '../../components/DataDisclaimer';
 import { AppCtx } from '../../context/AppContext';
-import type { Material, AIHook, EmbeddingHook, AppContextValue, MaterialWithScore } from '../../types';
+import type { Material, AIHook, EmbeddingHook, AppContextValue, MaterialWithScore, DbAction } from '../../types';
 
 interface DetailPageProps {
   db: Material[];
   recordId: string;
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<DbAction>;
   onBack: () => void;
   onEdit: () => void;
   claude: AIHook;
