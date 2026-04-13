@@ -113,6 +113,7 @@ export interface PageGuide {
 }
 
 export const PAGE_GUIDES: PageGuide[] = [
+  
   {
     id: 'dash', icon: 'dashboard',
     title: 'ダッシュボード', titleEn: 'Dashboard',
@@ -176,6 +177,31 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Natural language queries are supported (e.g., "nickel alloy with hardness over 300")',
     ],
     related: ['new', 'vsearch', 'detail'],
+  },
+  {
+    id: 'catalog', icon: 'embed',
+    title: '材料カタログ', titleEn: 'Material Catalog',
+    summary: '登録材料をビジュアルカード形式で一覧表示するページです。CSS/SVG ビジュアルで材料の種類を直感的に把握できます。',
+    summaryEn: 'Browse registered materials as visual cards. CSS/SVG visuals help you intuitively grasp material types.',
+    features: [
+      '組成・カテゴリに応じた CSS/SVG ビジュアルカード',
+      'クリックで詳細ページに遷移',
+      'テーブル一覧よりも視覚的に把握しやすい',
+    ],
+    featuresEn: [
+      'Visual cards with CSS/SVG based on composition and category',
+      'Click to navigate to the detail page',
+      'More visual than the table list view',
+    ],
+    tips: [
+      'カードの色やパターンはカテゴリを反映している',
+      '多数のデータがある場合はスクロールして閲覧',
+    ],
+    tipsEn: [
+      'Card colors and patterns reflect the category',
+      'Scroll to browse when there are many entries',
+    ],
+    related: ['list', 'detail'],
   },
   {
     id: 'new', icon: 'plus',
@@ -329,174 +355,6 @@ export const PAGE_GUIDES: PageGuide[] = [
     related: ['bayes', 'list'],
   },
   {
-    id: 'vsearch', icon: 'vecSearch',
-    title: '意味検索', titleEn: 'Semantic Search',
-    summary: '自然言語で材料を検索できるベクトル検索ページです。TensorFlow.js がブラウザ内で動作するため、サーバー通信は不要です。',
-    summaryEn: 'Search materials using natural language. TensorFlow.js runs in-browser, so no server communication is needed.',
-    features: [
-      '「耐熱性の高いニッケル合金」のような文章で検索可能',
-      'Embedding によるコサイン類似度ランキング表示',
-      '各結果にスコア（類似度）を表示',
-      '検索結果から AI チャットや詳細ページに遷移可能',
-    ],
-    featuresEn: [
-      'Search with natural sentences like "high heat-resistant nickel alloy"',
-      'Ranked by cosine similarity via Embeddings',
-      'Each result shows a similarity score',
-      'Navigate from results to AI Chat or Detail pages',
-    ],
-    tips: [
-      '初回ロード時にモデルをダウンロード（数秒かかる場合あり）',
-      'キーワードだけでなく文章で検索すると精度が上がる',
-      'スコアが低い場合は通常のフィルタ検索にフォールバック',
-    ],
-    tipsEn: [
-      'The model is downloaded on first load (may take a few seconds)',
-      'Full sentences yield better accuracy than single keywords',
-      'Falls back to standard filter search when scores are low',
-    ],
-    related: ['rag', 'list'],
-  },
-  {
-    id: 'rag', icon: 'rag',
-    title: 'AI チャット', titleEn: 'AI Chat',
-    summary: '材料データベースをコンテキストに AI と対話できる RAG（検索拡張生成）チャットです。登録データに基づいた根拠ある回答が得られます。',
-    summaryEn: 'A RAG (Retrieval-Augmented Generation) chat that uses your material database as context. Get grounded answers based on registered data.',
-    features: [
-      '質問するとベクトル検索で関連材料 4 件を自動取得',
-      '取得データをコンテキストとして AI に渡して回答生成',
-      'プロバイダー切替（GPT-5.4 nano / Gemini 2.5 Flash）',
-      'チャット履歴をセッション内で保持',
-    ],
-    featuresEn: [
-      'Automatically retrieves 4 related materials via vector search on each query',
-      'Injects retrieved data as context for AI-generated answers',
-      'Switch providers (GPT-5.4 nano / Gemini 2.5 Flash)',
-      'Chat history is kept within the session',
-    ],
-    tips: [
-      'Cmd+Enter / Ctrl+Enter で送信',
-      '具体的な材料名や特性値を含めると精度が上がる',
-      '詳細ページの「AIチャットで詳しく」から遷移すると初期クエリ付きで開く',
-    ],
-    tipsEn: [
-      'Send with Cmd+Enter / Ctrl+Enter',
-      'Including specific material names or property values improves accuracy',
-      'Navigating from Detail page\'s "Ask AI" opens with an initial query',
-    ],
-    related: ['vsearch', 'sim'],
-  },
-  {
-    id: 'sim', icon: 'similar',
-    title: '類似材料探索', titleEn: 'Similar Materials',
-    summary: '基準材料を指定して Embedding 類似度でランキングし、AI が選定ポイントと使い分けをアドバイスします。',
-    summaryEn: 'Specify a reference material, rank by Embedding similarity, and get AI advice on selection criteria and usage.',
-    features: [
-      '基準材料 ID または名称を入力して検索',
-      'Embedding 類似度でランキング表示',
-      'AI が選定ポイントと使い分けをアドバイス',
-      'しきい値スライダーで候補を絞り込み',
-    ],
-    featuresEn: [
-      'Enter a reference material ID or name to search',
-      'Results ranked by Embedding similarity',
-      'AI provides advice on selection criteria and usage',
-      'Filter candidates with the threshold slider',
-    ],
-    tips: [
-      '詳細ページの「類似材料を探す」ボタンから遷移すると基準材料が自動入力される',
-      'しきい値を下げると候補が増え、上げると厳選される',
-      '結果の各行をクリックで詳細ページに遷移',
-    ],
-    tipsEn: [
-      'Navigating from Detail\'s "Find Similar" auto-fills the reference material',
-      'Lowering the threshold shows more candidates; raising it narrows results',
-      'Click any result row to go to the detail page',
-    ],
-    related: ['vsearch', 'detail'],
-  },
-  {
-    id: 'catalog', icon: 'embed',
-    title: '材料カタログ', titleEn: 'Material Catalog',
-    summary: '登録材料をビジュアルカード形式で一覧表示するページです。CSS/SVG ビジュアルで材料の種類を直感的に把握できます。',
-    summaryEn: 'Browse registered materials as visual cards. CSS/SVG visuals help you intuitively grasp material types.',
-    features: [
-      '組成・カテゴリに応じた CSS/SVG ビジュアルカード',
-      'クリックで詳細ページに遷移',
-      'テーブル一覧よりも視覚的に把握しやすい',
-    ],
-    featuresEn: [
-      'Visual cards with CSS/SVG based on composition and category',
-      'Click to navigate to the detail page',
-      'More visual than the table list view',
-    ],
-    tips: [
-      'カードの色やパターンはカテゴリを反映している',
-      '多数のデータがある場合はスクロールして閲覧',
-    ],
-    tipsEn: [
-      'Card colors and patterns reflect the category',
-      'Scroll to browse when there are many entries',
-    ],
-    related: ['list', 'detail'],
-  },
-  {
-    id: 'help', icon: 'help',
-    title: 'ヘルプ・用語集', titleEn: 'Help / Glossary',
-    summary: 'このページです。専門用語解説、各ページの使い方ガイド、操作リファレンスを検索・閲覧できます。',
-    summaryEn: 'This page. Search and browse technical term explanations, page guides, and operation references.',
-    features: [
-      '6つのカテゴリタブ: ページガイド / 材料工学 / AI・ML / システム / 操作ガイド / すべて',
-      '上部の検索ボックスで用語名・英語名・説明文をキーワード検索',
-      '「ページガイド」タブで全20ページの詳細ドキュメント（概要・できること・操作のヒント・関連ページ）',
-      '各ページガイドから「このページを開く」ボタンで直接遷移',
-      'サポートパネル（右下の ? ボタン）でFAQ・お知らせ・AI設定にアクセス',
-      'FAQ は24件の質問と回答を収録（初めての使い方から技術的な質問まで）',
-    ],
-    featuresEn: [
-      'Filter by category tab (Page Guide, Materials, AI/ML, System, Operations)',
-      'Keyword search via search box',
-      'FAQ section answers common questions',
-    ],
-    tips: [
-      '初めて使う方は「ページガイド」タブから各画面の概要を確認してください',
-      '英語名・日本語名の両方が検索対象。例: 「hardness」で「硬度」がヒット',
-      'カードをクリックすると詳細な説明が展開されます',
-      '右下の ? ボタンからも FAQ やお知らせにアクセスできます',
-      '用語集は現在46エントリ、FAQ は24件を収録',
-    ],
-    tipsEn: [
-      'Check the Page Guide tab for instructions on all screens',
-      'English names are also included in search results',
-    ],
-    related: ['about'],
-  },
-  {
-    id: 'settings', icon: 'settings',
-    title: 'カテゴリ・バッチ管理', titleEn: 'Categories & Batches',
-    summary: '登録データのカテゴリ別・ステータス別分布をプログレスバーで可視化し、データ管理状況の全体像を把握できます。',
-    summaryEn: 'Visualize category and status distributions with progress bars, providing an overview of data management status.',
-    features: [
-      'カテゴリ別・ステータス別の分布プログレスバー',
-      'バッチ番号ごとのデータ件数表示',
-      '登録者ごとの担当件数確認',
-    ],
-    featuresEn: [
-      'Distribution progress bars by category and status',
-      'Data count per batch number',
-      'Entry count per registrant',
-    ],
-    tips: [
-      'データの偏りや未処理件数の把握に便利',
-      'ダッシュボードのグラフと併せて管理状況を確認',
-    ],
-    tipsEn: [
-      'Useful for spotting data imbalances and unprocessed items',
-      'Check alongside dashboard charts for a complete management overview',
-    ],
-    related: ['dash', 'list'],
-  },
-  {
     id: 'crystal', icon: 'embed',
     title: '結晶構造 3D ビューア', titleEn: 'Crystal Structure 3D Viewer',
     summary: 'BCC・FCC・HCP の結晶構造を Three.js で 3D 表示し、格子歪みスライダーで変形を可視化します。',
@@ -607,6 +465,124 @@ export const PAGE_GUIDES: PageGuide[] = [
     related: ['crystal', 'detail'],
   },
   {
+    id: 'vsearch', icon: 'vecSearch',
+    title: '意味検索', titleEn: 'Semantic Search',
+    summary: '自然言語で材料を検索できるベクトル検索ページです。TensorFlow.js がブラウザ内で動作するため、サーバー通信は不要です。',
+    summaryEn: 'Search materials using natural language. TensorFlow.js runs in-browser, so no server communication is needed.',
+    features: [
+      '「耐熱性の高いニッケル合金」のような文章で検索可能',
+      'Embedding によるコサイン類似度ランキング表示',
+      '各結果にスコア（類似度）を表示',
+      '検索結果から AI チャットや詳細ページに遷移可能',
+    ],
+    featuresEn: [
+      'Search with natural sentences like "high heat-resistant nickel alloy"',
+      'Ranked by cosine similarity via Embeddings',
+      'Each result shows a similarity score',
+      'Navigate from results to AI Chat or Detail pages',
+    ],
+    tips: [
+      '初回ロード時にモデルをダウンロード（数秒かかる場合あり）',
+      'キーワードだけでなく文章で検索すると精度が上がる',
+      'スコアが低い場合は通常のフィルタ検索にフォールバック',
+    ],
+    tipsEn: [
+      'The model is downloaded on first load (may take a few seconds)',
+      'Full sentences yield better accuracy than single keywords',
+      'Falls back to standard filter search when scores are low',
+    ],
+    related: ['rag', 'list'],
+  },
+  {
+    id: 'rag', icon: 'rag',
+    title: 'AI チャット', titleEn: 'AI Chat',
+    summary: '材料データベースをコンテキストに AI と対話できる RAG（検索拡張生成）チャットです。登録データに基づいた根拠ある回答が得られます。',
+    summaryEn: 'A RAG (Retrieval-Augmented Generation) chat that uses your material database as context. Get grounded answers based on registered data.',
+    features: [
+      '質問するとベクトル検索で関連材料 4 件を自動取得',
+      '取得データをコンテキストとして AI に渡して回答生成',
+      'プロバイダー切替（GPT-5.4 nano / Gemini 2.5 Flash）',
+      'チャット履歴をセッション内で保持',
+    ],
+    featuresEn: [
+      'Automatically retrieves 4 related materials via vector search on each query',
+      'Injects retrieved data as context for AI-generated answers',
+      'Switch providers (GPT-5.4 nano / Gemini 2.5 Flash)',
+      'Chat history is kept within the session',
+    ],
+    tips: [
+      'Cmd+Enter / Ctrl+Enter で送信',
+      '具体的な材料名や特性値を含めると精度が上がる',
+      '詳細ページの「AIチャットで詳しく」から遷移すると初期クエリ付きで開く',
+    ],
+    tipsEn: [
+      'Send with Cmd+Enter / Ctrl+Enter',
+      'Including specific material names or property values improves accuracy',
+      'Navigating from Detail page\'s "Ask AI" opens with an initial query',
+    ],
+    related: ['vsearch', 'sim'],
+  },
+  {
+    id: 'sim', icon: 'similar',
+    title: '類似材料探索', titleEn: 'Similar Materials',
+    summary: '基準材料を指定して Embedding 類似度でランキングし、AI が選定ポイントと使い分けをアドバイスします。',
+    summaryEn: 'Specify a reference material, rank by Embedding similarity, and get AI advice on selection criteria and usage.',
+    features: [
+      '基準材料 ID または名称を入力して検索',
+      'Embedding 類似度でランキング表示',
+      'AI が選定ポイントと使い分けをアドバイス',
+      'しきい値スライダーで候補を絞り込み',
+    ],
+    featuresEn: [
+      'Enter a reference material ID or name to search',
+      'Results ranked by Embedding similarity',
+      'AI provides advice on selection criteria and usage',
+      'Filter candidates with the threshold slider',
+    ],
+    tips: [
+      '詳細ページの「類似材料を探す」ボタンから遷移すると基準材料が自動入力される',
+      'しきい値を下げると候補が増え、上げると厳選される',
+      '結果の各行をクリックで詳細ページに遷移',
+    ],
+    tipsEn: [
+      'Navigating from Detail\'s "Find Similar" auto-fills the reference material',
+      'Lowering the threshold shows more candidates; raising it narrows results',
+      'Click any result row to go to the detail page',
+    ],
+    related: ['vsearch', 'detail'],
+  },
+  {
+    id: 'help', icon: 'help',
+    title: 'ヘルプ・用語集', titleEn: 'Help / Glossary',
+    summary: 'このページです。専門用語解説、各ページの使い方ガイド、操作リファレンスを検索・閲覧できます。',
+    summaryEn: 'This page. Search and browse technical term explanations, page guides, and operation references.',
+    features: [
+      '6つのカテゴリタブ: ページガイド / 材料工学 / AI・ML / システム / 操作ガイド / すべて',
+      '上部の検索ボックスで用語名・英語名・説明文をキーワード検索',
+      '「ページガイド」タブで全20ページの詳細ドキュメント（概要・できること・操作のヒント・関連ページ）',
+      '各ページガイドから「このページを開く」ボタンで直接遷移',
+      'サポートパネル（右下の ? ボタン）でFAQ・お知らせ・AI設定にアクセス',
+      'FAQ は24件の質問と回答を収録（初めての使い方から技術的な質問まで）',
+    ],
+    featuresEn: [
+      'Filter by category tab (Page Guide, Materials, AI/ML, System, Operations)',
+      'Keyword search via search box',
+      'FAQ section answers common questions',
+    ],
+    tips: [
+      '初めて使う方は「ページガイド」タブから各画面の概要を確認してください',
+      '英語名・日本語名の両方が検索対象。例: 「hardness」で「硬度」がヒット',
+      'カードをクリックすると詳細な説明が展開されます',
+      '右下の ? ボタンからも FAQ やお知らせにアクセスできます',
+      '用語集は現在46エントリ、FAQ は24件を収録',
+    ],
+    tipsEn: [
+      'Check the Page Guide tab for instructions on all screens',
+      'English names are also included in search results',
+    ],
+    related: ['about'],
+  },
+  {
     id: 'about', icon: 'about',
     title: '技術スタック', titleEn: 'Tech Stack',
     summary: 'Matlens を構成する技術の一覧。フロントエンド・AI/ML・データフォーマット・テスト・デプロイの全体像を確認できます。',
@@ -632,6 +608,31 @@ export const PAGE_GUIDES: PageGuide[] = [
       'See README.md for detailed rationale behind tech choices',
     ],
     related: ['help'],
+  },
+  {
+    id: 'settings', icon: 'settings',
+    title: 'カテゴリ・バッチ管理', titleEn: 'Categories & Batches',
+    summary: '登録データのカテゴリ別・ステータス別分布をプログレスバーで可視化し、データ管理状況の全体像を把握できます。',
+    summaryEn: 'Visualize category and status distributions with progress bars, providing an overview of data management status.',
+    features: [
+      'カテゴリ別・ステータス別の分布プログレスバー',
+      'バッチ番号ごとのデータ件数表示',
+      '登録者ごとの担当件数確認',
+    ],
+    featuresEn: [
+      'Distribution progress bars by category and status',
+      'Data count per batch number',
+      'Entry count per registrant',
+    ],
+    tips: [
+      'データの偏りや未処理件数の把握に便利',
+      'ダッシュボードのグラフと併せて管理状況を確認',
+    ],
+    tipsEn: [
+      'Useful for spotting data imbalances and unprocessed items',
+      'Check alongside dashboard charts for a complete management overview',
+    ],
+    related: ['dash', 'list'],
   },
 ];
 

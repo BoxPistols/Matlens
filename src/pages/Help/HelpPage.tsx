@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Icon } from '../../components/Icon';
 import { Badge, Card } from '../../components/atoms';
 import { SearchBox } from '../../components/molecules';
+import { AppCtx } from '../../context/AppContext';
+import type { AppContextValue } from '../../types';
 import { HELP_TERMS, PAGE_GUIDES } from '../../data/constants';
 import type { PageGuide } from '../../data/constants';
 
@@ -99,10 +101,11 @@ const PageGuideSection = ({
 /* ---------- HelpPage ---------- */
 
 export const HelpPage = ({ onNav }: { onNav?: (page: string) => void }) => {
+  const { t } = useContext(AppCtx) as AppContextValue;
   const [cat, setCat] = useState('all');
   const [q, setQ] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
-  const CATS = [{id:'all',label:'すべて'},{id:'guide',label:'ページガイド'},{id:'mat',label:'材料工学'},{id:'ai',label:'AI / ML'},{id:'sys',label:'システム'},{id:'ops',label:'操作ガイド'}];
+  const CATS = [{id:'all',label:t('すべて','All')},{id:'guide',label:t('ページガイド','Page Guide')},{id:'mat',label:t('材料工学','Materials')},{id:'ai',label:'AI / ML'},{id:'sys',label:t('システム','System')},{id:'ops',label:t('操作ガイド','Operations')}];
   const filtered = HELP_TERMS.filter(t => (cat==='all'||t.cat===cat) && (!q||`${t.term} ${t.en} ${t.body}`.toLowerCase().includes(q.toLowerCase())));
 
   // ページガイド表示時は q でフィルタ
