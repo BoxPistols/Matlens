@@ -1,0 +1,26 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Shadows.stories'
+
+<Meta of={Stories} />
+
+# Shadows & Elevation
+
+## 概要
+
+Matlens の影は **情報階層を示すための控えめな elevation** を採用。過度な立体感は避け、ダークテーマでも違和感の出ない低コントラスト設計です。
+
+## 階層
+
+- `--shadow-xs`: リスト行・小カード
+- `--shadow-sm`: カード・フォームブロック
+- `--shadow-md`: ポップオーバー・ツールチップ
+- `--shadow-lg`: モーダル・ダイアログ
+
+## テーマ別の挙動
+
+- Light: 青黒ベース (低彩度)
+- Dark / CAE: ほぼ無影 + 枠線強調でレイヤーを示す
+
+## 一覧
+
+<Canvas of={Stories.Default} />

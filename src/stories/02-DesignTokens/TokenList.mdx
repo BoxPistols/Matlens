@@ -1,0 +1,20 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './TokenList.stories'
+
+<Meta of={Stories} />
+
+# Token Overview
+
+## 概要
+
+Matlens で使われる主要 CSS 変数 (デザイントークン) の俯瞰。4 テーマ (Light/Dark/Eng/CAE) それぞれで値が差し替わります。
+
+## 値の定義元
+
+- リポジトリ直下 `design-tokens/` に TypeScript 単一ソースを配置
+- ビルド時に CSS 変数へ展開
+- テーマ別の上書きは `[data-theme=...]` セレクタ
+
+## 一覧
+
+<Canvas of={Stories.Default} />

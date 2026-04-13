@@ -1,0 +1,25 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Typography.stories'
+
+<Meta of={Stories} />
+
+# Typography
+
+## 概要
+
+Matlens は日英バイリンガル前提のため、フォントスタックは Inter + Noto Sans JP を基調としています。等幅が必要な箇所 (数値・コード) のみ `--font-mono` を参照。
+
+## 設計意図
+
+- **ダークモード可読性**: antialiased + 色コントラスト強化で長時間凝視に耐える
+- **スケール**: 13 (body) / 15 (heading) を中心とした情報密度重視スケール
+- **letter-spacing**: 見出しは `-0.02em` で引き締め、小文字は広めに
+
+## タイポグラフィ一覧
+
+<Canvas of={Stories.Default} />
+
+## 関連トークン
+
+- `--font-ui`, `--font-mono` — ファミリ
+- `--text-hi`, `--text-md`, `--text-lo` — 可読性階層の色

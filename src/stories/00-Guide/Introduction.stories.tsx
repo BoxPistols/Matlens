@@ -113,6 +113,113 @@ const Introduction = () => (
       </div>
     </section>
 
+    {/* Quick Start */}
+    <section style={{ marginBottom: 40 }}>
+      <div style={{ textAlign: 'center', marginBottom: 20 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 6 }}>Quick Start</div>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-hi)' }}>はじめての 4 ステップ</h2>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {[
+          { step: '1', title: 'Storybook を起動', desc: 'ターミナルで npm run storybook を実行' },
+          { step: '2', title: 'サイドバーで探す', desc: '左のツリーから見たいコンポーネントを選択' },
+          { step: '3', title: 'Controls で触る', desc: '下部 Controls タブで props をリアルタイム変更' },
+          { step: '4', title: 'テーマを切り替える', desc: '上部 Theme セレクターで Light/Dark/Eng/CAE を試す' },
+        ].map(q => (
+          <div
+            key={q.step}
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 14,
+              padding: '12px 16px',
+              borderRadius: 10,
+              background: 'var(--bg-surface)',
+              boxShadow: 'var(--shadow-xs)',
+            }}
+          >
+            <span
+              style={{
+                width: 28, height: 28, borderRadius: 8,
+                background: 'var(--accent)', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 13, fontWeight: 700, flexShrink: 0,
+              }}
+            >
+              {q.step}
+            </span>
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-hi)', marginBottom: 2 }}>{q.title}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--text-lo)', lineHeight: 1.6 }}>{q.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* Keyboard Shortcuts */}
+    <section style={{ marginBottom: 40 }}>
+      <div style={{ textAlign: 'center', marginBottom: 16 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 6 }}>Shortcuts</div>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-hi)' }}>キーボードショートカット</h2>
+      </div>
+      <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+        <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
+          <thead>
+            <tr style={{ background: 'var(--bg-raised)' }}>
+              <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, color: 'var(--text-lo)', fontSize: 12, textTransform: 'uppercase' }}>操作</th>
+              <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, color: 'var(--text-lo)', fontSize: 12, textTransform: 'uppercase' }}>キー</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['コンポーネント検索', 'K'],
+              ['フルスクリーン切替', 'F'],
+              ['サイドバー表示/非表示', 'S'],
+              ['アドオンパネル表示/非表示', 'A'],
+              ['前のストーリー', 'Alt + ←'],
+              ['次のストーリー', 'Alt + →'],
+            ].map(([op, key]) => (
+              <tr key={op} style={{ borderTop: '1px solid var(--border-faint)' }}>
+                <td style={{ padding: '8px 12px', color: 'var(--text-md)' }}>{op}</td>
+                <td style={{ padding: '8px 12px' }}>
+                  <code style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)' }}>{key}</code>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {/* Target Audience */}
+    <section style={{ marginBottom: 40 }}>
+      <div style={{ textAlign: 'center', marginBottom: 16 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 6 }}>Audience</div>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-hi)' }}>対象者別の入口</h2>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {[
+          { role: '全員', page: 'Guide / StorybookTutorial + Introduction' },
+          { role: '新規参加者', page: 'Guide / DomainPrimer + ApplicationGuide' },
+          { role: '実装者', page: 'Guide / ComponentDevelopment + Design Philosophy' },
+          { role: 'トークン更新時', page: 'DesignTokens / TokenList' },
+        ].map(a => (
+          <div
+            key={a.role}
+            style={{
+              display: 'flex', gap: 12, padding: '10px 14px',
+              borderRadius: 8, background: 'var(--bg-surface)',
+              boxShadow: 'var(--shadow-xs)', fontSize: 13,
+            }}
+          >
+            <span style={{ minWidth: 160, fontWeight: 700, color: 'var(--text-hi)' }}>{a.role}</span>
+            <span style={{ color: 'var(--text-md)' }}>{a.page}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
     {/* Tech Stack */}
     <section>
       <div style={{ textAlign: 'center', marginBottom: 16 }}>

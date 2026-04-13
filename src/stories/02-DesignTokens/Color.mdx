@@ -1,0 +1,27 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Color.stories'
+
+<Meta of={Stories} />
+
+# Color Tokens
+
+## 概要
+
+Matlens のカラーパレットは CSS 変数で定義され、4 テーマ (Light / Dark / Eng / CAE) ごとに値が差し替わります。コンポーネント側は常に `var(--name)` 参照のままでテーマに追従します。
+
+## 主な役割系
+
+- **Background**: `--bg-base`, `--bg-surface`, `--bg-raised` — 背景の階層
+- **Text**: `--text-hi`, `--text-md`, `--text-lo` — 可読性階層
+- **Accent**: `--accent`, `--accent-mid`, `--accent-dim` — 主要アクション
+- **Semantic**: `--ok`, `--warn`, `--err`, `--info` — 状態色
+- **Category**: `--ai-col`, `--vec` — 機能別識別色
+
+## カラーパレット
+
+<Canvas of={Stories.Default} />
+
+## 関連
+
+- 値の定義元: `design-tokens/` パッケージ
+- テーマ切替: 上部ツールバーの Theme セレクター (`data-theme` 属性)

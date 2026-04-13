@@ -1,0 +1,14 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Breakpoints.stories'
+
+<Meta of={Stories} />
+
+# Breakpoints
+
+## 概要
+
+Tailwind 標準 (`sm/md/lg/xl/2xl`) に揃えたモバイルファースト設計。ただし Matlens は PC 利用中心のため、主設計点は `lg` / `xl` です。
+
+## 一覧
+
+<Canvas of={Stories.Default} />

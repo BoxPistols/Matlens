@@ -1,0 +1,25 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Spacing.stories'
+
+<Meta of={Stories} />
+
+# Spacing
+
+## 概要
+
+Matlens のスペーシングは **4px ベース**。8px グリッドより細かい刻みで、情報密度の高い科学計測 UI に適合させています。
+
+## スケール
+
+`4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64` の等差＋倍数混在。
+
+## 使い分け
+
+- **4 / 8 px**: アイコンとラベル、バッジ内パディング
+- **12 / 16 px**: カード内パディング、フォーム行間
+- **24 / 32 px**: セクション区切り
+- **48 / 64 px**: ページレベルの余白
+
+## 一覧
+
+<Canvas of={Stories.Default} />

@@ -1,0 +1,25 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Motion.stories'
+
+<Meta of={Stories} />
+
+# Motion
+
+## 方針
+
+科学計測 UI では演出より「意味ある遷移」を重視します。`prefers-reduced-motion` を尊重し、装飾アニメーションは抑制。
+
+## Duration スケール
+
+- `xs` 100ms — hover / focus
+- `sm` 150ms — ボタン色変化
+- `md` 220ms — ドロップダウン開閉
+- `lg` 320ms — モーダル・サイドパネル
+
+## Easing
+
+標準は `cubic-bezier(0.16, 1, 0.3, 1)` (ease-out)。
+
+## サンプル
+
+<Canvas of={Stories.Default} />

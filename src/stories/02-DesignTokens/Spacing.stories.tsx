@@ -82,7 +82,6 @@ const SpacingScale = () => (
 const meta: Meta<typeof SpacingScale> = {
   title: 'DesignTokens/Spacing',
   component: SpacingScale,
-  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {

@@ -63,7 +63,6 @@ const TypographyScale = () => (
 const meta: Meta<typeof TypographyScale> = {
   title: 'DesignTokens/Typography',
   component: TypographyScale,
-  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {

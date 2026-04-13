@@ -1,11 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useEffect, useRef } from 'react'
-import Prism from 'prismjs'
-import 'prismjs/components/prism-markup'
-import 'prismjs/components/prism-javascript'
-import 'prismjs/components/prism-jsx'
-import 'prismjs/components/prism-typescript'
-import 'prismjs/components/prism-tsx'
+import { StoryCode as Code } from '../_shared/StoryCode'
 
 const Step = ({ num, title, children }: { num: string; title: string; children: React.ReactNode }) => (
   <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
@@ -18,49 +12,6 @@ const Step = ({ num, title, children }: { num: string; title: string; children: 
     </div>
   </div>
 )
-
-// Guide code blocks — readability over strict monospace alignment.
-// We use the UI font (system-ui + Japanese fallback) at medium weight so the
-// long TSX examples and Japanese inline comments stay legible. Prism token
-// spans inherit these styles, so the highlight colors still apply.
-const CODE_FONT_STACK =
-  "-apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo', 'Segoe UI', system-ui, sans-serif"
-
-const Code = ({ children, lang = 'tsx' }: { children: string; lang?: string }) => {
-  const ref = useRef<HTMLElement>(null)
-  useEffect(() => {
-    if (ref.current) Prism.highlightElement(ref.current)
-  }, [children])
-  return (
-    <div style={{ position: 'relative', margin: '8px 0', borderRadius: 8, overflow: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 12px', background: '#1a1a2e', borderBottom: '1px solid rgba(255,255,255,.08)', fontSize: 11, fontFamily: 'var(--font-mono)', color: '#8a8fb5', letterSpacing: '.03em' }}>
-        <span>{lang}</span>
-      </div>
-      <pre
-        style={{
-          margin: 0,
-          padding: '14px 16px',
-          background: '#12121f',
-          fontFamily: CODE_FONT_STACK,
-          fontSize: 13,
-          fontWeight: 500,
-          lineHeight: 1.5,
-          letterSpacing: '.005em',
-          overflowX: 'auto',
-          tabSize: 2,
-        }}
-      >
-        <code
-          ref={ref}
-          className={`language-${lang}`}
-          style={{ color: '#c9d1d9', fontFamily: 'inherit', fontWeight: 'inherit' }}
-        >
-          {children}
-        </code>
-      </pre>
-    </div>
-  )
-}
 
 const ComponentDevelopment = () => (
   <div style={{ maxWidth: 640, fontFamily: 'var(--font-ui)' }}>

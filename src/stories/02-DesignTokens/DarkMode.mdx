@@ -1,0 +1,21 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './DarkMode.stories'
+
+<Meta of={Stories} />
+
+# Dark Mode & Themes
+
+## 概要
+
+Matlens は 4 テーマ構成 (Light / Dark / Eng / CAE)。`data-theme` 属性と CSS 変数で完結し、React 側の再レンダリング不要で切り替わります。
+
+## テーマの使い分け
+
+- **Light**: 標準事務環境・レビュー向け
+- **Dark**: 長時間凝視・低照度環境
+- **Eng**: エンジニアリング作業画面 (計測・解析)
+- **CAE**: CAE 解析系の暗い画面セット
+
+## 並列比較
+
+<Canvas of={Stories.Default} />

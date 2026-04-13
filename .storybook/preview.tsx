@@ -96,12 +96,26 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    // 右カラム目次 (h2/h3) を有効化。autodocs は MDX ペアと競合するため個別 Story の tags で制御
+    docs: {
+      toc: { headingSelector: 'h2, h3' },
+    },
     options: {
       storySort: {
+        // 番号プレフィックス (00-/01-...) で物理順、order で表示名を明示
+        method: 'alphabetical',
+        includeNames: true,
         order: [
-          'Guide',
-          'Design Philosophy',
-          'DesignTokens',
+          'Guide', [
+            'StorybookTutorial', 'Introduction', 'DomainPrimer', 'HowToUse', 'ApplicationGuide',
+            'Ergonomics', 'ComponentDevelopment', 'MaterialDesign', 'MuiTailwind',
+            'CssReference', 'ForDesigners', 'AIAndDesignSystem', '*',
+          ],
+          'Design Philosophy', ['Overview', 'TechnicalStack', 'ComponentDesignGuide', '*'],
+          'DesignTokens', [
+            'TokenList', 'Color', 'Typography', 'Spacing', 'Shadows',
+            'Breakpoints', 'Motion', 'DarkMode', 'Accessibility', '*',
+          ],
           'Components', ['Atoms', 'Molecules', 'Organisms'],
           'Patterns',
         ],

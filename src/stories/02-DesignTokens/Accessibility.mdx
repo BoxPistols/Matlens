@@ -1,0 +1,19 @@
+import { Meta, Canvas } from '@storybook/blocks'
+import * as Stories from './Accessibility.stories'
+
+<Meta of={Stories} />
+
+# Accessibility
+
+## 方針
+
+Matlens は 4 テーマ全てで WCAG AA 以上のコントラスト比を確保し、キーボードのみで主要フローを完走できることを設計要件としています。
+
+## 自動チェック
+
+- `@storybook/addon-a11y` により axe-core が各 Story で自動実行
+- CI でコントラスト回帰を検出
+
+## サンプル
+
+<Canvas of={Stories.Default} />

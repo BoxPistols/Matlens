@@ -91,7 +91,6 @@ const ColorPalette = () => {
 const meta: Meta<typeof ColorPalette> = {
   title: 'DesignTokens/Color',
   component: ColorPalette,
-  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {

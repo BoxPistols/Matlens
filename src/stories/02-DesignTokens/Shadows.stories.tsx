@@ -48,7 +48,6 @@ const ShadowScale = () => (
 const meta: Meta<typeof ShadowScale> = {
   title: 'DesignTokens/Shadows',
   component: ShadowScale,
-  tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
