@@ -21,7 +21,7 @@ import {
 } from '../../data/metalTestWorkflow'
 import { exportPnml, downloadPnml } from '../../services/pnml'
 import { importPnml } from '../../services/pnmlImport'
-import { DownloadPreviewModal } from '../../components/molecules'
+import { Modal, DownloadPreviewModal } from '../../components/molecules'
 import { AppCtx } from '../../context/AppContext'
 import type { AppContextValue } from '../../types'
 import {
@@ -303,6 +303,8 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
   const [undoStack, setUndoStack] = useState<TokenState[]>([])
   // ダウンロードプレビューモーダルの開閉
   const [previewOpen, setPreviewOpen] = useState(false)
+  // ナビゲーション確認ダイアログ
+  const [pendingNav, setPendingNav] = useState<WorkflowLink | null>(null)
 
   const net = METAL_TEST_WORKFLOW
 
@@ -519,7 +521,7 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
               place={p}
               tokens={tokens[p.id] ?? 0}
               navLink={onNav ? PLACE_NAV_MAP[p.id] : undefined}
-              onNavigate={onNav && PLACE_NAV_MAP[p.id] ? () => onNav(PLACE_NAV_MAP[p.id]!.page) : undefined}
+              onNavigate={onNav && PLACE_NAV_MAP[p.id] ? () => setPendingNav(PLACE_NAV_MAP[p.id]!) : undefined}
             />
           ))}
 
@@ -622,6 +624,38 @@ export const PetriNetPage = ({ onNav }: PetriNetPageProps) => {
         language="xml"
         description="ISO/IEC 15909-2 準拠の PNML XML。PIPE・GreatSPN・CPN Tools などの外部解析ツールで読み込めます。現在のトークン配置が initialMarking として含まれます。"
       />
+
+      {/* ページ遷移確認ダイアログ (ESC でも閉じられる) */}
+      <Modal
+        open={!!pendingNav}
+        onClose={() => setPendingNav(null)}
+        title={t('ページを移動しますか？', 'Navigate away?')}
+        footer={
+          <>
+            <Button variant="default" onClick={() => setPendingNav(null)}>
+              {t('キャンセル', 'Cancel')}
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                if (pendingNav && onNav) {
+                  onNav(pendingNav.page)
+                }
+                setPendingNav(null)
+              }}
+            >
+              {t('移動する', 'Navigate')}
+            </Button>
+          </>
+        }
+      >
+        <p>
+          {t(
+            `このページから離れて「${pendingNav?.label ?? ''}」に移動します。ワークフローの状態は保持されます。`,
+            `You will leave this page and go to "${pendingNav?.label ?? ''}". Workflow state will be preserved.`,
+          )}
+        </p>
+      </Modal>
     </div>
   )
 }
