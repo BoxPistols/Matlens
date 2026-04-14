@@ -38,6 +38,7 @@
     "@upstash/vector": "^1.2.3",
     "ai": "^6.0.156",
     "chart.js": "^4.4.0",
+    "chartjs-plugin-zoom": "^2.2.0",
     "fuse.js": "^7.3.0",
     "isomorphic-dompurify": "^3.8.0",
     "lucide-react": "^1.8.0",

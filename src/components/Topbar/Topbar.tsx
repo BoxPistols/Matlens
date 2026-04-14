@@ -278,6 +278,9 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
         )}
       </div>
 
+      {/* グローバル実験ステータス (進行中の実験があれば表示) */}
+      <ExperimentStatusPill t={t} />
+
       <div className="hidden md:flex gap-0.5 bg-black/25 p-0.5 rounded-md border border-white/10 flex-shrink-0" role="group" aria-label="テーマ切替">
         {THEMES.map(t => (
           <button key={t.id} className={`px-2.5 py-1 rounded text-[12px] font-medium transition-all duration-150 font-ui ${theme === t.id ? 'bg-white/18 text-white' : 'text-white/50 hover:text-white/80'}`} onClick={() => setTheme(t.id)} aria-pressed={theme === t.id}>
@@ -365,3 +368,38 @@ export const Topbar = ({ theme, setTheme, density, setDensity, lang, setLang, on
     </header>
   );
 };
+
+/** Topbar 内の進行中実験ステータスピル（動的データ参照） */
+function ExperimentStatusPill({ t }: { t: (ja: string, en: string) => string }) {
+  // 遅延 import を避けるため直接参照（Topbar は常時描画）
+  // 将来的にはコンテキスト経由で注入するのが望ましい
+  const [activeExp, setActiveExp] = useState<{ id: string; progress: number } | null>(null);
+
+  useEffect(() => {
+    // MOCK_EXPERIMENTS を動的にインポート（バンドル分離維持）
+    import('../../data/experimentMock').then(({ MOCK_EXPERIMENTS }) => {
+      const inProgress = MOCK_EXPERIMENTS.find(e => e.status === 'in_progress');
+      if (inProgress) {
+        setActiveExp({ id: inProgress.experimentId, progress: inProgress.progressPercentage });
+      }
+    });
+  }, []);
+
+  if (!activeExp) return null;
+
+  const shortId = activeExp.id.replace('EXP-', '').slice(0, 8);
+
+  return (
+    <Tooltip label={t('加工実験ダッシュボードへ', 'Go to Experiment Dashboard')} placement="bottom">
+      <button
+        type="button"
+        className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--warn)]/20 border border-[var(--warn)]/40 text-[var(--warn)] text-[11px] font-semibold hover:bg-[var(--warn)]/30 transition-all flex-shrink-0 cursor-pointer"
+        aria-label={t(`進行中の実験: ${activeExp.progress}%`, `Experiment in progress: ${activeExp.progress}%`)}
+        onClick={() => { window.location.hash = '#/experiment'; }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--warn)] motion-safe:animate-pulse" />
+        <span className="font-mono">{shortId} {activeExp.progress}%</span>
+      </button>
+    </Tooltip>
+  );
+}

@@ -163,3 +163,85 @@ export type DbAction =
   | { type: 'BULK_DELETE'; ids: Set<string> }
   | { type: 'BULK_APPROVE'; ids: Set<string> }
   | { type: 'IMPORT'; records: Material[] };
+
+// ─── 加工実験ダッシュボード ───
+
+export type ExperimentStatus = 'planned' | 'in_progress' | 'completed' | 'aborted';
+export type AlertType = 'absolute' | 'spike' | 'baseline';
+export type AlertSeverity = 'critical' | 'warning' | 'info';
+
+export interface ExperimentAlert {
+  id: string;
+  type: AlertType;
+  severity: AlertSeverity;
+  timestamp: string;
+  message: string;
+  messageEn: string;
+  value?: number;
+  threshold?: number;
+}
+
+/** Phase 1: 条件設定 */
+export interface PhaseSetup {
+  material: string;
+  materialEn: string;
+  toolType: string;
+  toolTypeEn: string;
+  spindleSpeedRpm: number;
+  feedRateMmMin: number;
+  depthOfCutMm: number;
+  coolant: string;
+  coolantEn: string;
+}
+
+/** Phase 2: 加工中リアルタイムデータ */
+export interface PhaseProcess {
+  cuttingForceN: number;
+  vibrationG: number;
+  temperatureC: number;
+  spindleLoadPct: number;
+  alerts: ExperimentAlert[];
+}
+
+/** Phase 3: 評価・分析結果 */
+export interface PhaseResult {
+  surfaceRoughnessUm: number | null;
+  residualStressMpa: number | null;
+  toolWearMm: number | null;
+  inspectionImages: string[];
+  notes: string;
+}
+
+/** センサーデータの1サンプル */
+export interface SensorSample {
+  t: number;
+  force: number;
+  vibration: number;
+  temperature: number;
+  spindleLoad: number;
+}
+
+/** 間引き済みサンプル（ピーク・RMS 保持） */
+export interface DownsampledPoint {
+  t: number;
+  forceRms: number;
+  forcePeak: number;
+  vibrationRms: number;
+  vibrationPeak: number;
+  temperatureAvg: number;
+  spindleLoadAvg: number;
+  alertId?: string;
+}
+
+/** 加工実験 */
+export interface Experiment {
+  experimentId: string;
+  experimentName: string;
+  experimentNameEn: string;
+  status: ExperimentStatus;
+  progressPercentage: number;
+  createdAt: string;
+  phase1Setup: PhaseSetup;
+  phase2Process: PhaseProcess;
+  phase3Result: PhaseResult;
+}

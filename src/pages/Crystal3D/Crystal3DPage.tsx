@@ -6,6 +6,7 @@
 import { Suspense, useState, useMemo, createContext, useContext } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+// @ts-expect-error three は @types/three 未導入のため暗黙 any
 import * as THREE from 'three'
 import { useTheme } from '../../hooks/useTheme/useTheme'
 
