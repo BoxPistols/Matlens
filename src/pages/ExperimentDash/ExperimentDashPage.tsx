@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback, useContext, useMemo } from 'r
 import { Chart, registerables } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { Icon, type IconName } from '../../components/Icon';
-import { Button, Badge, Card, SectionCard } from '../../components/atoms';
+import { Badge } from '../../components/atoms';
 import { AppCtx } from '../../context/AppContext';
-import type { Experiment, ExperimentAlert, DownsampledPoint, AppContextValue } from '../../types';
+import type { Experiment, ExperimentAlert, AppContextValue } from '../../types';
 import { MOCK_EXPERIMENTS, createExperimentSimulation } from '../../data/experimentMock';
 
 Chart.register(...registerables, zoomPlugin);
@@ -36,7 +36,7 @@ interface Props {
   onNav: (page: string) => void;
 }
 
-export const ExperimentDashPage = ({ onNav }: Props) => {
+export const ExperimentDashPage = (_props: Props) => {
   const { t } = useContext(AppCtx) as AppContextValue;
 
   const firstExp = MOCK_EXPERIMENTS[0]!;
@@ -103,14 +103,15 @@ export const ExperimentDashPage = ({ onNav }: Props) => {
     return stopStream;
   }, [isStreaming, sim.downsampled.length, startStream, stopStream]);
 
+  const streamDone = streamIndex >= sim.downsampled.length;
   useEffect(() => {
     if (paused) {
       stopStream();
-    } else if (isStreaming && streamIndex < sim.downsampled.length) {
+    } else if (isStreaming && !streamDone) {
       startStream();
     }
     return stopStream;
-  }, [paused, isStreaming, startStream, stopStream]);
+  }, [paused, isStreaming, streamDone, startStream, stopStream]);
 
   // ── 描画データ ──
   const chartData = useMemo(() => {
@@ -303,6 +304,31 @@ export const ExperimentDashPage = ({ onNav }: Props) => {
   const criticalCount = visibleAlerts.filter(a => a.severity === 'critical').length;
   const warningCount = visibleAlerts.filter(a => a.severity === 'warning').length;
 
+  // ── Phase 2: リアルタイム値 (ストリームに連動) ──
+  const liveProcessData = useMemo(() => {
+    if (!isLive || streamIndex === 0) {
+      return {
+        force: selectedExp.phase2Process.cuttingForceN,
+        vibration: selectedExp.phase2Process.vibrationG,
+        temperature: selectedExp.phase2Process.temperatureC,
+        spindleLoad: selectedExp.phase2Process.spindleLoadPct,
+      };
+    }
+    const point = sim.downsampled[Math.min(streamIndex - 1, sim.downsampled.length - 1)];
+    if (!point) return {
+      force: selectedExp.phase2Process.cuttingForceN,
+      vibration: selectedExp.phase2Process.vibrationG,
+      temperature: selectedExp.phase2Process.temperatureC,
+      spindleLoad: selectedExp.phase2Process.spindleLoadPct,
+    };
+    return {
+      force: point.forceRms,
+      vibration: point.vibrationRms,
+      temperature: point.temperatureAvg,
+      spindleLoad: point.spindleLoadAvg,
+    };
+  }, [isLive, streamIndex, sim.downsampled, selectedExp]);
+
   return (
     <div className="space-y-5">
       {/* ── ヘッダー ── */}
@@ -453,14 +479,15 @@ export const ExperimentDashPage = ({ onNav }: Props) => {
           onToggle={() => togglePhase(2)}
         >
           <div className="grid grid-cols-2 gap-2.5">
-            <MiniKpi label={t('切削抵抗', 'Force')} value={selectedExp.phase2Process.cuttingForceN.toFixed(0)} unit="N" />
-            <MiniKpi label={t('振動', 'Vibration')} value={selectedExp.phase2Process.vibrationG.toFixed(1)} unit="G" />
-            <MiniKpi label={t('温度', 'Temp')} value={`${selectedExp.phase2Process.temperatureC}`} unit="°C" />
+            <MiniKpi label={t('切削抵抗', 'Force')} value={liveProcessData.force.toFixed(0)} unit="N" live={isLive} />
+            <MiniKpi label={t('振動', 'Vibration')} value={liveProcessData.vibration.toFixed(1)} unit="G" live={isLive} />
+            <MiniKpi label={t('温度', 'Temp')} value={liveProcessData.temperature.toFixed(0)} unit="°C" live={isLive} />
             <MiniKpi
               label={t('スピンドル負荷', 'Spindle Load')}
-              value={`${selectedExp.phase2Process.spindleLoadPct}`}
+              value={liveProcessData.spindleLoad.toFixed(0)}
               unit="%"
-              warn={selectedExp.phase2Process.spindleLoadPct > 80}
+              warn={liveProcessData.spindleLoad > 80}
+              live={isLive}
             />
           </div>
         </CollapsiblePhase>
@@ -474,21 +501,27 @@ export const ExperimentDashPage = ({ onNav }: Props) => {
           onToggle={() => togglePhase(3)}
         >
           {selectedExp.phase3Result.surfaceRoughnessUm !== null ? (
-            <dl className="space-y-2 text-[13px]">
-              <DefItem label={t('表面粗さ Ra', 'Surface Ra')} value={`${selectedExp.phase3Result.surfaceRoughnessUm} μm`} mono />
-              {selectedExp.phase3Result.residualStressMpa !== null && (
-                <DefItem label={t('残留応力', 'Residual Stress')} value={`${selectedExp.phase3Result.residualStressMpa} MPa`} mono />
-              )}
-              {selectedExp.phase3Result.toolWearMm !== null && (
-                <DefItem label={t('工具摩耗', 'Tool Wear')} value={`${selectedExp.phase3Result.toolWearMm} mm`} mono />
-              )}
+            <div className="space-y-3">
+              {/* 結果レポートヘッダー */}
+              <ResultVerdict result={selectedExp.phase3Result} t={t} />
+              {/* 測定値 */}
+              <dl className="space-y-2 text-[13px]">
+                <DefItem label={t('表面粗さ Ra', 'Surface Ra')} value={`${selectedExp.phase3Result.surfaceRoughnessUm} μm`} mono />
+                {selectedExp.phase3Result.residualStressMpa !== null && (
+                  <DefItem label={t('残留応力', 'Residual Stress')} value={`${selectedExp.phase3Result.residualStressMpa} MPa`} mono />
+                )}
+                {selectedExp.phase3Result.toolWearMm !== null && (
+                  <DefItem label={t('工具摩耗', 'Tool Wear')} value={`${selectedExp.phase3Result.toolWearMm} mm`} mono />
+                )}
+              </dl>
               {selectedExp.phase3Result.notes && (
-                <p className="text-[12px] text-text-lo mt-2 pt-2 border-t border-[var(--border-faint)] leading-relaxed">
+                <p className="text-[12px] text-text-lo pt-2 border-t border-[var(--border-faint)] leading-relaxed">
                   {selectedExp.phase3Result.notes}
                 </p>
               )}
-            </dl>
+            </div>
           ) : (
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
             <div
               onDragOver={e => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
@@ -658,16 +691,19 @@ function DefItem({ label, value, mono }: { label: string; value: string; mono?: 
   );
 }
 
-function MiniKpi({ label, value, unit, warn }: { label: string; value: string; unit: string; warn?: boolean }) {
+function MiniKpi({ label, value, unit, warn, live }: { label: string; value: string; unit: string; warn?: boolean; live?: boolean }) {
   return (
-    <div className={`p-3 rounded-lg border text-center ${
+    <div className={`p-3 rounded-lg border text-center motion-safe:transition-colors ${
       warn
         ? 'border-[var(--warn)] bg-[var(--warn-dim)]'
         : 'border-[var(--border-faint)] bg-[var(--hover)]'
     }`}>
-      <div className="text-[11px] text-text-lo leading-none">{label}</div>
+      <div className="flex items-center justify-center gap-1">
+        <span className="text-[11px] text-text-lo leading-none">{label}</span>
+        {live && <span className="w-1.5 h-1.5 rounded-full bg-[var(--warn)] motion-safe:animate-pulse" />}
+      </div>
       <div className="mt-1.5 flex items-baseline justify-center gap-0.5">
-        <span className={`text-[18px] font-bold font-mono tabular-nums leading-none ${
+        <span className={`text-[18px] font-bold font-mono tabular-nums leading-none motion-safe:transition-all ${
           warn ? 'text-[var(--warn)]' : 'text-text-hi'
         }`}>
           {value}
@@ -675,6 +711,76 @@ function MiniKpi({ label, value, unit, warn }: { label: string; value: string; u
         <span className={`text-[11px] font-medium ${warn ? 'text-[var(--warn)]' : 'text-text-lo'}`}>
           {unit}
         </span>
+      </div>
+    </div>
+  );
+}
+
+/** Phase 3 結果レポート: 判定サマリー */
+function ResultVerdict({ result, t }: {
+  result: { surfaceRoughnessUm: number | null; residualStressMpa: number | null; toolWearMm: number | null };
+  t: (ja: string, en: string) => string;
+}) {
+  const checks: { label: string; pass: boolean; detail: string }[] = [];
+
+  if (result.surfaceRoughnessUm !== null) {
+    const pass = result.surfaceRoughnessUm <= 1.0;
+    checks.push({
+      label: t('面粗さ', 'Surface'),
+      pass,
+      detail: pass
+        ? t(`Ra ${result.surfaceRoughnessUm} μm — 基準 1.0μm 以下を達成`, `Ra ${result.surfaceRoughnessUm} μm — meets ≤1.0μm`)
+        : t(`Ra ${result.surfaceRoughnessUm} μm — 基準 1.0μm 超過`, `Ra ${result.surfaceRoughnessUm} μm — exceeds 1.0μm`),
+    });
+  }
+  if (result.toolWearMm !== null) {
+    const pass = result.toolWearMm <= 0.3;
+    checks.push({
+      label: t('工具摩耗', 'Tool Wear'),
+      pass,
+      detail: pass
+        ? t(`${result.toolWearMm} mm — 許容範囲内`, `${result.toolWearMm} mm — within limit`)
+        : t(`${result.toolWearMm} mm — 交換推奨`, `${result.toolWearMm} mm — replacement recommended`),
+    });
+  }
+  if (result.residualStressMpa !== null) {
+    const compressive = result.residualStressMpa < 0;
+    checks.push({
+      label: t('残留応力', 'Residual Stress'),
+      pass: compressive,
+      detail: compressive
+        ? t(`${result.residualStressMpa} MPa — 圧縮（良好）`, `${result.residualStressMpa} MPa — compressive (good)`)
+        : t(`${result.residualStressMpa} MPa — 引張（注意）`, `${result.residualStressMpa} MPa — tensile (caution)`),
+    });
+  }
+
+  const allPass = checks.every(c => c.pass);
+  const failCount = checks.filter(c => !c.pass).length;
+
+  return (
+    <div className={`rounded-lg border p-3 ${
+      allPass
+        ? 'border-[var(--ok)]/40 bg-[var(--ok-dim)]'
+        : 'border-[var(--warn)]/40 bg-[var(--warn-dim)]'
+    }`}>
+      <div className="flex items-center gap-2 mb-2">
+        <Icon name={allPass ? 'check' : 'warning'} size={14}
+          className={allPass ? 'text-[var(--ok)]' : 'text-[var(--warn)]'} />
+        <span className={`text-[12px] font-bold ${allPass ? 'text-[var(--ok)]' : 'text-[var(--warn)]'}`}>
+          {allPass
+            ? t('全項目合格', 'All Checks Passed')
+            : t(`${failCount} 項目に注意`, `${failCount} item(s) need attention`)}
+        </span>
+      </div>
+      <div className="space-y-1">
+        {checks.map((c, i) => (
+          <div key={i} className="flex items-start gap-1.5 text-[11px]">
+            <span className={`mt-0.5 ${c.pass ? 'text-[var(--ok)]' : 'text-[var(--warn)]'}`}>
+              {c.pass ? '✓' : '!'}
+            </span>
+            <span className="text-text-hi">{c.detail}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
