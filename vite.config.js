@@ -1,7 +1,11 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { devApiProxy } from './dev-api-proxy.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   // Load all env vars (not just VITE_ prefixed) so OPENAI_API_KEY etc. are available
@@ -32,6 +36,9 @@ export default defineConfig(({ mode }) => {
     resolve: {
       // Prevent duplicate React instances (e.g. lucide-react v1.x useLucideContext)
       dedupe: ['react', 'react-dom'],
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
     },
     build: {
       outDir: 'dist',
