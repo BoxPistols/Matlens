@@ -1,0 +1,327 @@
+[
+  {
+    "id": "cst_001",
+    "name": "東日本電力株式会社",
+    "nameKana": "ヒガシニホンデンリョク",
+    "industryTagIds": [
+      "ind_infra_energy"
+    ],
+    "mainContact": {
+      "name": "東日担当者",
+      "email": "contact@cst_001.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_002",
+    "name": "中部重工業株式会社",
+    "nameKana": "チュウブジュウコウギョウ",
+    "industryTagIds": [
+      "ind_infra_energy",
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "中部担当者",
+      "email": "contact@cst_002.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_003",
+    "name": "西日本自動車工業",
+    "nameKana": "ニシニホンジドウシャコウギョウ",
+    "industryTagIds": [
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "西日担当者",
+      "email": "contact@cst_003.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_004",
+    "name": "スカイブリッジ航空機",
+    "nameKana": "スカイブリッジコウクウキ",
+    "industryTagIds": [
+      "ind_aerospace"
+    ],
+    "mainContact": {
+      "name": "スカ担当者",
+      "email": "contact@cst_004.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_005",
+    "name": "北海鉄鋼株式会社",
+    "nameKana": "ホッカイテッコウ",
+    "industryTagIds": [
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "北海担当者",
+      "email": "contact@cst_005.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_006",
+    "name": "グリーンカーボン研究所",
+    "nameKana": "グリーンカーボンケンキュウショ",
+    "industryTagIds": [
+      "ind_env_carbon"
+    ],
+    "mainContact": {
+      "name": "グリ担当者",
+      "email": "contact@cst_006.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_007",
+    "name": "太平洋プラント工業",
+    "nameKana": "タイヘイヨウプラントコウギョウ",
+    "industryTagIds": [
+      "ind_infra_energy"
+    ],
+    "mainContact": {
+      "name": "太平担当者",
+      "email": "contact@cst_007.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_008",
+    "name": "関東交通安全研究機構",
+    "nameKana": "カントウコウツウアンゼンケンキュウキコウ",
+    "industryTagIds": [
+      "ind_safety",
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "関東担当者",
+      "email": "contact@cst_008.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_009",
+    "name": "ジェットコア航空",
+    "nameKana": "ジェットコアコウクウ",
+    "industryTagIds": [
+      "ind_aerospace"
+    ],
+    "mainContact": {
+      "name": "ジェ担当者",
+      "email": "contact@cst_009.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_010",
+    "name": "中央石油化学",
+    "nameKana": "チュウオウセキユカガク",
+    "industryTagIds": [
+      "ind_infra_energy"
+    ],
+    "mainContact": {
+      "name": "中央担当者",
+      "email": "contact@cst_010.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_011",
+    "name": "アーバンインフラ建設",
+    "nameKana": "アーバンインフラケンセツ",
+    "industryTagIds": [
+      "ind_infra_energy",
+      "ind_safety"
+    ],
+    "mainContact": {
+      "name": "アー担当者",
+      "email": "contact@cst_011.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_012",
+    "name": "トーヨー精密機械",
+    "nameKana": "トーヨーセイミツキカイ",
+    "industryTagIds": [
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "トー担当者",
+      "email": "contact@cst_012.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_013",
+    "name": "オーシャンエナジー",
+    "nameKana": "オーシャンエナジー",
+    "industryTagIds": [
+      "ind_env_carbon",
+      "ind_infra_energy"
+    ],
+    "mainContact": {
+      "name": "オー担当者",
+      "email": "contact@cst_013.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_014",
+    "name": "宇宙開発機構外郭団体",
+    "nameKana": "ウチュウカイハツキコウガイカクダンタイ",
+    "industryTagIds": [
+      "ind_aerospace"
+    ],
+    "mainContact": {
+      "name": "宇宙担当者",
+      "email": "contact@cst_014.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_015",
+    "name": "ハイパーモビリティ",
+    "nameKana": "ハイパーモビリティ",
+    "industryTagIds": [
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "ハイ担当者",
+      "email": "contact@cst_015.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_016",
+    "name": "グリーンポリマー工業",
+    "nameKana": "グリーンポリマーコウギョウ",
+    "industryTagIds": [
+      "ind_env_carbon"
+    ],
+    "mainContact": {
+      "name": "グリ担当者",
+      "email": "contact@cst_016.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_017",
+    "name": "東海素材工業",
+    "nameKana": "トウカイソザイコウギョウ",
+    "industryTagIds": [
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "東海担当者",
+      "email": "contact@cst_017.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_018",
+    "name": "北陸電機",
+    "nameKana": "ホクリクデンキ",
+    "industryTagIds": [
+      "ind_infra_energy"
+    ],
+    "mainContact": {
+      "name": "北陸担当者",
+      "email": "contact@cst_018.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_019",
+    "name": "九州素形材センター",
+    "nameKana": "キュウシュウソケイザイセンター",
+    "industryTagIds": [
+      "ind_auto_industrial"
+    ],
+    "mainContact": {
+      "name": "九州担当者",
+      "email": "contact@cst_019.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "cst_020",
+    "name": "海洋構造安全研究会",
+    "nameKana": "カイヨウコウゾウアンゼンケンキュウカイ",
+    "industryTagIds": [
+      "ind_infra_energy",
+      "ind_safety"
+    ],
+    "mainContact": {
+      "name": "海洋担当者",
+      "email": "contact@cst_020.example.jp",
+      "phone": null
+    },
+    "notes": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  }
+]

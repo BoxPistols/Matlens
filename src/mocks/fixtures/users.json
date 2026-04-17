@@ -1,0 +1,74 @@
+[
+  {
+    "id": "usr_pm_001",
+    "name": "佐藤 隆志",
+    "email": "sato@matlens.example.jp",
+    "role": "pm",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_pm_002",
+    "name": "田中 美咲",
+    "email": "tanaka@matlens.example.jp",
+    "role": "pm",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_eng_001",
+    "name": "鈴木 健一",
+    "email": "suzuki@matlens.example.jp",
+    "role": "engineer",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_eng_002",
+    "name": "高橋 優子",
+    "email": "takahashi@matlens.example.jp",
+    "role": "engineer",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_eng_003",
+    "name": "伊藤 拓也",
+    "email": "ito@matlens.example.jp",
+    "role": "engineer",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_op_001",
+    "name": "山本 亮介",
+    "email": "yamamoto@matlens.example.jp",
+    "role": "operator",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_op_002",
+    "name": "中村 彩",
+    "email": "nakamura@matlens.example.jp",
+    "role": "operator",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "usr_admin",
+    "name": "管理者",
+    "email": "admin@matlens.example.jp",
+    "role": "admin",
+    "avatarUrl": null,
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  }
+]

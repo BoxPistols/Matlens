@@ -22,6 +22,7 @@
     "tokens:build": "node design-tokens/scripts/build-plugin.ts && node design-tokens/scripts/generate-tokens-json.ts",
     "tokens:build:figma-plugin": "node design-tokens/scripts/build-plugin.ts",
     "tokens:build:json": "node design-tokens/scripts/generate-tokens-json.ts",
+    "mocks:generate": "tsx scripts/generate-mock-fixtures.ts",
     "commitlint": "commitlint --edit",
     "prepare": "husky"
   },
@@ -91,6 +92,7 @@
     "rollup-plugin-visualizer": "^7.0.1",
     "storybook": "^10.3.5",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.1",
     "vite": "^6.4.2",

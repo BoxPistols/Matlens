@@ -1,0 +1,3802 @@
+[
+  {
+    "id": "dmg_00001",
+    "reportId": "rpt_tst_000001",
+    "testId": "tst_000001",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2026-04-25T01:00:00.000Z",
+    "updatedAt": "2026-04-25T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00002",
+    "reportId": "rpt_tst_000002",
+    "testId": "tst_000002",
+    "type": "stress_corrosion",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "粒界炭化物析出とCl⁻の複合作用",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2026-04-03T01:00:00.000Z",
+    "updatedAt": "2026-04-03T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00003",
+    "reportId": "rpt_tst_000003",
+    "testId": "tst_000003",
+    "type": "thermal",
+    "location": "内面全周",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2026-04-11T01:00:00.000Z",
+    "updatedAt": "2026-04-11T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00004",
+    "reportId": "rpt_tst_000004",
+    "testId": "tst_000004",
+    "type": "brittle_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2026-04-21T01:00:00.000Z",
+    "updatedAt": "2026-04-21T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00005",
+    "reportId": "rpt_tst_000005",
+    "testId": "tst_000005",
+    "type": "ductile_fracture",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2026-05-04T01:00:00.000Z",
+    "updatedAt": "2026-05-04T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00006",
+    "reportId": "rpt_tst_000006",
+    "testId": "tst_000006",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2026-04-09T01:00:00.000Z",
+    "updatedAt": "2026-04-09T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00007",
+    "reportId": "rpt_tst_000007",
+    "testId": "tst_000007",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2026-04-23T01:00:00.000Z",
+    "updatedAt": "2026-04-23T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00008",
+    "reportId": "rpt_tst_000008",
+    "testId": "tst_000008",
+    "type": "corrosion",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2026-05-01T01:00:00.000Z",
+    "updatedAt": "2026-05-01T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00009",
+    "reportId": "rpt_tst_000009",
+    "testId": "tst_000009",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2026-05-08T01:00:00.000Z",
+    "updatedAt": "2026-05-08T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00010",
+    "reportId": "rpt_tst_000010",
+    "testId": "tst_000010",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2026-05-20T01:00:00.000Z",
+    "updatedAt": "2026-05-20T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00011",
+    "reportId": "rpt_tst_000011",
+    "testId": "tst_000011",
+    "type": "fatigue",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2026-04-08T01:00:00.000Z",
+    "updatedAt": "2026-04-08T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00012",
+    "reportId": "rpt_tst_000012",
+    "testId": "tst_000012",
+    "type": "fatigue",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2026-05-17T01:00:00.000Z",
+    "updatedAt": "2026-05-17T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00013",
+    "reportId": "rpt_tst_000013",
+    "testId": "tst_000013",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2026-04-09T01:00:00.000Z",
+    "updatedAt": "2026-04-09T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00014",
+    "reportId": "rpt_tst_000014",
+    "testId": "tst_000014",
+    "type": "ductile_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "medium"
+    ],
+    "createdAt": "2026-05-04T01:00:00.000Z",
+    "updatedAt": "2026-05-04T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00015",
+    "reportId": "rpt_tst_000015",
+    "testId": "tst_000015",
+    "type": "stress_corrosion",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界炭化物析出とCl⁻の複合作用",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2026-04-20T01:00:00.000Z",
+    "updatedAt": "2026-04-20T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00016",
+    "reportId": "rpt_tst_000016",
+    "testId": "tst_000016",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "high"
+    ],
+    "createdAt": "2026-05-14T01:00:00.000Z",
+    "updatedAt": "2026-05-14T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00017",
+    "reportId": "rpt_tst_000017",
+    "testId": "tst_000017",
+    "type": "creep",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2026-05-15T01:00:00.000Z",
+    "updatedAt": "2026-05-15T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00018",
+    "reportId": "rpt_tst_000018",
+    "testId": "tst_000018",
+    "type": "creep",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2026-04-27T01:00:00.000Z",
+    "updatedAt": "2026-04-27T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00019",
+    "reportId": "rpt_tst_000019",
+    "testId": "tst_000019",
+    "type": "brittle_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2026-04-16T01:00:00.000Z",
+    "updatedAt": "2026-04-16T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00020",
+    "reportId": "rpt_tst_000020",
+    "testId": "tst_000020",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "high"
+    ],
+    "createdAt": "2026-05-03T01:00:00.000Z",
+    "updatedAt": "2026-05-03T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00021",
+    "reportId": "rpt_tst_000021",
+    "testId": "tst_000021",
+    "type": "brittle_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "high"
+    ],
+    "createdAt": "2026-05-19T01:00:00.000Z",
+    "updatedAt": "2026-05-19T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00022",
+    "reportId": "rpt_tst_000022",
+    "testId": "tst_000022",
+    "type": "creep",
+    "location": "内面全周",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2026-05-06T01:00:00.000Z",
+    "updatedAt": "2026-05-06T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00023",
+    "reportId": "rpt_tst_000023",
+    "testId": "tst_000023",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2026-04-07T01:00:00.000Z",
+    "updatedAt": "2026-04-07T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00024",
+    "reportId": "rpt_tst_000024",
+    "testId": "tst_000024",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "low"
+    ],
+    "createdAt": "2026-05-01T01:00:00.000Z",
+    "updatedAt": "2026-05-01T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00025",
+    "reportId": "rpt_tst_000025",
+    "testId": "tst_000025",
+    "type": "ductile_fracture",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "high"
+    ],
+    "createdAt": "2026-04-26T01:00:00.000Z",
+    "updatedAt": "2026-04-26T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00026",
+    "reportId": "rpt_tst_000026",
+    "testId": "tst_000026",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2026-05-01T01:00:00.000Z",
+    "updatedAt": "2026-05-01T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00027",
+    "reportId": "rpt_tst_000027",
+    "testId": "tst_000027",
+    "type": "fatigue",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2026-04-25T01:00:00.000Z",
+    "updatedAt": "2026-04-25T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00028",
+    "reportId": "rpt_tst_000028",
+    "testId": "tst_000028",
+    "type": "wear",
+    "location": "内面全周",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "high"
+    ],
+    "createdAt": "2026-04-18T01:00:00.000Z",
+    "updatedAt": "2026-04-18T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00029",
+    "reportId": "rpt_tst_000034",
+    "testId": "tst_000034",
+    "type": "wear",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2025-01-29T01:00:00.000Z",
+    "updatedAt": "2025-01-29T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00030",
+    "reportId": "rpt_tst_000035",
+    "testId": "tst_000035",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2025-01-28T01:00:00.000Z",
+    "updatedAt": "2025-01-28T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00031",
+    "reportId": "rpt_tst_000036",
+    "testId": "tst_000036",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-01-02T01:00:00.000Z",
+    "updatedAt": "2025-01-02T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00032",
+    "reportId": "rpt_tst_000037",
+    "testId": "tst_000037",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-02-04T01:00:00.000Z",
+    "updatedAt": "2025-02-04T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00033",
+    "reportId": "rpt_tst_000038",
+    "testId": "tst_000038",
+    "type": "creep",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2025-01-23T01:00:00.000Z",
+    "updatedAt": "2025-01-23T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00034",
+    "reportId": "rpt_tst_000039",
+    "testId": "tst_000039",
+    "type": "wear",
+    "location": "外面局所",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2025-01-29T01:00:00.000Z",
+    "updatedAt": "2025-01-29T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00035",
+    "reportId": "rpt_tst_000041",
+    "testId": "tst_000041",
+    "type": "stress_corrosion",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "low"
+    ],
+    "createdAt": "2025-02-03T01:00:00.000Z",
+    "updatedAt": "2025-02-03T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00036",
+    "reportId": "rpt_tst_000042",
+    "testId": "tst_000042",
+    "type": "fatigue",
+    "location": "外面局所",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2024-12-28T01:00:00.000Z",
+    "updatedAt": "2024-12-28T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00037",
+    "reportId": "rpt_tst_000043",
+    "testId": "tst_000043",
+    "type": "brittle_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2024-12-29T01:00:00.000Z",
+    "updatedAt": "2024-12-29T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00038",
+    "reportId": "rpt_tst_000044",
+    "testId": "tst_000044",
+    "type": "thermal",
+    "location": "内面全周",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "low"
+    ],
+    "createdAt": "2025-02-06T01:00:00.000Z",
+    "updatedAt": "2025-02-06T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00039",
+    "reportId": "rpt_tst_000049",
+    "testId": "tst_000049",
+    "type": "fatigue",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2024-12-21T01:00:00.000Z",
+    "updatedAt": "2024-12-21T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00040",
+    "reportId": "rpt_tst_000050",
+    "testId": "tst_000050",
+    "type": "thermal",
+    "location": "外面局所",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2025-01-04T01:00:00.000Z",
+    "updatedAt": "2025-01-04T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00041",
+    "reportId": "rpt_tst_000053",
+    "testId": "tst_000053",
+    "type": "corrosion",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2026-01-02T01:00:00.000Z",
+    "updatedAt": "2026-01-02T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00042",
+    "reportId": "rpt_tst_000097",
+    "testId": "tst_000097",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "high"
+    ],
+    "createdAt": "2025-05-29T01:00:00.000Z",
+    "updatedAt": "2025-05-29T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00043",
+    "reportId": "rpt_tst_000099",
+    "testId": "tst_000099",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-05-31T01:00:00.000Z",
+    "updatedAt": "2025-05-31T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00044",
+    "reportId": "rpt_tst_000101",
+    "testId": "tst_000101",
+    "type": "fatigue",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2025-06-22T01:00:00.000Z",
+    "updatedAt": "2025-06-22T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00045",
+    "reportId": "rpt_tst_000102",
+    "testId": "tst_000102",
+    "type": "corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2025-05-31T01:00:00.000Z",
+    "updatedAt": "2025-05-31T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00046",
+    "reportId": "rpt_tst_000107",
+    "testId": "tst_000107",
+    "type": "creep",
+    "location": "内面全周",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2025-05-21T01:00:00.000Z",
+    "updatedAt": "2025-05-21T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00047",
+    "reportId": "rpt_tst_000113",
+    "testId": "tst_000113",
+    "type": "fatigue",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2025-06-26T01:00:00.000Z",
+    "updatedAt": "2025-06-26T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00048",
+    "reportId": "rpt_tst_000121",
+    "testId": "tst_000121",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-10-07T01:00:00.000Z",
+    "updatedAt": "2025-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00049",
+    "reportId": "rpt_tst_000122",
+    "testId": "tst_000122",
+    "type": "wear",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2025-10-08T01:00:00.000Z",
+    "updatedAt": "2025-10-08T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00050",
+    "reportId": "rpt_tst_000123",
+    "testId": "tst_000123",
+    "type": "creep",
+    "location": "外面局所",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2025-08-26T01:00:00.000Z",
+    "updatedAt": "2025-08-26T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00051",
+    "reportId": "rpt_tst_000124",
+    "testId": "tst_000124",
+    "type": "corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2025-10-09T01:00:00.000Z",
+    "updatedAt": "2025-10-09T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00052",
+    "reportId": "rpt_tst_000125",
+    "testId": "tst_000125",
+    "type": "brittle_fracture",
+    "location": "外面局所",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-09-24T01:00:00.000Z",
+    "updatedAt": "2025-09-24T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00053",
+    "reportId": "rpt_tst_000126",
+    "testId": "tst_000126",
+    "type": "corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2025-09-05T01:00:00.000Z",
+    "updatedAt": "2025-09-05T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00054",
+    "reportId": "rpt_tst_000127",
+    "testId": "tst_000127",
+    "type": "brittle_fracture",
+    "location": "外面局所",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-10-07T01:00:00.000Z",
+    "updatedAt": "2025-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00055",
+    "reportId": "rpt_tst_000128",
+    "testId": "tst_000128",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2025-10-10T01:00:00.000Z",
+    "updatedAt": "2025-10-10T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00056",
+    "reportId": "rpt_tst_000129",
+    "testId": "tst_000129",
+    "type": "brittle_fracture",
+    "location": "外面局所",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-10-13T01:00:00.000Z",
+    "updatedAt": "2025-10-13T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00057",
+    "reportId": "rpt_tst_000130",
+    "testId": "tst_000130",
+    "type": "corrosion",
+    "location": "外面局所",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2025-10-05T01:00:00.000Z",
+    "updatedAt": "2025-10-05T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00058",
+    "reportId": "rpt_tst_000131",
+    "testId": "tst_000131",
+    "type": "thermal",
+    "location": "内面全周",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2025-10-07T01:00:00.000Z",
+    "updatedAt": "2025-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00059",
+    "reportId": "rpt_tst_000132",
+    "testId": "tst_000132",
+    "type": "corrosion",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-08-28T01:00:00.000Z",
+    "updatedAt": "2025-08-28T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00060",
+    "reportId": "rpt_tst_000133",
+    "testId": "tst_000133",
+    "type": "stress_corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-09-10T01:00:00.000Z",
+    "updatedAt": "2025-09-10T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00061",
+    "reportId": "rpt_tst_000134",
+    "testId": "tst_000134",
+    "type": "ductile_fracture",
+    "location": "内面全周",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-10-17T01:00:00.000Z",
+    "updatedAt": "2025-10-17T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00062",
+    "reportId": "rpt_tst_000135",
+    "testId": "tst_000135",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2025-08-30T01:00:00.000Z",
+    "updatedAt": "2025-08-30T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00063",
+    "reportId": "rpt_tst_000136",
+    "testId": "tst_000136",
+    "type": "wear",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2025-08-31T01:00:00.000Z",
+    "updatedAt": "2025-08-31T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00064",
+    "reportId": "rpt_tst_000137",
+    "testId": "tst_000137",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2025-10-16T01:00:00.000Z",
+    "updatedAt": "2025-10-16T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00065",
+    "reportId": "rpt_tst_000138",
+    "testId": "tst_000138",
+    "type": "fatigue",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-09-10T01:00:00.000Z",
+    "updatedAt": "2025-09-10T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00066",
+    "reportId": "rpt_tst_000139",
+    "testId": "tst_000139",
+    "type": "brittle_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-08-22T01:00:00.000Z",
+    "updatedAt": "2025-08-22T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00067",
+    "reportId": "rpt_tst_000140",
+    "testId": "tst_000140",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2025-10-15T01:00:00.000Z",
+    "updatedAt": "2025-10-15T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00068",
+    "reportId": "rpt_tst_000141",
+    "testId": "tst_000141",
+    "type": "thermal",
+    "location": "外面局所",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2025-08-25T01:00:00.000Z",
+    "updatedAt": "2025-08-25T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00069",
+    "reportId": "rpt_tst_000142",
+    "testId": "tst_000142",
+    "type": "wear",
+    "location": "外面局所",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2025-09-09T01:00:00.000Z",
+    "updatedAt": "2025-09-09T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00070",
+    "reportId": "rpt_tst_000143",
+    "testId": "tst_000143",
+    "type": "fatigue",
+    "location": "外面局所",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2025-08-26T01:00:00.000Z",
+    "updatedAt": "2025-08-26T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00071",
+    "reportId": "rpt_tst_000177",
+    "testId": "tst_000177",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2026-04-11T01:00:00.000Z",
+    "updatedAt": "2026-04-11T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00072",
+    "reportId": "rpt_tst_000178",
+    "testId": "tst_000178",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2026-03-09T01:00:00.000Z",
+    "updatedAt": "2026-03-09T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00073",
+    "reportId": "rpt_tst_000179",
+    "testId": "tst_000179",
+    "type": "thermal",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2026-04-04T01:00:00.000Z",
+    "updatedAt": "2026-04-04T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00074",
+    "reportId": "rpt_tst_000180",
+    "testId": "tst_000180",
+    "type": "thermal",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2026-03-18T01:00:00.000Z",
+    "updatedAt": "2026-03-18T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00075",
+    "reportId": "rpt_tst_000181",
+    "testId": "tst_000181",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2026-03-31T01:00:00.000Z",
+    "updatedAt": "2026-03-31T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00076",
+    "reportId": "rpt_tst_000182",
+    "testId": "tst_000182",
+    "type": "stress_corrosion",
+    "location": "外面局所",
+    "rootCauseHypothesis": "粒界炭化物析出とCl⁻の複合作用",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "high"
+    ],
+    "createdAt": "2026-03-28T01:00:00.000Z",
+    "updatedAt": "2026-03-28T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00077",
+    "reportId": "rpt_tst_000183",
+    "testId": "tst_000183",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2026-03-12T01:00:00.000Z",
+    "updatedAt": "2026-03-12T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00078",
+    "reportId": "rpt_tst_000184",
+    "testId": "tst_000184",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2026-04-21T01:00:00.000Z",
+    "updatedAt": "2026-04-21T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00079",
+    "reportId": "rpt_tst_000185",
+    "testId": "tst_000185",
+    "type": "creep",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2026-04-18T01:00:00.000Z",
+    "updatedAt": "2026-04-18T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00080",
+    "reportId": "rpt_tst_000186",
+    "testId": "tst_000186",
+    "type": "thermal",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2026-03-17T01:00:00.000Z",
+    "updatedAt": "2026-03-17T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00081",
+    "reportId": "rpt_tst_000187",
+    "testId": "tst_000187",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2026-03-03T01:00:00.000Z",
+    "updatedAt": "2026-03-03T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00082",
+    "reportId": "rpt_tst_000188",
+    "testId": "tst_000188",
+    "type": "thermal",
+    "location": "外面局所",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "low"
+    ],
+    "createdAt": "2026-03-05T01:00:00.000Z",
+    "updatedAt": "2026-03-05T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00083",
+    "reportId": "rpt_tst_000189",
+    "testId": "tst_000189",
+    "type": "wear",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2026-03-24T01:00:00.000Z",
+    "updatedAt": "2026-03-24T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00084",
+    "reportId": "rpt_tst_000190",
+    "testId": "tst_000190",
+    "type": "stress_corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2026-03-14T01:00:00.000Z",
+    "updatedAt": "2026-03-14T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00085",
+    "reportId": "rpt_tst_000191",
+    "testId": "tst_000191",
+    "type": "brittle_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2026-02-15T01:00:00.000Z",
+    "updatedAt": "2026-02-15T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00086",
+    "reportId": "rpt_tst_000192",
+    "testId": "tst_000192",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2026-02-21T01:00:00.000Z",
+    "updatedAt": "2026-02-21T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00087",
+    "reportId": "rpt_tst_000193",
+    "testId": "tst_000193",
+    "type": "brittle_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2026-01-23T01:00:00.000Z",
+    "updatedAt": "2026-01-23T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00088",
+    "reportId": "rpt_tst_000194",
+    "testId": "tst_000194",
+    "type": "wear",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "high"
+    ],
+    "createdAt": "2026-02-08T01:00:00.000Z",
+    "updatedAt": "2026-02-08T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00089",
+    "reportId": "rpt_tst_000195",
+    "testId": "tst_000195",
+    "type": "wear",
+    "location": "内面全周",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2026-03-01T01:00:00.000Z",
+    "updatedAt": "2026-03-01T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00090",
+    "reportId": "rpt_tst_000196",
+    "testId": "tst_000196",
+    "type": "fatigue",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2026-01-29T01:00:00.000Z",
+    "updatedAt": "2026-01-29T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00091",
+    "reportId": "rpt_tst_000197",
+    "testId": "tst_000197",
+    "type": "wear",
+    "location": "内面全周",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2026-02-27T01:00:00.000Z",
+    "updatedAt": "2026-02-27T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00092",
+    "reportId": "rpt_tst_000198",
+    "testId": "tst_000198",
+    "type": "fatigue",
+    "location": "内面全周",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2026-01-30T01:00:00.000Z",
+    "updatedAt": "2026-01-30T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00093",
+    "reportId": "rpt_tst_000199",
+    "testId": "tst_000199",
+    "type": "creep",
+    "location": "外面局所",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2026-03-19T01:00:00.000Z",
+    "updatedAt": "2026-03-19T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00094",
+    "reportId": "rpt_tst_000200",
+    "testId": "tst_000200",
+    "type": "brittle_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2026-01-23T01:00:00.000Z",
+    "updatedAt": "2026-01-23T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00095",
+    "reportId": "rpt_tst_000224",
+    "testId": "tst_000224",
+    "type": "stress_corrosion",
+    "location": "外面局所",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-10-15T01:00:00.000Z",
+    "updatedAt": "2025-10-15T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00096",
+    "reportId": "rpt_tst_000225",
+    "testId": "tst_000225",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2025-11-20T01:00:00.000Z",
+    "updatedAt": "2025-11-20T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00097",
+    "reportId": "rpt_tst_000226",
+    "testId": "tst_000226",
+    "type": "corrosion",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-10-29T01:00:00.000Z",
+    "updatedAt": "2025-10-29T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00098",
+    "reportId": "rpt_tst_000227",
+    "testId": "tst_000227",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2025-10-24T01:00:00.000Z",
+    "updatedAt": "2025-10-24T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00099",
+    "reportId": "rpt_tst_000228",
+    "testId": "tst_000228",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2025-11-22T01:00:00.000Z",
+    "updatedAt": "2025-11-22T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00100",
+    "reportId": "rpt_tst_000229",
+    "testId": "tst_000229",
+    "type": "stress_corrosion",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-11-07T01:00:00.000Z",
+    "updatedAt": "2025-11-07T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00101",
+    "reportId": "rpt_tst_000230",
+    "testId": "tst_000230",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2025-11-19T01:00:00.000Z",
+    "updatedAt": "2025-11-19T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00102",
+    "reportId": "rpt_tst_000231",
+    "testId": "tst_000231",
+    "type": "fatigue",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-11-16T01:00:00.000Z",
+    "updatedAt": "2025-11-16T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00103",
+    "reportId": "rpt_tst_000232",
+    "testId": "tst_000232",
+    "type": "fatigue",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2025-10-07T01:00:00.000Z",
+    "updatedAt": "2025-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00104",
+    "reportId": "rpt_tst_000233",
+    "testId": "tst_000233",
+    "type": "stress_corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "粒界炭化物析出とCl⁻の複合作用",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-10-30T01:00:00.000Z",
+    "updatedAt": "2025-10-30T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00105",
+    "reportId": "rpt_tst_000234",
+    "testId": "tst_000234",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-10-20T01:00:00.000Z",
+    "updatedAt": "2025-10-20T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00106",
+    "reportId": "rpt_tst_000235",
+    "testId": "tst_000235",
+    "type": "creep",
+    "location": "外面局所",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2025-10-14T01:00:00.000Z",
+    "updatedAt": "2025-10-14T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00107",
+    "reportId": "rpt_tst_000236",
+    "testId": "tst_000236",
+    "type": "brittle_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-11-10T01:00:00.000Z",
+    "updatedAt": "2025-11-10T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00108",
+    "reportId": "rpt_tst_000237",
+    "testId": "tst_000237",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2023-12-22T01:00:00.000Z",
+    "updatedAt": "2023-12-22T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00109",
+    "reportId": "rpt_tst_000238",
+    "testId": "tst_000238",
+    "type": "creep",
+    "location": "内面全周",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2023-12-27T01:00:00.000Z",
+    "updatedAt": "2023-12-27T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00110",
+    "reportId": "rpt_tst_000239",
+    "testId": "tst_000239",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2023-12-14T01:00:00.000Z",
+    "updatedAt": "2023-12-14T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00111",
+    "reportId": "rpt_tst_000240",
+    "testId": "tst_000240",
+    "type": "creep",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2023-12-06T01:00:00.000Z",
+    "updatedAt": "2023-12-06T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00112",
+    "reportId": "rpt_tst_000241",
+    "testId": "tst_000241",
+    "type": "wear",
+    "location": "内面全周",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2023-12-07T01:00:00.000Z",
+    "updatedAt": "2023-12-07T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00113",
+    "reportId": "rpt_tst_000242",
+    "testId": "tst_000242",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2023-12-04T01:00:00.000Z",
+    "updatedAt": "2023-12-04T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00114",
+    "reportId": "rpt_tst_000243",
+    "testId": "tst_000243",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2023-12-11T01:00:00.000Z",
+    "updatedAt": "2023-12-11T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00115",
+    "reportId": "rpt_tst_000244",
+    "testId": "tst_000244",
+    "type": "ductile_fracture",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "medium"
+    ],
+    "createdAt": "2023-11-11T01:00:00.000Z",
+    "updatedAt": "2023-11-11T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00116",
+    "reportId": "rpt_tst_000245",
+    "testId": "tst_000245",
+    "type": "creep",
+    "location": "外面局所",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2024-01-01T01:00:00.000Z",
+    "updatedAt": "2024-01-01T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00117",
+    "reportId": "rpt_tst_000246",
+    "testId": "tst_000246",
+    "type": "thermal",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2023-12-26T01:00:00.000Z",
+    "updatedAt": "2023-12-26T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00118",
+    "reportId": "rpt_tst_000247",
+    "testId": "tst_000247",
+    "type": "brittle_fracture",
+    "location": "内面全周",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "high"
+    ],
+    "createdAt": "2023-12-01T01:00:00.000Z",
+    "updatedAt": "2023-12-01T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00119",
+    "reportId": "rpt_tst_000248",
+    "testId": "tst_000248",
+    "type": "fatigue",
+    "location": "内面全周",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2023-12-09T01:00:00.000Z",
+    "updatedAt": "2023-12-09T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00120",
+    "reportId": "rpt_tst_000249",
+    "testId": "tst_000249",
+    "type": "creep",
+    "location": "外面局所",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2023-11-24T01:00:00.000Z",
+    "updatedAt": "2023-11-24T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00121",
+    "reportId": "rpt_tst_000250",
+    "testId": "tst_000250",
+    "type": "brittle_fracture",
+    "location": "内面全周",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2023-12-15T01:00:00.000Z",
+    "updatedAt": "2023-12-15T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00122",
+    "reportId": "rpt_tst_000251",
+    "testId": "tst_000251",
+    "type": "fatigue",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2023-12-16T01:00:00.000Z",
+    "updatedAt": "2023-12-16T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00123",
+    "reportId": "rpt_tst_000252",
+    "testId": "tst_000252",
+    "type": "brittle_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2024-09-16T01:00:00.000Z",
+    "updatedAt": "2024-09-16T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00124",
+    "reportId": "rpt_tst_000253",
+    "testId": "tst_000253",
+    "type": "corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2024-09-28T01:00:00.000Z",
+    "updatedAt": "2024-09-28T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00125",
+    "reportId": "rpt_tst_000254",
+    "testId": "tst_000254",
+    "type": "thermal",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "low"
+    ],
+    "createdAt": "2024-09-17T01:00:00.000Z",
+    "updatedAt": "2024-09-17T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00126",
+    "reportId": "rpt_tst_000255",
+    "testId": "tst_000255",
+    "type": "thermal",
+    "location": "外面局所",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2024-10-30T01:00:00.000Z",
+    "updatedAt": "2024-10-30T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00127",
+    "reportId": "rpt_tst_000256",
+    "testId": "tst_000256",
+    "type": "thermal",
+    "location": "外面局所",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2024-09-13T01:00:00.000Z",
+    "updatedAt": "2024-09-13T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00128",
+    "reportId": "rpt_tst_000257",
+    "testId": "tst_000257",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2024-10-31T01:00:00.000Z",
+    "updatedAt": "2024-10-31T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00129",
+    "reportId": "rpt_tst_000258",
+    "testId": "tst_000258",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2024-09-17T01:00:00.000Z",
+    "updatedAt": "2024-09-17T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00130",
+    "reportId": "rpt_tst_000259",
+    "testId": "tst_000259",
+    "type": "corrosion",
+    "location": "外面局所",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2024-09-14T01:00:00.000Z",
+    "updatedAt": "2024-09-14T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00131",
+    "reportId": "rpt_tst_000260",
+    "testId": "tst_000260",
+    "type": "corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2024-10-07T01:00:00.000Z",
+    "updatedAt": "2024-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00132",
+    "reportId": "rpt_tst_000261",
+    "testId": "tst_000261",
+    "type": "wear",
+    "location": "外面局所",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "high"
+    ],
+    "createdAt": "2024-09-17T01:00:00.000Z",
+    "updatedAt": "2024-09-17T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00133",
+    "reportId": "rpt_tst_000262",
+    "testId": "tst_000262",
+    "type": "fatigue",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2024-10-03T01:00:00.000Z",
+    "updatedAt": "2024-10-03T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00134",
+    "reportId": "rpt_tst_000263",
+    "testId": "tst_000263",
+    "type": "creep",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2024-10-16T01:00:00.000Z",
+    "updatedAt": "2024-10-16T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00135",
+    "reportId": "rpt_tst_000264",
+    "testId": "tst_000264",
+    "type": "creep",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2024-09-22T01:00:00.000Z",
+    "updatedAt": "2024-09-22T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00136",
+    "reportId": "rpt_tst_000265",
+    "testId": "tst_000265",
+    "type": "wear",
+    "location": "内面全周",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2024-09-14T01:00:00.000Z",
+    "updatedAt": "2024-09-14T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00137",
+    "reportId": "rpt_tst_000266",
+    "testId": "tst_000266",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2024-10-13T01:00:00.000Z",
+    "updatedAt": "2024-10-13T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00138",
+    "reportId": "rpt_tst_000267",
+    "testId": "tst_000267",
+    "type": "wear",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2024-10-19T01:00:00.000Z",
+    "updatedAt": "2024-10-19T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00139",
+    "reportId": "rpt_tst_000268",
+    "testId": "tst_000268",
+    "type": "brittle_fracture",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2024-10-11T01:00:00.000Z",
+    "updatedAt": "2024-10-11T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00140",
+    "reportId": "rpt_tst_000269",
+    "testId": "tst_000269",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2024-09-27T01:00:00.000Z",
+    "updatedAt": "2024-09-27T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00141",
+    "reportId": "rpt_tst_000270",
+    "testId": "tst_000270",
+    "type": "brittle_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2024-10-28T01:00:00.000Z",
+    "updatedAt": "2024-10-28T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00142",
+    "reportId": "rpt_tst_000271",
+    "testId": "tst_000271",
+    "type": "brittle_fracture",
+    "location": "内面全周",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2024-09-29T01:00:00.000Z",
+    "updatedAt": "2024-09-29T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00143",
+    "reportId": "rpt_tst_000272",
+    "testId": "tst_000272",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "high"
+    ],
+    "createdAt": "2025-09-08T01:00:00.000Z",
+    "updatedAt": "2025-09-08T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00144",
+    "reportId": "rpt_tst_000273",
+    "testId": "tst_000273",
+    "type": "brittle_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "high"
+    ],
+    "createdAt": "2025-09-30T01:00:00.000Z",
+    "updatedAt": "2025-09-30T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00145",
+    "reportId": "rpt_tst_000274",
+    "testId": "tst_000274",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-09-25T01:00:00.000Z",
+    "updatedAt": "2025-09-25T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00146",
+    "reportId": "rpt_tst_000275",
+    "testId": "tst_000275",
+    "type": "brittle_fracture",
+    "location": "内面全周",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-10-07T01:00:00.000Z",
+    "updatedAt": "2025-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00147",
+    "reportId": "rpt_tst_000276",
+    "testId": "tst_000276",
+    "type": "stress_corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "粒界炭化物析出とCl⁻の複合作用",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "low"
+    ],
+    "createdAt": "2025-09-15T01:00:00.000Z",
+    "updatedAt": "2025-09-15T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00148",
+    "reportId": "rpt_tst_000277",
+    "testId": "tst_000277",
+    "type": "fatigue",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2025-09-18T01:00:00.000Z",
+    "updatedAt": "2025-09-18T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00149",
+    "reportId": "rpt_tst_000278",
+    "testId": "tst_000278",
+    "type": "corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2025-10-13T01:00:00.000Z",
+    "updatedAt": "2025-10-13T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00150",
+    "reportId": "rpt_tst_000279",
+    "testId": "tst_000279",
+    "type": "corrosion",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-08-21T01:00:00.000Z",
+    "updatedAt": "2025-08-21T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00151",
+    "reportId": "rpt_tst_000280",
+    "testId": "tst_000280",
+    "type": "creep",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2025-09-14T01:00:00.000Z",
+    "updatedAt": "2025-09-14T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00152",
+    "reportId": "rpt_tst_000281",
+    "testId": "tst_000281",
+    "type": "creep",
+    "location": "内面全周",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "high"
+    ],
+    "createdAt": "2025-10-07T01:00:00.000Z",
+    "updatedAt": "2025-10-07T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00153",
+    "reportId": "rpt_tst_000282",
+    "testId": "tst_000282",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2025-10-13T01:00:00.000Z",
+    "updatedAt": "2025-10-13T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00154",
+    "reportId": "rpt_tst_000283",
+    "testId": "tst_000283",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2025-08-28T01:00:00.000Z",
+    "updatedAt": "2025-08-28T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00155",
+    "reportId": "rpt_tst_000284",
+    "testId": "tst_000284",
+    "type": "fatigue",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-10-17T01:00:00.000Z",
+    "updatedAt": "2025-10-17T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00156",
+    "reportId": "rpt_tst_000285",
+    "testId": "tst_000285",
+    "type": "fatigue",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-09-16T01:00:00.000Z",
+    "updatedAt": "2025-09-16T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00157",
+    "reportId": "rpt_tst_000286",
+    "testId": "tst_000286",
+    "type": "fatigue",
+    "location": "外面局所",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-09-13T01:00:00.000Z",
+    "updatedAt": "2025-09-13T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00158",
+    "reportId": "rpt_tst_000287",
+    "testId": "tst_000287",
+    "type": "wear",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2025-09-28T01:00:00.000Z",
+    "updatedAt": "2025-09-28T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00159",
+    "reportId": "rpt_tst_000288",
+    "testId": "tst_000288",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-09-04T01:00:00.000Z",
+    "updatedAt": "2025-09-04T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00160",
+    "reportId": "rpt_tst_000289",
+    "testId": "tst_000289",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2025-10-01T01:00:00.000Z",
+    "updatedAt": "2025-10-01T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00161",
+    "reportId": "rpt_tst_000290",
+    "testId": "tst_000290",
+    "type": "creep",
+    "location": "外面局所",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2025-10-18T01:00:00.000Z",
+    "updatedAt": "2025-10-18T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00162",
+    "reportId": "rpt_tst_000291",
+    "testId": "tst_000291",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-09-10T01:00:00.000Z",
+    "updatedAt": "2025-09-10T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00163",
+    "reportId": "rpt_tst_000292",
+    "testId": "tst_000292",
+    "type": "thermal",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2025-08-26T01:00:00.000Z",
+    "updatedAt": "2025-08-26T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00164",
+    "reportId": "rpt_tst_000293",
+    "testId": "tst_000293",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-10-15T01:00:00.000Z",
+    "updatedAt": "2025-10-15T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00165",
+    "reportId": "rpt_tst_000294",
+    "testId": "tst_000294",
+    "type": "stress_corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "low"
+    ],
+    "createdAt": "2025-06-05T01:00:00.000Z",
+    "updatedAt": "2025-06-05T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00166",
+    "reportId": "rpt_tst_000295",
+    "testId": "tst_000295",
+    "type": "thermal",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2025-07-15T01:00:00.000Z",
+    "updatedAt": "2025-07-15T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00167",
+    "reportId": "rpt_tst_000296",
+    "testId": "tst_000296",
+    "type": "brittle_fracture",
+    "location": "外面局所",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "high"
+    ],
+    "createdAt": "2025-06-14T01:00:00.000Z",
+    "updatedAt": "2025-06-14T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00168",
+    "reportId": "rpt_tst_000297",
+    "testId": "tst_000297",
+    "type": "corrosion",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "high"
+    ],
+    "createdAt": "2025-06-22T01:00:00.000Z",
+    "updatedAt": "2025-06-22T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00169",
+    "reportId": "rpt_tst_000298",
+    "testId": "tst_000298",
+    "type": "corrosion",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-07-21T01:00:00.000Z",
+    "updatedAt": "2025-07-21T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00170",
+    "reportId": "rpt_tst_000299",
+    "testId": "tst_000299",
+    "type": "fatigue",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-05-31T01:00:00.000Z",
+    "updatedAt": "2025-05-31T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00171",
+    "reportId": "rpt_tst_000300",
+    "testId": "tst_000300",
+    "type": "fatigue",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "low"
+    ],
+    "createdAt": "2025-06-07T01:00:00.000Z",
+    "updatedAt": "2025-06-07T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00172",
+    "reportId": "rpt_tst_000301",
+    "testId": "tst_000301",
+    "type": "ductile_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-07-24T01:00:00.000Z",
+    "updatedAt": "2025-07-24T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00173",
+    "reportId": "rpt_tst_000302",
+    "testId": "tst_000302",
+    "type": "creep",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2025-07-24T01:00:00.000Z",
+    "updatedAt": "2025-07-24T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00174",
+    "reportId": "rpt_tst_000303",
+    "testId": "tst_000303",
+    "type": "brittle_fracture",
+    "location": "外面局所",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-07-17T01:00:00.000Z",
+    "updatedAt": "2025-07-17T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00175",
+    "reportId": "rpt_tst_000304",
+    "testId": "tst_000304",
+    "type": "brittle_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "medium"
+    ],
+    "createdAt": "2025-07-02T01:00:00.000Z",
+    "updatedAt": "2025-07-02T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00176",
+    "reportId": "rpt_tst_000305",
+    "testId": "tst_000305",
+    "type": "corrosion",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-06-22T01:00:00.000Z",
+    "updatedAt": "2025-06-22T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00177",
+    "reportId": "rpt_tst_000306",
+    "testId": "tst_000306",
+    "type": "creep",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "medium"
+    ],
+    "createdAt": "2025-07-04T01:00:00.000Z",
+    "updatedAt": "2025-07-04T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00178",
+    "reportId": "rpt_tst_000307",
+    "testId": "tst_000307",
+    "type": "brittle_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-06-13T01:00:00.000Z",
+    "updatedAt": "2025-06-13T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00179",
+    "reportId": "rpt_tst_000308",
+    "testId": "tst_000308",
+    "type": "stress_corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "low"
+    ],
+    "createdAt": "2025-07-12T01:00:00.000Z",
+    "updatedAt": "2025-07-12T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00180",
+    "reportId": "rpt_tst_000309",
+    "testId": "tst_000309",
+    "type": "corrosion",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "塩化物環境下で局部腐食（孔食）が進行したと推定される",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2025-06-14T01:00:00.000Z",
+    "updatedAt": "2025-06-14T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00181",
+    "reportId": "rpt_tst_000310",
+    "testId": "tst_000310",
+    "type": "creep",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "高温長時間保持により粒界空洞が合体し、クリープ破断に至った",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2025-06-19T01:00:00.000Z",
+    "updatedAt": "2025-06-19T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00182",
+    "reportId": "rpt_tst_000311",
+    "testId": "tst_000311",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-06-29T01:00:00.000Z",
+    "updatedAt": "2025-06-29T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00183",
+    "reportId": "rpt_tst_000312",
+    "testId": "tst_000312",
+    "type": "fatigue",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2025-06-03T01:00:00.000Z",
+    "updatedAt": "2025-06-03T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00184",
+    "reportId": "rpt_tst_000313",
+    "testId": "tst_000313",
+    "type": "fatigue",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "応力集中部からの疲労き裂発生と考えられる",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "high"
+    ],
+    "createdAt": "2025-07-28T01:00:00.000Z",
+    "updatedAt": "2025-07-28T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00185",
+    "reportId": "rpt_tst_000314",
+    "testId": "tst_000314",
+    "type": "corrosion",
+    "location": "外面局所",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "low"
+    ],
+    "createdAt": "2025-07-07T01:00:00.000Z",
+    "updatedAt": "2025-07-07T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00186",
+    "reportId": "rpt_tst_000315",
+    "testId": "tst_000315",
+    "type": "ductile_fracture",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-07-21T01:00:00.000Z",
+    "updatedAt": "2025-07-21T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00187",
+    "reportId": "rpt_tst_000316",
+    "testId": "tst_000316",
+    "type": "creep",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "粒界における第二相析出が起点",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "creep",
+      "low"
+    ],
+    "createdAt": "2025-07-02T01:00:00.000Z",
+    "updatedAt": "2025-07-02T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00188",
+    "reportId": "rpt_tst_000317",
+    "testId": "tst_000317",
+    "type": "ductile_fracture",
+    "location": "内面全周",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-07-15T01:00:00.000Z",
+    "updatedAt": "2025-07-15T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00189",
+    "reportId": "rpt_tst_000318",
+    "testId": "tst_000318",
+    "type": "brittle_fracture",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "き裂先端部での劈開破面観察",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2025-07-19T01:00:00.000Z",
+    "updatedAt": "2025-07-19T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00190",
+    "reportId": "rpt_tst_000319",
+    "testId": "tst_000319",
+    "type": "ductile_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "過負荷による延性破壊、ディンプル破面が顕著",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "ductile_fracture",
+      "low"
+    ],
+    "createdAt": "2025-06-21T01:00:00.000Z",
+    "updatedAt": "2025-06-21T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00191",
+    "reportId": "rpt_tst_000320",
+    "testId": "tst_000320",
+    "type": "wear",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2026-02-20T01:00:00.000Z",
+    "updatedAt": "2026-02-20T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00192",
+    "reportId": "rpt_tst_000321",
+    "testId": "tst_000321",
+    "type": "fatigue",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "繰返し荷重により粒内滑りが蓄積し、表面起点き裂が進展した可能性",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "fatigue",
+      "medium"
+    ],
+    "createdAt": "2026-01-18T01:00:00.000Z",
+    "updatedAt": "2026-01-18T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00193",
+    "reportId": "rpt_tst_000322",
+    "testId": "tst_000322",
+    "type": "corrosion",
+    "location": "内面全周",
+    "rootCauseHypothesis": "不動態皮膜の破れと再不動態化遅延",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "corrosion",
+      "medium"
+    ],
+    "createdAt": "2026-02-10T01:00:00.000Z",
+    "updatedAt": "2026-02-10T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00194",
+    "reportId": "rpt_tst_000323",
+    "testId": "tst_000323",
+    "type": "brittle_fracture",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2026-02-21T01:00:00.000Z",
+    "updatedAt": "2026-02-21T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00195",
+    "reportId": "rpt_tst_000329",
+    "testId": "tst_000329",
+    "type": "thermal",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "high",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "high"
+    ],
+    "createdAt": "2026-02-23T01:00:00.000Z",
+    "updatedAt": "2026-02-23T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  },
+  {
+    "id": "dmg_00196",
+    "reportId": "rpt_tst_000330",
+    "testId": "tst_000330",
+    "type": "wear",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "low"
+    ],
+    "createdAt": "2026-02-06T01:00:00.000Z",
+    "updatedAt": "2026-02-06T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00197",
+    "reportId": "rpt_tst_000332",
+    "testId": "tst_000332",
+    "type": "stress_corrosion",
+    "location": "フランジ根元",
+    "rootCauseHypothesis": "引張応力と腐食環境の同時作用により粒界型SCCが進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "stress_corrosion",
+      "medium"
+    ],
+    "createdAt": "2026-02-12T01:00:00.000Z",
+    "updatedAt": "2026-02-12T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00198",
+    "reportId": "rpt_tst_000333",
+    "testId": "tst_000333",
+    "type": "brittle_fracture",
+    "location": "肉厚変化部",
+    "rootCauseHypothesis": "低温脆性遷移以下での衝撃負荷により脆性破壊",
+    "confidenceLevel": "low",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "brittle_fracture",
+      "low"
+    ],
+    "createdAt": "2023-06-20T01:00:00.000Z",
+    "updatedAt": "2023-06-20T01:00:00.000Z",
+    "createdBy": "usr_eng_002",
+    "updatedBy": "usr_eng_002"
+  },
+  {
+    "id": "dmg_00199",
+    "reportId": "rpt_tst_000334",
+    "testId": "tst_000334",
+    "type": "thermal",
+    "location": "溶接止端部",
+    "rootCauseHypothesis": "熱サイクルに伴う熱疲労き裂の発生",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "thermal",
+      "medium"
+    ],
+    "createdAt": "2023-06-23T01:00:00.000Z",
+    "updatedAt": "2023-06-23T01:00:00.000Z",
+    "createdBy": "usr_eng_003",
+    "updatedBy": "usr_eng_003"
+  },
+  {
+    "id": "dmg_00200",
+    "reportId": "rpt_tst_000335",
+    "testId": "tst_000335",
+    "type": "wear",
+    "location": "ねじ部根元",
+    "rootCauseHypothesis": "摺動界面での凝着・アブレシブ摩耗の進展",
+    "confidenceLevel": "medium",
+    "images": [],
+    "similarCaseIds": [],
+    "tags": [
+      "wear",
+      "medium"
+    ],
+    "createdAt": "2023-08-03T01:00:00.000Z",
+    "updatedAt": "2023-08-03T01:00:00.000Z",
+    "createdBy": "usr_eng_001",
+    "updatedBy": "usr_eng_001"
+  }
+]

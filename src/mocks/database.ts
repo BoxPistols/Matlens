@@ -1,5 +1,6 @@
 // メモリ内データベース
-// Seeds + faker ジェネレータ（seed固定）で決定論的にデータを生成する。
+// src/mocks/fixtures/*.json（pnpm mocks:generate で生成）をロードする。
+// faker や generators は本番バンドルには含まれない。
 
 import type {
   Customer,
@@ -13,15 +14,16 @@ import type {
   TestType,
   User,
 } from '@/domain/types';
-import { seedCustomers } from './seeds/customers.seed';
-import { seedMaterials } from './seeds/materials.seed';
-import { seedStandards } from './seeds/standards.seed';
-import { seedTestTypes } from './seeds/testTypes.seed';
-import { seedUsers } from './seeds/users.seed';
-import { generateProjects } from './generators/projects.gen';
-import { generateSpecimens } from './generators/specimens.gen';
-import { generateTests } from './generators/tests.gen';
-import { generateDamages } from './generators/damages.gen';
+
+import customersJson from './fixtures/customers.json';
+import usersJson from './fixtures/users.json';
+import materialsJson from './fixtures/materials.json';
+import standardsJson from './fixtures/standards.json';
+import testTypesJson from './fixtures/testTypes.json';
+import projectsJson from './fixtures/projects.json';
+import specimensJson from './fixtures/specimens.json';
+import testsJson from './fixtures/tests.json';
+import damagesJson from './fixtures/damages.json';
 
 class InMemoryTable<T extends { id: ID }> {
   private items = new Map<ID, T>();
@@ -81,46 +83,16 @@ let _database: MockDatabase | null = null;
 export const getMockDatabase = (): MockDatabase => {
   if (_database) return _database;
 
-  const customers = seedCustomers();
-  const users = seedUsers();
-  const materials = seedMaterials();
-  const standards = seedStandards();
-  const testTypes = seedTestTypes();
-
-  const projects = generateProjects({ customers, users, count: 150 });
-  const specimens = generateSpecimens({ projects, materials, users, perProject: [3, 8] });
-  const tests = generateTests({ specimens, testTypes, standards, users, perSpecimen: [1, 5] });
-  const damages = generateDamages({ tests, users, count: 200 });
-
-  // Project集計（specimen/test件数）
-  const specimenCountByProject = new Map<ID, number>();
-  specimens.forEach((s) => {
-    specimenCountByProject.set(s.projectId, (specimenCountByProject.get(s.projectId) ?? 0) + 1);
-  });
-  const testCountByProject = new Map<ID, number>();
-  const specimenById = new Map(specimens.map((s) => [s.id, s]));
-  tests.forEach((t) => {
-    const spec = specimenById.get(t.specimenId);
-    if (spec) {
-      testCountByProject.set(spec.projectId, (testCountByProject.get(spec.projectId) ?? 0) + 1);
-    }
-  });
-  const enrichedProjects = projects.map((p) => ({
-    ...p,
-    specimenCount: specimenCountByProject.get(p.id) ?? 0,
-    testCount: testCountByProject.get(p.id) ?? 0,
-  }));
-
   _database = {
-    customers: new InMemoryTable(customers),
-    users: new InMemoryTable(users),
-    materials: new InMemoryTable(materials),
-    standards: new InMemoryTable(standards),
-    testTypes: new InMemoryTable(testTypes),
-    projects: new InMemoryTable(enrichedProjects),
-    specimens: new InMemoryTable(specimens),
-    tests: new InMemoryTable(tests),
-    damages: new InMemoryTable(damages),
+    customers: new InMemoryTable(customersJson as Customer[]),
+    users: new InMemoryTable(usersJson as User[]),
+    materials: new InMemoryTable(materialsJson as Material[]),
+    standards: new InMemoryTable(standardsJson as Standard[]),
+    testTypes: new InMemoryTable(testTypesJson as TestType[]),
+    projects: new InMemoryTable(projectsJson as Project[]),
+    specimens: new InMemoryTable(specimensJson as Specimen[]),
+    tests: new InMemoryTable(testsJson as Test[]),
+    damages: new InMemoryTable(damagesJson as DamageFinding[]),
   };
 
   return _database;
