@@ -45,6 +45,7 @@ const ProcessTimelinePage = lazy(() => import('./pages/ProcessTimeline').then(m 
 const OverlayPage = lazy(() => import('./pages/Overlay').then(m => ({ default: m.OverlayPage })));
 const MultiModalPage = lazy(() => import('./pages/MultiModal').then(m => ({ default: m.MultiModalPage })));
 const ExperimentDashPage = lazy(() => import('./pages/ExperimentDash').then(m => ({ default: m.ExperimentDashPage })));
+const TestMatrixPage = lazy(() => import('./features/tests/matrix').then(m => ({ default: m.TestMatrixPage })));
 
 const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
@@ -224,6 +225,7 @@ export function App() {
       case 'overlay':    return lazyPage(<OverlayPage db={db} />);
       case 'multimodal': return lazyPage(<MultiModalPage db={db} />);
       case 'experiment': return lazyPage(<ExperimentDashPage onNav={navTo} />);
+      case 'matrix':  return lazyPage(<TestMatrixPage />);
       case 'voice':   return lazyPage(<VoicePage />);
       case 'api':     return lazyPage(<ApiDebugPage db={db} dispatch={dispatch} />);
       case 'tests':   return lazyPage(<TestSuitePage />);
