@@ -9,12 +9,35 @@ interface SelectedCell {
 }
 
 export const TestMatrixPage = () => {
-  const { data: matrix, isLoading: matrixLoading } = useTestMatrix();
-  const { data: testTypes = [] } = useTestTypes();
-  const { data: materials = [] } = useMaterials();
+  const { data: matrix, isLoading: matrixLoading, isError: matrixError } = useTestMatrix();
+  const {
+    data: testTypes,
+    isLoading: testTypesLoading,
+    isError: testTypesError,
+  } = useTestTypes();
+  const {
+    data: materials,
+    isLoading: materialsLoading,
+    isError: materialsError,
+  } = useMaterials();
   const [selected, setSelected] = useState<SelectedCell | null>(null);
 
-  if (matrixLoading || !matrix) {
+  if (matrixError || testTypesError || materialsError) {
+    return (
+      <div className="p-6 text-[var(--err,#dc2626)]">
+        試験マトリクスの読み込みに失敗しました。時間をおいて再度お試しください。
+      </div>
+    );
+  }
+
+  if (
+    matrixLoading ||
+    testTypesLoading ||
+    materialsLoading ||
+    !matrix ||
+    !testTypes ||
+    !materials
+  ) {
     return (
       <div className="p-6">
         <div className="text-[var(--text-lo)]">試験マトリクスを読み込んでいます…</div>

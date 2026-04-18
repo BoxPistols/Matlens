@@ -154,6 +154,11 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
               </tbody>
             </table>
           )}
+          {testsQuery.data && testsQuery.data.items.length > 50 && (
+            <div className="mt-2 text-[11px] text-[var(--text-lo)]">
+              先頭 50 件を表示しています（全 {testsQuery.data.items.length} 件）
+            </div>
+          )}
         </section>
       </div>
     </div>

@@ -3,6 +3,7 @@
 // ID から seed を作ることで、同じ所見は常に同じ模様になる。
 
 import type React from 'react';
+import { useId } from 'react';
 import type { DamageType, ID } from '@/domain/types';
 
 const HUE: Record<DamageType, number> = {
@@ -52,6 +53,10 @@ export const DamagePatternSvg = ({
   const bgDark = `hsl(${hue}, 30%, 10%)`;
   const fg = `hsl(${hue}, 70%, 65%)`;
   const fgDim = `hsl(${hue}, 40%, 45%)`;
+  // 同じ損傷所見をグリッドとライトボックスに同時描画しても DOM id が衝突しないよう、
+  // インスタンス固有の prefix を useId から生成して linearGradient に付与する
+  const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  const gradientId = `bg-${instanceId}-${id}`;
 
   return (
     <svg
@@ -64,12 +69,12 @@ export const DamagePatternSvg = ({
       aria-label={ariaLabel ?? `損傷パターン (${type})`}
     >
       <defs>
-        <linearGradient id={`bg-${id}`} x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor={bgLight} />
           <stop offset="1" stopColor={bgDark} />
         </linearGradient>
       </defs>
-      <rect width={width} height={height} fill={`url(#bg-${id})`} />
+      <rect width={width} height={height} fill={`url(#${gradientId})`} />
       {renderPattern(type, width, height, rand, fg, fgDim)}
     </svg>
   );

@@ -44,7 +44,8 @@ export const SemanticSearchPage = () => {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setCommittedQuery(input);
+    // 空白のみを送ると committedQuery が truthy になり「結果なし」表示に入ってしまう
+    setCommittedQuery(input.trim());
   };
 
   return (
@@ -106,16 +107,19 @@ export const SemanticSearchPage = () => {
             </div>
           ) : (
             <ul className="flex flex-col gap-2">
-              {hits.map((hit) => (
+              {hits.map((hit) => {
+                // entityId は entityType をまたぐと衝突しうるので複合キーで比較する
+                const isSelected =
+                  selectedHit?.entityType === hit.entityType &&
+                  selectedHit?.entityId === hit.entityId;
+                return (
                 <li key={`${hit.entityType}-${hit.entityId}`}>
                   <button
                     type="button"
                     onClick={() => setSelectedHit(hit)}
-                    aria-current={
-                      selectedHit?.entityId === hit.entityId ? 'true' : undefined
-                    }
+                    aria-current={isSelected ? 'true' : undefined}
                     className={`w-full text-left p-3 rounded border ${
-                      selectedHit?.entityId === hit.entityId
+                      isSelected
                         ? 'border-[var(--accent,#2563eb)] bg-[var(--hover)]'
                         : 'border-[var(--border-faint)] hover:bg-[var(--hover)]'
                     }`}
@@ -134,7 +138,8 @@ export const SemanticSearchPage = () => {
                     </div>
                   </button>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           )}
         </section>

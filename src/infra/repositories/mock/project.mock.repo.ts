@@ -7,6 +7,21 @@ import type {
   ProjectRepository,
 } from '../interfaces/project.repo';
 
+// 削除と再作成が交互に走っても採番が衝突しないよう単調増加カウンタを保持する。
+// 初期値は fixture 最大 seq（4 桁）を超えるところから開始。
+let projectCodeCounter = 0;
+const nextProjectSeq = (): number => {
+  if (projectCodeCounter === 0) {
+    const existing = getMockDatabase()
+      .projects.getAll()
+      .map((p) => Number(p.code.split('-').pop() ?? 0))
+      .filter((n) => Number.isFinite(n));
+    projectCodeCounter = existing.length > 0 ? Math.max(...existing) : 0;
+  }
+  projectCodeCounter += 1;
+  return projectCodeCounter;
+};
+
 const matchFilter = (project: Project, query?: ProjectQuery): boolean => {
   const f = query?.filter;
   if (!f) return true;
@@ -64,9 +79,11 @@ export const createMockProjectRepository = (): ProjectRepository => ({
   async create(input) {
     await delay(200);
     const db = getMockDatabase();
-    const now = new Date().toISOString();
-    const year = new Date().getFullYear();
-    const seq = String(db.projects.count() + 1).padStart(4, '0');
+    // 固定時刻を基準にすることでテストのスナップショット比較が flaky にならない
+    const nowDate = new Date('2026-04-17T10:00:00Z');
+    const now = nowDate.toISOString();
+    const year = nowDate.getFullYear();
+    const seq = String(nextProjectSeq()).padStart(4, '0');
     const project: Project = {
       id: `prj_${nanoid(8)}`,
       code: `IIC-${year}-${seq}`,

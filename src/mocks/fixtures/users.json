@@ -63,7 +63,7 @@
     "updatedAt": "2025-12-31T15:00:00.000Z"
   },
   {
-    "id": "usr_admin",
+    "id": "usr_admin_001",
     "name": "管理者",
     "email": "admin@matlens.example.jp",
     "role": "admin",

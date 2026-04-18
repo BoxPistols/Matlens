@@ -36,11 +36,13 @@ export const createMockSpecimenRepository = (): SpecimenRepository => ({
   async create(input) {
     await delay(200);
     const db = getMockDatabase();
-    const now = new Date().toISOString();
-    const seq = String(db.specimens.count() + 1).padStart(5, '0');
+    const now = new Date('2026-04-17T10:00:00Z').toISOString();
+    // 削除後の再作成でも衝突しないよう nanoid 派生サフィックスを使う
+    const code = input.code ?? `SPC-NEW-${nanoid(6).toUpperCase()}`;
+    // TODO(auth): 実ユーザ情報が確立したら createdBy/updatedBy を current user から注入する
     const specimen: Specimen = {
       id: `spc_${nanoid(8)}`,
-      code: input.code ?? `SPC-NEW-${seq}`,
+      code,
       projectId: input.projectId,
       materialId: input.materialId,
       dimensions: input.dimensions,
@@ -51,8 +53,8 @@ export const createMockSpecimenRepository = (): SpecimenRepository => ({
       notes: input.notes ?? null,
       createdAt: now,
       updatedAt: now,
-      createdBy: 'usr_admin',
-      updatedBy: 'usr_admin',
+      createdBy: 'usr_admin_001',
+      updatedBy: 'usr_admin_001',
     };
     return db.specimens.upsert(specimen);
   },

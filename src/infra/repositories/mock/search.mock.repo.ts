@@ -11,7 +11,8 @@ import type {
 } from '../interfaces/search.repo';
 
 const scoreTextMatch = (query: string, target: string): number => {
-  const q = query.toLowerCase();
+  const q = query.trim().toLowerCase();
+  if (!q) return 0;
   const t = target.toLowerCase();
   if (!t.includes(q)) return 0;
   // 完全一致寄与 + 長さ正規化
@@ -32,7 +33,8 @@ export const createMockSearchRepository = (): SearchRepository => ({
     await delay(250);
     const db = getMockDatabase();
     const hits: SearchHit[] = [];
-    const types: SearchEntityType[] = query.entityTypes ?? ['damage', 'material', 'project', 'report'];
+    // NOTE: 'report' エンティティは現在のモックでは未実装のためデフォルト集合から除外する
+    const types: SearchEntityType[] = query.entityTypes ?? ['damage', 'material', 'project'];
 
     if (types.includes('damage')) {
       for (const d of db.damages.getAll()) {

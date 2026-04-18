@@ -8,6 +8,8 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
+// TODO(auth): PoC 用の簡易 localStorage 保管。本番では XSS 耐性のため
+// HttpOnly Cookie + CSRF 対策、もしくは短命トークン + refresh へ移行する。
 const TOKEN_STORAGE_KEY = 'matlens_token';
 
 class ApiClient {
@@ -24,11 +26,14 @@ class ApiClient {
   }
 
   private buildURL(path: string, params?: RequestOptions['params']): string {
-    const base =
+    const absoluteBase =
       this.baseURL.startsWith('http://') || this.baseURL.startsWith('https://')
         ? this.baseURL
         : `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost'}${this.baseURL}`;
-    const url = new URL(path, base);
+    // URL 解決仕様上、baseURL 末尾は必ず "/"、path 先頭の "/" は剥がす
+    const base = absoluteBase.endsWith('/') ? absoluteBase : `${absoluteBase}/`;
+    const relPath = path.startsWith('/') ? path.slice(1) : path;
+    const url = new URL(relPath, base);
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined) url.searchParams.append(k, String(v));
@@ -73,7 +78,9 @@ class ApiClient {
     }
 
     if (response.status === 204) return undefined as T;
-    return (await response.json()) as T;
+    // 空ボディ（200/201 でも起こり得る）で JSON.parse 例外を避けるため text 経由でパース
+    const text = await response.text();
+    return (text ? (JSON.parse(text) as T) : (undefined as T));
   }
 
   get<T>(path: string, options?: RequestOptions) {

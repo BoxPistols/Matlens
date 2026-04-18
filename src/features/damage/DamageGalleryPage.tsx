@@ -151,6 +151,11 @@ const DamageLightbox = ({ damages, id, onClose }: DamageLightboxProps) => {
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
+  // フィルタ変更等で対象がページから外れた場合、selectedId を残したまま黙って閉じず明示的に閉じる
+  useEffect(() => {
+    if (!target) onClose();
+  }, [target, onClose]);
+
   if (!target) return null;
 
   return (

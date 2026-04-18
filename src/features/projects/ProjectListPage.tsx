@@ -125,7 +125,16 @@ export const ProjectListPage = ({ onNav }: ProjectListPageProps) => {
                 <tr
                   key={p.id}
                   onClick={() => onNav(`pjdetail_${p.id}`)}
-                  className="border-b border-[var(--border-faint)] cursor-pointer hover:bg-[var(--hover)]"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onNav(`pjdetail_${p.id}`);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`案件 ${p.code} ${p.title} を開く`}
+                  className="border-b border-[var(--border-faint)] cursor-pointer hover:bg-[var(--hover)] focus:outline focus:outline-2 focus:outline-[var(--accent,#2563eb)]"
                 >
                   <td className="px-4 py-2 font-mono text-[12px]">{p.code}</td>
                   <td className="px-4 py-2">{p.title}</td>

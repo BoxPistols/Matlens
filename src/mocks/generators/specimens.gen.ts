@@ -69,9 +69,11 @@ export const generateSpecimens = (input: GenerateSpecimensInput): Specimen[] => 
                   thickness: faker.number.int({ min: 20, max: 80 }),
                 };
 
-      const dateSeq = String(running).padStart(2, '0');
-      const month = String(faker.number.int({ min: 1, max: 12 })).padStart(2, '0');
-      const code = `SPC-${month}-${dateSeq}`;
+      // 試験片総数は数百件規模になり得るので 5 桁に拡張。
+      // 月はプロジェクト開始日から決定論的に導出し、MM-NN の意味を壊さない。
+      const seq = String(running).padStart(5, '0');
+      const month = String(new Date(project.startedAt).getMonth() + 1).padStart(2, '0');
+      const code = `SPC-${month}-${seq}`;
 
       const status = statusForProject(project.status, () => faker.number.float({ min: 0, max: 1 }));
       const receivedAt = project.startedAt;

@@ -43,7 +43,16 @@ export const generateTests = (input: GenerateTestsInput): Test[] => {
 
   for (const specimen of specimens) {
     const count = faker.number.int({ min: perSpecimen[0], max: perSpecimen[1] });
-    const baseTime = new Date(specimen.receivedAt + 'T10:00:00+09:00').getTime();
+    // receivedAt が YYYY-MM-DD でも ISO datetime でも壊れないように二段階でフォールバック
+    const directParse = new Date(specimen.receivedAt).getTime();
+    const baseTime = Number.isFinite(directParse)
+      ? directParse
+      : new Date(`${specimen.receivedAt}T10:00:00+09:00`).getTime();
+    if (!Number.isFinite(baseTime)) {
+      throw new Error(
+        `generateTests: invalid specimen.receivedAt: ${String(specimen.receivedAt)}`
+      );
+    }
 
     for (let i = 0; i < count; i++) {
       const testType = faker.helpers.arrayElement(testTypes);
@@ -154,6 +163,42 @@ const generateMetricsForCategory = (
           label: '腐食速度',
           value: faker.number.float({ min: 0.01, max: 5, fractionDigits: 3 }),
           unit: 'mm/y',
+        },
+      ];
+    case 'chemical':
+      return [
+        {
+          key: 'composition_fe',
+          label: '主成分濃度',
+          value: faker.number.float({ min: 60, max: 99.9, fractionDigits: 2 }),
+          unit: '%',
+        },
+      ];
+    case 'metallographic':
+      return [
+        {
+          key: 'grain_size_astm',
+          label: '結晶粒度番号',
+          value: faker.number.int({ min: 3, max: 10 }),
+          unit: 'ASTM',
+        },
+      ];
+    case 'non_destructive':
+      return [
+        {
+          key: 'defect_count',
+          label: '検出欠陥数',
+          value: faker.number.int({ min: 0, max: 5 }),
+          unit: '個',
+        },
+      ];
+    case 'environmental':
+      return [
+        {
+          key: 'exposure_hours',
+          label: '曝露時間',
+          value: faker.number.int({ min: 100, max: 5000 }),
+          unit: 'h',
         },
       ];
     default:

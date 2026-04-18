@@ -43,7 +43,7 @@ export const HeatmapMatrix = ({
 
   return (
     <div className="overflow-auto border border-[var(--border-faint)] rounded-lg bg-[var(--bg-raised,transparent)]">
-      <table className="w-full border-collapse text-[12px]" role="grid" aria-label="試験マトリクス">
+      <table className="w-full border-collapse text-[12px]" aria-label="試験マトリクス">
         <thead>
           <tr>
             <th
@@ -92,7 +92,6 @@ export const HeatmapMatrix = ({
                   <td
                     key={tt.id}
                     className="border-b border-[var(--border-faint)] p-0 text-center"
-                    role="gridcell"
                   >
                     <button
                       type="button"

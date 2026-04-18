@@ -23,8 +23,13 @@ const filterProjects = (items: Project[], url: URL): Project[] => {
 export const projectHandlers = [
   http.get(projectEndpoints.list, ({ request }) => {
     const url = new URL(request.url);
-    const page = Number(url.searchParams.get('page') ?? 1);
-    const pageSize = Number(url.searchParams.get('page_size') ?? 20);
+    const parsePositiveInt = (value: string | null, fallback: number): number => {
+      if (value === null) return fallback;
+      const n = Number(value);
+      return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
+    };
+    const page = parsePositiveInt(url.searchParams.get('page'), 1);
+    const pageSize = parsePositiveInt(url.searchParams.get('page_size'), 20);
     const items = filterProjects(getMockDatabase().projects.getAll(), url);
     const paged = paginate(items, page, pageSize);
     return HttpResponse.json({

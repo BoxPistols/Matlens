@@ -12,7 +12,7 @@
     "dueAt": "2026-06-22",
     "completedAt": "2026-04-30",
     "specimenCount": 8,
-    "testCount": 28,
+    "testCount": 27,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -23,7 +23,7 @@
   },
   {
     "id": "prj_0002",
-    "code": "IIC-2024-0002",
+    "code": "IIC-2024-0001",
     "title": "関東交通安全研究機構 新材料採用に向けた特性評価",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -33,8 +33,8 @@
     "startedAt": "2024-12-11",
     "dueAt": "2025-05-01",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 24,
+    "specimenCount": 5,
+    "testCount": 13,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -45,7 +45,7 @@
   },
   {
     "id": "prj_0003",
-    "code": "IIC-2025-0003",
+    "code": "IIC-2025-0001",
     "title": "グリーンカーボン研究所 新材料採用に向けた特性評価",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -56,7 +56,7 @@
     "dueAt": "2026-05-20",
     "completedAt": null,
     "specimenCount": 7,
-    "testCount": 19,
+    "testCount": 18,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -67,7 +67,7 @@
   },
   {
     "id": "prj_0004",
-    "code": "IIC-2023-0004",
+    "code": "IIC-2023-0001",
     "title": "太平洋プラント工業 耐食性評価試験",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -77,8 +77,8 @@
     "startedAt": "2023-06-28",
     "dueAt": "2023-12-21",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 25,
+    "specimenCount": 4,
+    "testCount": 12,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -89,7 +89,7 @@
   },
   {
     "id": "prj_0005",
-    "code": "IIC-2025-0005",
+    "code": "IIC-2025-0002",
     "title": "東日本電力 高温特性評価",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -100,7 +100,7 @@
     "dueAt": "2025-08-29",
     "completedAt": null,
     "specimenCount": 7,
-    "testCount": 24,
+    "testCount": 23,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -111,7 +111,7 @@
   },
   {
     "id": "prj_0006",
-    "code": "IIC-2025-0006",
+    "code": "IIC-2025-0003",
     "title": "宇宙開発機構外郭団体 耐食性評価試験",
     "customerId": "cst_014",
     "industryTagIds": [
@@ -121,8 +121,8 @@
     "startedAt": "2025-08-18",
     "dueAt": "2025-12-21",
     "completedAt": "2025-10-19",
-    "specimenCount": 6,
-    "testCount": 23,
+    "specimenCount": 7,
+    "testCount": 20,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -133,7 +133,7 @@
   },
   {
     "id": "prj_0007",
-    "code": "IIC-2023-0007",
+    "code": "IIC-2023-0002",
     "title": "太平洋プラント工業 定期点検に伴う材料調査",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -143,8 +143,8 @@
     "startedAt": "2023-12-27",
     "dueAt": "2024-04-23",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 13,
+    "specimenCount": 4,
+    "testCount": 17,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -155,7 +155,7 @@
   },
   {
     "id": "prj_0008",
-    "code": "IIC-2024-0008",
+    "code": "IIC-2024-0002",
     "title": "中部重工業 定期点検に伴う材料調査",
     "customerId": "cst_002",
     "industryTagIds": [
@@ -167,7 +167,7 @@
     "dueAt": "2024-12-21",
     "completedAt": null,
     "specimenCount": 6,
-    "testCount": 20,
+    "testCount": 26,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -178,7 +178,7 @@
   },
   {
     "id": "prj_0009",
-    "code": "IIC-2026-0009",
+    "code": "IIC-2026-0002",
     "title": "太平洋プラント工業 疲労き裂発生原因調査",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -188,8 +188,8 @@
     "startedAt": "2026-02-26",
     "dueAt": "2026-07-15",
     "completedAt": "2026-06-05",
-    "specimenCount": 5,
-    "testCount": 14,
+    "specimenCount": 6,
+    "testCount": 15,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -200,7 +200,7 @@
   },
   {
     "id": "prj_0010",
-    "code": "IIC-2026-0010",
+    "code": "IIC-2026-0003",
     "title": "ハイパーモビリティ 経年劣化評価",
     "customerId": "cst_015",
     "industryTagIds": [
@@ -210,8 +210,8 @@
     "startedAt": "2026-01-19",
     "dueAt": "2026-02-03",
     "completedAt": "2026-02-01",
-    "specimenCount": 3,
-    "testCount": 10,
+    "specimenCount": 8,
+    "testCount": 27,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -222,7 +222,7 @@
   },
   {
     "id": "prj_0011",
-    "code": "IIC-2025-0011",
+    "code": "IIC-2025-0004",
     "title": "北海鉄鋼 経年劣化評価",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -232,8 +232,8 @@
     "startedAt": "2025-01-07",
     "dueAt": "2025-01-31",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 23,
+    "specimenCount": 3,
+    "testCount": 13,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -244,7 +244,7 @@
   },
   {
     "id": "prj_0012",
-    "code": "IIC-2025-0012",
+    "code": "IIC-2025-0005",
     "title": "太平洋プラント工業 高温特性評価",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -255,7 +255,7 @@
     "dueAt": "2026-01-18",
     "completedAt": "2026-01-04",
     "specimenCount": 5,
-    "testCount": 13,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -266,7 +266,7 @@
   },
   {
     "id": "prj_0013",
-    "code": "IIC-2023-0013",
+    "code": "IIC-2023-0003",
     "title": "オーシャンエナジー 定期点検に伴う材料調査",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -276,8 +276,8 @@
     "startedAt": "2023-11-07",
     "dueAt": "2024-01-13",
     "completedAt": "2023-11-17",
-    "specimenCount": 4,
-    "testCount": 15,
+    "specimenCount": 6,
+    "testCount": 22,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -288,7 +288,7 @@
   },
   {
     "id": "prj_0014",
-    "code": "IIC-2024-0014",
+    "code": "IIC-2024-0003",
     "title": "ハイパーモビリティ 耐食性評価試験",
     "customerId": "cst_015",
     "industryTagIds": [
@@ -298,8 +298,8 @@
     "startedAt": "2024-09-01",
     "dueAt": "2024-09-30",
     "completedAt": "2024-09-20",
-    "specimenCount": 7,
-    "testCount": 20,
+    "specimenCount": 5,
+    "testCount": 12,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -310,7 +310,7 @@
   },
   {
     "id": "prj_0015",
-    "code": "IIC-2025-0015",
+    "code": "IIC-2025-0006",
     "title": "関東交通安全研究機構 経年劣化評価",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -320,8 +320,8 @@
     "startedAt": "2025-08-19",
     "dueAt": "2026-01-27",
     "completedAt": "2026-01-06",
-    "specimenCount": 8,
-    "testCount": 22,
+    "specimenCount": 7,
+    "testCount": 21,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -332,7 +332,7 @@
   },
   {
     "id": "prj_0016",
-    "code": "IIC-2025-0016",
+    "code": "IIC-2025-0007",
     "title": "ハイパーモビリティ 新材料採用に向けた特性評価",
     "customerId": "cst_015",
     "industryTagIds": [
@@ -342,8 +342,8 @@
     "startedAt": "2025-05-29",
     "dueAt": "2025-11-16",
     "completedAt": "2025-09-15",
-    "specimenCount": 8,
-    "testCount": 26,
+    "specimenCount": 4,
+    "testCount": 9,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -354,7 +354,7 @@
   },
   {
     "id": "prj_0017",
-    "code": "IIC-2025-0017",
+    "code": "IIC-2025-0008",
     "title": "東海素材工業 耐食性評価試験",
     "customerId": "cst_017",
     "industryTagIds": [
@@ -365,7 +365,7 @@
     "dueAt": "2026-06-01",
     "completedAt": null,
     "specimenCount": 4,
-    "testCount": 13,
+    "testCount": 15,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -376,7 +376,7 @@
   },
   {
     "id": "prj_0018",
-    "code": "IIC-2023-0018",
+    "code": "IIC-2023-0004",
     "title": "スカイブリッジ航空機 規格適合性確認試験",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -386,8 +386,8 @@
     "startedAt": "2023-06-09",
     "dueAt": "2023-08-18",
     "completedAt": "2023-08-25",
-    "specimenCount": 8,
-    "testCount": 18,
+    "specimenCount": 4,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -398,7 +398,7 @@
   },
   {
     "id": "prj_0019",
-    "code": "IIC-2023-0019",
+    "code": "IIC-2023-0005",
     "title": "中央石油化学 規格適合性確認試験",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -409,7 +409,7 @@
     "dueAt": "2024-03-16",
     "completedAt": null,
     "specimenCount": 4,
-    "testCount": 8,
+    "testCount": 14,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -420,7 +420,7 @@
   },
   {
     "id": "prj_0020",
-    "code": "IIC-2025-0020",
+    "code": "IIC-2025-0009",
     "title": "トーヨー精密機械 経年劣化評価",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -430,8 +430,8 @@
     "startedAt": "2025-09-01",
     "dueAt": "2026-01-24",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 6,
+    "specimenCount": 7,
+    "testCount": 22,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -442,7 +442,7 @@
   },
   {
     "id": "prj_0021",
-    "code": "IIC-2025-0021",
+    "code": "IIC-2025-0010",
     "title": "ジェットコア航空 新材料採用に向けた特性評価",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -452,8 +452,8 @@
     "startedAt": "2025-05-25",
     "dueAt": "2025-09-18",
     "completedAt": "2025-06-07",
-    "specimenCount": 7,
-    "testCount": 17,
+    "specimenCount": 8,
+    "testCount": 20,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -464,7 +464,7 @@
   },
   {
     "id": "prj_0022",
-    "code": "IIC-2024-0022",
+    "code": "IIC-2024-0004",
     "title": "海洋構造安全研究会 規格適合性確認試験",
     "customerId": "cst_020",
     "industryTagIds": [
@@ -474,8 +474,8 @@
     "startedAt": "2024-03-27",
     "dueAt": "2024-06-27",
     "completedAt": "2024-07-25",
-    "specimenCount": 4,
-    "testCount": 7,
+    "specimenCount": 3,
+    "testCount": 9,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -486,7 +486,7 @@
   },
   {
     "id": "prj_0023",
-    "code": "IIC-2025-0023",
+    "code": "IIC-2025-0011",
     "title": "ジェットコア航空 耐食性評価試験",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -496,8 +496,8 @@
     "startedAt": "2025-12-08",
     "dueAt": "2026-02-14",
     "completedAt": "2026-02-04",
-    "specimenCount": 4,
-    "testCount": 17,
+    "specimenCount": 6,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -508,7 +508,7 @@
   },
   {
     "id": "prj_0024",
-    "code": "IIC-2024-0024",
+    "code": "IIC-2024-0005",
     "title": "中央石油化学 定期点検に伴う材料調査",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -519,7 +519,7 @@
     "dueAt": "2024-08-15",
     "completedAt": null,
     "specimenCount": 6,
-    "testCount": 18,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -530,7 +530,7 @@
   },
   {
     "id": "prj_0025",
-    "code": "IIC-2025-0025",
+    "code": "IIC-2025-0012",
     "title": "アーバンインフラ建設 耐食性評価試験",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -540,8 +540,8 @@
     "startedAt": "2025-01-26",
     "dueAt": "2025-07-03",
     "completedAt": "2025-02-05",
-    "specimenCount": 4,
-    "testCount": 9,
+    "specimenCount": 6,
+    "testCount": 27,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -552,7 +552,7 @@
   },
   {
     "id": "prj_0026",
-    "code": "IIC-2024-0026",
+    "code": "IIC-2024-0006",
     "title": "中央石油化学 高温特性評価",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -562,8 +562,8 @@
     "startedAt": "2024-11-07",
     "dueAt": "2024-12-18",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 16,
+    "specimenCount": 8,
+    "testCount": 27,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -574,7 +574,7 @@
   },
   {
     "id": "prj_0027",
-    "code": "IIC-2025-0027",
+    "code": "IIC-2025-0013",
     "title": "九州素形材センター 新材料採用に向けた特性評価",
     "customerId": "cst_019",
     "industryTagIds": [
@@ -584,8 +584,8 @@
     "startedAt": "2025-12-06",
     "dueAt": "2026-03-17",
     "completedAt": "2026-01-15",
-    "specimenCount": 7,
-    "testCount": 17,
+    "specimenCount": 8,
+    "testCount": 27,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -596,7 +596,7 @@
   },
   {
     "id": "prj_0028",
-    "code": "IIC-2025-0028",
+    "code": "IIC-2025-0014",
     "title": "北海鉄鋼 疲労き裂発生原因調査",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -607,7 +607,7 @@
     "dueAt": "2026-01-05",
     "completedAt": null,
     "specimenCount": 4,
-    "testCount": 11,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -618,7 +618,7 @@
   },
   {
     "id": "prj_0029",
-    "code": "IIC-2023-0029",
+    "code": "IIC-2023-0006",
     "title": "アーバンインフラ建設 経年劣化評価",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -629,8 +629,8 @@
     "startedAt": "2023-06-17",
     "dueAt": "2023-10-04",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 14,
+    "specimenCount": 4,
+    "testCount": 11,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -641,7 +641,7 @@
   },
   {
     "id": "prj_0030",
-    "code": "IIC-2023-0030",
+    "code": "IIC-2023-0007",
     "title": "西日本自動車工業 新材料採用に向けた特性評価",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -651,8 +651,8 @@
     "startedAt": "2023-11-20",
     "dueAt": "2023-12-12",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 7,
+    "testCount": 18,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -663,7 +663,7 @@
   },
   {
     "id": "prj_0031",
-    "code": "IIC-2024-0031",
+    "code": "IIC-2024-0007",
     "title": "グリーンカーボン研究所 疲労き裂発生原因調査",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -674,7 +674,7 @@
     "dueAt": "2024-04-26",
     "completedAt": "2024-04-24",
     "specimenCount": 6,
-    "testCount": 13,
+    "testCount": 24,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -685,7 +685,7 @@
   },
   {
     "id": "prj_0032",
-    "code": "IIC-2023-0032",
+    "code": "IIC-2023-0008",
     "title": "東日本電力 部品破損の原因究明",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -695,8 +695,8 @@
     "startedAt": "2023-11-28",
     "dueAt": "2024-04-12",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 12,
+    "specimenCount": 3,
+    "testCount": 8,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -707,7 +707,7 @@
   },
   {
     "id": "prj_0033",
-    "code": "IIC-2024-0033",
+    "code": "IIC-2024-0008",
     "title": "東海素材工業 耐食性評価試験",
     "customerId": "cst_017",
     "industryTagIds": [
@@ -717,8 +717,8 @@
     "startedAt": "2024-12-03",
     "dueAt": "2025-03-22",
     "completedAt": "2025-01-30",
-    "specimenCount": 7,
-    "testCount": 19,
+    "specimenCount": 3,
+    "testCount": 7,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -729,7 +729,7 @@
   },
   {
     "id": "prj_0034",
-    "code": "IIC-2025-0034",
+    "code": "IIC-2025-0015",
     "title": "グリーンカーボン研究所 耐食性評価試験",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -740,7 +740,7 @@
     "dueAt": "2025-12-01",
     "completedAt": "2025-10-05",
     "specimenCount": 5,
-    "testCount": 19,
+    "testCount": 12,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -751,7 +751,7 @@
   },
   {
     "id": "prj_0035",
-    "code": "IIC-2023-0035",
+    "code": "IIC-2023-0009",
     "title": "スカイブリッジ航空機 疲労き裂発生原因調査",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -762,7 +762,7 @@
     "dueAt": "2023-12-13",
     "completedAt": "2023-12-06",
     "specimenCount": 7,
-    "testCount": 20,
+    "testCount": 18,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -773,7 +773,7 @@
   },
   {
     "id": "prj_0036",
-    "code": "IIC-2026-0036",
+    "code": "IIC-2026-0004",
     "title": "アーバンインフラ建設 定期点検に伴う材料調査",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -783,8 +783,8 @@
     "startedAt": "2026-03-31",
     "dueAt": "2026-06-25",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 29,
+    "specimenCount": 5,
+    "testCount": 12,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -795,7 +795,7 @@
   },
   {
     "id": "prj_0037",
-    "code": "IIC-2024-0037",
+    "code": "IIC-2024-0009",
     "title": "スカイブリッジ航空機 疲労き裂発生原因調査",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -805,8 +805,8 @@
     "startedAt": "2024-08-07",
     "dueAt": "2025-01-05",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 18,
+    "specimenCount": 5,
+    "testCount": 7,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -817,7 +817,7 @@
   },
   {
     "id": "prj_0038",
-    "code": "IIC-2024-0038",
+    "code": "IIC-2024-0010",
     "title": "関東交通安全研究機構 部品破損の原因究明",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -828,7 +828,7 @@
     "dueAt": "2025-02-04",
     "completedAt": "2024-11-29",
     "specimenCount": 8,
-    "testCount": 23,
+    "testCount": 21,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -839,7 +839,7 @@
   },
   {
     "id": "prj_0039",
-    "code": "IIC-2023-0039",
+    "code": "IIC-2023-0010",
     "title": "関東交通安全研究機構 定期点検に伴う材料調査",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -849,8 +849,8 @@
     "startedAt": "2023-11-24",
     "dueAt": "2024-03-04",
     "completedAt": "2024-04-01",
-    "specimenCount": 3,
-    "testCount": 7,
+    "specimenCount": 7,
+    "testCount": 27,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -861,7 +861,7 @@
   },
   {
     "id": "prj_0040",
-    "code": "IIC-2024-0040",
+    "code": "IIC-2024-0011",
     "title": "アーバンインフラ建設 規格適合性確認試験",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -871,8 +871,8 @@
     "startedAt": "2024-10-08",
     "dueAt": "2024-12-29",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 7,
+    "specimenCount": 6,
+    "testCount": 11,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -883,7 +883,7 @@
   },
   {
     "id": "prj_0041",
-    "code": "IIC-2025-0041",
+    "code": "IIC-2025-0016",
     "title": "西日本自動車工業 高温特性評価",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -894,7 +894,7 @@
     "dueAt": "2026-01-02",
     "completedAt": "2026-01-27",
     "specimenCount": 4,
-    "testCount": 15,
+    "testCount": 7,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -905,7 +905,7 @@
   },
   {
     "id": "prj_0042",
-    "code": "IIC-2023-0042",
+    "code": "IIC-2023-0011",
     "title": "グリーンカーボン研究所 経年劣化評価",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -915,8 +915,8 @@
     "startedAt": "2023-10-16",
     "dueAt": "2024-04-13",
     "completedAt": "2024-03-04",
-    "specimenCount": 6,
-    "testCount": 15,
+    "specimenCount": 3,
+    "testCount": 8,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -927,7 +927,7 @@
   },
   {
     "id": "prj_0043",
-    "code": "IIC-2024-0043",
+    "code": "IIC-2024-0012",
     "title": "アーバンインフラ建設 新材料採用に向けた特性評価",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -938,7 +938,7 @@
     "startedAt": "2024-01-05",
     "dueAt": "2024-06-04",
     "completedAt": "2024-04-03",
-    "specimenCount": 7,
+    "specimenCount": 8,
     "testCount": 25,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
@@ -950,7 +950,7 @@
   },
   {
     "id": "prj_0044",
-    "code": "IIC-2023-0044",
+    "code": "IIC-2023-0012",
     "title": "西日本自動車工業 規格適合性確認試験",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -960,8 +960,8 @@
     "startedAt": "2023-04-26",
     "dueAt": "2023-05-23",
     "completedAt": "2023-06-07",
-    "specimenCount": 3,
-    "testCount": 10,
+    "specimenCount": 7,
+    "testCount": 20,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -972,7 +972,7 @@
   },
   {
     "id": "prj_0045",
-    "code": "IIC-2023-0045",
+    "code": "IIC-2023-0013",
     "title": "九州素形材センター 規格適合性確認試験",
     "customerId": "cst_019",
     "industryTagIds": [
@@ -982,8 +982,8 @@
     "startedAt": "2023-07-08",
     "dueAt": "2023-10-02",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 11,
+    "specimenCount": 8,
+    "testCount": 29,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -994,7 +994,7 @@
   },
   {
     "id": "prj_0046",
-    "code": "IIC-2024-0046",
+    "code": "IIC-2024-0013",
     "title": "中部重工業 経年劣化評価",
     "customerId": "cst_002",
     "industryTagIds": [
@@ -1004,8 +1004,8 @@
     "startedAt": "2024-03-02",
     "dueAt": "2024-08-03",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 7,
+    "testCount": 26,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1016,7 +1016,7 @@
   },
   {
     "id": "prj_0047",
-    "code": "IIC-2025-0047",
+    "code": "IIC-2025-0017",
     "title": "九州素形材センター 耐食性評価試験",
     "customerId": "cst_019",
     "industryTagIds": [
@@ -1026,8 +1026,8 @@
     "startedAt": "2025-02-21",
     "dueAt": "2025-06-20",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 24,
+    "specimenCount": 8,
+    "testCount": 27,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1038,7 +1038,7 @@
   },
   {
     "id": "prj_0048",
-    "code": "IIC-2024-0048",
+    "code": "IIC-2024-0014",
     "title": "東海素材工業 高温特性評価",
     "customerId": "cst_017",
     "industryTagIds": [
@@ -1048,8 +1048,8 @@
     "startedAt": "2024-09-03",
     "dueAt": "2024-12-28",
     "completedAt": "2024-12-15",
-    "specimenCount": 6,
-    "testCount": 18,
+    "specimenCount": 8,
+    "testCount": 20,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1060,7 +1060,7 @@
   },
   {
     "id": "prj_0049",
-    "code": "IIC-2025-0049",
+    "code": "IIC-2025-0018",
     "title": "スカイブリッジ航空機 部品破損の原因究明",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -1070,8 +1070,8 @@
     "startedAt": "2025-01-02",
     "dueAt": "2025-04-12",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 22,
+    "specimenCount": 3,
+    "testCount": 12,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1082,7 +1082,7 @@
   },
   {
     "id": "prj_0050",
-    "code": "IIC-2025-0050",
+    "code": "IIC-2025-0019",
     "title": "オーシャンエナジー 疲労き裂発生原因調査",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -1093,8 +1093,8 @@
     "startedAt": "2025-04-28",
     "dueAt": "2025-08-09",
     "completedAt": "2025-07-02",
-    "specimenCount": 4,
-    "testCount": 10,
+    "specimenCount": 6,
+    "testCount": 24,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1105,7 +1105,7 @@
   },
   {
     "id": "prj_0051",
-    "code": "IIC-2024-0051",
+    "code": "IIC-2024-0015",
     "title": "東日本電力 新材料採用に向けた特性評価",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -1115,8 +1115,8 @@
     "startedAt": "2024-08-09",
     "dueAt": "2024-12-19",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 17,
+    "specimenCount": 4,
+    "testCount": 10,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1127,7 +1127,7 @@
   },
   {
     "id": "prj_0052",
-    "code": "IIC-2025-0052",
+    "code": "IIC-2025-0020",
     "title": "中部重工業 経年劣化評価",
     "customerId": "cst_002",
     "industryTagIds": [
@@ -1138,8 +1138,8 @@
     "startedAt": "2025-08-26",
     "dueAt": "2026-02-17",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 17,
+    "specimenCount": 3,
+    "testCount": 11,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1150,7 +1150,7 @@
   },
   {
     "id": "prj_0053",
-    "code": "IIC-2024-0053",
+    "code": "IIC-2024-0016",
     "title": "オーシャンエナジー 部品破損の原因究明",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -1160,8 +1160,8 @@
     "startedAt": "2024-03-09",
     "dueAt": "2024-06-07",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 22,
+    "specimenCount": 3,
+    "testCount": 10,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1172,7 +1172,7 @@
   },
   {
     "id": "prj_0054",
-    "code": "IIC-2024-0054",
+    "code": "IIC-2024-0017",
     "title": "北陸電機 定期点検に伴う材料調査",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -1182,8 +1182,8 @@
     "startedAt": "2024-09-08",
     "dueAt": "2024-11-23",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 20,
+    "specimenCount": 5,
+    "testCount": 10,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1194,7 +1194,7 @@
   },
   {
     "id": "prj_0055",
-    "code": "IIC-2023-0055",
+    "code": "IIC-2023-0014",
     "title": "グリーンカーボン研究所 部品破損の原因究明",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -1205,7 +1205,7 @@
     "dueAt": "2023-10-08",
     "completedAt": null,
     "specimenCount": 7,
-    "testCount": 21,
+    "testCount": 23,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1216,7 +1216,7 @@
   },
   {
     "id": "prj_0056",
-    "code": "IIC-2025-0056",
+    "code": "IIC-2025-0021",
     "title": "九州素形材センター 高温特性評価",
     "customerId": "cst_019",
     "industryTagIds": [
@@ -1226,8 +1226,8 @@
     "startedAt": "2025-06-15",
     "dueAt": "2025-07-20",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 27,
+    "specimenCount": 4,
+    "testCount": 10,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1238,7 +1238,7 @@
   },
   {
     "id": "prj_0057",
-    "code": "IIC-2026-0057",
+    "code": "IIC-2026-0005",
     "title": "グリーンカーボン研究所 経年劣化評価",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -1248,8 +1248,8 @@
     "startedAt": "2026-03-24",
     "dueAt": "2026-07-20",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 15,
+    "specimenCount": 6,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1260,7 +1260,7 @@
   },
   {
     "id": "prj_0058",
-    "code": "IIC-2025-0058",
+    "code": "IIC-2025-0022",
     "title": "グリーンポリマー工業 高温特性評価",
     "customerId": "cst_016",
     "industryTagIds": [
@@ -1271,7 +1271,7 @@
     "dueAt": "2025-08-05",
     "completedAt": null,
     "specimenCount": 6,
-    "testCount": 21,
+    "testCount": 20,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1282,7 +1282,7 @@
   },
   {
     "id": "prj_0059",
-    "code": "IIC-2024-0059",
+    "code": "IIC-2024-0018",
     "title": "宇宙開発機構外郭団体 高温特性評価",
     "customerId": "cst_014",
     "industryTagIds": [
@@ -1292,8 +1292,8 @@
     "startedAt": "2024-05-11",
     "dueAt": "2024-07-25",
     "completedAt": "2024-05-21",
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 7,
+    "testCount": 21,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1304,7 +1304,7 @@
   },
   {
     "id": "prj_0060",
-    "code": "IIC-2024-0060",
+    "code": "IIC-2024-0019",
     "title": "中央石油化学 新材料採用に向けた特性評価",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -1314,8 +1314,8 @@
     "startedAt": "2024-03-18",
     "dueAt": "2024-04-28",
     "completedAt": "2024-04-28",
-    "specimenCount": 7,
-    "testCount": 23,
+    "specimenCount": 5,
+    "testCount": 17,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1326,7 +1326,7 @@
   },
   {
     "id": "prj_0061",
-    "code": "IIC-2023-0061",
+    "code": "IIC-2023-0015",
     "title": "オーシャンエナジー 規格適合性確認試験",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -1336,8 +1336,8 @@
     "startedAt": "2023-06-25",
     "dueAt": "2023-11-05",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 10,
+    "specimenCount": 7,
+    "testCount": 28,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1348,7 +1348,7 @@
   },
   {
     "id": "prj_0062",
-    "code": "IIC-2024-0062",
+    "code": "IIC-2024-0020",
     "title": "北海鉄鋼 疲労き裂発生原因調査",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -1358,8 +1358,8 @@
     "startedAt": "2024-10-26",
     "dueAt": "2025-04-20",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 15,
+    "specimenCount": 7,
+    "testCount": 14,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1370,7 +1370,7 @@
   },
   {
     "id": "prj_0063",
-    "code": "IIC-2024-0063",
+    "code": "IIC-2024-0021",
     "title": "宇宙開発機構外郭団体 耐食性評価試験",
     "customerId": "cst_014",
     "industryTagIds": [
@@ -1380,8 +1380,8 @@
     "startedAt": "2024-02-27",
     "dueAt": "2024-03-31",
     "completedAt": "2024-04-06",
-    "specimenCount": 6,
-    "testCount": 19,
+    "specimenCount": 7,
+    "testCount": 24,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1392,7 +1392,7 @@
   },
   {
     "id": "prj_0064",
-    "code": "IIC-2023-0064",
+    "code": "IIC-2023-0016",
     "title": "中央石油化学 経年劣化評価",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -1402,8 +1402,8 @@
     "startedAt": "2023-05-28",
     "dueAt": "2023-07-21",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 23,
+    "specimenCount": 4,
+    "testCount": 11,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1414,7 +1414,7 @@
   },
   {
     "id": "prj_0065",
-    "code": "IIC-2024-0065",
+    "code": "IIC-2024-0022",
     "title": "九州素形材センター 高温特性評価",
     "customerId": "cst_019",
     "industryTagIds": [
@@ -1424,8 +1424,8 @@
     "startedAt": "2024-02-12",
     "dueAt": "2024-07-16",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 21,
+    "specimenCount": 8,
+    "testCount": 25,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1436,7 +1436,7 @@
   },
   {
     "id": "prj_0066",
-    "code": "IIC-2024-0066",
+    "code": "IIC-2024-0023",
     "title": "中部重工業 部品破損の原因究明",
     "customerId": "cst_002",
     "industryTagIds": [
@@ -1447,8 +1447,8 @@
     "startedAt": "2024-10-22",
     "dueAt": "2025-01-06",
     "completedAt": "2025-02-03",
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 7,
+    "testCount": 18,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1459,7 +1459,7 @@
   },
   {
     "id": "prj_0067",
-    "code": "IIC-2023-0067",
+    "code": "IIC-2023-0017",
     "title": "グリーンポリマー工業 疲労き裂発生原因調査",
     "customerId": "cst_016",
     "industryTagIds": [
@@ -1469,8 +1469,8 @@
     "startedAt": "2023-09-27",
     "dueAt": "2024-02-25",
     "completedAt": "2023-11-27",
-    "specimenCount": 4,
-    "testCount": 9,
+    "specimenCount": 5,
+    "testCount": 21,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1481,7 +1481,7 @@
   },
   {
     "id": "prj_0068",
-    "code": "IIC-2025-0068",
+    "code": "IIC-2025-0023",
     "title": "オーシャンエナジー 経年劣化評価",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -1491,8 +1491,8 @@
     "startedAt": "2025-09-28",
     "dueAt": "2025-11-03",
     "completedAt": "2025-11-28",
-    "specimenCount": 8,
-    "testCount": 24,
+    "specimenCount": 5,
+    "testCount": 12,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1503,7 +1503,7 @@
   },
   {
     "id": "prj_0069",
-    "code": "IIC-2024-0069",
+    "code": "IIC-2024-0024",
     "title": "アーバンインフラ建設 定期点検に伴う材料調査",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -1515,7 +1515,7 @@
     "dueAt": "2024-12-29",
     "completedAt": "2024-12-16",
     "specimenCount": 8,
-    "testCount": 25,
+    "testCount": 27,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1526,7 +1526,7 @@
   },
   {
     "id": "prj_0070",
-    "code": "IIC-2023-0070",
+    "code": "IIC-2023-0018",
     "title": "アーバンインフラ建設 耐食性評価試験",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -1536,8 +1536,8 @@
     "startedAt": "2023-11-26",
     "dueAt": "2024-03-28",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 15,
+    "specimenCount": 5,
+    "testCount": 12,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1548,7 +1548,7 @@
   },
   {
     "id": "prj_0071",
-    "code": "IIC-2025-0071",
+    "code": "IIC-2025-0024",
     "title": "海洋構造安全研究会 高温特性評価",
     "customerId": "cst_020",
     "industryTagIds": [
@@ -1558,8 +1558,8 @@
     "startedAt": "2025-12-09",
     "dueAt": "2026-01-29",
     "completedAt": "2026-01-12",
-    "specimenCount": 7,
-    "testCount": 17,
+    "specimenCount": 5,
+    "testCount": 15,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1570,7 +1570,7 @@
   },
   {
     "id": "prj_0072",
-    "code": "IIC-2025-0072",
+    "code": "IIC-2025-0025",
     "title": "スカイブリッジ航空機 疲労き裂発生原因調査",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -1580,8 +1580,8 @@
     "startedAt": "2025-04-27",
     "dueAt": "2025-06-29",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 20,
+    "specimenCount": 8,
+    "testCount": 29,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1592,7 +1592,7 @@
   },
   {
     "id": "prj_0073",
-    "code": "IIC-2025-0073",
+    "code": "IIC-2025-0026",
     "title": "海洋構造安全研究会 高温特性評価",
     "customerId": "cst_020",
     "industryTagIds": [
@@ -1603,8 +1603,8 @@
     "startedAt": "2025-07-10",
     "dueAt": "2025-07-30",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 23,
+    "specimenCount": 6,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1615,7 +1615,7 @@
   },
   {
     "id": "prj_0074",
-    "code": "IIC-2024-0074",
+    "code": "IIC-2024-0025",
     "title": "オーシャンエナジー 部品破損の原因究明",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -1626,8 +1626,8 @@
     "startedAt": "2024-07-07",
     "dueAt": "2025-01-02",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 11,
+    "specimenCount": 3,
+    "testCount": 5,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1638,7 +1638,7 @@
   },
   {
     "id": "prj_0075",
-    "code": "IIC-2026-0075",
+    "code": "IIC-2026-0006",
     "title": "グリーンカーボン研究所 耐食性評価試験",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -1648,8 +1648,8 @@
     "startedAt": "2026-01-24",
     "dueAt": "2026-06-23",
     "completedAt": "2026-06-01",
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 3,
+    "testCount": 9,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1660,7 +1660,7 @@
   },
   {
     "id": "prj_0076",
-    "code": "IIC-2025-0076",
+    "code": "IIC-2025-0027",
     "title": "中央石油化学 部品破損の原因究明",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -1670,8 +1670,8 @@
     "startedAt": "2025-09-09",
     "dueAt": "2025-12-10",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 21,
+    "specimenCount": 3,
+    "testCount": 13,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1682,7 +1682,7 @@
   },
   {
     "id": "prj_0077",
-    "code": "IIC-2025-0077",
+    "code": "IIC-2025-0028",
     "title": "スカイブリッジ航空機 新材料採用に向けた特性評価",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -1693,7 +1693,7 @@
     "dueAt": "2025-03-02",
     "completedAt": null,
     "specimenCount": 8,
-    "testCount": 22,
+    "testCount": 21,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1704,7 +1704,7 @@
   },
   {
     "id": "prj_0078",
-    "code": "IIC-2025-0078",
+    "code": "IIC-2025-0029",
     "title": "ジェットコア航空 部品破損の原因究明",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -1714,7 +1714,7 @@
     "startedAt": "2025-12-08",
     "dueAt": "2026-05-18",
     "completedAt": null,
-    "specimenCount": 6,
+    "specimenCount": 8,
     "testCount": 20,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
@@ -1726,7 +1726,7 @@
   },
   {
     "id": "prj_0079",
-    "code": "IIC-2025-0079",
+    "code": "IIC-2025-0030",
     "title": "トーヨー精密機械 経年劣化評価",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -1736,8 +1736,8 @@
     "startedAt": "2025-11-01",
     "dueAt": "2026-03-03",
     "completedAt": "2026-02-27",
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 5,
+    "testCount": 12,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1748,7 +1748,7 @@
   },
   {
     "id": "prj_0080",
-    "code": "IIC-2025-0080",
+    "code": "IIC-2025-0031",
     "title": "アーバンインフラ建設 高温特性評価",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -1758,8 +1758,8 @@
     "startedAt": "2025-04-06",
     "dueAt": "2025-09-09",
     "completedAt": "2025-08-08",
-    "specimenCount": 3,
-    "testCount": 13,
+    "specimenCount": 7,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -1770,7 +1770,7 @@
   },
   {
     "id": "prj_0081",
-    "code": "IIC-2025-0081",
+    "code": "IIC-2025-0032",
     "title": "宇宙開発機構外郭団体 規格適合性確認試験",
     "customerId": "cst_014",
     "industryTagIds": [
@@ -1781,7 +1781,7 @@
     "dueAt": "2026-01-28",
     "completedAt": "2026-02-04",
     "specimenCount": 3,
-    "testCount": 12,
+    "testCount": 13,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1792,7 +1792,7 @@
   },
   {
     "id": "prj_0082",
-    "code": "IIC-2025-0082",
+    "code": "IIC-2025-0033",
     "title": "北陸電機 新材料採用に向けた特性評価",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -1802,8 +1802,8 @@
     "startedAt": "2025-12-03",
     "dueAt": "2025-12-19",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 14,
+    "specimenCount": 3,
+    "testCount": 9,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1814,7 +1814,7 @@
   },
   {
     "id": "prj_0083",
-    "code": "IIC-2023-0083",
+    "code": "IIC-2023-0019",
     "title": "西日本自動車工業 経年劣化評価",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -1825,7 +1825,7 @@
     "dueAt": "2023-08-25",
     "completedAt": "2023-09-16",
     "specimenCount": 7,
-    "testCount": 26,
+    "testCount": 19,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1836,7 +1836,7 @@
   },
   {
     "id": "prj_0084",
-    "code": "IIC-2025-0084",
+    "code": "IIC-2025-0034",
     "title": "北陸電機 新材料採用に向けた特性評価",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -1847,7 +1847,7 @@
     "dueAt": "2025-05-24",
     "completedAt": null,
     "specimenCount": 3,
-    "testCount": 11,
+    "testCount": 10,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1858,7 +1858,7 @@
   },
   {
     "id": "prj_0085",
-    "code": "IIC-2023-0085",
+    "code": "IIC-2023-0020",
     "title": "中央石油化学 定期点検に伴う材料調査",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -1868,8 +1868,8 @@
     "startedAt": "2023-08-01",
     "dueAt": "2023-12-29",
     "completedAt": "2023-12-26",
-    "specimenCount": 4,
-    "testCount": 16,
+    "specimenCount": 5,
+    "testCount": 19,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1880,7 +1880,7 @@
   },
   {
     "id": "prj_0086",
-    "code": "IIC-2023-0086",
+    "code": "IIC-2023-0021",
     "title": "北陸電機 経年劣化評価",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -1890,8 +1890,8 @@
     "startedAt": "2023-11-25",
     "dueAt": "2024-03-22",
     "completedAt": "2023-12-19",
-    "specimenCount": 4,
-    "testCount": 16,
+    "specimenCount": 8,
+    "testCount": 19,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1902,7 +1902,7 @@
   },
   {
     "id": "prj_0087",
-    "code": "IIC-2025-0087",
+    "code": "IIC-2025-0035",
     "title": "ジェットコア航空 部品破損の原因究明",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -1912,8 +1912,8 @@
     "startedAt": "2025-10-15",
     "dueAt": "2025-12-26",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 18,
+    "specimenCount": 6,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1924,7 +1924,7 @@
   },
   {
     "id": "prj_0088",
-    "code": "IIC-2024-0088",
+    "code": "IIC-2024-0026",
     "title": "ハイパーモビリティ 部品破損の原因究明",
     "customerId": "cst_015",
     "industryTagIds": [
@@ -1934,7 +1934,7 @@
     "startedAt": "2024-08-18",
     "dueAt": "2025-02-07",
     "completedAt": "2025-01-26",
-    "specimenCount": 5,
+    "specimenCount": 6,
     "testCount": 14,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
@@ -1946,7 +1946,7 @@
   },
   {
     "id": "prj_0089",
-    "code": "IIC-2025-0089",
+    "code": "IIC-2025-0036",
     "title": "ハイパーモビリティ 規格適合性確認試験",
     "customerId": "cst_015",
     "industryTagIds": [
@@ -1956,8 +1956,8 @@
     "startedAt": "2025-01-18",
     "dueAt": "2025-04-03",
     "completedAt": "2025-03-02",
-    "specimenCount": 3,
-    "testCount": 13,
+    "specimenCount": 7,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -1968,7 +1968,7 @@
   },
   {
     "id": "prj_0090",
-    "code": "IIC-2023-0090",
+    "code": "IIC-2023-0022",
     "title": "オーシャンエナジー 新材料採用に向けた特性評価",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -1980,7 +1980,7 @@
     "dueAt": "2023-09-30",
     "completedAt": "2023-10-06",
     "specimenCount": 6,
-    "testCount": 18,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -1991,7 +1991,7 @@
   },
   {
     "id": "prj_0091",
-    "code": "IIC-2026-0091",
+    "code": "IIC-2026-0007",
     "title": "ジェットコア航空 部品破損の原因究明",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -2001,8 +2001,8 @@
     "startedAt": "2026-01-27",
     "dueAt": "2026-03-27",
     "completedAt": "2026-03-08",
-    "specimenCount": 5,
-    "testCount": 13,
+    "specimenCount": 4,
+    "testCount": 7,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2013,7 +2013,7 @@
   },
   {
     "id": "prj_0092",
-    "code": "IIC-2025-0092",
+    "code": "IIC-2025-0037",
     "title": "海洋構造安全研究会 経年劣化評価",
     "customerId": "cst_020",
     "industryTagIds": [
@@ -2024,8 +2024,8 @@
     "startedAt": "2025-03-08",
     "dueAt": "2025-05-22",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 7,
+    "testCount": 26,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2036,7 +2036,7 @@
   },
   {
     "id": "prj_0093",
-    "code": "IIC-2023-0093",
+    "code": "IIC-2023-0023",
     "title": "関東交通安全研究機構 規格適合性確認試験",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -2047,7 +2047,7 @@
     "dueAt": "2024-01-28",
     "completedAt": "2023-09-27",
     "specimenCount": 3,
-    "testCount": 10,
+    "testCount": 11,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2058,7 +2058,7 @@
   },
   {
     "id": "prj_0094",
-    "code": "IIC-2026-0094",
+    "code": "IIC-2026-0008",
     "title": "オーシャンエナジー 経年劣化評価",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -2069,8 +2069,8 @@
     "startedAt": "2026-02-01",
     "dueAt": "2026-07-03",
     "completedAt": "2026-05-04",
-    "specimenCount": 6,
-    "testCount": 24,
+    "specimenCount": 8,
+    "testCount": 22,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2081,7 +2081,7 @@
   },
   {
     "id": "prj_0095",
-    "code": "IIC-2024-0095",
+    "code": "IIC-2024-0027",
     "title": "太平洋プラント工業 規格適合性確認試験",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -2091,8 +2091,8 @@
     "startedAt": "2024-02-24",
     "dueAt": "2024-07-24",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 17,
+    "specimenCount": 3,
+    "testCount": 13,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2103,7 +2103,7 @@
   },
   {
     "id": "prj_0096",
-    "code": "IIC-2025-0096",
+    "code": "IIC-2025-0038",
     "title": "ハイパーモビリティ 経年劣化評価",
     "customerId": "cst_015",
     "industryTagIds": [
@@ -2113,8 +2113,8 @@
     "startedAt": "2025-12-25",
     "dueAt": "2026-04-30",
     "completedAt": "2026-05-08",
-    "specimenCount": 8,
-    "testCount": 28,
+    "specimenCount": 6,
+    "testCount": 14,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2125,7 +2125,7 @@
   },
   {
     "id": "prj_0097",
-    "code": "IIC-2023-0097",
+    "code": "IIC-2023-0024",
     "title": "太平洋プラント工業 高温特性評価",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -2135,8 +2135,8 @@
     "startedAt": "2023-12-20",
     "dueAt": "2024-03-27",
     "completedAt": "2024-01-13",
-    "specimenCount": 5,
-    "testCount": 17,
+    "specimenCount": 6,
+    "testCount": 20,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2147,7 +2147,7 @@
   },
   {
     "id": "prj_0098",
-    "code": "IIC-2023-0098",
+    "code": "IIC-2023-0025",
     "title": "ジェットコア航空 部品破損の原因究明",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -2157,8 +2157,8 @@
     "startedAt": "2023-07-05",
     "dueAt": "2023-07-30",
     "completedAt": "2023-08-28",
-    "specimenCount": 7,
-    "testCount": 17,
+    "specimenCount": 6,
+    "testCount": 23,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2169,7 +2169,7 @@
   },
   {
     "id": "prj_0099",
-    "code": "IIC-2024-0099",
+    "code": "IIC-2024-0028",
     "title": "海洋構造安全研究会 定期点検に伴う材料調査",
     "customerId": "cst_020",
     "industryTagIds": [
@@ -2180,8 +2180,8 @@
     "startedAt": "2024-02-25",
     "dueAt": "2024-05-08",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 10,
+    "specimenCount": 7,
+    "testCount": 21,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2192,7 +2192,7 @@
   },
   {
     "id": "prj_0100",
-    "code": "IIC-2023-0100",
+    "code": "IIC-2023-0026",
     "title": "北陸電機 部品破損の原因究明",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -2202,8 +2202,8 @@
     "startedAt": "2023-08-18",
     "dueAt": "2023-12-15",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 24,
+    "specimenCount": 8,
+    "testCount": 33,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2214,7 +2214,7 @@
   },
   {
     "id": "prj_0101",
-    "code": "IIC-2024-0101",
+    "code": "IIC-2024-0029",
     "title": "東海素材工業 経年劣化評価",
     "customerId": "cst_017",
     "industryTagIds": [
@@ -2224,8 +2224,8 @@
     "startedAt": "2024-09-01",
     "dueAt": "2024-11-11",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 7,
+    "specimenCount": 8,
+    "testCount": 17,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2236,7 +2236,7 @@
   },
   {
     "id": "prj_0102",
-    "code": "IIC-2024-0102",
+    "code": "IIC-2024-0030",
     "title": "東日本電力 規格適合性確認試験",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -2247,7 +2247,7 @@
     "dueAt": "2024-07-02",
     "completedAt": null,
     "specimenCount": 7,
-    "testCount": 17,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2258,7 +2258,7 @@
   },
   {
     "id": "prj_0103",
-    "code": "IIC-2023-0103",
+    "code": "IIC-2023-0027",
     "title": "北陸電機 疲労き裂発生原因調査",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -2268,8 +2268,8 @@
     "startedAt": "2023-11-21",
     "dueAt": "2024-04-22",
     "completedAt": "2024-02-08",
-    "specimenCount": 5,
-    "testCount": 13,
+    "specimenCount": 3,
+    "testCount": 9,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2280,7 +2280,7 @@
   },
   {
     "id": "prj_0104",
-    "code": "IIC-2025-0104",
+    "code": "IIC-2025-0039",
     "title": "アーバンインフラ建設 部品破損の原因究明",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -2291,8 +2291,8 @@
     "startedAt": "2025-08-28",
     "dueAt": "2026-02-14",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 10,
+    "specimenCount": 8,
+    "testCount": 22,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2303,7 +2303,7 @@
   },
   {
     "id": "prj_0105",
-    "code": "IIC-2023-0105",
+    "code": "IIC-2023-0028",
     "title": "北海鉄鋼 規格適合性確認試験",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -2313,8 +2313,8 @@
     "startedAt": "2023-07-21",
     "dueAt": "2024-01-12",
     "completedAt": "2023-11-28",
-    "specimenCount": 6,
-    "testCount": 17,
+    "specimenCount": 5,
+    "testCount": 15,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2325,7 +2325,7 @@
   },
   {
     "id": "prj_0106",
-    "code": "IIC-2023-0106",
+    "code": "IIC-2023-0029",
     "title": "スカイブリッジ航空機 定期点検に伴う材料調査",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -2335,8 +2335,8 @@
     "startedAt": "2023-10-20",
     "dueAt": "2024-01-20",
     "completedAt": "2024-02-14",
-    "specimenCount": 6,
-    "testCount": 15,
+    "specimenCount": 4,
+    "testCount": 13,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2347,7 +2347,7 @@
   },
   {
     "id": "prj_0107",
-    "code": "IIC-2023-0107",
+    "code": "IIC-2023-0030",
     "title": "グリーンポリマー工業 高温特性評価",
     "customerId": "cst_016",
     "industryTagIds": [
@@ -2357,8 +2357,8 @@
     "startedAt": "2023-06-02",
     "dueAt": "2023-08-22",
     "completedAt": "2023-06-17",
-    "specimenCount": 3,
-    "testCount": 13,
+    "specimenCount": 6,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2369,7 +2369,7 @@
   },
   {
     "id": "prj_0108",
-    "code": "IIC-2024-0108",
+    "code": "IIC-2024-0031",
     "title": "西日本自動車工業 疲労き裂発生原因調査",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -2379,8 +2379,8 @@
     "startedAt": "2024-11-01",
     "dueAt": "2025-01-30",
     "completedAt": "2025-01-11",
-    "specimenCount": 3,
-    "testCount": 10,
+    "specimenCount": 5,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2391,7 +2391,7 @@
   },
   {
     "id": "prj_0109",
-    "code": "IIC-2024-0109",
+    "code": "IIC-2024-0032",
     "title": "関東交通安全研究機構 規格適合性確認試験",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -2401,8 +2401,8 @@
     "startedAt": "2024-02-27",
     "dueAt": "2024-08-04",
     "completedAt": null,
-    "specimenCount": 7,
-    "testCount": 20,
+    "specimenCount": 3,
+    "testCount": 10,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2413,7 +2413,7 @@
   },
   {
     "id": "prj_0110",
-    "code": "IIC-2023-0110",
+    "code": "IIC-2023-0031",
     "title": "関東交通安全研究機構 耐食性評価試験",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -2424,8 +2424,8 @@
     "startedAt": "2023-08-03",
     "dueAt": "2023-09-08",
     "completedAt": "2023-08-15",
-    "specimenCount": 5,
-    "testCount": 13,
+    "specimenCount": 3,
+    "testCount": 11,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -2436,7 +2436,7 @@
   },
   {
     "id": "prj_0111",
-    "code": "IIC-2025-0111",
+    "code": "IIC-2025-0040",
     "title": "西日本自動車工業 疲労き裂発生原因調査",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -2447,7 +2447,7 @@
     "dueAt": "2025-07-15",
     "completedAt": "2025-06-07",
     "specimenCount": 8,
-    "testCount": 32,
+    "testCount": 26,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2458,7 +2458,7 @@
   },
   {
     "id": "prj_0112",
-    "code": "IIC-2025-0112",
+    "code": "IIC-2025-0041",
     "title": "北海鉄鋼 疲労き裂発生原因調査",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -2469,7 +2469,7 @@
     "dueAt": "2025-06-06",
     "completedAt": null,
     "specimenCount": 5,
-    "testCount": 17,
+    "testCount": 14,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2480,7 +2480,7 @@
   },
   {
     "id": "prj_0113",
-    "code": "IIC-2024-0113",
+    "code": "IIC-2024-0033",
     "title": "トーヨー精密機械 耐食性評価試験",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -2490,8 +2490,8 @@
     "startedAt": "2024-08-20",
     "dueAt": "2024-09-18",
     "completedAt": "2024-09-24",
-    "specimenCount": 3,
-    "testCount": 11,
+    "specimenCount": 8,
+    "testCount": 25,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2502,7 +2502,7 @@
   },
   {
     "id": "prj_0114",
-    "code": "IIC-2025-0114",
+    "code": "IIC-2025-0042",
     "title": "トーヨー精密機械 規格適合性確認試験",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -2513,7 +2513,7 @@
     "dueAt": "2026-05-19",
     "completedAt": "2026-03-17",
     "specimenCount": 5,
-    "testCount": 18,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2524,7 +2524,7 @@
   },
   {
     "id": "prj_0115",
-    "code": "IIC-2024-0115",
+    "code": "IIC-2024-0034",
     "title": "ジェットコア航空 高温特性評価",
     "customerId": "cst_009",
     "industryTagIds": [
@@ -2534,8 +2534,8 @@
     "startedAt": "2024-09-09",
     "dueAt": "2024-10-10",
     "completedAt": "2024-10-29",
-    "specimenCount": 6,
-    "testCount": 17,
+    "specimenCount": 5,
+    "testCount": 14,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2546,7 +2546,7 @@
   },
   {
     "id": "prj_0116",
-    "code": "IIC-2026-0116",
+    "code": "IIC-2026-0009",
     "title": "海洋構造安全研究会 定期点検に伴う材料調査",
     "customerId": "cst_020",
     "industryTagIds": [
@@ -2557,8 +2557,8 @@
     "startedAt": "2026-02-28",
     "dueAt": "2026-04-30",
     "completedAt": "2026-04-27",
-    "specimenCount": 5,
-    "testCount": 18,
+    "specimenCount": 6,
+    "testCount": 15,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2569,7 +2569,7 @@
   },
   {
     "id": "prj_0117",
-    "code": "IIC-2024-0117",
+    "code": "IIC-2024-0035",
     "title": "北海鉄鋼 規格適合性確認試験",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -2579,8 +2579,8 @@
     "startedAt": "2024-03-19",
     "dueAt": "2024-06-24",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 27,
+    "specimenCount": 5,
+    "testCount": 18,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2591,7 +2591,7 @@
   },
   {
     "id": "prj_0118",
-    "code": "IIC-2023-0118",
+    "code": "IIC-2023-0032",
     "title": "中央石油化学 定期点検に伴う材料調査",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -2601,8 +2601,8 @@
     "startedAt": "2023-10-30",
     "dueAt": "2024-01-22",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 12,
+    "specimenCount": 3,
+    "testCount": 9,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2613,7 +2613,7 @@
   },
   {
     "id": "prj_0119",
-    "code": "IIC-2025-0119",
+    "code": "IIC-2025-0043",
     "title": "中央石油化学 耐食性評価試験",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -2623,8 +2623,8 @@
     "startedAt": "2025-04-03",
     "dueAt": "2025-06-04",
     "completedAt": "2025-05-16",
-    "specimenCount": 6,
-    "testCount": 20,
+    "specimenCount": 7,
+    "testCount": 22,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2635,7 +2635,7 @@
   },
   {
     "id": "prj_0120",
-    "code": "IIC-2024-0120",
+    "code": "IIC-2024-0036",
     "title": "西日本自動車工業 疲労き裂発生原因調査",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -2645,8 +2645,8 @@
     "startedAt": "2024-02-15",
     "dueAt": "2024-08-02",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 19,
+    "specimenCount": 4,
+    "testCount": 11,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2657,7 +2657,7 @@
   },
   {
     "id": "prj_0121",
-    "code": "IIC-2025-0121",
+    "code": "IIC-2025-0044",
     "title": "関東交通安全研究機構 経年劣化評価",
     "customerId": "cst_008",
     "industryTagIds": [
@@ -2667,8 +2667,8 @@
     "startedAt": "2025-01-02",
     "dueAt": "2025-03-22",
     "completedAt": "2025-04-11",
-    "specimenCount": 4,
-    "testCount": 9,
+    "specimenCount": 5,
+    "testCount": 18,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2679,7 +2679,7 @@
   },
   {
     "id": "prj_0122",
-    "code": "IIC-2024-0122",
+    "code": "IIC-2024-0037",
     "title": "東日本電力 疲労き裂発生原因調査",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -2689,7 +2689,7 @@
     "startedAt": "2024-04-19",
     "dueAt": "2024-07-16",
     "completedAt": "2024-07-09",
-    "specimenCount": 6,
+    "specimenCount": 5,
     "testCount": 19,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
@@ -2701,7 +2701,7 @@
   },
   {
     "id": "prj_0123",
-    "code": "IIC-2023-0123",
+    "code": "IIC-2023-0033",
     "title": "九州素形材センター 部品破損の原因究明",
     "customerId": "cst_019",
     "industryTagIds": [
@@ -2711,7 +2711,7 @@
     "startedAt": "2023-07-25",
     "dueAt": "2023-08-31",
     "completedAt": "2023-09-14",
-    "specimenCount": 6,
+    "specimenCount": 7,
     "testCount": 16,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
@@ -2723,7 +2723,7 @@
   },
   {
     "id": "prj_0124",
-    "code": "IIC-2024-0124",
+    "code": "IIC-2024-0038",
     "title": "アーバンインフラ建設 高温特性評価",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -2734,8 +2734,8 @@
     "startedAt": "2024-01-25",
     "dueAt": "2024-03-20",
     "completedAt": "2024-04-05",
-    "specimenCount": 8,
-    "testCount": 21,
+    "specimenCount": 5,
+    "testCount": 14,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2746,7 +2746,7 @@
   },
   {
     "id": "prj_0125",
-    "code": "IIC-2023-0125",
+    "code": "IIC-2023-0034",
     "title": "東海素材工業 耐食性評価試験",
     "customerId": "cst_017",
     "industryTagIds": [
@@ -2756,8 +2756,8 @@
     "startedAt": "2023-12-23",
     "dueAt": "2024-02-17",
     "completedAt": "2024-01-30",
-    "specimenCount": 7,
-    "testCount": 17,
+    "specimenCount": 8,
+    "testCount": 22,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2768,7 +2768,7 @@
   },
   {
     "id": "prj_0126",
-    "code": "IIC-2025-0126",
+    "code": "IIC-2025-0045",
     "title": "西日本自動車工業 部品破損の原因究明",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -2778,8 +2778,8 @@
     "startedAt": "2025-11-07",
     "dueAt": "2026-01-16",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 15,
+    "specimenCount": 5,
+    "testCount": 13,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2790,7 +2790,7 @@
   },
   {
     "id": "prj_0127",
-    "code": "IIC-2024-0127",
+    "code": "IIC-2024-0039",
     "title": "トーヨー精密機械 疲労き裂発生原因調査",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -2800,8 +2800,8 @@
     "startedAt": "2024-06-06",
     "dueAt": "2024-08-26",
     "completedAt": "2024-07-20",
-    "specimenCount": 4,
-    "testCount": 14,
+    "specimenCount": 7,
+    "testCount": 16,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2812,7 +2812,7 @@
   },
   {
     "id": "prj_0128",
-    "code": "IIC-2023-0128",
+    "code": "IIC-2023-0035",
     "title": "北陸電機 定期点検に伴う材料調査",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -2823,7 +2823,7 @@
     "dueAt": "2023-08-25",
     "completedAt": null,
     "specimenCount": 5,
-    "testCount": 17,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2834,7 +2834,7 @@
   },
   {
     "id": "prj_0129",
-    "code": "IIC-2025-0129",
+    "code": "IIC-2025-0046",
     "title": "北陸電機 規格適合性確認試験",
     "customerId": "cst_018",
     "industryTagIds": [
@@ -2845,7 +2845,7 @@
     "dueAt": "2025-11-16",
     "completedAt": null,
     "specimenCount": 8,
-    "testCount": 22,
+    "testCount": 21,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2856,7 +2856,7 @@
   },
   {
     "id": "prj_0130",
-    "code": "IIC-2026-0130",
+    "code": "IIC-2026-0010",
     "title": "グリーンポリマー工業 新材料採用に向けた特性評価",
     "customerId": "cst_016",
     "industryTagIds": [
@@ -2866,8 +2866,8 @@
     "startedAt": "2026-02-04",
     "dueAt": "2026-02-19",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 10,
+    "specimenCount": 8,
+    "testCount": 20,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2878,7 +2878,7 @@
   },
   {
     "id": "prj_0131",
-    "code": "IIC-2025-0131",
+    "code": "IIC-2025-0047",
     "title": "グリーンポリマー工業 耐食性評価試験",
     "customerId": "cst_016",
     "industryTagIds": [
@@ -2888,8 +2888,8 @@
     "startedAt": "2025-01-15",
     "dueAt": "2025-03-31",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 19,
+    "specimenCount": 4,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,
@@ -2900,7 +2900,7 @@
   },
   {
     "id": "prj_0132",
-    "code": "IIC-2026-0132",
+    "code": "IIC-2026-0011",
     "title": "西日本自動車工業 部品破損の原因究明",
     "customerId": "cst_003",
     "industryTagIds": [
@@ -2910,8 +2910,8 @@
     "startedAt": "2026-02-01",
     "dueAt": "2026-04-09",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 8,
+    "specimenCount": 5,
+    "testCount": 15,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2922,7 +2922,7 @@
   },
   {
     "id": "prj_0133",
-    "code": "IIC-2024-0133",
+    "code": "IIC-2024-0040",
     "title": "北海鉄鋼 定期点検に伴う材料調査",
     "customerId": "cst_005",
     "industryTagIds": [
@@ -2932,8 +2932,8 @@
     "startedAt": "2024-02-05",
     "dueAt": "2024-06-07",
     "completedAt": "2024-03-04",
-    "specimenCount": 6,
-    "testCount": 18,
+    "specimenCount": 4,
+    "testCount": 9,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2944,7 +2944,7 @@
   },
   {
     "id": "prj_0134",
-    "code": "IIC-2024-0134",
+    "code": "IIC-2024-0041",
     "title": "グリーンカーボン研究所 耐食性評価試験",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -2954,8 +2954,8 @@
     "startedAt": "2024-07-14",
     "dueAt": "2024-12-25",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 23,
+    "specimenCount": 7,
+    "testCount": 13,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2966,7 +2966,7 @@
   },
   {
     "id": "prj_0135",
-    "code": "IIC-2024-0135",
+    "code": "IIC-2024-0042",
     "title": "中部重工業 疲労き裂発生原因調査",
     "customerId": "cst_002",
     "industryTagIds": [
@@ -2977,8 +2977,8 @@
     "startedAt": "2024-12-10",
     "dueAt": "2025-03-21",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 16,
+    "specimenCount": 4,
+    "testCount": 13,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -2989,7 +2989,7 @@
   },
   {
     "id": "prj_0136",
-    "code": "IIC-2025-0136",
+    "code": "IIC-2025-0048",
     "title": "東日本電力 定期点検に伴う材料調査",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -2999,8 +2999,8 @@
     "startedAt": "2025-05-15",
     "dueAt": "2025-07-20",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 7,
+    "testCount": 22,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3011,7 +3011,7 @@
   },
   {
     "id": "prj_0137",
-    "code": "IIC-2025-0137",
+    "code": "IIC-2025-0049",
     "title": "トーヨー精密機械 規格適合性確認試験",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -3021,8 +3021,8 @@
     "startedAt": "2025-05-08",
     "dueAt": "2025-07-29",
     "completedAt": null,
-    "specimenCount": 4,
-    "testCount": 9,
+    "specimenCount": 8,
+    "testCount": 18,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3033,7 +3033,7 @@
   },
   {
     "id": "prj_0138",
-    "code": "IIC-2025-0138",
+    "code": "IIC-2025-0050",
     "title": "宇宙開発機構外郭団体 規格適合性確認試験",
     "customerId": "cst_014",
     "industryTagIds": [
@@ -3043,8 +3043,8 @@
     "startedAt": "2025-10-03",
     "dueAt": "2025-12-26",
     "completedAt": null,
-    "specimenCount": 6,
-    "testCount": 21,
+    "specimenCount": 5,
+    "testCount": 11,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3055,7 +3055,7 @@
   },
   {
     "id": "prj_0139",
-    "code": "IIC-2026-0139",
+    "code": "IIC-2026-0012",
     "title": "太平洋プラント工業 疲労き裂発生原因調査",
     "customerId": "cst_007",
     "industryTagIds": [
@@ -3065,8 +3065,8 @@
     "startedAt": "2026-02-05",
     "dueAt": "2026-03-27",
     "completedAt": "2026-02-19",
-    "specimenCount": 5,
-    "testCount": 17,
+    "specimenCount": 7,
+    "testCount": 12,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3077,7 +3077,7 @@
   },
   {
     "id": "prj_0140",
-    "code": "IIC-2026-0140",
+    "code": "IIC-2026-0013",
     "title": "東日本電力 規格適合性確認試験",
     "customerId": "cst_001",
     "industryTagIds": [
@@ -3087,8 +3087,8 @@
     "startedAt": "2026-01-12",
     "dueAt": "2026-04-09",
     "completedAt": null,
-    "specimenCount": 8,
-    "testCount": 25,
+    "specimenCount": 6,
+    "testCount": 18,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -3099,7 +3099,7 @@
   },
   {
     "id": "prj_0141",
-    "code": "IIC-2024-0141",
+    "code": "IIC-2024-0043",
     "title": "グリーンカーボン研究所 定期点検に伴う材料調査",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -3109,8 +3109,8 @@
     "startedAt": "2024-04-29",
     "dueAt": "2024-09-21",
     "completedAt": "2024-09-04",
-    "specimenCount": 7,
-    "testCount": 17,
+    "specimenCount": 8,
+    "testCount": 22,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -3121,7 +3121,7 @@
   },
   {
     "id": "prj_0142",
-    "code": "IIC-2024-0142",
+    "code": "IIC-2024-0044",
     "title": "アーバンインフラ建設 部品破損の原因究明",
     "customerId": "cst_011",
     "industryTagIds": [
@@ -3131,8 +3131,8 @@
     "startedAt": "2024-02-20",
     "dueAt": "2024-05-23",
     "completedAt": "2024-05-29",
-    "specimenCount": 4,
-    "testCount": 13,
+    "specimenCount": 8,
+    "testCount": 16,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -3143,7 +3143,7 @@
   },
   {
     "id": "prj_0143",
-    "code": "IIC-2025-0143",
+    "code": "IIC-2025-0051",
     "title": "中央石油化学 高温特性評価",
     "customerId": "cst_010",
     "industryTagIds": [
@@ -3153,8 +3153,8 @@
     "startedAt": "2025-02-11",
     "dueAt": "2025-07-27",
     "completedAt": "2025-03-09",
-    "specimenCount": 5,
-    "testCount": 15,
+    "specimenCount": 8,
+    "testCount": 31,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -3165,7 +3165,7 @@
   },
   {
     "id": "prj_0144",
-    "code": "IIC-2024-0144",
+    "code": "IIC-2024-0045",
     "title": "グリーンポリマー工業 部品破損の原因究明",
     "customerId": "cst_016",
     "industryTagIds": [
@@ -3175,8 +3175,8 @@
     "startedAt": "2024-03-11",
     "dueAt": "2024-05-02",
     "completedAt": "2024-04-30",
-    "specimenCount": 8,
-    "testCount": 27,
+    "specimenCount": 7,
+    "testCount": 20,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3187,7 +3187,7 @@
   },
   {
     "id": "prj_0145",
-    "code": "IIC-2024-0145",
+    "code": "IIC-2024-0046",
     "title": "グリーンカーボン研究所 規格適合性確認試験",
     "customerId": "cst_006",
     "industryTagIds": [
@@ -3197,8 +3197,8 @@
     "startedAt": "2024-07-13",
     "dueAt": "2024-08-17",
     "completedAt": null,
-    "specimenCount": 5,
-    "testCount": 17,
+    "specimenCount": 8,
+    "testCount": 26,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -3209,7 +3209,7 @@
   },
   {
     "id": "prj_0146",
-    "code": "IIC-2025-0146",
+    "code": "IIC-2025-0052",
     "title": "トーヨー精密機械 経年劣化評価",
     "customerId": "cst_012",
     "industryTagIds": [
@@ -3219,8 +3219,8 @@
     "startedAt": "2025-10-24",
     "dueAt": "2026-02-03",
     "completedAt": "2026-01-18",
-    "specimenCount": 3,
-    "testCount": 10,
+    "specimenCount": 5,
+    "testCount": 20,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3231,7 +3231,7 @@
   },
   {
     "id": "prj_0147",
-    "code": "IIC-2024-0147",
+    "code": "IIC-2024-0047",
     "title": "東海素材工業 部品破損の原因究明",
     "customerId": "cst_017",
     "industryTagIds": [
@@ -3241,8 +3241,8 @@
     "startedAt": "2024-11-28",
     "dueAt": "2025-02-13",
     "completedAt": "2025-01-15",
-    "specimenCount": 7,
-    "testCount": 20,
+    "specimenCount": 5,
+    "testCount": 18,
     "pmId": "usr_pm_002",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3253,7 +3253,7 @@
   },
   {
     "id": "prj_0148",
-    "code": "IIC-2025-0148",
+    "code": "IIC-2025-0053",
     "title": "スカイブリッジ航空機 高温特性評価",
     "customerId": "cst_004",
     "industryTagIds": [
@@ -3263,8 +3263,8 @@
     "startedAt": "2025-05-03",
     "dueAt": "2025-10-04",
     "completedAt": null,
-    "specimenCount": 3,
-    "testCount": 12,
+    "specimenCount": 5,
+    "testCount": 17,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_003",
     "description": null,
@@ -3275,7 +3275,7 @@
   },
   {
     "id": "prj_0149",
-    "code": "IIC-2026-0149",
+    "code": "IIC-2026-0014",
     "title": "中部重工業 新材料採用に向けた特性評価",
     "customerId": "cst_002",
     "industryTagIds": [
@@ -3287,7 +3287,7 @@
     "dueAt": "2026-07-21",
     "completedAt": "2026-07-11",
     "specimenCount": 6,
-    "testCount": 20,
+    "testCount": 18,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_002",
     "description": null,
@@ -3298,7 +3298,7 @@
   },
   {
     "id": "prj_0150",
-    "code": "IIC-2025-0150",
+    "code": "IIC-2025-0054",
     "title": "オーシャンエナジー 規格適合性確認試験",
     "customerId": "cst_013",
     "industryTagIds": [
@@ -3309,8 +3309,8 @@
     "startedAt": "2025-09-05",
     "dueAt": "2025-12-11",
     "completedAt": "2026-01-06",
-    "specimenCount": 5,
-    "testCount": 12,
+    "specimenCount": 4,
+    "testCount": 13,
     "pmId": "usr_pm_001",
     "leadEngineerId": "usr_eng_001",
     "description": null,

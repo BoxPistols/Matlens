@@ -89,9 +89,17 @@ export const createMockTestRepository = (): TestRepository => ({
     const specimenById = new Map(specimens.map((s) => [s.id, s]));
     const projectById = new Map(db.projects.getAll().map((p) => [p.id, p]));
 
+    // 'YYYY-MM-DD' のような日付のみの指定は、時刻付き performedAt と比較するために
+    // その日の末尾 (23:59:59.999Z) に正規化する
+    const normalizedDateFrom = query?.dateFrom;
+    const normalizedDateTo =
+      query?.dateTo && /^\d{4}-\d{2}-\d{2}$/.test(query.dateTo)
+        ? `${query.dateTo}T23:59:59.999Z`
+        : query?.dateTo;
+
     const allTests = db.tests.getAll().filter((t) => {
-      if (query?.dateFrom && t.performedAt < query.dateFrom) return false;
-      if (query?.dateTo && t.performedAt > query.dateTo) return false;
+      if (normalizedDateFrom && t.performedAt < normalizedDateFrom) return false;
+      if (normalizedDateTo && t.performedAt > normalizedDateTo) return false;
       if (query?.customerId) {
         const spec = specimenById.get(t.specimenId);
         if (!spec) return false;
@@ -130,6 +138,8 @@ export const createMockTestRepository = (): TestRepository => ({
         existing.count += 1;
         if (!existing.latestPerformedAt || t.performedAt > existing.latestPerformedAt) {
           existing.latestPerformedAt = t.performedAt;
+          // 代表温度は「最新試験の温度」を反映する
+          existing.representativeTemperature = tempC;
         }
         if (!existing.atmospheres.includes(t.condition.atmosphere)) {
           existing.atmospheres.push(t.condition.atmosphere);

@@ -49,11 +49,15 @@ export const generateProjects = (input: GenerateProjectsInput): Project[] => {
   const threeYearsMs = 3 * 365 * 24 * 60 * 60 * 1000;
 
   const projects: Project[] = [];
+  const seqByYear = new Map<number, number>();
   for (let i = 0; i < count; i++) {
     const customer = faker.helpers.arrayElement(customers);
     const started = new Date(now - Math.floor(faker.number.float({ min: 0, max: 1 }) * threeYearsMs));
     const year = started.getFullYear();
-    const seq = String(i + 1).padStart(4, '0');
+    // 年単位で連番をリセットする（IIC-YYYY-NNNN のコード体系と整合させる）
+    const nextSeq = (seqByYear.get(year) ?? 0) + 1;
+    seqByYear.set(year, nextSeq);
+    const seq = String(nextSeq).padStart(4, '0');
     const code = `IIC-${year}-${seq}`;
 
     const status = pickWeighted(() => faker.number.float({ min: 0, max: 1 }), STATUS_WEIGHTS);
@@ -84,7 +88,10 @@ export const generateProjects = (input: GenerateProjectsInput): Project[] => {
       '新材料採用に向けた特性評価',
       '規格適合性確認試験',
     ];
-    const title = `${customer.name.split('株式会社')[0]} ${faker.helpers.arrayElement(titleTemplates)}`;
+    // 「株式会社○○」「○○株式会社」いずれの表記でも、先頭空白や空プレフィックスを発生させない
+    const customerShortName =
+      customer.name.replace(/株式会社/g, '').trim() || customer.name;
+    const title = `${customerShortName} ${faker.helpers.arrayElement(titleTemplates)}`;
 
     projects.push({
       id: `prj_${String(i + 1).padStart(4, '0')}`,

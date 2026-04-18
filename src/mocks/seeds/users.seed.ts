@@ -12,7 +12,7 @@ const defs: Array<Pick<User, 'id' | 'name' | 'email' | 'role'>> = [
   { id: 'usr_eng_003', name: '伊藤 拓也', email: 'ito@matlens.example.jp', role: 'engineer' },
   { id: 'usr_op_001', name: '山本 亮介', email: 'yamamoto@matlens.example.jp', role: 'operator' },
   { id: 'usr_op_002', name: '中村 彩', email: 'nakamura@matlens.example.jp', role: 'operator' },
-  { id: 'usr_admin', name: '管理者', email: 'admin@matlens.example.jp', role: 'admin' },
+  { id: 'usr_admin_001', name: '管理者', email: 'admin@matlens.example.jp', role: 'admin' },
 ];
 
 export const seedUsers = (): User[] =>

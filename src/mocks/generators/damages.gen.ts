@@ -47,9 +47,8 @@ export const generateDamages = (input: GenerateDamagesInput): DamageFinding[] =>
   if (completedTests.length === 0) return [];
 
   const damages: DamageFinding[] = [];
-  const target = Math.min(count, completedTests.length);
-
-  for (let i = 0; i < target; i++) {
+  // count 件を生成。元テスト数が不足する場合は巡回させて利用する
+  for (let i = 0; i < count; i++) {
     const test = completedTests[i % completedTests.length]!;
     const type = faker.helpers.arrayElement(DAMAGE_TYPES);
     const engineer = faker.helpers.arrayElement(engineers);

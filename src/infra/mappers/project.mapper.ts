@@ -3,9 +3,9 @@
 import type {
   CreateProjectInput,
   Project,
-  ProjectStatus,
   UpdateProjectInput,
 } from '@/domain/types';
+import { ProjectStatusSchema } from '@/domain/schemas/project.schema';
 import type {
   CreateProjectDTO,
   ProjectDTO,
@@ -21,7 +21,8 @@ export const projectMapper = {
       title: dto.title,
       customerId: dto.customer_id,
       industryTagIds: dto.industry_tag_ids,
-      status: dto.status as ProjectStatus,
+      // 外部 DTO の status は Zod で検証し、未知値を早期に失敗させる
+      status: ProjectStatusSchema.parse(dto.status),
       startedAt: dto.started_at,
       dueAt: dto.due_at,
       completedAt: dto.completed_at,
