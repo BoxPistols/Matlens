@@ -7,3 +7,4 @@ export * from './test';
 export * from './material';
 export * from './standard';
 export * from './damage';
+export * from './cutting';

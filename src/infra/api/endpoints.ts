@@ -48,3 +48,18 @@ export const dashboardEndpoints = {
   activity: `${API_PREFIX}/dashboard/activity`,
   atRiskProjects: `${API_PREFIX}/dashboard/at-risk-projects`,
 } as const;
+
+export const toolEndpoints = {
+  list: `${API_PREFIX}/tools`,
+  create: `${API_PREFIX}/tools`,
+  detail: (id: string) => `${API_PREFIX}/tools/${id}`,
+} as const;
+
+export const cuttingProcessEndpoints = {
+  list: `${API_PREFIX}/cutting-processes`,
+  create: `${API_PREFIX}/cutting-processes`,
+  detail: (id: string) => `${API_PREFIX}/cutting-processes/${id}`,
+  bySpecimen: (specimenId: string) =>
+    `${API_PREFIX}/specimens/${specimenId}/cutting-processes`,
+  waveforms: (id: string) => `${API_PREFIX}/cutting-processes/${id}/waveforms`,
+} as const;

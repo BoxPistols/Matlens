@@ -4,6 +4,7 @@
 
 import type {
   CustomerRepository,
+  CuttingProcessRepository,
   DamageRepository,
   MaterialRepository,
   ProjectRepository,
@@ -12,6 +13,7 @@ import type {
   StandardRepository,
   TestRepository,
   TestTypeRepository,
+  ToolRepository,
 } from './interfaces';
 
 import {
@@ -24,6 +26,8 @@ import {
   createMockCustomerRepository,
   createMockDamageRepository,
   createMockSearchRepository,
+  createMockToolRepository,
+  createMockCuttingProcessRepository,
 } from './mock';
 
 export type BackendMode = 'mock' | 'rest' | 'graphql';
@@ -38,6 +42,8 @@ export interface RepositoryContainer {
   customers: CustomerRepository;
   damage: DamageRepository;
   search: SearchRepository;
+  tools: ToolRepository;
+  cuttingProcesses: CuttingProcessRepository;
 }
 
 const createMockRepositories = (): RepositoryContainer => ({
@@ -50,6 +56,8 @@ const createMockRepositories = (): RepositoryContainer => ({
   customers: createMockCustomerRepository(),
   damage: createMockDamageRepository(),
   search: createMockSearchRepository(),
+  tools: createMockToolRepository(),
+  cuttingProcesses: createMockCuttingProcessRepository(),
 });
 
 export const createRepositories = (mode: BackendMode): RepositoryContainer => {

@@ -3,6 +3,7 @@
 // faker や generators は本番バンドルには含まれない。
 
 import type {
+  CuttingProcess,
   Customer,
   DamageFinding,
   ID,
@@ -12,7 +13,9 @@ import type {
   Standard,
   Test,
   TestType,
+  Tool,
   User,
+  WaveformSample,
 } from '@/domain/types';
 
 import customersJson from './fixtures/customers.json';
@@ -24,6 +27,9 @@ import projectsJson from './fixtures/projects.json';
 import specimensJson from './fixtures/specimens.json';
 import testsJson from './fixtures/tests.json';
 import damagesJson from './fixtures/damages.json';
+import toolsJson from './fixtures/tools.json';
+import cuttingProcessesJson from './fixtures/cuttingProcesses.json';
+import waveformsJson from './fixtures/waveforms.json';
 
 class InMemoryTable<T extends { id: ID }> {
   private items = new Map<ID, T>();
@@ -76,6 +82,9 @@ export interface MockDatabase {
   specimens: InMemoryTable<Specimen>;
   tests: InMemoryTable<Test>;
   damages: InMemoryTable<DamageFinding>;
+  tools: InMemoryTable<Tool>;
+  cuttingProcesses: InMemoryTable<CuttingProcess>;
+  waveforms: InMemoryTable<WaveformSample>;
 }
 
 let _database: MockDatabase | null = null;
@@ -93,6 +102,9 @@ export const getMockDatabase = (): MockDatabase => {
     specimens: new InMemoryTable(specimensJson as Specimen[]),
     tests: new InMemoryTable(testsJson as Test[]),
     damages: new InMemoryTable(damagesJson as DamageFinding[]),
+    tools: new InMemoryTable(toolsJson as Tool[]),
+    cuttingProcesses: new InMemoryTable(cuttingProcessesJson as CuttingProcess[]),
+    waveforms: new InMemoryTable(waveformsJson as WaveformSample[]),
   };
 
   return _database;
