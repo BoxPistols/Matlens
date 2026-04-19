@@ -1,0 +1,342 @@
+[
+  {
+    "id": "mat_sus304",
+    "designation": "SUS304",
+    "category": "stainless",
+    "composition": [
+      {
+        "element": "Fe",
+        "wtPercent": 70
+      },
+      {
+        "element": "Cr",
+        "wtPercent": 18
+      },
+      {
+        "element": "Ni",
+        "wtPercent": 8
+      },
+      {
+        "element": "C",
+        "wtPercent": 0.08
+      }
+    ],
+    "standardRefs": [
+      "std_jis_g4305"
+    ],
+    "properties": {
+      "density": 7.93,
+      "meltingPoint": 1450,
+      "youngsModulus": 193,
+      "yieldStrength": 205
+    },
+    "description": "オーステナイト系ステンレス鋼、汎用耐食材料",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_sus316l",
+    "designation": "SUS316L",
+    "category": "stainless",
+    "composition": [
+      {
+        "element": "Fe",
+        "wtPercent": 66
+      },
+      {
+        "element": "Cr",
+        "wtPercent": 17
+      },
+      {
+        "element": "Ni",
+        "wtPercent": 12
+      },
+      {
+        "element": "Mo",
+        "wtPercent": 2.2
+      }
+    ],
+    "standardRefs": [
+      "std_jis_g4305",
+      "std_astm_a240"
+    ],
+    "properties": {
+      "density": 7.98,
+      "meltingPoint": 1400,
+      "youngsModulus": 193,
+      "yieldStrength": 170
+    },
+    "description": "モリブデン添加、高耐食オーステナイト系ステンレス鋼",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_s45c",
+    "designation": "S45C",
+    "category": "steel",
+    "composition": [
+      {
+        "element": "Fe",
+        "wtPercent": 98
+      },
+      {
+        "element": "C",
+        "wtPercent": 0.45
+      },
+      {
+        "element": "Mn",
+        "wtPercent": 0.7
+      }
+    ],
+    "standardRefs": [
+      "std_jis_g4051"
+    ],
+    "properties": {
+      "density": 7.85,
+      "meltingPoint": 1520,
+      "youngsModulus": 205,
+      "yieldStrength": 490
+    },
+    "description": "機械構造用炭素鋼、一般用途",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_scm440",
+    "designation": "SCM440",
+    "category": "steel",
+    "composition": [
+      {
+        "element": "Fe",
+        "wtPercent": 97
+      },
+      {
+        "element": "C",
+        "wtPercent": 0.4
+      },
+      {
+        "element": "Cr",
+        "wtPercent": 1
+      },
+      {
+        "element": "Mo",
+        "wtPercent": 0.2
+      }
+    ],
+    "standardRefs": [
+      "std_jis_g4053"
+    ],
+    "properties": {
+      "density": 7.85,
+      "youngsModulus": 205,
+      "yieldStrength": 785
+    },
+    "description": "クロムモリブデン鋼、軸・歯車部品向け",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_ti6al4v",
+    "designation": "Ti-6Al-4V",
+    "category": "titanium",
+    "composition": [
+      {
+        "element": "Ti",
+        "wtPercent": 90
+      },
+      {
+        "element": "Al",
+        "wtPercent": 6
+      },
+      {
+        "element": "V",
+        "wtPercent": 4
+      }
+    ],
+    "standardRefs": [
+      "std_astm_b265"
+    ],
+    "properties": {
+      "density": 4.43,
+      "meltingPoint": 1660,
+      "youngsModulus": 114,
+      "yieldStrength": 880
+    },
+    "description": "α+β型チタン合金、航空宇宙・医療",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_inconel718",
+    "designation": "Inconel 718",
+    "category": "nickel_alloy",
+    "composition": [
+      {
+        "element": "Ni",
+        "wtPercent": 53
+      },
+      {
+        "element": "Cr",
+        "wtPercent": 19
+      },
+      {
+        "element": "Fe",
+        "wtPercent": 18
+      },
+      {
+        "element": "Nb",
+        "wtPercent": 5
+      }
+    ],
+    "standardRefs": [
+      "std_astm_b637"
+    ],
+    "properties": {
+      "density": 8.19,
+      "meltingPoint": 1336,
+      "youngsModulus": 200,
+      "yieldStrength": 1036
+    },
+    "description": "耐熱Ni基合金、ガスタービン・ジェットエンジン用",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_a5052",
+    "designation": "A5052",
+    "category": "aluminum",
+    "composition": [
+      {
+        "element": "Al",
+        "wtPercent": 97
+      },
+      {
+        "element": "Mg",
+        "wtPercent": 2.5
+      }
+    ],
+    "standardRefs": [
+      "std_jis_h4000"
+    ],
+    "properties": {
+      "density": 2.68,
+      "meltingPoint": 650,
+      "youngsModulus": 70,
+      "yieldStrength": 195
+    },
+    "description": "Al-Mg系合金、中強度・耐食性",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_a7075",
+    "designation": "A7075",
+    "category": "aluminum",
+    "composition": [
+      {
+        "element": "Al",
+        "wtPercent": 90
+      },
+      {
+        "element": "Zn",
+        "wtPercent": 5.6
+      },
+      {
+        "element": "Mg",
+        "wtPercent": 2.5
+      },
+      {
+        "element": "Cu",
+        "wtPercent": 1.6
+      }
+    ],
+    "standardRefs": [
+      "std_jis_h4000"
+    ],
+    "properties": {
+      "density": 2.81,
+      "meltingPoint": 635,
+      "youngsModulus": 72,
+      "yieldStrength": 503
+    },
+    "description": "超々ジュラルミン、航空機構造用",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_c1100",
+    "designation": "C1100",
+    "category": "copper",
+    "composition": [
+      {
+        "element": "Cu",
+        "wtPercent": 99.9
+      }
+    ],
+    "standardRefs": [
+      "std_jis_h3100"
+    ],
+    "properties": {
+      "density": 8.94,
+      "meltingPoint": 1083,
+      "youngsModulus": 117,
+      "yieldStrength": 69
+    },
+    "description": "タフピッチ銅、導電材料",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_peek",
+    "designation": "PEEK",
+    "category": "polymer",
+    "composition": [],
+    "standardRefs": [],
+    "properties": {
+      "density": 1.32,
+      "meltingPoint": 343,
+      "youngsModulus": 3.6
+    },
+    "description": "高性能熱可塑性樹脂、耐熱・耐薬品",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_cfrp",
+    "designation": "CFRP (T700/エポキシ)",
+    "category": "composite",
+    "composition": [],
+    "standardRefs": [],
+    "properties": {
+      "density": 1.6,
+      "youngsModulus": 135
+    },
+    "description": "炭素繊維強化プラスチック、航空宇宙・スポーツ",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  },
+  {
+    "id": "mat_al2o3",
+    "designation": "Al2O3 (高純度アルミナ)",
+    "category": "ceramic",
+    "composition": [
+      {
+        "element": "Al",
+        "wtPercent": 53
+      },
+      {
+        "element": "O",
+        "wtPercent": 47
+      }
+    ],
+    "standardRefs": [],
+    "properties": {
+      "density": 3.95,
+      "meltingPoint": 2072,
+      "youngsModulus": 380
+    },
+    "description": "高純度アルミナセラミックス、絶縁・耐熱",
+    "createdAt": "2025-12-31T15:00:00.000Z",
+    "updatedAt": "2025-12-31T15:00:00.000Z"
+  }
+]
