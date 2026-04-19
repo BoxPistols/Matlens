@@ -17,12 +17,16 @@ describe('createMockCuttingProcessRepository', () => {
 
   it('findBySpecimen() は指定 specimen に紐づくプロセスを全件返す', async () => {
     const repo = createMockCuttingProcessRepository();
-    const anyProcess = getMockDatabase().cuttingProcesses.getAll()[0];
+    // 固定 seed なので specimenId を持つプロセスが必ず存在する前提で検証する
+    const anyProcess = getMockDatabase()
+      .cuttingProcesses.getAll()
+      .find((p) => p.specimenId !== null);
     expect(anyProcess).toBeDefined();
-    if (!anyProcess || anyProcess.specimenId === null) return;
-    const results = await repo.findBySpecimen(anyProcess.specimenId);
+    expect(anyProcess?.specimenId).not.toBeNull();
+    const specimenId = anyProcess!.specimenId!;
+    const results = await repo.findBySpecimen(specimenId);
     expect(results.length).toBeGreaterThan(0);
-    expect(results.every((p) => p.specimenId === anyProcess.specimenId)).toBe(true);
+    expect(results.every((p) => p.specimenId === specimenId)).toBe(true);
   });
 
   it('filter.chatterDetected=true でびびり発生のみ抽出できる', async () => {
@@ -49,13 +53,14 @@ describe('createMockCuttingProcessRepository', () => {
 
   it('waveforms() は波形が存在するプロセスについて配列を返す', async () => {
     const repo = createMockCuttingProcessRepository();
+    // 固定 seed では waveformProbability で必ず 1 件以上生成される前提
     const withWaveform = getMockDatabase()
       .cuttingProcesses.getAll()
       .find((p) => p.waveformIds.length > 0);
-    if (!withWaveform) return; // モック側で 0 本になっているケースはスキップ
-    const waves = await repo.waveforms(withWaveform.id);
+    expect(withWaveform).toBeDefined();
+    const waves = await repo.waveforms(withWaveform!.id);
     expect(waves.length).toBeGreaterThan(0);
-    expect(waves.every((w) => w.processId === withWaveform.id)).toBe(true);
+    expect(waves.every((w) => w.processId === withWaveform!.id)).toBe(true);
   });
 
   it('create() + findById() でラウンドトリップできる', async () => {

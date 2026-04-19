@@ -1,7 +1,6 @@
 // 切削工具マスタ seed
 // エンドミル / フライスカッター / 旋削インサート / ドリル 等の代表品を手動定義。
-// 参考: Sandvik Coromant / Mitsubishi Materials / Kyocera SGS 公開カタログの典型値。
-// 実在企業名は出さず、vendor は中立カテゴリ表記にする。
+// 公開カタログ等に見られる典型値を参考に抽象化し、vendor は中立カテゴリ表記にする。
 
 import type { Tool } from '@/domain/types';
 
@@ -252,6 +251,8 @@ const defs: Array<Omit<Tool, 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedB
 export const seedTools = (): Tool[] =>
   defs.map((d) => ({
     ...d,
+    // applicableMaterials は浅いコピーで外部から汚染されないよう切り離す
+    applicableMaterials: [...d.applicableMaterials],
     createdAt: t(),
     updatedAt: t(),
     createdBy: 'usr_admin_001',

@@ -4,6 +4,20 @@ import { getMockDatabase } from '@/mocks/database';
 import { nanoid } from 'nanoid';
 import type { ToolQuery, ToolRepository } from '../interfaces/tool.repo';
 
+const applySort = (items: Tool[], query?: ToolQuery): Tool[] => {
+  if (!query?.sort) return items;
+  const { field, order } = query.sort;
+  const sign = order === 'asc' ? 1 : -1;
+  return [...items].sort((a, b) => {
+    const av = a[field];
+    const bv = b[field];
+    if (av === bv) return 0;
+    if (av === null || av === undefined) return 1;
+    if (bv === null || bv === undefined) return -1;
+    return av > bv ? sign : -sign;
+  });
+};
+
 const matchFilter = (tool: Tool, query?: ToolQuery): boolean => {
   const f = query?.filter;
   if (!f) return true;
@@ -28,8 +42,9 @@ const matchFilter = (tool: Tool, query?: ToolQuery): boolean => {
 export const createMockToolRepository = (): ToolRepository => ({
   async list(query) {
     await delay(80);
-    const all = getMockDatabase().tools.getAll().filter((t) => matchFilter(t, query));
-    return paginate(all, query?.page ?? 1, query?.pageSize ?? 24);
+    const filtered = getMockDatabase().tools.getAll().filter((t) => matchFilter(t, query));
+    const sorted = applySort(filtered, query);
+    return paginate(sorted, query?.page ?? 1, query?.pageSize ?? 24);
   },
 
   async findById(id) {

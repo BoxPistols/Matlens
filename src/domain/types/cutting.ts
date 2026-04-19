@@ -53,7 +53,7 @@ export interface Tool extends AuditInfo {
   type: ToolType;
   material: ToolMaterial;
   coating: string | null; // 例: AlTiN / TiAlN / DLC
-  diameter: number; // mm (インサートの場合は刃先 R）
+  diameter: number; // 直径または代表寸法 (mm、インサートは呼び寸法 / IC)
   fluteCount: number | null; // 刃数（インサートは null）
   rakeAngle: number | null; // すくい角 (deg)
   reliefAngle: number | null; // 逃げ角 (deg)
@@ -71,17 +71,17 @@ export interface CreateToolInput {
   nameEn: string;
   type: ToolType;
   material: ToolMaterial;
-  coating?: string;
+  coating?: string | null;
   diameter: number;
-  fluteCount?: number;
-  rakeAngle?: number;
-  reliefAngle?: number;
-  helixAngle?: number;
-  cornerRadius?: number;
-  maxDepthOfCut?: number;
+  fluteCount?: number | null;
+  rakeAngle?: number | null;
+  reliefAngle?: number | null;
+  helixAngle?: number | null;
+  cornerRadius?: number | null;
+  maxDepthOfCut?: number | null;
   applicableMaterials?: ID[];
-  vendor?: string;
-  description?: string;
+  vendor?: string | null;
+  description?: string | null;
 }
 
 export type UpdateToolInput = Partial<CreateToolInput>;
@@ -122,7 +122,7 @@ export interface WaveformSample {
   sampleRateHz: number;
   /**
    * 生波形。ブラウザ上で FFT / 可視化する想定。
-   * バンドル肥大化を避けるため、モックでは 1 本あたり 128〜512 点に抑える。
+   * バンドル肥大化を避けるため、モックでは 1 本あたり最大 128 点に抑える。
    */
   values: number[];
   /** 取得開始時刻（加工開始からの offset ms も notes で保持可） */
@@ -182,15 +182,15 @@ export interface CreateCuttingProcessInput {
   condition: CuttingCondition;
   machiningTimeSec: number;
   cuttingDistanceMm: number;
-  surfaceRoughnessRa?: number;
-  toolWearVB?: number;
-  chatterDetected?: boolean;
-  cuttingForceFc?: number;
-  cuttingTemperatureC?: number;
+  surfaceRoughnessRa?: number | null;
+  toolWearVB?: number | null;
+  chatterDetected?: boolean | null;
+  cuttingForceFc?: number | null;
+  cuttingTemperatureC?: number | null;
   operatorId: ID;
-  machine?: string;
+  machine?: string | null;
   performedAt: ISODateTime;
-  notes?: string;
+  notes?: string | null;
 }
 
 export type UpdateCuttingProcessInput = Partial<CreateCuttingProcessInput>;

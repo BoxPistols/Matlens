@@ -1,6 +1,6 @@
 // 切削プロセス generator
 // specimen を「どう切り出したか」の加工履歴を決定論的に生成する。
-// 波形サンプルは可視化用途のみ想定。1 プロセス 0〜2 本、各 128 点に抑えバンドルを肥大化させない。
+// 波形サンプルは可視化用途のみ想定。1 プロセス 0〜1 本、各 128 点に抑えバンドルを肥大化させない。
 
 import type {
   CuttingCondition,
@@ -134,17 +134,30 @@ export const generateCuttingProcesses = (
         fractionDigits: 2,
       });
       // Vc = π D N / 1000 → N = 1000 Vc / (π D)
+      // NOTE: 旋削ではワークピース径、ミーリングでは有効径を使うのが本来の挙動。
+      // 本モックでは簡易的に tool.diameter を代表寸法として使用し、モック用途として
+      // 現実的なオーダーに収める。実バックエンドでは CuttingCondition に参照径を
+      // 明示するフィールド拡張を検討する。
       const spindleSpeed = Math.round((1000 * cuttingSpeed) / (Math.PI * tool.diameter));
       const widthOfCut =
         operation === 'turning' || operation === 'drilling'
           ? null
           : Number(faker.number.float({ min: tool.diameter * 0.3, max: tool.diameter * 0.8, fractionDigits: 2 }));
 
+      // 旋削・ドリル・リーマ・タップは 1 回転あたりの送り (mm/rev) で表現するのが慣例。
+      // エンドミル / フライス系は 1 刃あたり (mm/tooth) を使う。
+      const feedUnit: CuttingCondition['feedUnit'] =
+        tool.type === 'insert_turning' ||
+        tool.type === 'drill' ||
+        tool.type === 'reamer' ||
+        tool.type === 'tap'
+          ? 'mm/rev'
+          : 'mm/tooth';
+
       const condition: CuttingCondition = {
         cuttingSpeed,
         feed,
-        feedUnit:
-          tool.type === 'insert_turning' ? 'mm/rev' : tool.type === 'drill' ? 'mm/rev' : 'mm/tooth',
+        feedUnit,
         depthOfCut,
         widthOfCut,
         spindleSpeed,

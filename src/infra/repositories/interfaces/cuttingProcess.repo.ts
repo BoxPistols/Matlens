@@ -13,7 +13,7 @@ export interface CuttingProcessFilter {
   specimenId?: ID;
   toolId?: ID;
   materialId?: ID;
-  operation?: MachiningOperation[];
+  operations?: MachiningOperation[];
   /** びびり振動の検出有無でフィルタ */
   chatterDetected?: boolean;
   /** 表面粗さ Ra の上限 (µm) */
