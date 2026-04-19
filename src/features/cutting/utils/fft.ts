@@ -3,11 +3,6 @@
 // 大きな N (>= 8192) が必要になったら、専用ライブラリへの差し替えを検討する。
 
 /**
- * 入力サイズが 2 の冪かどうかを判定。
- */
-const isPowerOfTwo = (n: number): boolean => n > 0 && (n & (n - 1)) === 0;
-
-/**
  * 入力長を次の 2 の冪まで 0 パディングする。in-place の FFT に渡すため。
  */
 const padToPow2 = (values: readonly number[]): number[] => {
@@ -34,8 +29,8 @@ export interface FFTResult {
 export const fft = (values: readonly number[]): FFTResult => {
   const padded = padToPow2(values);
   const n = padded.length;
-  if (!isPowerOfTwo(n) || n < 2) {
-    // N=1 は意味がないので 0 スペクトルを返す
+  // padToPow2 後は n が 2 の冪であることが保証される。n=1 だけが空・単点の退化ケース。
+  if (n < 2) {
     return { re: new Float64Array([padded[0] ?? 0]), im: new Float64Array(1), n };
   }
 
@@ -88,16 +83,18 @@ export const fft = (values: readonly number[]): FFTResult => {
 
 /**
  * FFT 結果から片側振幅スペクトルを得る。
- * 戻り値は長さ N/2 の配列、各値は |X[k]| * 2 / N (DC と Nyquist のみ /N)。
+ * 戻り値は長さ N/2 + 1 の配列（DC から Nyquist まで包含）、
+ * 各値は |X[k]| * 2 / N。ただし DC (k=0) と Nyquist (k=N/2) のみ 1/N。
  */
 export const magnitudeSpectrum = (result: FFTResult): number[] => {
   const { re, im, n } = result;
   const half = n >> 1;
-  const out = new Array<number>(half).fill(0);
-  for (let k = 0; k < half; k++) {
+  const out = new Array<number>(half + 1).fill(0);
+  for (let k = 0; k <= half; k++) {
     const mag = Math.hypot(re[k] ?? 0, im[k] ?? 0);
-    // DC (k=0) と Nyquist はスケーリングを半分にする
-    const scale = k === 0 ? 1 / n : 2 / n;
+    // DC (k=0) と Nyquist (k=N/2) は実数スペクトル側でミラー対を持たないため 1/N、
+    // それ以外はミラー分を足し合わせて 2/N
+    const scale = k === 0 || k === half ? 1 / n : 2 / n;
     out[k] = mag * scale;
   }
   return out;

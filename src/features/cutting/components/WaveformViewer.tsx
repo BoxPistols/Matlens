@@ -1,7 +1,7 @@
 // 波形ビューア。時系列プロット + FFT スペクトル + 基本統計を純 SVG で描画する。
 // 依存ゼロ（自前 FFT を使用）。128 点規模の PoC 用途を想定。
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { WaveformSample } from '@/domain/types';
 import { binFrequency, fft, magnitudeSpectrum } from '../utils/fft';
 
@@ -57,8 +57,16 @@ const CHANNEL_LABEL: Record<WaveformSample['channel'], string> = {
 };
 
 export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
-  const initialChannel = samples[0]?.id ?? '';
-  const [activeId, setActiveId] = useState<string>(initialChannel);
+  const firstSampleId = samples[0]?.id ?? '';
+  const [activeId, setActiveId] = useState<string>(firstSampleId);
+
+  // samples が差し替わったら選択状態をリセットする（前回の activeId が新しい配列に
+  // 含まれないと詳細表示と選択状態が乖離するため）
+  useEffect(() => {
+    if (!samples.some((s) => s.id === activeId)) {
+      setActiveId(firstSampleId);
+    }
+  }, [samples, activeId, firstSampleId]);
 
   const active = samples.find((s) => s.id === activeId) ?? samples[0] ?? null;
 
@@ -216,6 +224,7 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
           viewBox="0 0 560 120"
           width="100%"
           className="block"
+          role="img"
           aria-label={`${CHANNEL_LABEL[active.channel]}の時間波形`}
         >
           <rect
@@ -239,6 +248,7 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
           viewBox="0 0 560 120"
           width="100%"
           className="block"
+          role="img"
           aria-label={`${CHANNEL_LABEL[active.channel]}のスペクトル`}
         >
           <rect
