@@ -50,7 +50,8 @@ export const CuttingConditionsExplorerPage = () => {
     if (opSet.size > 0) filter.operations = Array.from(opSet);
     if (chatter === 'chatter') filter.chatterDetected = true;
     if (chatter === 'stable') filter.chatterDetected = false;
-    return { filter, pageSize: 500 };
+    // 全件俯瞰用途のため、fixture 規模 (1,300 件超) を余裕をもって超える上限を指定する
+    return { filter, pageSize: 2000 };
   }, [materialId, opSet, chatter]);
 
   const {
@@ -61,11 +62,14 @@ export const CuttingConditionsExplorerPage = () => {
   const {
     data: materialsData,
     isLoading: materialsLoading,
+    isError: materialsError,
   } = useCuttingMaterials();
+  // 工具マスタは pageSize を大きめに取り、クライアント側 in-memory フィルタが取り漏らさないようにする
   const {
     data: toolsData,
     isLoading: toolsLoading,
-  } = useTools({ pageSize: 100 });
+    isError: toolsError,
+  } = useTools({ pageSize: 500 });
 
   // 工具種別フィルタはクライアント側（Repository インターフェースが ToolType
   // 配列を受けていないため、PR-1 との互換のため in-memory で絞る）
@@ -78,6 +82,11 @@ export const CuttingConditionsExplorerPage = () => {
       return tool ? toolTypeSet.has(tool.type) : false;
     });
   }, [processesData, toolsData, toolTypeSet]);
+
+  const chatterCount = useMemo(
+    () => filteredProcesses.filter((p) => p.chatterDetected === true).length,
+    [filteredProcesses]
+  );
 
   const selected = selectedId
     ? filteredProcesses.find((p) => p.id === selectedId) ?? null
@@ -110,7 +119,7 @@ export const CuttingConditionsExplorerPage = () => {
     setSelectedId(null);
   };
 
-  if (processesError) {
+  if (processesError || materialsError || toolsError) {
     return (
       <div className="p-6 text-[var(--err,#dc2626)]">
         切削条件の読み込みに失敗しました。時間をおいて再度お試しください。
@@ -125,10 +134,6 @@ export const CuttingConditionsExplorerPage = () => {
       </div>
     );
   }
-
-  const chatterCount = filteredProcesses.filter(
-    (p) => p.chatterDetected === true
-  ).length;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
