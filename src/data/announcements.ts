@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-specimen-tracker',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '試験片トラッカー（カンバン + テーブル）を追加',
+    body: '受入 → 準備 → 試験中 → 試験済 → 保管のライフサイクルを俯瞰する新画面を追加しました。ビューはカンバン / テーブル切替、案件・母材・ステータス・キーワードでフィルタ可能。廃棄はオプションで表示できます。',
+  },
+  {
     id: '2026-04-20-cutting-waveform-viewer',
     date: '2026-04-20',
     type: 'feature',
