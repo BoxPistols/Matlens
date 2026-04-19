@@ -46,6 +46,7 @@ const OverlayPage = lazy(() => import('./pages/Overlay').then(m => ({ default: m
 const MultiModalPage = lazy(() => import('./pages/MultiModal').then(m => ({ default: m.MultiModalPage })));
 const ExperimentDashPage = lazy(() => import('./pages/ExperimentDash').then(m => ({ default: m.ExperimentDashPage })));
 const TestMatrixPage = lazy(() => import('./features/tests/matrix').then(m => ({ default: m.TestMatrixPage })));
+const CuttingConditionsExplorerPage = lazy(() => import('./features/cutting').then(m => ({ default: m.CuttingConditionsExplorerPage })));
 const ProjectListPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectListPage })));
 const ProjectDetailPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectDetailPage })));
 const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ default: m.DamageGalleryPage })));
@@ -231,6 +232,7 @@ export function App() {
       case 'multimodal': return lazyPage(<MultiModalPage db={db} />);
       case 'experiment': return lazyPage(<ExperimentDashPage onNav={navTo} />);
       case 'matrix':  return lazyPage(<TestMatrixPage />);
+      case 'cutting-conditions': return lazyPage(<CuttingConditionsExplorerPage />);
       case 'pjlist':  return lazyPage(<ProjectListPage onNav={navTo} />);
       case 'pjdetail':return lazyPage(<ProjectDetailPage id={detailId!} onBack={() => navTo('pjlist')} onNav={navTo} />);
       case 'damage':  return lazyPage(<DamageGalleryPage />);
