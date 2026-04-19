@@ -49,9 +49,9 @@ describe('ConditionScatter', () => {
     const { container } = render(
       <ConditionScatter processes={processes} selectedId={null} onSelect={() => {}} />
     );
-    const circles = container.querySelectorAll('circle');
-    // 点 3 + 凡例 2 = 5
-    expect(circles.length).toBeGreaterThanOrEqual(processes.length);
+    // 凡例の circle を除くため aria-label 付き（データ点のみ）を対象にする
+    const dataPoints = container.querySelectorAll('circle[aria-label]');
+    expect(dataPoints).toHaveLength(processes.length);
   });
 
   it('点クリックで onSelect が呼ばれる', () => {
