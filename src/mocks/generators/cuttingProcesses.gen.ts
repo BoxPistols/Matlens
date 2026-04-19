@@ -179,10 +179,11 @@ export const generateCuttingProcesses = (
         waveformIds.push(waveId);
       }
 
-      // 工具摩耗 VB は加工距離に Taylor 的に緩やかに増加
-      const cuttingDistanceMm = Math.round(
-        cuttingSpeed * 1000 * (faker.number.float({ min: 0.5, max: 3, fractionDigits: 2 }))
-      );
+      // 工具摩耗 VB は加工距離に Taylor 的に緩やかに増加させる。
+      // cuttingSpeed [m/min] × 1000 = [mm/min] に machiningDurationMin を掛けて mm を算出。
+      // machiningTimeSec も同じ durationMin から導出することで物理的整合を保つ。
+      const machiningDurationMin = faker.number.float({ min: 0.5, max: 3, fractionDigits: 2 });
+      const cuttingDistanceMm = Math.round(cuttingSpeed * 1000 * machiningDurationMin);
       const toolWearVB = Number(
         Math.min(
           0.4,
@@ -206,7 +207,7 @@ export const generateCuttingProcesses = (
         toolId: tool.id,
         operation,
         condition,
-        machiningTimeSec: Math.round(cuttingDistanceMm / (feed * spindleSpeed)),
+        machiningTimeSec: Math.round(machiningDurationMin * 60),
         cuttingDistanceMm,
         surfaceRoughnessRa,
         toolWearVB,

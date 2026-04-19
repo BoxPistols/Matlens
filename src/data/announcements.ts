@@ -17,6 +17,27 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-19-cutting-process-domain',
+    date: '2026-04-19',
+    type: 'feature',
+    title: '切削プロセスドメインの基盤を追加',
+    body: '金属切削加工（転削・旋削）の条件・工具マスタ・時系列波形データを扱うドメイン層を追加しました。工具マスタ 12 件、加工プロセス 1,304 件、波形サンプル 250 件をモックデータとして同梱。UI は次回アップデートで追加予定です。',
+  },
+  {
+    id: '2026-04-19-review-fixes-pr43',
+    date: '2026-04-19',
+    type: 'fix',
+    title: 'レビュー指摘 32 件を一括対応',
+    body: 'PR #43 のレビュー指摘（URL 解決仕様バグ、モック採番衝突、キーボード操作、aria-current 複合キー、MSW 起動失敗の可視化ほか）を一括で修正しました。',
+  },
+  {
+    id: '2026-04-17-phase12-signature-screens',
+    date: '2026-04-17',
+    type: 'feature',
+    title: 'PoC Phase 1/2 — 基盤刷新 + Signature Screens 3 本を追加',
+    body: 'レイヤードアーキテクチャ（domain / infra / mocks / features）、Repository パターン、MSW による API モック化を導入。試験マトリクス・損傷ギャラリー・横断セマンティック検索の 3 画面と、案件一覧・詳細を追加しました。',
+  },
+  {
     id: '2026-04-13-help-guide',
     date: '2026-04-13',
     type: 'feature',

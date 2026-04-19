@@ -50,14 +50,40 @@ AI ベクトル検索と RAG チャット、**自然言語クエリ変換**、**
 | マルチスケールビューア | マクロ〜ミクロの複数スケールを統合表示 |
 | モバイル対応 | サイドバーオーバーレイ、Topbar 設定メニュー、レスポンシブカラム |
 | AI エラーガイダンス | AI 呼び出しエラー時の toast 通知とユーザーガイド |
+| 受託試験 PoC (Signature Screens) | 試験マトリクス / 損傷ギャラリー / 横断セマンティック検索 / 案件一覧・詳細 |
+| 切削プロセスドメイン | 工具マスタ + 加工条件 + 時系列波形。UI は次フェーズで追加予定 |
+
+## アーキテクチャ (Phase 1 以降)
+
+`src/` 直下はレイヤードアーキテクチャで分離されています。
+
+```
+src/
+├── domain/         ドメイン型・Zod スキーマ・定数（外部依存なし）
+├── infra/
+│   ├── api/        fetch ラッパ + エラー正規化 + エンドポイント定数
+│   ├── mappers/    DTO ⇄ Domain 変換（純粋関数）
+│   └── repositories/
+│       ├── interfaces/    Repository インターフェース群
+│       └── mock/          メモリ内実装
+├── mocks/          Seeds + Generators + in-memory DB + MSW handler
+├── app/providers/  RepositoryProvider + QueryProvider
+└── features/       機能単位モジュール（新規 UI はここに追加）
+```
+
+- `VITE_BACKEND_MODE=mock | rest | graphql` で Repository 実装を切替
+- `VITE_MSW_ENABLED=true` で Service Worker が `/api/v1/*` をモックに振替
+- モックデータは `src/mocks/fixtures/*.json` に JSON 固定化（`pnpm mocks:generate` で再生成）
+- **本番バンドルに faker は含まれない**
 
 ## 数値サマリ
 
 | 項目 | 数 |
 |------|-----|
-| ページ数 | 22 |
-| サンプルデータ | 88 件 (金属合金 52, セラミクス 12, ポリマー 14, 複合材料 10) |
-| テスト | 601 件 |
+| ページ数 | 22 (受託試験 PoC Signature Screens 含む) |
+| 材料サンプル | 88 件 (金属合金 52, セラミクス 12, ポリマー 14, 複合材料 10) |
+| モック DB | 顧客 20 / ユーザー 8 / 材料 12 / 規格 22 / 試験種別 15 / 案件 150 / 試験片 861 / 試験 2,558 / 損傷所見 200 / 工具 12 / 加工プロセス 1,304 |
+| テスト | 657 件 |
 | 用語集 | 20+ 用語 |
 
 ## Getting Started
