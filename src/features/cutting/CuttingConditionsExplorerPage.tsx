@@ -11,6 +11,7 @@ import type {
 } from '@/domain/types';
 import type { CuttingProcessQuery } from '@/infra/repositories/interfaces';
 import { ConditionScatter } from './components/ConditionScatter';
+import { WaveformViewer } from './components/WaveformViewer';
 import {
   useCuttingMaterials,
   useCuttingProcesses,
@@ -406,19 +407,10 @@ export const CuttingConditionsExplorerPage = () => {
 
               {waveforms && waveforms.length > 0 && (
                 <div className="border-t border-[var(--border-faint)] pt-3">
-                  <div className="text-[11px] text-[var(--text-lo)] mb-1">
+                  <div className="text-[11px] text-[var(--text-lo)] mb-2">
                     波形サンプル ({waveforms.length} ch)
                   </div>
-                  <ul className="text-[11px] text-[var(--text-md)]">
-                    {waveforms.map((w) => (
-                      <li key={w.id} className="font-mono">
-                        {w.channel} @ {w.sampleRateHz} Hz / {w.values.length} 点
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="text-[11px] text-[var(--text-lo)] mt-1">
-                    波形ビューアは次フェーズで実装予定です。
-                  </div>
+                  <WaveformViewer samples={waveforms} />
                 </div>
               )}
             </div>

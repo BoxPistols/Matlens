@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-cutting-waveform-viewer',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '切削条件エクスプローラに波形ビューアを追加',
+    body: '切削条件エクスプローラで点を選ぶと、紐づく波形を時間領域 + 周波数領域（FFT 片側振幅スペクトル）で表示するようになりました。min / max / 平均 / RMS / 標準偏差 / ピーク周波数の統計値も併記。マルチチャネル対応で、切削抵抗 3 方向や振動・音響をタブで切替できます。',
+  },
+  {
     id: '2026-04-19-cutting-conditions-explorer',
     date: '2026-04-19',
     type: 'feature',
