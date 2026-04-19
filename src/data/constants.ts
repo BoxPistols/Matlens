@@ -30,6 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'matrix', label:'試験マトリクス', labelEn:'Test Matrix', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'damage', label:'損傷ギャラリー', labelEn:'Damage Gallery', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'semsearch', label:'横断検索 (PoC)', labelEn:'Semantic Search (PoC)', icon:'vecSearch', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'cutting-conditions', label:'切削条件エクスプローラ', labelEn:'Cutting Conditions', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
   { section: 'ワークフロー', sectionEn: 'Workflow' },
   { id:'petri',   label:'試験フロー可視化', labelEn:'Workflow Viz', icon:'workflow' },
   { id:'bayes',   label:'ベイズ最適化',    labelEn:'Bayesian Opt', icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
@@ -643,6 +644,35 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Check alongside dashboard charts for a complete management overview',
     ],
     related: ['dash', 'list'],
+  },
+  {
+    id: 'cutting-conditions', icon: 'scan',
+    title: '切削条件エクスプローラ', titleEn: 'Cutting Conditions Explorer',
+    summary: '過去の切削加工を切削速度 (Vc) × 送り (f) の散布図で俯瞰し、びびり振動の発生点と安定点を見比べながら次条件の当たりをつける PoC 画面です。',
+    summaryEn: 'Browse past machining operations on a cutting speed (Vc) × feed (f) scatter plot. Compare chatter vs stable points to narrow down next conditions.',
+    features: [
+      'Vc × f の散布図（びびり検出ありは赤、安定は青で色分け）',
+      '母材 / 加工種別 / 工具種別 / びびり有無のファセットフィルタ',
+      '点クリック→工具詳細・切削条件・代表値・波形概要を右ペインに表示',
+      'Stability Lobe の概念曲線を破線でオーバーレイ（厳密化は後続）',
+    ],
+    featuresEn: [
+      'Vc × f scatter plot (red = chatter detected, blue = stable)',
+      'Facet filters by material, operation, tool type, and chatter presence',
+      'Click a point to see tool detail, cutting condition, representative values, and waveform summary in the right pane',
+      'Overlays a dashed stability lobe concept curve (to be formalized in a follow-up)',
+    ],
+    tips: [
+      '点をクリックで選択、もう一度クリックで解除',
+      'びびりが多い領域は母材や工具コーティングとの組み合わせで傾向を確認',
+      '波形ビューアは次フェーズで追加予定',
+    ],
+    tipsEn: [
+      'Click a point to select, click again to deselect',
+      'Check chatter-heavy regions together with material and tool coating combinations',
+      'A waveform viewer will be added in the next phase',
+    ],
+    related: ['matrix', 'damage', 'pjlist'],
   },
 ];
 

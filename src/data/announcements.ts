@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-19-cutting-conditions-explorer',
+    date: '2026-04-19',
+    type: 'feature',
+    title: '切削条件エクスプローラを追加',
+    body: '切削速度 × 送りの散布図で過去加工を俯瞰し、びびり検出有無で色分け表示。母材 / 加工種別 / 工具種別 / びびり有無のフィルタ、点選択で工具・代表値・波形概要を右ペインに表示します。サイドバー「受託試験 (PoC)」から開けます。',
+  },
+  {
     id: '2026-04-19-cutting-process-domain',
     date: '2026-04-19',
     type: 'feature',
