@@ -2,7 +2,7 @@
 // Kanban / Table 2 ビュー切替 + 案件・母材・ステータス・キーワードフィルタ。
 // 上部に KPI（各ステータス件数）を表示し、今週到着分を目立たせる。
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ID, SpecimenStatus } from '@/domain/types';
 import type { SpecimenQuery } from '@/infra/repositories/interfaces';
 import { SpecimenKanban } from './components/SpecimenKanban';
@@ -30,17 +30,25 @@ export const SpecimenTrackerPage = () => {
   const [materialId, setMaterialId] = useState<string>('');
   const [statusSet, setStatusSet] = useState<Set<SpecimenStatus>>(new Set());
   const [search, setSearch] = useState<string>('');
+  // 入力毎のクエリ発火を抑えるため、debounce した値を Repository へ渡す
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [selectedId, setSelectedId] = useState<ID | null>(null);
   const [includeDiscarded, setIncludeDiscarded] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 200);
+    return () => clearTimeout(t);
+  }, [search]);
 
   const query = useMemo<SpecimenQuery>(() => {
     const filter: SpecimenQuery['filter'] = {};
     if (projectId) filter.projectId = projectId;
     if (materialId) filter.materialId = materialId;
     if (statusSet.size > 0) filter.status = Array.from(statusSet);
-    if (search.trim()) filter.search = search.trim();
-    return { filter, pageSize: 500 };
-  }, [projectId, materialId, statusSet, search]);
+    if (debouncedSearch.trim()) filter.search = debouncedSearch.trim();
+    // 試験片総数 (fixture 861 件) を一括俯瞰できるよう余裕をもって 1000 とする
+    return { filter, pageSize: 1000 };
+  }, [projectId, materialId, statusSet, debouncedSearch]);
 
   const {
     data: specimensData,
@@ -57,6 +65,29 @@ export const SpecimenTrackerPage = () => {
     isLoading: materialsLoading,
     isError: materialsError,
   } = useMaterialsIndex();
+
+  // 廃棄表示は「includeDiscarded トグル」または「ステータスフィルタで廃棄を選択」のいずれかで有効
+  const specimens = useMemo(() => {
+    if (!specimensData) return [];
+    const showDiscarded = includeDiscarded || statusSet.has('discarded');
+    return showDiscarded
+      ? specimensData.items
+      : specimensData.items.filter((s) => s.status !== 'discarded');
+  }, [specimensData, includeDiscarded, statusSet]);
+
+  const projectOptions = useMemo(() => {
+    if (!projectsById) return [];
+    return Array.from(projectsById.values()).sort((a, b) =>
+      a.code > b.code ? 1 : -1
+    );
+  }, [projectsById]);
+
+  const materialOptions = useMemo(() => {
+    if (!materialsById) return [];
+    return Array.from(materialsById.values()).sort((a, b) =>
+      a.designation > b.designation ? 1 : -1
+    );
+  }, [materialsById]);
 
   const statusCounts = useMemo(() => {
     const base: Record<SpecimenStatus, number> = {
@@ -97,19 +128,6 @@ export const SpecimenTrackerPage = () => {
       </div>
     );
   }
-
-  const specimens = includeDiscarded
-    ? specimensData.items
-    : specimensData.items.filter((s) => s.status !== 'discarded');
-
-  const projectOptions = projectsById
-    ? Array.from(projectsById.values()).sort((a, b) => (a.code > b.code ? 1 : -1))
-    : [];
-  const materialOptions = materialsById
-    ? Array.from(materialsById.values()).sort((a, b) =>
-        a.designation > b.designation ? 1 : -1
-      )
-    : [];
 
   return (
     <div className="flex flex-col h-full overflow-hidden">

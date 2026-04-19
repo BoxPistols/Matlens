@@ -2,6 +2,7 @@
 // ステータス遷移: received → prepared → testing → tested → stored
 // discarded は別列として右端に出す（オプション）。
 
+import { useMemo } from 'react';
 import type {
   ID,
   Material,
@@ -109,11 +110,15 @@ export const SpecimenKanban = ({
   includeDiscarded = false,
 }: SpecimenKanbanProps) => {
   const columns = includeDiscarded ? [...COLUMNS, DISCARDED_COLUMN] : COLUMNS;
-  const bucketed = new Map<SpecimenStatus, Specimen[]>();
-  for (const c of columns) bucketed.set(c.status, []);
-  for (const s of specimens) {
-    bucketed.get(s.status)?.push(s);
-  }
+  // specimens の件数が多いので、ステータス振り分けを再レンダ毎に走らせない
+  const bucketed = useMemo(() => {
+    const map = new Map<SpecimenStatus, Specimen[]>();
+    for (const c of columns) map.set(c.status, []);
+    for (const s of specimens) {
+      map.get(s.status)?.push(s);
+    }
+    return map;
+  }, [specimens, columns]);
 
   return (
     <div
