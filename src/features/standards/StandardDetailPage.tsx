@@ -1,6 +1,7 @@
 // Standards マスタ詳細 (#/std-master-detail/<id>)
 // 発行組織 + コード + タイトル + 関連試験種別 + 準拠材料 + 試験実績件数 を 1 画面に集約。
 
+import { useMemo } from 'react';
 import type { ID } from '@/domain/types';
 import {
   useMaterialsByStandard,
@@ -26,6 +27,16 @@ export const StandardDetailPage = ({
   const materialsByStdQ = useMaterialsByStandard();
   const testCountsQ = useTestCountsByStandard();
 
+  // 関連試験種別は standard の情報が揃ったタイミングで派生させる（hook 順序を守るため
+  // 早期 return より前に配置）。standard 未取得時は空配列で安全にフォールバック。
+  const relatedTestTypes = useMemo(() => {
+    const standard = standardQ.data;
+    if (!standard) return [];
+    return standard.relatedTestTypeIds
+      .map((tid) => testTypesQ.data?.get(tid))
+      .filter((t): t is NonNullable<typeof t> => !!t);
+  }, [standardQ.data, testTypesQ.data]);
+
   if (standardQ.isError) {
     return (
       <div className="p-6">
@@ -50,10 +61,6 @@ export const StandardDetailPage = ({
       </div>
     );
   }
-
-  const relatedTestTypes = standard.relatedTestTypeIds
-    .map((tid) => testTypesQ.data?.get(tid))
-    .filter((t): t is NonNullable<typeof t> => !!t);
 
   const referencingMaterials = materialsByStdQ.data?.get(standard.id) ?? [];
   const testCount = testCountsQ.data?.get(standard.id) ?? 0;

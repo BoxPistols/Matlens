@@ -13,7 +13,9 @@ export const standardsKeys = {
   testCounts: ['standards-test-counts'] as const,
 };
 
-// TODO(stage2): 現状 client 側で全件走査。実 REST では集計エンドポイントへ
+// TODO(stage2): 現状 client 側で全件走査するため、将来 tests が 3000 件を超えると
+// 集計が欠落しうる。実 REST では /api/v1/standards/<id>/tests/count のような
+// 集計エンドポイントに切り出す（dashboard / materials と同方針）。
 const STANDARDS_TEST_PAGE_SIZE = 3000;
 
 export const useStandards = (filter?: StandardFilter) => {
