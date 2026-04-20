@@ -63,8 +63,13 @@ export const computeOpsKpi = (input: {
       new Date(t.performedAt).getTime() >= thirtyDaysAgo.getTime()
   ).length;
 
-  // 異常所見比率: 低確信度以外の損傷所見 / 過去 30 日の完了試験
-  const abnormal = damages.filter((d) => d.confidenceLevel !== 'low').length;
+  // 異常所見比率: 「過去 30 日の低確信度以外の損傷所見」/「過去 30 日の完了試験」
+  // 分子・分母の期間を揃える（揃えないと蓄積分で常に 1.0 に張り付く）。
+  const abnormal = damages.filter(
+    (d) =>
+      d.confidenceLevel !== 'low' &&
+      new Date(d.updatedAt).getTime() >= thirtyDaysAgo.getTime()
+  ).length;
   const ratio = completedTestsLast30Days > 0
     ? Math.min(1, abnormal / completedTestsLast30Days)
     : 0;

@@ -21,7 +21,7 @@ export const useAllProjects = () => {
   return useQuery({
     queryKey: dashboardKeys.projects,
     queryFn: async () => {
-      const page = await projects.list({ pageSize: 500 });
+      const page = await projects.list({ pageSize: DASHBOARD_PROJECT_PAGE_SIZE });
       return page.items;
     },
     staleTime: 60_000,
@@ -33,19 +33,27 @@ export const useAllSpecimens = () => {
   return useQuery({
     queryKey: dashboardKeys.specimens,
     queryFn: async () => {
-      const page = await specimens.list({ pageSize: 1000 });
+      const page = await specimens.list({ pageSize: DASHBOARD_SPECIMEN_PAGE_SIZE });
       return page.items;
     },
     staleTime: 60_000,
   });
 };
 
+// TODO(stage2): 全件走査を Repository の集計専用エンドポイントに置き換える。
+// 現状はモック規模（約 2,500 件）での PoC 用途に限定して pageSize を大きめに取る。
+// 実 REST に差し替える際は /api/v1/dashboard/kpi のような集計 API を別途用意する前提。
+const DASHBOARD_TEST_PAGE_SIZE = 3000;
+const DASHBOARD_SPECIMEN_PAGE_SIZE = 1000;
+const DASHBOARD_PROJECT_PAGE_SIZE = 500;
+const DASHBOARD_DAMAGE_PAGE_SIZE = 500;
+
 export const useAllTests = () => {
   const { tests } = useRepositories();
   return useQuery({
     queryKey: dashboardKeys.tests,
     queryFn: async () => {
-      const page = await tests.list({ pageSize: 3000 });
+      const page = await tests.list({ pageSize: DASHBOARD_TEST_PAGE_SIZE });
       return page.items;
     },
     staleTime: 60_000,
@@ -57,7 +65,7 @@ export const useAllDamages = () => {
   return useQuery({
     queryKey: dashboardKeys.damages,
     queryFn: async () => {
-      const page = await damage.list({ pageSize: 500 });
+      const page = await damage.list({ pageSize: DASHBOARD_DAMAGE_PAGE_SIZE });
       return page.items;
     },
     staleTime: 60_000,
@@ -69,7 +77,7 @@ export const useProjectsIndex = () => {
   return useQuery({
     queryKey: dashboardKeys.projectsIndex,
     queryFn: async () => {
-      const page = await projects.list({ pageSize: 500 });
+      const page = await projects.list({ pageSize: DASHBOARD_PROJECT_PAGE_SIZE });
       return new Map<ID, Project>(page.items.map((p) => [p.id, p]));
     },
     staleTime: 5 * 60_000,
