@@ -18,30 +18,34 @@ import {
 
 interface OpsDashboardPageProps {
   onNav?: (page: string) => void;
+  /**
+   * KPI の基準時刻。テストやモック環境で固定値を注入するために使う。
+   * 省略時は実行時の現在時刻（`new Date()`）。
+   * 現在のモック fixture に合わせて固定で見たい場合は `new Date('2026-04-20T00:00:00+09:00')` を渡す。
+   */
+  referenceNow?: Date;
 }
 
-export const OpsDashboardPage = ({ onNav }: OpsDashboardPageProps) => {
+export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps) => {
   const projectsQ = useAllProjects();
   const specimensQ = useAllSpecimens();
   const testsQ = useAllTests();
   const damagesQ = useAllDamages();
+  // 顧客名はリスク行の表示のみに使う副次情報。取得失敗でもダッシュボード全体はブロックしない。
   const customersQ = useCustomersIndex();
 
   const isLoading =
     projectsQ.isLoading ||
     specimensQ.isLoading ||
     testsQ.isLoading ||
-    damagesQ.isLoading ||
-    customersQ.isLoading;
+    damagesQ.isLoading;
   const isError =
     projectsQ.isError ||
     specimensQ.isError ||
     testsQ.isError ||
-    damagesQ.isError ||
-    customersQ.isError;
+    damagesQ.isError;
 
-  // KPI は固定基準時刻を使って決定論的に（フィクスチャの時系列に合わせる）
-  const now = useMemo(() => new Date('2026-04-20T00:00:00+09:00'), []);
+  const now = useMemo(() => referenceNow ?? new Date(), [referenceNow]);
 
   const kpi = useMemo(() => {
     if (!projectsQ.data || !specimensQ.data || !testsQ.data || !damagesQ.data) {
@@ -109,9 +113,9 @@ export const OpsDashboardPage = ({ onNav }: OpsDashboardPageProps) => {
               delta={`全 ${kpi.totalProjects} 件中`}
             />
             <KpiCard
-              label="期限 7 日以内の試験片"
-              value={kpi.dueSoonSpecimens}
-              delta="受入 / 準備 中で進行中案件のもの"
+              label="要アクションの試験片"
+              value={kpi.pendingSpecimens}
+              delta="進行中案件の 受入 / 準備 中"
               color="var(--accent, #2563eb)"
             />
             <KpiCard

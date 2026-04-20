@@ -97,19 +97,19 @@ const makeDamage = (
 });
 
 describe('computeOpsKpi', () => {
-  it('進行中案件・期限の近い試験片・最近の完了試験・異常所見比率を集計する', () => {
+  it('進行中案件・要アクション試験片・最近の完了試験・異常所見比率を集計する', () => {
     const projects = [
       makeProject({ id: 'a', status: 'in_progress' }),
       makeProject({ id: 'b', status: 'reviewing' }),
       makeProject({ id: 'c', status: 'completed' }),
     ];
     const specimens = [
-      // 進行中案件 a、受入中、受入日が翌週以内 → カウント対象
+      // 進行中案件 a、受入中 → 要アクション
       makeSpecimen({ id: 's1', projectId: 'a', status: 'received', receivedAt: '2026-04-20' }),
       // 進行中だがステータスが stored → 対象外
       makeSpecimen({ id: 's2', projectId: 'a', status: 'stored', receivedAt: '2026-04-20' }),
-      // 受入日が遠い未来 → 対象外
-      makeSpecimen({ id: 's3', projectId: 'a', status: 'prepared', receivedAt: '2027-01-01' }),
+      // 進行中案件の prepared → 要アクション（受入日が古くても滞留として拾う）
+      makeSpecimen({ id: 's3', projectId: 'a', status: 'prepared', receivedAt: '2025-01-01' }),
     ];
     const tests = [
       makeTest({ id: 't1', status: 'completed', performedAt: '2026-04-10T10:00:00Z' }),
@@ -118,17 +118,28 @@ describe('computeOpsKpi', () => {
       makeTest({ id: 't3', status: 'scheduled', performedAt: '2026-04-10T10:00:00Z' }),
     ];
     const damages = [
-      makeDamage({ id: 'd1', confidenceLevel: 'high', updatedAt: '2026-04-10T10:00:00Z' }),
+      // 過去 30 日 / 非 low / 完了試験 t1 に紐づく → 分子にカウント
+      makeDamage({ id: 'd1', testId: 't1', confidenceLevel: 'high', updatedAt: '2026-04-10T10:00:00Z' }),
       // low は除外
-      makeDamage({ id: 'd2', confidenceLevel: 'low', updatedAt: '2026-04-10T10:00:00Z' }),
+      makeDamage({ id: 'd2', testId: 't1', confidenceLevel: 'low', updatedAt: '2026-04-10T10:00:00Z' }),
     ];
 
     const kpi = computeOpsKpi({ projects, specimens, tests, damages, now: NOW });
     expect(kpi.activeProjects).toBe(2);
     expect(kpi.totalProjects).toBe(3);
-    expect(kpi.dueSoonSpecimens).toBe(1);
+    expect(kpi.pendingSpecimens).toBe(2); // s1 + s3
     expect(kpi.completedTestsLast30Days).toBe(1);
-    expect(kpi.abnormalFindingRatio).toBe(1); // 1 / 1
+    expect(kpi.abnormalFindingRatio).toBe(1); // 1 unique testId / 1 completed test
+  });
+
+  it('同一試験に複数所見があっても分子は 1 として数える（unique testId ベース）', () => {
+    const tests = [makeTest({ id: 't1', status: 'completed', performedAt: '2026-04-10T10:00:00Z' })];
+    const damages = [
+      makeDamage({ id: 'd1', testId: 't1', confidenceLevel: 'high', updatedAt: '2026-04-10T10:00:00Z' }),
+      makeDamage({ id: 'd2', testId: 't1', confidenceLevel: 'medium', updatedAt: '2026-04-11T10:00:00Z' }),
+    ];
+    const kpi = computeOpsKpi({ projects: [], specimens: [], tests, damages, now: NOW });
+    expect(kpi.abnormalFindingRatio).toBe(1);
   });
 
   it('完了試験が 0 のとき異常所見比率は 0', () => {
@@ -137,7 +148,7 @@ describe('computeOpsKpi', () => {
       specimens: [],
       tests: [],
       damages: [
-        makeDamage({ id: 'd1', confidenceLevel: 'high', updatedAt: '2026-04-10T10:00:00Z' }),
+        makeDamage({ id: 'd1', testId: 't1', confidenceLevel: 'high', updatedAt: '2026-04-10T10:00:00Z' }),
       ],
       now: NOW,
     });
