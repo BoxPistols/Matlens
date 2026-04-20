@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-tool-life-tracker',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '工具ライフトラッカー（PoC）を追加',
+    body: '工具個体ごとの累積加工距離 × 工具摩耗 VB の推移を可視化する新画面を追加しました。VB=0.3mm の摩耗限界ライン、実施プロセス数、総切削距離、びびり検出回数、直近プロセス一覧を集約表示します。',
+  },
+  {
     id: '2026-04-20-reports',
     date: '2026-04-20',
     type: 'feature',

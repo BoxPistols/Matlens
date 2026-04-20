@@ -32,6 +32,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'damage', label:'損傷ギャラリー', labelEn:'Damage Gallery', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'semsearch', label:'横断検索 (PoC)', labelEn:'Semantic Search (PoC)', icon:'vecSearch', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'cutting-conditions', label:'切削条件エクスプローラ', labelEn:'Cutting Conditions', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'tools', label:'工具ライフトラッカー', labelEn:'Tool Life Tracker', icon:'settings', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'specimens', label:'試験片トラッカー', labelEn:'Specimen Tracker', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'mat-master', label:'材料マスタ', labelEn:'Materials Master', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'std-master', label:'規格マスタ', labelEn:'Standards Master', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
@@ -792,6 +793,35 @@ export const PAGE_GUIDES: PageGuide[] = [
       'If the received column is piling up, receiving is becoming a bottleneck',
     ],
     related: ['pjlist', 'matrix', 'damage'],
+  },
+  {
+    id: 'tools', icon: 'settings',
+    title: '工具ライフトラッカー', titleEn: 'Tool Life Tracker (PoC)',
+    summary: '工具個体ごとの累積加工距離 × 工具摩耗 VB の推移を可視化する PoC 画面です。摩耗限界ラインで交換タイミングを俯瞰します。',
+    summaryEn: 'PoC tool life tracker showing cumulative cutting distance vs wear VB per tool, with a wear-limit line for replacement judgement.',
+    features: [
+      '左ペイン: 工具一覧（種別チップ + キーワード検索、使用プロセス数 / 最大 VB 併記）',
+      '右ペイン KPI: 実施プロセス数 / 累積切削距離 / 最大 VB / びびり検出回数',
+      'VB 進展チャート: 累積切削距離 × VB、摩耗限界 VB=0.3mm の破線',
+      '直近プロセス表: Vc / f / 距離 / VB / びびり / 実施日',
+      '限界超過工具は一覧に「限界超」バッジを表示',
+    ],
+    featuresEn: [
+      'Left pane: tool list with type chips + keyword search, usage count and max VB',
+      'Right pane KPIs: process count, cumulative distance, max VB, chatter count',
+      'VB progression chart with wear-limit line at VB=0.3mm',
+      'Recent process table: Vc / f / distance / VB / chatter / date',
+      'Tools exceeding the limit are flagged in the list',
+    ],
+    tips: [
+      '「限界超」バッジの工具は交換を検討。チャートで超過タイミングを確認',
+      '同一工具で母材が変わると VB 増加率も変わるので直近プロセス表の母材列を併せて確認',
+    ],
+    tipsEn: [
+      'Consider replacing tools flagged as over-limit; check the chart for when VB crossed',
+      'Wear rate changes with material — compare the material column in the recent process table',
+    ],
+    related: ['cutting-conditions', 'mat-master'],
   },
   {
     id: 'cutting-conditions', icon: 'scan',
