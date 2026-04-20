@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-domain-research-phase-2',
+    date: '2026-04-20',
+    type: 'info',
+    title: 'ドメインリサーチメモ第 2 弾（NADCAP / 輸出管理 / LIMS 市場）を追加',
+    body: '航空系試験所認定 NADCAP（AC7101 シリーズと Task Group）、ITAR / EAR / 外為法によるクラウド可否への影響、主要 LIMS（LabWare / Matrix Gemini / Sample Manager 等）と連携パターンを整理しました。合計 7 本の研究ノートが docs/research/ に揃い、現場ヒアリングで確認したい論点を各メモ末尾に明示しています。',
+  },
+  {
     id: '2026-04-20-domain-research',
     date: '2026-04-20',
     type: 'info',
