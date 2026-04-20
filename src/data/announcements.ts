@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-reports',
+    date: '2026-04-20',
+    type: 'feature',
+    title: 'レポート画面（PoC）を追加',
+    body: '試験報告書・損傷解析・検査成績書・サマリレポートを一覧化し、Markdown 本文を詳細で表示する新画面です。種別 / ステータスフィルタで絞込、案件詳細から相互リンクできます。',
+  },
+  {
     id: '2026-04-20-standards-master',
     date: '2026-04-20',
     type: 'feature',

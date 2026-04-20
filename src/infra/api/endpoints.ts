@@ -55,6 +55,12 @@ export const toolEndpoints = {
   detail: (id: string) => `${API_PREFIX}/tools/${id}`,
 } as const;
 
+export const reportEndpoints = {
+  list: `${API_PREFIX}/reports`,
+  create: `${API_PREFIX}/reports`,
+  detail: (id: string) => `${API_PREFIX}/reports/${id}`,
+} as const;
+
 export const cuttingProcessEndpoints = {
   list: `${API_PREFIX}/cutting-processes`,
   create: `${API_PREFIX}/cutting-processes`,

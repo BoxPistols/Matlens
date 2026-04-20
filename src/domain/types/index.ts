@@ -8,3 +8,4 @@ export * from './material';
 export * from './standard';
 export * from './damage';
 export * from './cutting';
+export * from './report';

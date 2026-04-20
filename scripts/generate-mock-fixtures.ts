@@ -17,6 +17,7 @@ import { generateSpecimens } from '../src/mocks/generators/specimens.gen.ts';
 import { generateTests } from '../src/mocks/generators/tests.gen.ts';
 import { generateDamages } from '../src/mocks/generators/damages.gen.ts';
 import { generateCuttingProcesses } from '../src/mocks/generators/cuttingProcesses.gen.ts';
+import { generateReports } from '../src/mocks/generators/reports.gen.ts';
 import type { ID } from '../src/domain/types/index.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -56,6 +57,14 @@ const main = () => {
     perSpecimen: [1, 2],
     waveformProbability: 0.2,
   });
+  const reports = generateReports({
+    projects: rawProjects,
+    specimens,
+    tests,
+    damages,
+    users,
+    perProject: [1, 3],
+  });
 
   // Project に specimenCount / testCount を集計埋め込み
   const specimenCountByProject = new Map<ID, number>();
@@ -88,6 +97,7 @@ const main = () => {
   writeJson('tools', tools);
   writeJson('cuttingProcesses', cuttingProcesses);
   writeJson('waveforms', waveforms);
+  writeJson('reports', reports);
 
   console.log('Done.');
 };

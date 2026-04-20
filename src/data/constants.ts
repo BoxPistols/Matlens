@@ -35,6 +35,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'specimens', label:'試験片トラッカー', labelEn:'Specimen Tracker', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'mat-master', label:'材料マスタ', labelEn:'Materials Master', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'std-master', label:'規格マスタ', labelEn:'Standards Master', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'reports', label:'レポート', labelEn:'Reports', icon:'report', badgeLabel:'PoC', badgeVariant:'vec' },
   { section: 'ワークフロー', sectionEn: 'Workflow' },
   { id:'petri',   label:'試験フロー可視化', labelEn:'Workflow Viz', icon:'workflow' },
   { id:'bayes',   label:'ベイズ最適化',    labelEn:'Bayesian Opt', icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
@@ -677,6 +678,35 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Abnormal finding ratio = non-low-confidence damage findings / completed tests in last 30 days',
     ],
     related: ['pjlist', 'specimens', 'matrix'],
+  },
+  {
+    id: 'reports', icon: 'report',
+    title: 'レポート', titleEn: 'Reports (PoC)',
+    summary: '試験報告書・損傷解析・検査成績書・サマリレポートを横断して俯瞰する PoC 画面です。詳細で Markdown 本文と担当・参照情報を確認できます。',
+    summaryEn: 'PoC reports screen covering test reports, damage analyses, inspection certificates, and summaries. Detail view renders markdown with author / reference info.',
+    features: [
+      '種別（試験報告書 / 損傷解析 / 材料証明書 / 検査成績書 / サマリ）フィルタ',
+      'ステータスチップ（下書き / レビュー中 / 承認済 / 発行済 / アーカイブ）+ 件数カウント',
+      'キーワード検索（タイトル / コード / サマリ）',
+      '詳細で Markdown 本文（見出し / 表 / リスト / 太字 / インラインコード）を表示',
+      'メタパネル: 関連案件リンク / 担当者 / 日付 / 参照試験 / タグ',
+    ],
+    featuresEn: [
+      'Kind filter (test / damage analysis / material certification / inspection / summary)',
+      'Status chips (draft / review / approved / issued / archived) with counts',
+      'Keyword search across title / code / summary',
+      'Detail view renders markdown (headings, tables, lists, bold, inline code)',
+      'Meta side panel with project link, assignees, dates, reference counts, and tags',
+    ],
+    tips: [
+      'Markdown レンダリングは依存ゼロの簡易実装。将来 marked + sanitize 導入予定',
+      'PDF / DOCX エクスポートと版管理は Phase 4 以降',
+    ],
+    tipsEn: [
+      'Markdown rendering is a zero-dependency minimal parser — marked + sanitize is planned',
+      'PDF / DOCX export and revision history will come in Phase 4',
+    ],
+    related: ['pjlist', 'damage', 'mat-master'],
   },
   {
     id: 'std-master', icon: 'list',
