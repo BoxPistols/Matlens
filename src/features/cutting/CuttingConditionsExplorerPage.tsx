@@ -11,6 +11,8 @@ import type {
 } from '@/domain/types';
 import type { CuttingProcessQuery } from '@/infra/repositories/interfaces';
 import { ConditionScatter } from './components/ConditionScatter';
+import { KcEstimatePanel } from './components/KcEstimatePanel';
+import { StabilityLobePanel } from './components/StabilityLobePanel';
 import { WaveformViewer } from './components/WaveformViewer';
 import {
   useCuttingMaterials,
@@ -403,6 +405,20 @@ export const CuttingConditionsExplorerPage = () => {
                     この条件ではびびり振動が検出されました。
                   </div>
                 )}
+              </div>
+
+              <div className="border-t border-[var(--border-faint)] pt-3">
+                <div className="text-[11px] text-[var(--text-lo)] mb-2">
+                  Kienzle 切削抵抗モデル見積
+                </div>
+                <KcEstimatePanel process={selected} tool={selectedTool} />
+              </div>
+
+              <div className="border-t border-[var(--border-faint)] pt-3">
+                <div className="text-[11px] text-[var(--text-lo)] mb-2">
+                  Stability Lobe (Altintas 2012 近似)
+                </div>
+                <StabilityLobePanel process={selected} tool={selectedTool} />
               </div>
 
               {waveforms && waveforms.length > 0 && (

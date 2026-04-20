@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-cutting-sim-ui',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '切削経験式パネル（Kienzle / Stability Lobe / Taylor）を UI に統合',
+    body: '切削条件エクスプローラで点を選ぶと、Kienzle モデルの Fc/P/MRR 見積（実測値との乖離率表示）と Altintas 2012 Stability Lobe 厳密曲線が右ペインに表示されるようになりました。工具ライフトラッカーには Taylor 工具寿命の回帰予測（R² 付）を追加し、実測点から n, C を推定して現行 Vc での予測寿命距離を算出します。',
+  },
+  {
     id: '2026-04-20-cutting-domain-math',
     date: '2026-04-20',
     type: 'feature',
