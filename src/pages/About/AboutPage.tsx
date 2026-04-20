@@ -75,7 +75,12 @@ export const AboutPage = () => {
           ] as const).map(([name,items,color],i,arr)=>(
             <React.Fragment key={name}>
               <div className="flex-1 min-w-[160px] flex flex-col gap-2 px-4 border-r border-[var(--border-faint)] last:border-r-0">
-                <div className={`text-[11px] font-bold uppercase tracking-[.05em] text-[var(--${color})]`}>{name}</div>
+                <div
+                  className="text-[11px] font-bold uppercase tracking-[.05em]"
+                  style={{ color: `var(--${color})` }}
+                >
+                  {name}
+                </div>
                 <div className="text-[12px] text-text-md leading-[1.7]">{items.split(' / ').map(c=><span key={c} className="inline-block"><code className="text-[11px] bg-raised px-1 py-0.5 rounded border border-[var(--border-faint)]">{c}</code>{' '}</span>)}</div>
               </div>
               {i < arr.length-1 && <div className="flex items-center px-1 text-text-lo flex-shrink-0"><Icon name="chevronRight" size={14} /></div>}
