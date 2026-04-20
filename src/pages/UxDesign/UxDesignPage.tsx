@@ -104,7 +104,15 @@ export const UxDesignPage = () => {
       <SectionCard title="フィードバック設計の4層">
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
           {[['即時 (<100ms)','ボタン押下のvisual feedback。hover/focus状態。','accent'],['短期 (〜2s)','ローディング・Typing インジケーター（AI応答待ち）。','ai'],['操作完了','Toast通知（登録・更新・削除）。3秒後自動消去。','ok'],['エラー・警告','モーダル（削除確認）。インラインエラー。バナー。','warn']].map(([t,d,c])=>(
-            <div key={t} className={`bg-[var(--${c}-dim)] border border-[var(--${c})] rounded p-3`}><div className="text-[13px] font-bold text-text-hi mb-1.5">{t}</div><div className="text-[12px] text-text-md">{d}</div></div>
+            // Tailwind JIT が dynamic string を読めないよう、CSS 変数は inline style で渡す
+            <div
+              key={t}
+              className="rounded p-3 border"
+              style={{ background: `var(--${c}-dim)`, borderColor: `var(--${c})` }}
+            >
+              <div className="text-[13px] font-bold text-text-hi mb-1.5">{t}</div>
+              <div className="text-[12px] text-text-md">{d}</div>
+            </div>
           ))}
         </div>
       </SectionCard>
@@ -171,7 +179,15 @@ export const UxDesignPage = () => {
         <SectionCard title="コンポーネント構成 (Atomic Design)">
           <div className="flex flex-col gap-2 text-[12px]">
             {[['Atoms','Button·Icon·Badge·Input·Select·Textarea·UnitInput·Checkbox·ProgressBar·Typing','accent'],['Molecules','SearchBox·FilterChip·Modal·Toast·KpiCard·AIInsightCard·VecCard·MarkdownBubble·ExportModal','ai'],['Organisms','Topbar·Sidebar·VoicePanel','vec'],['Pages','Dashboard·List·Form·Detail·VecSearch·RAGChat·Similar·Voice·API·Tests·UX·Help·About','ok']].map(([name,items,color])=>(
-              <div key={name} className="py-1.5 border-b border-[var(--border-faint)] last:border-b-0"><div className={`text-[11px] font-bold uppercase tracking-[.04em] text-[var(--${color})] mb-0.5`}>{name}</div><div className="text-text-lo">{items}</div></div>
+              <div key={name} className="py-1.5 border-b border-[var(--border-faint)] last:border-b-0">
+                <div
+                  className="text-[11px] font-bold uppercase tracking-[.04em] mb-0.5"
+                  style={{ color: `var(--${color})` }}
+                >
+                  {name}
+                </div>
+                <div className="text-text-lo">{items}</div>
+              </div>
             ))}
           </div>
         </SectionCard>
