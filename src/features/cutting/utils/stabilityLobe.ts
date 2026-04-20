@@ -131,8 +131,13 @@ export const computeStabilityLobes = (inputs: SLDInputs): SLDPoint[] => {
     }
   }
 
-  // 主軸回転数でソートしておくと UI 側でそのまま折れ線が引ける
-  return points.sort((a, b) => a.spindleRpm - b.spindleRpm);
+  // lobe を第一キー、spindleRpm を第二キーでソート。
+  // UI 側で lobe ごとに連続した折れ線を引けるようにする
+  // （spindleRpm のみでソートすると lobe 間を往復するジグザグ線になる）。
+  return points.sort((a, b) => {
+    if (a.lobe !== b.lobe) return a.lobe - b.lobe;
+    return a.spindleRpm - b.spindleRpm;
+  });
 };
 
 /**

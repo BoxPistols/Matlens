@@ -64,10 +64,11 @@ export const spindlePowerKW = (
  */
 export const MRR_turning = (Vc: number, f: number, ap: number): number => {
   if (Vc <= 0 || f <= 0 || ap <= 0) return 0;
-  // Vc を mm/min に換算: Vc [m/min] * 1000 → 単位的に ae に相当しないため、
-  // 旋削の MRR は Vc · f · ap で良い（Vc[mm/min] * f[mm/rev] * ap[mm] / 回転数省略扱い）。
-  // 通常は vf · ap と書いた方が正確だが、Vc · f · ap は便利な近似。
-  return (Vc * 1000 * f * ap) / 1000 / 1000; // cm³/min
+  // 旋削の材料除去率:
+  //   Vc [m/min] × 1000 = [mm/min]
+  //   MRR [mm³/min] = Vc[mm/min] · f[mm/rev] · ap[mm]
+  //   cm³/min 換算は /1000。結果として MRR[cm³/min] = Vc[m/min] · f · ap
+  return Vc * f * ap;
 };
 
 export const MRR_milling = (
