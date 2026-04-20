@@ -55,6 +55,7 @@ const StandardsListPage = lazy(() => import('./features/standards').then(m => ({
 const StandardDetailPage = lazy(() => import('./features/standards').then(m => ({ default: m.StandardDetailPage })));
 const ReportsListPage = lazy(() => import('./features/reports').then(m => ({ default: m.ReportsListPage })));
 const ReportDetailPage = lazy(() => import('./features/reports').then(m => ({ default: m.ReportDetailPage })));
+const ToolLifeTrackerPage = lazy(() => import('./features/tools').then(m => ({ default: m.ToolLifeTrackerPage })));
 const ProjectListPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectListPage })));
 const ProjectDetailPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectDetailPage })));
 const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ default: m.DamageGalleryPage })));
@@ -260,6 +261,7 @@ export function App() {
       case 'std-master-detail': return lazyPage(<StandardDetailPage id={detailId!} onBack={() => navTo('std-master')} onNav={navTo} />);
       case 'reports': return lazyPage(<ReportsListPage onNav={navTo} />);
       case 'report-detail': return lazyPage(<ReportDetailPage id={detailId!} onBack={() => navTo('reports')} onNav={navTo} />);
+      case 'tools': return lazyPage(<ToolLifeTrackerPage />);
       case 'pjlist':  return lazyPage(<ProjectListPage onNav={navTo} />);
       case 'pjdetail':return lazyPage(<ProjectDetailPage id={detailId!} onBack={() => navTo('pjlist')} onNav={navTo} />);
       case 'damage':  return lazyPage(<DamageGalleryPage />);
