@@ -66,36 +66,89 @@ const ApplicationGuide = () => (
       </div>
     </Section>
 
-    <Section title="優先施策マトリクス (2026-04 策定)" lead="研究現場の課題への直結度 × 差別化の観点で決定。">
+    <Section title="優先施策マトリクス (2026-04 策定 / 04-20 更新)" lead="研究現場の課題への直結度 × 差別化の観点で決定。切削プロセス系は Day 1 で数学・UI とも実装済。">
       <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
         <table style={{ width: '100%', fontSize: 12.5, borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--bg-raised)' }}>
               <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, fontSize: 12, color: 'var(--text-lo)', textTransform: 'uppercase' }}>ID</th>
               <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, fontSize: 12, color: 'var(--text-lo)', textTransform: 'uppercase' }}>施策</th>
-              <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, fontSize: 12, color: 'var(--text-lo)', textTransform: 'uppercase' }}>優先</th>
+              <th style={{ padding: '8px 12px', textAlign: 'left', fontWeight: 700, fontSize: 12, color: 'var(--text-lo)', textTransform: 'uppercase' }}>状態</th>
             </tr>
           </thead>
           <tbody>
             {([
-              ['A-1', 'ステップ式入力ウィザード', '最優先'],
-              ['A-2', 'ファセット検索 + 保存済クエリ', '高'],
+              ['A-1', 'ステップ式入力ウィザード', '実装済'],
+              ['A-2', 'ファセット検索 + 保存済クエリ', '実装済'],
               ['A-3', 'ワークフロー連動ナビゲーション', '中'],
               ['B-1', 'ベイズ最適化 (2D GP)', '実装済'],
               ['B-2', 'ペトリネット強化 (rework + PNML)', '中'],
               ['B-3', '経験式シミュレーション (4 式)', '実装済'],
               ['B-4', 'provenance バッジ', '実装済'],
+              ['C-1', '受託試験 Signature Screens (8 画面)', '実装済'],
+              ['C-2', '切削プロセス数学 (Taylor / Kienzle / SLD)', '実装済'],
+              ['C-3', '切削 UI 統合 (SLD / Kc / Taylor パネル)', '実装済'],
+              ['C-4', 'MaiML (JIS K 0200:2024) エクスポート', '未着手'],
             ] as const).map(([id, name, pri]) => (
               <tr key={id} style={{ borderTop: '1px solid var(--border-faint)' }}>
                 <td style={{ padding: '8px 12px', color: 'var(--text-hi)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{id}</td>
                 <td style={{ padding: '8px 12px', color: 'var(--text-md)' }}>{name}</td>
                 <td style={{ padding: '8px 12px' }}>
-                  <Pill label={pri} tone={pri === '最優先' ? 'warn' : pri === '実装済' ? 'ok' : 'accent'} />
+                  <Pill label={pri} tone={pri === '実装済' ? 'ok' : pri === '未着手' ? 'warn' : 'accent'} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+    </Section>
+
+    <Section
+      title="現場入り準備キット (2026-04-20)"
+      lead="ヒアリング前の素材と、これまでの判断ログをリポジトリ内に格納。Storybook からはリンクで辿れるようになっています。"
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+        {[
+          {
+            heading: 'ヒアリング素材',
+            path: 'docs/onsite/',
+            bullets: [
+              '画面別ヒアリングシート (11 画面)',
+              'ペルソナ別ワークフロー仮説 (4 ペルソナ)',
+              '既存ツール比較マトリクス (LIMS / Excel / CAM)',
+              '痛み候補カタログ (30 件)',
+              '知識ギャップ棚卸し (規格 / 輸出管理 / 連携 / 報告書)',
+            ],
+            tone: 'vec' as const,
+          },
+          {
+            heading: '設計判断ログ (ADR)',
+            path: 'docs/adr/',
+            bullets: [
+              'ADR-001 レイヤードアーキテクチャ',
+              'ADR-002 切削ドメイン分離',
+              'ADR-003 決定論的 fixture',
+              'ADR-005 Stability Lobe 段階実装',
+              'ADR-009 純 SVG + 依存ゼロ可視化',
+              'ADR-010 Stage 2 集計 / 検索境界',
+              '他、フロント系 10 本 + インフラ系 7 本',
+            ],
+            tone: 'warn' as const,
+          },
+        ].map(kit => (
+          <div
+            key={kit.heading}
+            style={{ padding: 14, borderRadius: 10, background: 'var(--bg-surface)', boxShadow: 'var(--shadow-xs)' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <Pill label={kit.heading} tone={kit.tone} />
+              <code style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--text-lo)' }}>{kit.path}</code>
+            </div>
+            <ul style={{ fontSize: 12.5, color: 'var(--text-md)', lineHeight: 1.7, paddingLeft: 18, margin: 0 }}>
+              {kit.bullets.map(b => <li key={b}>{b}</li>)}
+            </ul>
+          </div>
+        ))}
       </div>
     </Section>
 
