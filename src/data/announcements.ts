@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-domain-research-phase-3',
+    date: '2026-04-20',
+    type: 'info',
+    title: 'ドメインリサーチメモ第 3 弾（切削実機知 3 本）を追加 — 合計 10 本',
+    body: '5 軸同時制御切削の運動学（B-table / B-head / RTCP / 特異点）、切削プロセス計測（温度 / 残留応力 / 加工変質層の手法比較）、特殊切削技術（MQL / クライオ / 超音波 / ハイブリッド製造）の 3 本を docs/research/ に追加。これで規格 / 認証 / セキュリティ / 連携 / 切削実機 / ビジネスの 6 領域を網羅する合計 10 本の研究ノートが揃いました。',
+  },
+  {
     id: '2026-04-20-domain-research-phase-2',
     date: '2026-04-20',
     type: 'info',

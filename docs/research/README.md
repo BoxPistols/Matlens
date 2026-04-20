@@ -17,6 +17,9 @@
 | [0005](./0005-nadcap-accreditation.md) | NADCAP（航空系試験所認定） | 認証 | Draft |
 | [0006](./0006-export-control-itar-ear.md) | 輸出管理（ITAR / EAR / 外為法）と技術データ管理 | セキュリティ | Draft |
 | [0007](./0007-lims-market-and-interop.md) | LIMS 市場と相互運用性 | 連携 | Draft |
+| [0008](./0008-5axis-kinematics-cnc.md) | 5 軸同時制御切削の運動学と CNC 制御 | 切削実機 | Draft |
+| [0009](./0009-cutting-process-measurement.md) | 切削プロセス計測（温度 / 残留応力 / 加工変質層） | 切削実機 | Draft |
+| [0010](./0010-special-cutting-techniques.md) | 特殊切削技術（MQL / クライオ / UAM / ハイブリッド） | 切削実機 | Draft |
 
 ## 書き方ルール
 
