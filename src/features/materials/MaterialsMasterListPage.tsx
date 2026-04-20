@@ -41,12 +41,14 @@ export const MaterialsMasterListPage = ({ onNav }: MaterialsMasterListPageProps)
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<MaterialCategory | ''>('');
 
+  // Repository には search だけ渡し、カテゴリ絞り込みはクライアント側で行う。
+  // こうすることで「カテゴリ別チップの件数」は「search 適用後のカテゴリ分布」を
+  // 常に反映でき、あるカテゴリを選んでも他カテゴリの件数がゼロに潰れない。
   const filter = useMemo(() => {
-    const f: { category?: string; search?: string } = {};
-    if (category) f.category = category;
+    const f: { search?: string } = {};
     if (search.trim()) f.search = search.trim();
     return f;
-  }, [category, search]);
+  }, [search]);
 
   const materialsQ = useMaterials(filter);
   const usageQ = useMaterialUsage();
@@ -59,6 +61,12 @@ export const MaterialsMasterListPage = ({ onNav }: MaterialsMasterListPageProps)
     }
     return map;
   }, [materialsQ.data]);
+
+  const displayedMaterials = useMemo(() => {
+    const all = materialsQ.data ?? [];
+    if (!category) return all;
+    return all.filter((m) => m.category === category);
+  }, [materialsQ.data, category]);
 
   if (materialsQ.isError) {
     return (
@@ -74,7 +82,8 @@ export const MaterialsMasterListPage = ({ onNav }: MaterialsMasterListPageProps)
     );
   }
 
-  const materials = materialsQ.data;
+  const materials = displayedMaterials;
+  const totalCount = materialsQ.data.length;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -83,7 +92,7 @@ export const MaterialsMasterListPage = ({ onNav }: MaterialsMasterListPageProps)
           <h1 className="text-xl font-bold">材料マスタ</h1>
           <span className="text-[11px] text-[var(--text-lo)]">Materials Master (PoC)</span>
           <span className="ml-auto text-[12px] text-[var(--text-lo)]">
-            登録 {materials.length} 件
+            表示 {materials.length} / 全 {totalCount} 件
           </span>
         </div>
         <p className="text-[13px] text-[var(--text-lo)] mt-1">

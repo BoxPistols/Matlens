@@ -9,11 +9,16 @@ export const materialsMasterKeys = {
     [...materialsMasterKeys.all, 'list', filter] as const,
   detail: (id: ID) => [...materialsMasterKeys.all, 'detail', id] as const,
   standards: ['standards-index'] as const,
-  /** 材料 id → 関連試験件数 */
-  testCountByMaterial: ['material-test-counts'] as const,
-  /** 材料 id → 関連試験片件数 */
-  specimenCountByMaterial: ['material-specimen-counts'] as const,
+  /** 材料 id → 関連試験片 / 試験件数 */
+  usage: ['material-usage'] as const,
+  /** 全試験（recent tests を材料横断で共有するためのグローバルキー） */
+  allTests: ['material-all-tests'] as const,
 };
+
+// TODO(stage2): 現状 client 側で全件取って集計している。実 REST では集計
+// 専用エンドポイントに切り出す（dashboard/api.ts と同方針）。
+const MATERIAL_SPECIMEN_PAGE_SIZE = 1000;
+const MATERIAL_TEST_PAGE_SIZE = 3000;
 
 export const useMaterials = (filter?: MaterialFilter) => {
   const { materials } = useRepositories();
@@ -53,15 +58,14 @@ export const useStandardsIndex = () => {
 /**
  * 材料ごとの試験片件数と試験件数を集計する。
  * 一覧で「実績数」列に表示する用途。
- * 規模が大きくなれば Repository 側に集計エンドポイントを切り出す。
  */
 export const useMaterialUsage = () => {
   const { specimens, tests } = useRepositories();
   return useQuery({
-    queryKey: materialsMasterKeys.testCountByMaterial,
+    queryKey: materialsMasterKeys.usage,
     queryFn: async () => {
-      const specimenPage = await specimens.list({ pageSize: 1000 });
-      const testPage = await tests.list({ pageSize: 3000 });
+      const specimenPage = await specimens.list({ pageSize: MATERIAL_SPECIMEN_PAGE_SIZE });
+      const testPage = await tests.list({ pageSize: MATERIAL_TEST_PAGE_SIZE });
       const specimenByMaterial = new Map<ID, number>();
       const specimenIdToMaterial = new Map<ID, ID>();
       for (const s of specimenPage.items) {
@@ -81,27 +85,59 @@ export const useMaterialUsage = () => {
 };
 
 /**
+ * 全試験の単一取得。useMaterialRecentTests で材料横断に共有する。
+ * 材料ごとに 3000 件 fetch を繰り返さないためのキャッシュ。
+ */
+const useAllTestsShared = () => {
+  const { tests } = useRepositories();
+  return useQuery({
+    queryKey: materialsMasterKeys.allTests,
+    queryFn: async () => {
+      const page = await tests.list({ pageSize: MATERIAL_TEST_PAGE_SIZE });
+      return page.items;
+    },
+    staleTime: 2 * 60_000,
+  });
+};
+
+/**
  * 指定材料で実施された試験の上位 N 件（新しい順）。詳細画面の試験履歴用。
+ * 全試験は useAllTestsShared で 1 回だけ取得し、クライアント側で specimenId で絞る。
  */
 export const useMaterialRecentTests = (materialId: ID | null, limit = 20) => {
-  const { specimens, tests } = useRepositories();
-  return useQuery({
-    queryKey: [...materialsMasterKeys.all, 'recent-tests', materialId, limit] as const,
+  const { specimens } = useRepositories();
+  const allTestsQ = useAllTestsShared();
+  const specPageQ = useQuery({
+    queryKey: [...materialsMasterKeys.all, 'specimens-of-material', materialId] as const,
     queryFn: async () => {
       if (!materialId) return [];
-      const specPage = await specimens.list({
+      const page = await specimens.list({
         filter: { materialId },
         pageSize: 500,
       });
-      const specimenIds = new Set(specPage.items.map((s) => s.id));
-      if (specimenIds.size === 0) return [];
-      const testPage = await tests.list({ pageSize: 3000 });
-      return testPage.items
-        .filter((t) => specimenIds.has(t.specimenId))
-        .sort((a, b) => (a.performedAt < b.performedAt ? 1 : -1))
-        .slice(0, limit);
+      return page.items;
     },
     enabled: !!materialId,
     staleTime: 2 * 60_000,
   });
+
+  const isLoading = allTestsQ.isLoading || specPageQ.isLoading;
+  const isError = allTestsQ.isError || specPageQ.isError;
+  const data = !materialId
+    ? []
+    : (() => {
+        if (!allTestsQ.data || !specPageQ.data) return undefined;
+        const specimenIds = new Set(specPageQ.data.map((s) => s.id));
+        if (specimenIds.size === 0) return [];
+        return allTestsQ.data
+          .filter((t) => specimenIds.has(t.specimenId))
+          .sort((a, b) => {
+            const aTime = Date.parse(a.performedAt);
+            const bTime = Date.parse(b.performedAt);
+            return bTime - aTime;
+          })
+          .slice(0, limit);
+      })();
+
+  return { data, isLoading, isError };
 };
