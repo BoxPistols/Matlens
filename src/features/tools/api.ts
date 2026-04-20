@@ -4,7 +4,6 @@ import type {
   CuttingProcess,
   ID,
   Material,
-  Tool,
 } from '@/domain/types';
 import type { ToolQuery } from '@/infra/repositories/interfaces';
 
@@ -122,7 +121,7 @@ export const buildWearSeries = (
 ): WearPoint[] => {
   const relevant = processes
     .filter((p) => p.toolId === toolId && p.toolWearVB !== null)
-    .sort((a, b) => (a.performedAt < b.performedAt ? -1 : 1));
+    .sort((a, b) => a.performedAt.localeCompare(b.performedAt));
   let cumulative = 0;
   const out: WearPoint[] = [];
   for (const p of relevant) {
@@ -138,6 +137,3 @@ export const buildWearSeries = (
   return out;
 };
 
-export interface Tools {
-  tool: Tool;
-}

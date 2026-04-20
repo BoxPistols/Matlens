@@ -36,12 +36,18 @@ const TOOL_TYPE_OPTIONS: ToolType[] = [
 
 const WEAR_LIMIT = 0.3;
 
+// TODO(stage2): 工具マスタが数百件に拡大したらページネーション UI または
+// 集計 API（/api/v1/tools/usage-summary）に切り出す。
+const TOOLS_PAGE_SIZE = 500;
+
 export const ToolLifeTrackerPage = () => {
   const [search, setSearch] = useState('');
   const [typeSet, setTypeSet] = useState<Set<ToolType>>(new Set());
   const [selectedId, setSelectedId] = useState<ID | null>(null);
 
-  const toolsQ = useTools({ pageSize: 500 });
+  // TODO(stage2): 工具マスタ全件取得は集計 API / ページネーション対応に置換予定。
+  // 現状 fixture 12 件なので 500 でも十分だが、規模拡大時の制約を明示するための定数化。
+  const toolsQ = useTools({ pageSize: TOOLS_PAGE_SIZE });
   const processesQ = useAllCuttingProcesses();
   const materialsQ = useMaterialsIndex();
 
@@ -66,10 +72,10 @@ export const ToolLifeTrackerPage = () => {
     [processesQ.data]
   );
 
+  // 全工具から引く（toolsFiltered は絞込後でフィルタを変えると選択工具が
+  // 消える問題があるため、全体集合を参照する）
   const selectedTool: Tool | null = selectedId
-    ? toolsFiltered.find((t) => t.id === selectedId) ??
-      toolsQ.data?.items.find((t) => t.id === selectedId) ??
-      null
+    ? toolsQ.data?.items.find((t) => t.id === selectedId) ?? null
     : null;
 
   const wearSeries = useMemo(
@@ -84,7 +90,7 @@ export const ToolLifeTrackerPage = () => {
     if (!selectedTool || !processesQ.data) return [];
     return processesQ.data
       .filter((p) => p.toolId === selectedTool.id)
-      .sort((a, b) => (a.performedAt < b.performedAt ? 1 : -1))
+      .sort((a, b) => b.performedAt.localeCompare(a.performedAt))
       .slice(0, 15);
   }, [selectedTool, processesQ.data]);
 
