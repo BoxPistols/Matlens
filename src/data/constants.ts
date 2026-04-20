@@ -679,6 +679,33 @@ export const PAGE_GUIDES: PageGuide[] = [
     related: ['pjlist', 'specimens', 'matrix'],
   },
   {
+    id: 'std-master', icon: 'list',
+    title: '規格マスタ', titleEn: 'Standards Master (PoC)',
+    summary: 'JIS / ASTM / ASME / ISO / EN 等の試験規格を組織タブで俯瞰する PoC 画面です。詳細で関連試験種別・準拠材料・試験実績件数を確認できます。',
+    summaryEn: 'PoC standards master screen categorized by issuer (JIS / ASTM / ASME / ISO / EN). Detail view shows related test types, referencing materials, and test counts.',
+    features: [
+      '組織タブ（JIS / ASTM / ASME / ISO / EN / その他）+ 件数カウント',
+      'キーワード検索（コード / タイトル）',
+      '一覧で関連試験種別数・準拠材料数・試験実績件数を併記',
+      '詳細で関連試験種別リストから試験マトリクスへ / 準拠材料から材料マスタへ相互リンク',
+    ],
+    featuresEn: [
+      'Organization tabs (JIS / ASTM / ASME / ISO / EN / other) with counts',
+      'Keyword search across code and title',
+      'List shows related test types, referencing materials, and test counts',
+      'Detail cross-links to test matrix and materials master',
+    ],
+    tips: [
+      '「その他」タブは上記主要組織以外の規格（業界団体標準など）',
+      '試験実績 0 の規格は参考規格のみ登録されているケース',
+    ],
+    tipsEn: [
+      'The "other" tab holds non-mainstream standards (industry body specs etc.)',
+      'Standards with zero test count are usually reference-only entries',
+    ],
+    related: ['mat-master', 'matrix'],
+  },
+  {
     id: 'mat-master', icon: 'embed',
     title: '材料マスタ', titleEn: 'Materials Master (PoC)',
     summary: '試験ドメインで使う母材マスタを一覧化する PoC 画面です。組成・物性・関連規格・直近試験実績を詳細で確認できます。',
