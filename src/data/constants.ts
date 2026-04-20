@@ -26,6 +26,7 @@ export const NAV_ITEMS: NavItem[] = [
   { section: '加工実験', sectionEn: 'Experiment' },
   { id:'experiment', label:'加工実験', labelEn:'Experiment', icon:'report', badgeLabel:'NEW', badgeVariant:'ai' },
   { section: '受託試験 (PoC)', sectionEn: 'Contract Testing (PoC)' },
+  { id:'ops-dash', label:'受託試験ダッシュボード', labelEn:'Ops Dashboard', icon:'dashboard', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'pjlist', label:'案件一覧', labelEn:'Projects', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'matrix', label:'試験マトリクス', labelEn:'Test Matrix', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'damage', label:'損傷ギャラリー', labelEn:'Damage Gallery', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
@@ -645,6 +646,35 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Check alongside dashboard charts for a complete management overview',
     ],
     related: ['dash', 'list'],
+  },
+  {
+    id: 'ops-dash', icon: 'dashboard',
+    title: '受託試験ダッシュボード', titleEn: 'Ops Dashboard (PoC)',
+    summary: '受託試験業務全体の状況を KPI・納期リスク・活動タイムラインで俯瞰する PoC ダッシュボードです。',
+    summaryEn: 'PoC ops dashboard that summarizes project pipeline status via KPIs, due-risk list, and activity timeline.',
+    features: [
+      'KPI: 進行中案件数 / 期限 7 日以内の試験片 / 過去 30 日の完了試験 / 異常所見比率',
+      '納期リスク一覧: dueAt <= +7 日 or 遅延 の進行中・レビュー中案件',
+      '活動タイムライン: 完了試験と損傷所見登録を時系列降順で 20 件',
+      '案件行クリックで案件詳細へ遷移',
+    ],
+    featuresEn: [
+      'KPIs: active projects / specimens due in 7 days / completed tests in last 30 days / abnormal finding ratio',
+      'Due-risk list: in-progress or reviewing projects with dueAt within 7 days or overdue',
+      'Activity timeline: last 20 completed tests and damage findings in descending time order',
+      'Click a project row to jump to its detail page',
+    ],
+    tips: [
+      'KPI の計算基準時刻はフィクスチャに合わせて固定化されており、表示値は決定論的です',
+      '納期リスクで「○日遅延」が出ている案件はすぐに案件詳細を開いて進捗確認を',
+      '異常所見比率は「低確信度以外の損傷所見 / 過去 30 日の完了試験」で算出',
+    ],
+    tipsEn: [
+      'KPI reference time is fixed to match fixtures for deterministic rendering',
+      'Projects shown as "N days overdue" should be opened immediately from the detail link',
+      'Abnormal finding ratio = non-low-confidence damage findings / completed tests in last 30 days',
+    ],
+    related: ['pjlist', 'specimens', 'matrix'],
   },
   {
     id: 'specimens', icon: 'list',

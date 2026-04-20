@@ -48,6 +48,7 @@ const ExperimentDashPage = lazy(() => import('./pages/ExperimentDash').then(m =>
 const TestMatrixPage = lazy(() => import('./features/tests/matrix').then(m => ({ default: m.TestMatrixPage })));
 const CuttingConditionsExplorerPage = lazy(() => import('./features/cutting').then(m => ({ default: m.CuttingConditionsExplorerPage })));
 const SpecimenTrackerPage = lazy(() => import('./features/specimens').then(m => ({ default: m.SpecimenTrackerPage })));
+const OpsDashboardPage = lazy(() => import('./features/dashboard').then(m => ({ default: m.OpsDashboardPage })));
 const ProjectListPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectListPage })));
 const ProjectDetailPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectDetailPage })));
 const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ default: m.DamageGalleryPage })));
@@ -235,6 +236,7 @@ export function App() {
       case 'matrix':  return lazyPage(<TestMatrixPage />);
       case 'cutting-conditions': return lazyPage(<CuttingConditionsExplorerPage />);
       case 'specimens': return lazyPage(<SpecimenTrackerPage />);
+      case 'ops-dash': return lazyPage(<OpsDashboardPage onNav={navTo} />);
       case 'pjlist':  return lazyPage(<ProjectListPage onNav={navTo} />);
       case 'pjdetail':return lazyPage(<ProjectDetailPage id={detailId!} onBack={() => navTo('pjlist')} onNav={navTo} />);
       case 'damage':  return lazyPage(<DamageGalleryPage />);

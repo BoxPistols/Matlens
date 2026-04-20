@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-ops-dashboard',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '受託試験ダッシュボードを追加',
+    body: '進行中案件数・期限 7 日以内の試験片・過去 30 日の完了試験・異常所見比率の KPI、納期リスク 7 日以内の案件一覧、最新の試験完了・損傷所見登録のタイムラインを 1 画面に集約しました。サイドバー「受託試験 (PoC)」→「受託試験ダッシュボード」から開けます。',
+  },
+  {
     id: '2026-04-20-specimen-tracker',
     date: '2026-04-20',
     type: 'feature',
