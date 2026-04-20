@@ -34,6 +34,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'cutting-conditions', label:'切削条件エクスプローラ', labelEn:'Cutting Conditions', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'specimens', label:'試験片トラッカー', labelEn:'Specimen Tracker', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'mat-master', label:'材料マスタ', labelEn:'Materials Master', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'std-master', label:'規格マスタ', labelEn:'Standards Master', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
   { section: 'ワークフロー', sectionEn: 'Workflow' },
   { id:'petri',   label:'試験フロー可視化', labelEn:'Workflow Viz', icon:'workflow' },
   { id:'bayes',   label:'ベイズ最適化',    labelEn:'Bayesian Opt', icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },

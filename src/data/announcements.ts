@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-standards-master',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '規格マスタ（PoC）を追加',
+    body: 'JIS / ASTM / ASME / ISO / EN 等の試験規格を組織タブで俯瞰する新画面です。詳細で関連試験種別・準拠材料・試験実績件数を確認でき、材料マスタから相互リンクします。',
+  },
+  {
     id: '2026-04-20-materials-master',
     date: '2026-04-20',
     type: 'feature',
