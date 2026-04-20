@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-onsite-prep-kit',
+    date: '2026-04-20',
+    type: 'info',
+    title: '現場入り準備キットと ADR 10 本をリポジトリに追加',
+    body: 'docs/onsite/ にヒアリングシート（11 画面分）・ペルソナ別ワークフロー仮説（4 ペルソナ）・既存ツール比較・痛み候補 30 件・知識ギャップ棚卸しを格納しました。あわせて docs/adr/ にフロント / ドメイン設計の判断ログ 10 本（切削ドメイン分離・決定論 fixture・Stability Lobe 段階実装・純 SVG 方針・Stage 2 集計境界など）を追加。Storybook の ApplicationGuide からも現在地と準備内容が辿れます。',
+  },
+  {
     id: '2026-04-20-cutting-sim-ui',
     date: '2026-04-20',
     type: 'feature',
