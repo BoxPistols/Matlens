@@ -77,9 +77,11 @@ export const createMockReportRepository = (): ReportRepository => ({
   async create(input) {
     await delay(180);
     const db = getMockDatabase();
-    const now = new Date('2026-04-20T10:00:00Z').toISOString();
+    // fixture 再現性のため now は固定値。year も now から導出して一貫性を保つ。
+    const now = new Date('2026-04-20T10:00:00Z');
+    const nowIso = now.toISOString();
     const seq = nextReportSeq();
-    const year = new Date().getFullYear();
+    const year = now.getFullYear();
     const code = input.code ?? `RPT-${year}-${String(seq).padStart(4, '0')}`;
     const report: Report = {
       id: `rpt_${String(seq).padStart(6, '0')}`,
@@ -99,8 +101,8 @@ export const createMockReportRepository = (): ReportRepository => ({
       body: input.body,
       summary: input.summary,
       tags: input.tags ?? [],
-      createdAt: now,
-      updatedAt: now,
+      createdAt: nowIso,
+      updatedAt: nowIso,
       createdBy: input.authorId,
       updatedBy: input.authorId,
     };

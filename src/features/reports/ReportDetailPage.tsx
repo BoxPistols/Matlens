@@ -29,7 +29,9 @@ interface ReportDetailPageProps {
  * - 行内 `code`
  * 依存を足さず本文表示ができる最低限。高度な書式は将来 marked 等に置換。
  */
-const INLINE_PATTERN = /(\*\*[^*]+\*\*|`[^`]+`)/g;
+// 非強欲マッチで `**a * b**` のような内部アスタリスク混入にも対応。
+// バッククオートも同方針で揃える。
+const INLINE_PATTERN = /(\*\*.+?\*\*|`.+?`)/g;
 
 const inline = (text: string): ReactNode[] => {
   const out: ReactNode[] = [];
@@ -96,14 +98,15 @@ const renderMarkdown = (src: string): ReactElement => {
         tableLines.push(lines[i] ?? '');
         i++;
       }
+      // 末尾パイプ省略形（`| a | b`）にも対応するため、先頭・末尾の `|` を
+      // 「存在する場合のみ」剥がしてから split する。
       const rows = tableLines
-        .map((row) =>
-          row
-            .trim()
-            .slice(1, -1)
-            .split('|')
-            .map((c) => c.trim())
-        )
+        .map((row) => {
+          const trimmed = row.trim();
+          const noLeading = trimmed.startsWith('|') ? trimmed.slice(1) : trimmed;
+          const noTrailing = noLeading.endsWith('|') ? noLeading.slice(0, -1) : noLeading;
+          return noTrailing.split('|').map((c) => c.trim());
+        })
         .filter((r) => r.length > 0);
       const isSep = rows[1]?.every((c) => /^-{3,}$/.test(c));
       const header = isSep ? rows[0] : null;

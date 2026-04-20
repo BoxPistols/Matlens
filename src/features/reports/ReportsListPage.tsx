@@ -75,6 +75,9 @@ export const ReportsListPage = ({ onNav }: ReportsListPageProps) => {
   const projectsQ = useProjectsIndexForReports();
   const usersQ = useUsersIndex();
 
+  // 現ページ（pageSize=200、fixture 規模で 1 ページに収まる）のステータス分布を
+  // 集計する。総件数は pagination.total をヘッダに表示する。
+  // TODO(stage2): 実 REST では /api/v1/reports/status-counts のような集計 API を用意する
   const countsByStatus = useMemo(() => {
     const map = new Map<ReportStatus, number>();
     for (const s of STATUS_OPTIONS) map.set(s, 0);
@@ -122,7 +125,7 @@ export const ReportsListPage = ({ onNav }: ReportsListPageProps) => {
           <h1 className="text-xl font-bold">レポート</h1>
           <span className="text-[11px] text-[var(--text-lo)]">Reports (PoC)</span>
           <span className="ml-auto text-[12px] text-[var(--text-lo)]">
-            {reports.length} 件
+            表示 {reports.length} / 全 {reportsQ.data.pagination.total} 件
           </span>
         </div>
         <p className="text-[13px] text-[var(--text-lo)] mt-1">

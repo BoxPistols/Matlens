@@ -30,16 +30,16 @@ export const useReport = (id: ID | null) => {
   });
 };
 
+/**
+ * ユーザインデックス。UserRepository は現状 container に露出していないため、
+ * mock DB から直接引く。
+ * TODO(stage2): UserRepository を container に追加し、実 REST では
+ * `/api/v1/users` 経由に差し替える。
+ */
 export const useUsersIndex = () => {
-  const { users } = useRepositories() as unknown as {
-    // User Repository は container にまだ露出していないため materials を回避。
-    // 実装が必要になったら CustomerRepository と並べて UserRepository を追加する。
-    users: { list: () => Promise<User[]> };
-  };
   return useQuery({
     queryKey: reportsKeys.users,
     queryFn: async () => {
-      // mock database から直接取る fallback。
       const { getMockDatabase } = await import('@/mocks/database');
       const all = getMockDatabase().users.getAll();
       return new Map<ID, User>(all.map((u) => [u.id, u]));

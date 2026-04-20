@@ -38,7 +38,7 @@ export interface Report extends AuditInfo {
   reviewerId: ID | null;
   /** 承認者 (任意) */
   approverId: ID | null;
-  /** Markdown 本文（見出し・表・コードブロック可） */
+  /** Markdown 本文（見出し / 表 / リスト / 太字 / インラインコードに対応） */
   body: string;
   /** 要約 (一覧カード用) */
   summary: string;
