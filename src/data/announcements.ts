@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-materials-master',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '材料マスタ（PoC）を追加',
+    body: '試験ドメインの母材マスタを一覧化する新画面です。カテゴリ別カウント・キーワード検索、詳細で組成・物性・関連規格・直近試験実績を俯瞰できます。サイドバー「受託試験 (PoC)」→「材料マスタ」から開けます。',
+  },
+  {
     id: '2026-04-20-ops-dashboard',
     date: '2026-04-20',
     type: 'feature',
