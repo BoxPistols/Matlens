@@ -37,10 +37,16 @@ export const KcEstimatePanel = ({ process, tool }: KcEstimatePanelProps) => {
     // ミーリング: fz × teeth × rpm = vf
     const teeth = tool?.fluteCount ?? 2;
     const vf_mm_min = feed * teeth * spindleSpeed;
-    // 平均切りくず厚は fz × sin(engagement), ここでは fz を代表値として使用（PoC 近似）
-    const Fc = cuttingForceFc({ h: feed, b: depthOfCut }, kienzle);
-    const P = spindlePowerKW(Fc, cuttingSpeed);
     const ae = widthOfCut ?? depthOfCut;
+    const D = tool?.diameter ?? 10;
+    // 平均切りくず厚（ミーリング、側面削り近似）:
+    //   h_m ≈ fz · √(ae/D)   (engagement < 180°, Sandvik/Altintas 公式)
+    //   全没入のときは h_m ≈ fz (ae/D=1 相当)。
+    // これを使わず fz をそのまま h にすると、側面削りで Fc を過大評価する。
+    const engagement = Math.min(1, Math.max(0.05, ae / D));
+    const h_mean = feed * Math.sqrt(engagement);
+    const Fc = cuttingForceFc({ h: h_mean, b: depthOfCut }, kienzle);
+    const P = spindlePowerKW(Fc, cuttingSpeed);
     const MRR = MRR_milling(vf_mm_min, ae, depthOfCut);
     return {
       Fc_N: Fc,

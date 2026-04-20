@@ -32,25 +32,35 @@ export const TaylorPredictionPanel = ({
   targetVc,
 }: TaylorPredictionPanelProps) => {
   const { samples, fit, defaults, referenceVc } = useMemo(() => {
-    // 対象工具のプロセスのみ抽出し、VB が 0.1mm 以上到達したものを「寿命テスト点」として扱う。
-    // 各プロセスの加工時間 T = cuttingDistanceMm / (Vc[m/min] * 1000) * 60 分換算
-    // で単純化（Vc は進行中一定と仮定）。
-    const relevant = processes
-      .filter((p) => p.toolId === tool.id && p.toolWearVB !== null && p.toolWearVB >= 0.1)
+    // Taylor 式の T は「新品 → 寿命到達までの累積時間」であり、単一プロセスの
+    // 加工時間ではない。このため対象工具の全プロセスを時系列で並べ、各プロセス
+    // 終了時点までの累積加工時間を T として扱う。
+    // さらに VB が 0.1mm 以上到達した時点（＝寿命指標が取れる段階）を
+    // 回帰サンプルとする。
+    const allForTool = processes
+      .filter((p) => p.toolId === tool.id)
       .sort((a, b) => a.performedAt.localeCompare(b.performedAt));
 
-    const sample: SamplePoint[] = relevant.map((p) => {
+    let cumulativeTime = 0;
+    const sample: SamplePoint[] = [];
+    for (const p of allForTool) {
       const V = p.condition.cuttingSpeed;
-      // 1 プロセスの加工時間 [min] = 距離 [mm] / (Vc [m/min] × 1000)
-      const T = V > 0 ? p.cuttingDistanceMm / (V * 1000) : 0;
-      return {
-        V,
-        T,
-        Vb: p.toolWearVB ?? 0,
-        distance: p.cuttingDistanceMm,
-        processId: p.id,
-      };
-    });
+      // このプロセスの加工時間 [min] = 距離 [mm] / (Vc [m/min] × 1000)
+      const dT = V > 0 ? p.cuttingDistanceMm / (V * 1000) : 0;
+      cumulativeTime += dT;
+      if (p.toolWearVB !== null && p.toolWearVB >= 0.1 && V > 0) {
+        sample.push({
+          V,
+          T: cumulativeTime,
+          Vb: p.toolWearVB,
+          distance: p.cuttingDistanceMm,
+          processId: p.id,
+        });
+      }
+    }
+    const relevant = allForTool.filter(
+      (p) => p.toolWearVB !== null && p.toolWearVB >= 0.1
+    );
 
     const fitInput = sample
       .filter((s) => s.V > 0 && s.T > 0)

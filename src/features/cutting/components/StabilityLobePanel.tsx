@@ -8,6 +8,7 @@ import type { CuttingProcess, Tool } from '@/domain/types';
 import {
   approximateModalParams,
   computeStabilityLobes,
+  minBlimAtRpm,
   type SLDPoint,
 } from '../utils/stabilityLobe';
 import { kienzleFor } from '../utils/kcForceModel';
@@ -95,7 +96,9 @@ export const StabilityLobePanel = ({
   const xTicks = Array.from({ length: 6 }, (_, i) => (rpmMax / 5) * i);
   const yTicks = Array.from({ length: 5 }, (_, i) => (blimMax / 4) * i);
 
-  const overLimit = currentAp > (points.find((p) => Math.abs(p.spindleRpm - currentRpm) < 500)?.blim_mm ?? blimMax);
+  // 下側包絡線ヘルパを使って、現在 rpm における最小 blim（最も厳しい安定限界）を取得
+  const limitAtCurrent = minBlimAtRpm(currentRpm, points, 100);
+  const overLimit = limitAtCurrent !== null && currentAp > limitAtCurrent;
 
   return (
     <div className="flex flex-col gap-1">
