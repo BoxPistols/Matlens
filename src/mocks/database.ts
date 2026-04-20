@@ -9,6 +9,7 @@ import type {
   ID,
   Material,
   Project,
+  Report,
   Specimen,
   Standard,
   Test,
@@ -30,6 +31,7 @@ import damagesJson from './fixtures/damages.json';
 import toolsJson from './fixtures/tools.json';
 import cuttingProcessesJson from './fixtures/cuttingProcesses.json';
 import waveformsJson from './fixtures/waveforms.json';
+import reportsJson from './fixtures/reports.json';
 
 class InMemoryTable<T extends { id: ID }> {
   private items = new Map<ID, T>();
@@ -85,6 +87,7 @@ export interface MockDatabase {
   tools: InMemoryTable<Tool>;
   cuttingProcesses: InMemoryTable<CuttingProcess>;
   waveforms: InMemoryTable<WaveformSample>;
+  reports: InMemoryTable<Report>;
 }
 
 let _database: MockDatabase | null = null;
@@ -105,6 +108,7 @@ export const getMockDatabase = (): MockDatabase => {
     tools: new InMemoryTable(toolsJson as Tool[]),
     cuttingProcesses: new InMemoryTable(cuttingProcessesJson as CuttingProcess[]),
     waveforms: new InMemoryTable(waveformsJson as WaveformSample[]),
+    reports: new InMemoryTable(reportsJson as Report[]),
   };
 
   return _database;

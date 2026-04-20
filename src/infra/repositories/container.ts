@@ -8,6 +8,7 @@ import type {
   DamageRepository,
   MaterialRepository,
   ProjectRepository,
+  ReportRepository,
   SearchRepository,
   SpecimenRepository,
   StandardRepository,
@@ -28,6 +29,7 @@ import {
   createMockSearchRepository,
   createMockToolRepository,
   createMockCuttingProcessRepository,
+  createMockReportRepository,
 } from './mock';
 
 export type BackendMode = 'mock' | 'rest' | 'graphql';
@@ -44,6 +46,7 @@ export interface RepositoryContainer {
   search: SearchRepository;
   tools: ToolRepository;
   cuttingProcesses: CuttingProcessRepository;
+  reports: ReportRepository;
 }
 
 const createMockRepositories = (): RepositoryContainer => ({
@@ -58,6 +61,7 @@ const createMockRepositories = (): RepositoryContainer => ({
   search: createMockSearchRepository(),
   tools: createMockToolRepository(),
   cuttingProcesses: createMockCuttingProcessRepository(),
+  reports: createMockReportRepository(),
 });
 
 export const createRepositories = (mode: BackendMode): RepositoryContainer => {

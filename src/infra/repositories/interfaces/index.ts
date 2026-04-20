@@ -6,3 +6,4 @@ export * from './damage.repo';
 export * from './search.repo';
 export * from './tool.repo';
 export * from './cuttingProcess.repo';
+export * from './report.repo';

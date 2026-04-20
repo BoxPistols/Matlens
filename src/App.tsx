@@ -53,6 +53,8 @@ const MaterialsMasterListPage = lazy(() => import('./features/materials').then(m
 const MaterialsMasterDetailPage = lazy(() => import('./features/materials').then(m => ({ default: m.MaterialsMasterDetailPage })));
 const StandardsListPage = lazy(() => import('./features/standards').then(m => ({ default: m.StandardsListPage })));
 const StandardDetailPage = lazy(() => import('./features/standards').then(m => ({ default: m.StandardDetailPage })));
+const ReportsListPage = lazy(() => import('./features/reports').then(m => ({ default: m.ReportsListPage })));
+const ReportDetailPage = lazy(() => import('./features/reports').then(m => ({ default: m.ReportDetailPage })));
 const ProjectListPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectListPage })));
 const ProjectDetailPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectDetailPage })));
 const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ default: m.DamageGalleryPage })));
@@ -85,7 +87,8 @@ function buildHash(page: string, detailId: string | null): string {
       page === 'edit' ||
       page === 'pjdetail' ||
       page === 'mat-master-detail' ||
-      page === 'std-master-detail')
+      page === 'std-master-detail' ||
+      page === 'report-detail')
   ) {
     return `#/${page}/${detailId}`;
   }
@@ -201,6 +204,7 @@ export function App() {
     if (p.startsWith('pjdetail_')) { setDetailId(p.slice(9)); setPage('pjdetail'); return; }
     if (p.startsWith('mat-master_')) { setDetailId(p.slice(11)); setPage('mat-master-detail'); return; }
     if (p.startsWith('std-master_')) { setDetailId(p.slice(11)); setPage('std-master-detail'); return; }
+    if (p.startsWith('report_')) { setDetailId(p.slice(7)); setPage('report-detail'); return; }
     if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
     if (p.startsWith('sim:')) { setSimInitialBase(p.slice(4)); setPage('sim'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
@@ -254,6 +258,8 @@ export function App() {
       case 'mat-master-detail': return lazyPage(<MaterialsMasterDetailPage id={detailId!} onBack={() => navTo('mat-master')} onNav={navTo} />);
       case 'std-master': return lazyPage(<StandardsListPage onNav={navTo} />);
       case 'std-master-detail': return lazyPage(<StandardDetailPage id={detailId!} onBack={() => navTo('std-master')} onNav={navTo} />);
+      case 'reports': return lazyPage(<ReportsListPage onNav={navTo} />);
+      case 'report-detail': return lazyPage(<ReportDetailPage id={detailId!} onBack={() => navTo('reports')} onNav={navTo} />);
       case 'pjlist':  return lazyPage(<ProjectListPage onNav={navTo} />);
       case 'pjdetail':return lazyPage(<ProjectDetailPage id={detailId!} onBack={() => navTo('pjlist')} onNav={navTo} />);
       case 'damage':  return lazyPage(<DamageGalleryPage />);
