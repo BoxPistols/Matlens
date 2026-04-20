@@ -4,6 +4,7 @@
 import { useMemo, useState } from 'react';
 import type { ID, Tool, ToolType } from '@/domain/types';
 import { VBChart } from './components/VBChart';
+import { TaylorPredictionPanel } from './components/TaylorPredictionPanel';
 import {
   buildWearSeries,
   summarizeByTool,
@@ -308,6 +309,23 @@ export const ToolLifeTrackerPage = () => {
                   </span>
                 </div>
                 <VBChart series={wearSeries} limit={WEAR_LIMIT} />
+              </section>
+
+              {/* Taylor 寿命予測 */}
+              <section
+                aria-label="Taylor 工具寿命予測"
+                className="rounded border border-[var(--border-faint)] bg-[var(--bg-raised)] p-3"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-[13px] font-semibold">Taylor 工具寿命予測</h3>
+                  <span className="text-[11px] text-[var(--text-lo)]">
+                    V·T^n = C
+                  </span>
+                </div>
+                <TaylorPredictionPanel
+                  tool={selectedTool}
+                  processes={processesQ.data ?? []}
+                />
               </section>
 
               {/* 直近プロセス */}
