@@ -33,6 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id:'semsearch', label:'横断検索 (PoC)', labelEn:'Semantic Search (PoC)', icon:'vecSearch', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'cutting-conditions', label:'切削条件エクスプローラ', labelEn:'Cutting Conditions', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
   { id:'specimens', label:'試験片トラッカー', labelEn:'Specimen Tracker', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'mat-master', label:'材料マスタ', labelEn:'Materials Master', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
   { section: 'ワークフロー', sectionEn: 'Workflow' },
   { id:'petri',   label:'試験フロー可視化', labelEn:'Workflow Viz', icon:'workflow' },
   { id:'bayes',   label:'ベイズ最適化',    labelEn:'Bayesian Opt', icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
@@ -675,6 +676,33 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Abnormal finding ratio = non-low-confidence damage findings / completed tests in last 30 days',
     ],
     related: ['pjlist', 'specimens', 'matrix'],
+  },
+  {
+    id: 'mat-master', icon: 'embed',
+    title: '材料マスタ', titleEn: 'Materials Master (PoC)',
+    summary: '試験ドメインで使う母材マスタを一覧化する PoC 画面です。組成・物性・関連規格・直近試験実績を詳細で確認できます。',
+    summaryEn: 'PoC materials master screen for the testing domain. Detail view shows composition, properties, related standards, and recent tests.',
+    features: [
+      'カテゴリ別のチップカウントと切替（炭素鋼 / ステンレス / Al / Ti / Ni 基 / Cu / ポリマー / 複合材 / セラミクス）',
+      'キーワード検索（designation / description）',
+      '一覧に主要組成 (wt%)・密度・降伏強さ・関連規格数・試験片数・試験数を併記',
+      '詳細で組成テーブル / 物性 KPI / 関連規格リスト / 直近 20 試験の試験履歴',
+    ],
+    featuresEn: [
+      'Category chip filter with live counts (steel / stainless / aluminum / titanium / nickel / copper / polymer / composite / ceramic)',
+      'Keyword search across designation and description',
+      'List shows composition summary, density, yield strength, related standards count, and specimen / test counts',
+      'Detail view: composition table, property KPIs, related standards, and last 20 tests',
+    ],
+    tips: [
+      '同ページの一覧で「試験」列が 0 の材料はまだ実績未蓄積',
+      '詳細の「マトリクスで俯瞰」リンクから試験種別 × 材料のヒートマップへジャンプ',
+    ],
+    tipsEn: [
+      'Zero in the test column indicates materials with no accumulated experience yet',
+      'Use "Open in matrix" link in the detail view to jump to the test type × material heatmap',
+    ],
+    related: ['matrix', 'specimens', 'pjlist'],
   },
   {
     id: 'specimens', icon: 'list',

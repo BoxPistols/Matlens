@@ -49,6 +49,8 @@ const TestMatrixPage = lazy(() => import('./features/tests/matrix').then(m => ({
 const CuttingConditionsExplorerPage = lazy(() => import('./features/cutting').then(m => ({ default: m.CuttingConditionsExplorerPage })));
 const SpecimenTrackerPage = lazy(() => import('./features/specimens').then(m => ({ default: m.SpecimenTrackerPage })));
 const OpsDashboardPage = lazy(() => import('./features/dashboard').then(m => ({ default: m.OpsDashboardPage })));
+const MaterialsMasterListPage = lazy(() => import('./features/materials').then(m => ({ default: m.MaterialsMasterListPage })));
+const MaterialsMasterDetailPage = lazy(() => import('./features/materials').then(m => ({ default: m.MaterialsMasterDetailPage })));
 const ProjectListPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectListPage })));
 const ProjectDetailPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectDetailPage })));
 const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ default: m.DamageGalleryPage })));
@@ -75,7 +77,10 @@ function parseHash(): { page: string; detailId: string | null } {
 }
 
 function buildHash(page: string, detailId: string | null): string {
-  if (detailId && (page === 'detail' || page === 'edit' || page === 'pjdetail')) {
+  if (
+    detailId &&
+    (page === 'detail' || page === 'edit' || page === 'pjdetail' || page === 'mat-master-detail')
+  ) {
     return `#/${page}/${detailId}`;
   }
   return `#/${page}`;
@@ -188,6 +193,7 @@ export function App() {
     if (p.startsWith('edit_')) { setDetailId(p.slice(5)); setPage('edit'); return; }
     if (p.startsWith('detail_')) { setDetailId(p.slice(7)); setPage('detail'); return; }
     if (p.startsWith('pjdetail_')) { setDetailId(p.slice(9)); setPage('pjdetail'); return; }
+    if (p.startsWith('mat-master_')) { setDetailId(p.slice(11)); setPage('mat-master-detail'); return; }
     if (p.startsWith('rag:')) { setRagInitialQuery(p.slice(4)); setPage('rag'); return; }
     if (p.startsWith('sim:')) { setSimInitialBase(p.slice(4)); setPage('sim'); return; }
     setPage(p); if (p !== 'detail') setDetailId(null);
@@ -237,6 +243,8 @@ export function App() {
       case 'cutting-conditions': return lazyPage(<CuttingConditionsExplorerPage />);
       case 'specimens': return lazyPage(<SpecimenTrackerPage />);
       case 'ops-dash': return lazyPage(<OpsDashboardPage onNav={navTo} />);
+      case 'mat-master': return lazyPage(<MaterialsMasterListPage onNav={navTo} />);
+      case 'mat-master-detail': return lazyPage(<MaterialsMasterDetailPage id={detailId!} onBack={() => navTo('mat-master')} onNav={navTo} />);
       case 'pjlist':  return lazyPage(<ProjectListPage onNav={navTo} />);
       case 'pjdetail':return lazyPage(<ProjectDetailPage id={detailId!} onBack={() => navTo('pjlist')} onNav={navTo} />);
       case 'damage':  return lazyPage(<DamageGalleryPage />);
