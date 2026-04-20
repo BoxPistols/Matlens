@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-cutting-domain-math',
+    date: '2026-04-20',
+    type: 'feature',
+    title: '切削プロセス経験式モジュール（Taylor / Kc / Stability Lobe）を追加',
+    body: '工具寿命 (Taylor V·T^n=C)、切削抵抗 (Kienzle Kc1.1·h^(1-mc)·b)、安定性ローブ (Altintas 2012 単一 DOF モデル) を純 TS で実装。ISO 3685 の VB 閾値や工具材種別 Taylor 指数、被削材別 Kc 係数も規格定数として一元化しました。UI 統合は次回アップデート。',
+  },
+  {
     id: '2026-04-20-tool-life-tracker',
     date: '2026-04-20',
     type: 'feature',
