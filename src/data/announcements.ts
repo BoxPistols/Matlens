@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-20-domain-research',
+    date: '2026-04-20',
+    type: 'info',
+    title: 'ドメインリサーチメモ 3 本を docs/research/ に追加',
+    body: '航空宇宙材料の AMS (SAE) 体系、ISO/IEC 17025 7.8 の試験報告書必須記載事項と測定不確かさ、FAR Part 25 / MMPDS の A-basis / B-basis と統計要件を整理。公開情報ベースの学習ドラフトで、各メモ末尾に「現場で聞くこと」を併記しています。ApplicationGuide の現場入り準備キットセクションから辿れます。',
+  },
+  {
     id: '2026-04-20-onsite-prep-kit',
     date: '2026-04-20',
     type: 'info',

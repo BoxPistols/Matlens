@@ -88,7 +88,8 @@ const ApplicationGuide = () => (
               ['C-1', '受託試験 Signature Screens (8 画面)', '実装済'],
               ['C-2', '切削プロセス数学 (Taylor / Kienzle / SLD)', '実装済'],
               ['C-3', '切削 UI 統合 (SLD / Kc / Taylor パネル)', '実装済'],
-              ['C-4', 'MaiML (JIS K 0200:2024) エクスポート', '未着手'],
+              ['C-4', 'MaiML (JIS K 0200:2024) エクスポート（Material 型）', '実装済'],
+              ['C-5', 'MaiML 拡張（Test / 切削条件）', '未着手'],
             ] as const).map(([id, name, pri]) => (
               <tr key={id} style={{ borderTop: '1px solid var(--border-faint)' }}>
                 <td style={{ padding: '8px 12px', color: 'var(--text-hi)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{id}</td>
@@ -134,6 +135,17 @@ const ApplicationGuide = () => (
               '他、フロント系 10 本 + インフラ系 7 本',
             ],
             tone: 'warn' as const,
+          },
+          {
+            heading: 'ドメインリサーチ',
+            path: 'docs/research/',
+            bullets: [
+              'Target Brief（仮名ドメイン仮説）',
+              'AMS (SAE) 航空宇宙材料規格の概観',
+              'ISO/IEC 17025 と試験報告書の法定要件',
+              'FAR Part 25 / MMPDS と材料データ統計',
+            ],
+            tone: 'accent' as const,
           },
         ].map(kit => (
           <div
