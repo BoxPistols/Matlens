@@ -6,7 +6,7 @@ import {
   Square, RefreshCw, Play, Sparkles, Share2, AlertTriangle,
   Info, Filter, ArrowDownWideNarrow, FileText, Braces, FileSpreadsheet, ClipboardList,
   Sun, ScanLine, Workflow, Atom,
-  Bot, Send, PanelRight,
+  Bot, Send, PanelRight, ExternalLink,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -18,7 +18,7 @@ export type IconName =
   | 'stop' | 'refresh' | 'play' | 'spark' | 'embed' | 'warning'
   | 'info' | 'filter' | 'sort' | 'pdf' | 'json' | 'csv' | 'report'
   | 'ai' | 'scan'
-  | 'bot' | 'send' | 'panelRight'
+  | 'bot' | 'send' | 'panelRight' | 'external'
   | 'workflow' | 'atom';
 
 const ICON_MAP: Record<IconName, LucideIcon> = {
@@ -62,6 +62,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   bot:          Bot,
   send:         Send,
   panelRight:   PanelRight,
+  external:     ExternalLink,
   workflow:     Workflow,
   atom:         Atom,
 };

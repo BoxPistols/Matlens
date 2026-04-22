@@ -6,6 +6,7 @@ import { AppCtx } from '../../context/AppContext';
 import type { AppContextValue } from '../../types';
 import { HELP_TERMS, PAGE_GUIDES } from '../../data/constants';
 import type { PageGuide } from '../../data/constants';
+import { urlForChapter, urlForTerm } from '../../data/glossaryMapping';
 
 /* ---------- ページガイド専用ビュー ---------- */
 
@@ -58,6 +59,38 @@ const PageGuideSection = ({
               {g.tips.map((tip, i) => <li key={i}>{tip}</li>)}
             </ul>
           </div>
+
+          {/* 詳しく学ぶ: 金属加工の基礎解説サイトへの外部リンク */}
+          {g.learnMore && g.learnMore.length > 0 && (
+            <div>
+              <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">
+                詳しく学ぶ
+              </div>
+              <p className="text-[12px] text-text-lo mb-1.5">
+                画面で扱う概念を金属加工の基礎解説サイトで学べます（外部リンク・新しいタブで開きます）。
+              </p>
+              <ul className="flex flex-col gap-1">
+                {g.learnMore.map((link, i) => {
+                  const href = link.termId
+                    ? urlForTerm(link.termId)
+                    : urlForChapter(link.chapterRef);
+                  return (
+                    <li key={i}>
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-accent hover:underline text-[13px]"
+                      >
+                        <Icon name="external" size={12} />
+                        <span>{link.label}</span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
 
           {/* Footer: 関連ページ + 遷移ボタン */}
           <div className="flex items-center justify-between gap-4 pt-1 flex-wrap">
