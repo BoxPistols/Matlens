@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-help-learn-more-links',
+    date: '2026-04-23',
+    type: 'feature',
+    title: 'ヘルプの「ページガイド」に金属加工の基礎解説サイトへのリンクを追加',
+    body: 'ヘルプ画面の「ページガイド」タブで表示される各画面解説に、金属加工の基礎（原子・結晶構造・転位・切削条件・工具摩耗・安定性ローブ等）を解説する外部サイトへのリンクを追加しました。切削条件エクスプローラ・工具ライフトラッカー・材料マスタ・受託試験ダッシュボードの 4 画面で、登場する専門用語（VB / Taylor / Kc / Vc / f / ap 等）を深掘りできます。リンクは新しいタブで開きます。',
+  },
+  {
     id: '2026-04-20-cutting-sim-ui',
     date: '2026-04-20',
     type: 'feature',
