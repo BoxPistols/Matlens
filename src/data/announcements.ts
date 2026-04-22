@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-adr-013-url-contract',
+    date: '2026-04-23',
+    type: 'info',
+    title: 'ADR-013: URL 規約・用語 ownership・更新ポリシーを草稿（親密化の運用規約）',
+    body: 'ADR-012（戦略）に続く運用規約レベルの ADR を草稿しました。URL 契約（<base>#/chapter/<id>#<term-id>）/ 用語 master は machining-fundamentals / 実装 master は Matlens / 破壊的変更の予告期間 / dead link CI チェック / お互い触らない領域 の 5 点を明文化。PR #74 の Phase 1 実装の根拠として機能します。',
+  },
+  {
     id: '2026-04-23-phase1-learning-links',
     date: '2026-04-23',
     type: 'feature',
