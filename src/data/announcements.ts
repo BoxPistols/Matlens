@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-adr-012-integration-strategy',
+    date: '2026-04-23',
+    type: 'info',
+    title: 'ADR-012: machining-fundamentals との親密化統合戦略を草稿（Proposed）',
+    body: '並行開発中の金属加工学習アプリ machining-fundamentals を、Matlens の事実上の公式ドキュメントとして位置づける親密化戦略を ADR-012 として草稿しました。相互リンク戦略 5 パターン（用語集双方向 / PAGE_GUIDES 誘導 / 章末 Matlens カード / RAG 統合 / 検索横断）と Phase 0〜4 の段階的統合計画を記載。peer 側との URL 規約合意 → Matlens PAGE_GUIDES 型拡張 → Phase 1 着手の順で進めます。',
+  },
+  {
     id: '2026-04-20-domain-research-phase-3',
     date: '2026-04-20',
     type: 'info',

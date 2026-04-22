@@ -52,5 +52,6 @@ implementation details — those belong in commit messages.
 | [ADR-009](./ADR-009-pure-svg-zero-dependency-visualization.md) | 可視化は純 SVG + 依存ゼロ（chart ライブラリ不採用） | Accepted |
 | [ADR-010](./ADR-010-stage2-aggregation-endpoints.md) | 集計 / 横断検索エンドポイントを Stage 2 で REST へ切り出す | Accepted |
 | [ADR-011](./ADR-011-testing-strategy.md) | テスト戦略（Vitest + 純関数 + 決定論的 fixture） | Accepted |
+| [ADR-012](./ADR-012-machining-fundamentals-integration.md) | machining-fundamentals との親密化統合戦略 | Proposed |
 
 [nygard]: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
