@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-learning-anchors-finalized',
+    date: '2026-04-23',
+    type: 'feature',
+    title: '金属加工学習アプリの 24 anchor 本番反映 + URL 規約確定 + ADR-014 起票',
+    body: 'peer 側の machining-fundamentals が Vercel 本番デプロイ完了、24 anchor（Part A 15 / Part B 9）を付与済み。Matlens 側の glossaryMapping.ts を 24 件に拡張し pending フラグを全解除しました。URL 規約は RFC 3986 理由で <base>#/chapter/<id>/<term>（slash 区切り）に確定、ADR-013 を Minor Revision で更新し Accepted 化。ADR-014「monorepo 統合実行計画」を草稿し、判断点 4 件の決定内容を固定化しました。',
+  },
+  {
     id: '2026-04-23-adr-013-url-contract',
     date: '2026-04-23',
     type: 'info',

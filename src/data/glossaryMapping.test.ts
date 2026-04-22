@@ -8,8 +8,8 @@ import {
 } from './glossaryMapping';
 
 describe('glossaryMapping', () => {
-  it('contains at least the 20 terms agreed with peer', () => {
-    expect(GLOSSARY_MAPPINGS.length).toBeGreaterThanOrEqual(20);
+  it('contains at least the 24 anchors delivered by peer (2026-04-23)', () => {
+    expect(GLOSSARY_MAPPINGS.length).toBeGreaterThanOrEqual(24);
   });
 
   it('all terms have unique termId', () => {
@@ -25,11 +25,13 @@ describe('glossaryMapping', () => {
   });
 
   describe('urlForTerm', () => {
-    it('builds the agreed URL shape <base>#/chapter/<id>#<term-id>', () => {
-      expect(urlForTerm('VB')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/8#VB`);
-      expect(urlForTerm('Taylor')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/8#Taylor`);
-      expect(urlForTerm('SLD')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/10#SLD`);
-      expect(urlForTerm('atom')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/a1#atom`);
+    it('builds the agreed URL shape <base>#/chapter/<id>/<term-id> (slash separator)', () => {
+      // 2026-04-23: peer が RFC 3986 §3.5 理由で slash 形式に確定。ADR-013 Minor Revision 参照
+      expect(urlForTerm('VB')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/8/VB`);
+      expect(urlForTerm('Taylor')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/8/Taylor`);
+      expect(urlForTerm('SLD')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/10/SLD`);
+      expect(urlForTerm('atom')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/a1/atom`);
+      expect(urlForTerm('chatter')).toBe(`${MACHINING_FUNDAMENTALS_BASE_URL}#/chapter/10/chatter`);
     });
 
     it('falls back to base URL for unknown termId (peer guarantees home fallback)', () => {
@@ -37,7 +39,7 @@ describe('glossaryMapping', () => {
     });
 
     it('accepts a custom base URL (for staging / fixture)', () => {
-      expect(urlForTerm('VB', 'https://example.test/')).toBe('https://example.test/#/chapter/8#VB');
+      expect(urlForTerm('VB', 'https://example.test/')).toBe('https://example.test/#/chapter/8/VB');
     });
   });
 
@@ -49,15 +51,11 @@ describe('glossaryMapping', () => {
   });
 
   describe('isPendingTerm', () => {
-    it('returns true for pending anchors (Part A not yet published)', () => {
-      expect(isPendingTerm('metallic-bond')).toBe(true);
-      expect(isPendingTerm('dislocation')).toBe(true);
-    });
-
-    it('returns false for already-published anchors', () => {
-      expect(isPendingTerm('VB')).toBe(false);
-      expect(isPendingTerm('Taylor')).toBe(false);
-      expect(isPendingTerm('atom')).toBe(false); // A1 は公開済と peer が報告
+    // 2026-04-23: peer が Part A 全章 + 補強完了、pending フラグは全解除済
+    it('returns false for all anchors currently in mapping (all 24 delivered)', () => {
+      for (const m of GLOSSARY_MAPPINGS) {
+        expect(isPendingTerm(m.termId)).toBe(false);
+      }
     });
 
     it('returns false for unknown term', () => {
