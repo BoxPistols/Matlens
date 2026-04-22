@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-adr-012-014-accepted',
+    date: '2026-04-23',
+    type: 'info',
+    title: 'ADR-012 親密化戦略 + ADR-014 monorepo 実行計画を Accepted に昇格',
+    body: 'peer 側 owner の ALL OK 承認と peer repo への ADR-COM-014 コピー配置（263 行完全一致）を受け、ADR-012（親密化戦略）と ADR-014（monorepo 統合の実行計画）を両 repo 同時に Accepted に昇格しました。Phase 1 実装（PR #74）で 4 画面 learnMore が 24 anchor を実参照できる状態が、戦略の技術的実証として機能。これで ADR-012/013/014 の 3 本構成（戦略・運用規約・実行計画）が固定化され、Phase 4-A（2026-06 開始見込み）まで設計議論は一段落します。',
+  },
+  {
     id: '2026-04-23-learning-anchors-finalized',
     date: '2026-04-23',
     type: 'feature',

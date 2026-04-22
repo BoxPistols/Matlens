@@ -1,9 +1,16 @@
 # ADR-014: monorepo 統合の実行計画
 
-- ステータス: **Proposed**（peer 側でも同内容を配置予定）
-- 日付: 2026-04-23
+- ステータス: **Accepted**（2026-04-23 peer 側 owner 承認、両 repo 同時合意）
+- 日付: 2026-04-23（初版 Proposed → 同日 Accepted 昇格）
 - 関連 ADR: ADR-012（戦略）/ ADR-013（運用規約）
-- 関連 peer / repo: `BoxPistols/machining-fundamentals` の `docs/monorepo-decisions.md`
+- 関連 peer / repo: `BoxPistols/machining-fundamentals/docs/adr/ADR-COM-014-monorepo-integration-execution-plan.md`（peer 側コピー、263 行完全一致）
+
+## 改訂履歴
+
+| バージョン | 日付 | 変更点 |
+|---|---|---|
+| 初版 Proposed | 2026-04-23 | 判断点 4 件の決定、monorepo ディレクトリ構造、Phase 4-A 〜 4-E 移行スケジュール、Rollback 計画を起票 |
+| Accepted 昇格 | 2026-04-23 | peer 側 owner が ALL OK 承認、ADR-COM-014 として peer repo にコピー配置済。両 repo 同時昇格 |
 
 ---
 

@@ -1,9 +1,16 @@
 # ADR-012: machining-fundamentals との親密化統合戦略
 
-- ステータス: **Proposed**（peer と合意途中、user 方針確認済）
-- 日付: 2026-04-23
+- ステータス: **Accepted**（2026-04-23 両 repo で合意、Phase 1 実装で実証済）
+- 日付: 2026-04-23（初版 Proposed → 同日 Accepted 昇格）
 - 関連 peer / PR: `~/dev/Asagiri/Metal/machining-fundamentals`（GitHub: BoxPistols/machining-fundamentals）
-- 関連 ADR: ADR-001 / ADR-002 / ADR-005 / ADR-009
+- 関連 ADR: ADR-001 / ADR-002 / ADR-005 / ADR-009 / ADR-013 / ADR-014
+
+## 改訂履歴
+
+| バージョン | 日付 | 変更点 |
+|---|---|---|
+| 初版 Proposed | 2026-04-23 | 親密化レベル 3 目標、相互リンク戦略 5 パターン、Phase 0〜4 の草稿 |
+| Accepted 昇格 | 2026-04-23 | Phase 1 実装（PR #74）で 4 画面 learnMore が peer 配信の 24 anchor を実参照可能になったことで、戦略の技術的実証が完了。peer 側も同日同意。両 repo 同時昇格 |
 
 ---
 
