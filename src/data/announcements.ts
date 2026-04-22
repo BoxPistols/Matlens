@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-phase1-learning-links',
+    date: '2026-04-23',
+    type: 'feature',
+    title: 'PAGE_GUIDES に金属加工学習アプリへの「詳しく学ぶ」リンクを追加（ADR-012 Phase 1）',
+    body: '切削条件エクスプローラ / 工具ライフトラッカー / 材料マスタ / 受託試験ダッシュボードの 4 画面に、並行開発中の学習アプリ machining-fundamentals の該当章 / 用語へのリンクを追加しました。URL 規約は peer と合意済（<base>#/chapter/<id>#<term-id>）。Matlens 側で glossaryMapping.ts を新設し 20 件の用語マッピングを管理します。Part A の anchor は pending で管理し、公開後に順次有効化されます。',
+  },
+  {
     id: '2026-04-23-adr-012-integration-strategy',
     date: '2026-04-23',
     type: 'info',

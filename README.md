@@ -99,10 +99,14 @@ src/
 | ディレクトリ | 内容 |
 |------|------|
 | [`docs/onsite/`](./docs/onsite/) | 現場入り準備キット。ヒアリングシート（11 画面）／ペルソナ別ワークフロー仮説（4 ペルソナ）／既存ツール比較マトリクス／痛み候補 30 件／知識ギャップ棚卸し |
-| [`docs/adr/`](./docs/adr/) | Architecture Decision Records。インフラ系 7 本（英語）＋ フロント / ドメイン系 11 本（日本語、ADR-001〜011） |
+| [`docs/adr/`](./docs/adr/) | Architecture Decision Records。インフラ系 7 本（英語）＋ フロント / ドメイン系 12 本（日本語、ADR-001〜012）。ADR-012 は並行開発中の learning アプリとの親密化統合戦略 |
 | [`docs/research/`](./docs/research/) | ドメイン調査メモ・参照論文リンク |
 
 現場ヒアリングの結果は seeds / announcements / PAGE_GUIDES に反映する運用（ADR-007）を取っています。
+
+### 関連プロジェクト
+
+- [machining-fundamentals](https://github.com/BoxPistols/machining-fundamentals) — 金属加工の学習アプリ（独立 repo、MIT + CC BY 4.0 デュアルライセンス）。ADR-012 に基づき、用語・章・学習コンテンツを相互参照する親密化を進めています。
 
 ## Getting Started
 
