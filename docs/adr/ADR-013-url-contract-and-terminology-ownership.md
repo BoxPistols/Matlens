@@ -1,10 +1,17 @@
 # ADR-013: URL 規約・用語 ownership・更新ポリシー（親密化の運用規約）
 
-- ステータス: **Proposed**（peer 合意中、実装一部先行済）
-- 日付: 2026-04-23
-- 関連 ADR: ADR-012（親密化統合戦略 — Proposed）、ADR-007（連動更新ルール）
+- ステータス: **Accepted**（2026-04-23 peer と全項目合意）
+- 日付: 2026-04-23（初版）/ 2026-04-23（Minor Revision #1）
+- 関連 ADR: ADR-012（親密化統合戦略 — Proposed）、ADR-014（統合実行計画 — Proposed）、ADR-007（連動更新ルール）
 - 対応 PR: #74（Phase 1 Matlens 側実装）
 - 関連 peer / repo: `BoxPistols/machining-fundamentals`
+
+## 改訂履歴
+
+| バージョン | 日付 | 変更点 |
+|---|---|---|
+| 初版 | 2026-04-23 | URL Contract / Terminology Ownership / Update Policy / Dead Link / Out of Scope を草稿 |
+| Minor Revision #1 | 2026-04-23 | URL Contract の term anchor 区切りを `#` → `/` に確定（詳細は本文 §1 末尾） |
 
 ---
 
@@ -33,20 +40,45 @@ machining-fundamentals の URL は hash-based SPA 規約:
 
 ```
 <base>                          ホーム（未知 id のフォールバック先）
-<base>#/chapter/<id>            章詳細（id は '1'..'10' / 'a1'..'a6' 等）
-<base>#/chapter/<id>#<term-id>  章内 anchor（term-id は @mc/glossary と揃える）
+<base>#/chapter/<id>            章詳細（id は '1'..'10' / 'a1'..'a6' / 'c1' 等）
+<base>#/chapter/<id>/<term-id>  章内 anchor（term-id は @mc/glossary と揃える）
 <base>#/about                   このアプリについて
 <base>#/sim                     CFD シミュレーター
 ```
 
 **保証事項**（peer から宣言済）:
 - 章の `id` は原則変更しない（外部リンクを壊さない）
-- 既存 1..10 の id は Part A 挿入後も不変（a1〜a6 は先頭に追加された別名前空間）
+- 既存 1..10 の id は Part A 挿入後も不変（a1〜a6 / c1 は別名前空間で先頭・末尾に追加）
 - 未知 `id` は **ホームにフォールバック**（404 画面を出さない）
 
 **Matlens 側の運用**:
 - `src/data/glossaryMapping.ts` の `MACHINING_FUNDAMENTALS_BASE_URL` を信頼する
 - 定数で差替え可能（staging / CI テスト用）
+
+#### Minor Revision #1（2026-04-23）: term anchor 区切り `#` → `/` に確定
+
+**変更理由**:
+- 当初提案は `<base>#/chapter/<id>#<term-id>` だったが、RFC 3986 §3.5 により
+  単一 URL は `#` を 1 つしか持てない
+- `#/chapter/8#VB` ではブラウザの `location.hash` が
+  `/chapter/8#VB` 全体となり、2 段目の `#` は literal 扱い
+- peer 側実装で「path-style の `/` 連結のほうが parser がシンプル」と判断し変更
+- 2026-04-23 に両 repo で確認・合意
+
+**変更内容**:
+- `<base>#/chapter/<id>#<term-id>`（廃案）
+- `<base>#/chapter/<id>/<term-id>`（採用）
+
+**既に配置済のリンクへの影響**:
+- PR #74 で配置した 4 画面の learnMore はコミット時点で内部生成関数経由、
+  generateURL を 1 箇所修正すれば全てが同期追従
+- 本 ADR Minor Revision と同じ PR で `glossaryMapping.ts` を更新、test 期待値も更新
+
+**「予告期間」の扱い**:
+- ADR-013 初版の Update Policy（章 id 変更 1 週間等）は「既に公開・利用されている
+  anchor の破壊的変更」を対象とする
+- 本件は **初期合意形成中のタイポ修正** に相当し、予告期間は不要
+- 両 repo とも実利用開始前のため、初期固定化として処理
 
 ### 2. Terminology Ownership（用語の責任分界）
 
