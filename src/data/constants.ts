@@ -115,6 +115,15 @@ export const HELP_TERMS: { id: string; term: string; en: string; cat: string; ca
   {id:'guide-about',term:'技術スタック',en:'Tech Stack',cat:'guide',catLabel:'ページガイド',catVariant:'blue',body:'Matlens を構成する技術の一覧です。フロントエンド（React + TypeScript + Vite）、AI/ML（AI SDK + TensorFlow.js）、データフォーマット（MaiML + PNML）、テスト（Vitest + Playwright）などの技術選定とプロジェクト構成を確認できます。',related:'ヘルプ・用語集'},
 ];
 
+// machining-fundamentals（金属加工学習アプリ）への学習リンク。
+// URL 規約: `<base>#/chapter/<id>[#<term-id>]`。ADR-012 で合意済み。
+export interface LearnMoreLink {
+  chapterRef: string; // 論理参照 ('3' / 'a4' / '10' 等)、URL が変わっても不変
+  label: string;
+  labelEn: string;
+  termId?: string; // 章内 anchor（任意）
+}
+
 export interface PageGuide {
   id: string;
   icon: string;
@@ -127,6 +136,7 @@ export interface PageGuide {
   tips: string[];
   tipsEn: string[];
   related: string[];
+  learnMore?: LearnMoreLink[]; // 関連学習章（machining-fundamentals 参照）
 }
 
 export const PAGE_GUIDES: PageGuide[] = [
@@ -679,6 +689,9 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Abnormal finding ratio = non-low-confidence damage findings / completed tests in last 30 days',
     ],
     related: ['pjlist', 'specimens', 'matrix'],
+    learnMore: [
+      { chapterRef: '1', label: '金属加工の基礎（序章）', labelEn: 'Foundations of Metal Machining' },
+    ],
   },
   {
     id: 'reports', icon: 'report',
@@ -762,6 +775,11 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Use "Open in matrix" link in the detail view to jump to the test type × material heatmap',
     ],
     related: ['matrix', 'specimens', 'pjlist'],
+    learnMore: [
+      { chapterRef: 'a1', termId: 'atom', label: '原子と電子（Part A1）', labelEn: 'Atoms and Electrons (Part A1)' },
+      { chapterRef: 'a3', termId: 'fcc', label: '結晶構造 FCC / BCC / HCP', labelEn: 'Crystal Structures' },
+      { chapterRef: 'a5', termId: 'phase-diagram', label: '合金と相変態（Part A5）', labelEn: 'Alloys and Phase Transformations' },
+    ],
   },
   {
     id: 'specimens', icon: 'list',
@@ -822,6 +840,10 @@ export const PAGE_GUIDES: PageGuide[] = [
       'Wear rate changes with material — compare the material column in the recent process table',
     ],
     related: ['cutting-conditions', 'mat-master'],
+    learnMore: [
+      { chapterRef: '8', termId: 'VB', label: 'VB（逃げ面摩耗）とは', labelEn: 'About VB (Flank Wear)' },
+      { chapterRef: '8', termId: 'Taylor', label: 'Taylor 工具寿命式', labelEn: 'Taylor Tool Life Equation' },
+    ],
   },
   {
     id: 'cutting-conditions', icon: 'scan',
@@ -853,6 +875,11 @@ export const PAGE_GUIDES: PageGuide[] = [
       'When multiple waveform channels exist, switch between them via the tabs at the top of the right pane',
     ],
     related: ['matrix', 'damage', 'pjlist'],
+    learnMore: [
+      { chapterRef: '3', termId: 'Vc', label: '切削速度 Vc / 送り f / 切込 ap', labelEn: 'Vc / f / ap Basics' },
+      { chapterRef: '6', termId: 'Kc', label: '比切削抵抗 Kc（Kienzle）', labelEn: 'Specific Cutting Force Kc' },
+      { chapterRef: '10', termId: 'SLD', label: 'Stability Lobe Diagram', labelEn: 'Stability Lobe Diagram' },
+    ],
   },
 ];
 
