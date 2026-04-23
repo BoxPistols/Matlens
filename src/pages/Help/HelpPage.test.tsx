@@ -1,8 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { AppCtx } from '../../context/AppContext';
 
 import { HelpPage } from './HelpPage';
-import { renderWithContext } from '../../test/helpers';
+import { renderWithContext, mockContext } from '../../test/helpers';
 
 describe('HelpPage', () => {
   const onNav = vi.fn();
@@ -85,5 +86,26 @@ describe('HelpPage', () => {
     expect(firstLink.getAttribute('target')).toBe('_blank');
     expect(firstLink.getAttribute('rel')).toBe('noopener noreferrer');
     expect(firstLink.getAttribute('href')).toContain('machining-fundamentals');
+  });
+
+  it('renders English labels when lang is switched to en', () => {
+    // lang='en' のカスタムコンテキストで render
+    const enContext = {
+      ...mockContext,
+      lang: 'en' as const,
+      t: (_ja: string, en?: string) => en ?? _ja,
+    };
+    render(
+      <AppCtx.Provider value={enContext}>
+        <HelpPage onNav={onNav} />
+      </AppCtx.Provider>,
+    );
+    fireEvent.click(screen.getByRole('tab', { name: 'Page Guide' }));
+    // セクション見出しが英語になる
+    expect(screen.getAllByText('Overview').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Features').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Tips').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Learn More').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Open this page').length).toBeGreaterThan(0);
   });
 });
