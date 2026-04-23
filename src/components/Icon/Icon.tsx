@@ -71,9 +71,11 @@ interface IconProps {
   name: IconName;
   size?: number;
   className?: string;
+  /** 装飾用途でスクリーンリーダーから隠す場合に true。親要素で意味を伝えているときに使う */
+  ariaHidden?: boolean;
 }
 
-export const Icon = ({ name, size = 16, className = '' }: IconProps) => {
+export const Icon = ({ name, size = 16, className = '', ariaHidden = false }: IconProps) => {
   const LucideComponent = ICON_MAP[name];
   if (!LucideComponent) return null;
   return (
@@ -81,6 +83,7 @@ export const Icon = ({ name, size = 16, className = '' }: IconProps) => {
       size={size}
       className={`inline-flex flex-shrink-0 ${className}`}
       strokeWidth={1.75}
+      aria-hidden={ariaHidden || undefined}
     />
   );
 };

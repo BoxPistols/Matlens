@@ -74,15 +74,17 @@ const PageGuideSection = ({
                   const href = link.termId
                     ? urlForTerm(link.termId)
                     : urlForChapter(link.chapterRef);
+                  const key = link.termId ?? `chapter-${link.chapterRef}-${i}`;
                   return (
-                    <li key={i}>
+                    <li key={key}>
                       <a
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`${link.label}（外部サイトで開きます）`}
                         className="inline-flex items-center gap-1 text-accent hover:underline text-[13px]"
                       >
-                        <Icon name="external" size={12} />
+                        <Icon name="external" size={12} ariaHidden />
                         <span>{link.label}</span>
                       </a>
                     </li>
