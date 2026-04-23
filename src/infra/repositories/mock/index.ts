@@ -14,3 +14,4 @@ export { createMockSearchRepository } from './search.mock.repo';
 export { createMockToolRepository } from './tool.mock.repo';
 export { createMockCuttingProcessRepository } from './cuttingProcess.mock.repo';
 export { createMockReportRepository } from './report.mock.repo';
+export { createMockUserRepository } from './user.mock.repo';

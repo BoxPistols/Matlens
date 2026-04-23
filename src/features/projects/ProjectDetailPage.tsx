@@ -4,7 +4,13 @@ import type { ID } from '@/domain/types';
 import { ProjectStatusPill } from './components/ProjectStatusPill';
 import { DueTimeline } from './components/DueTimeline';
 import { SpecimenKanbanMini } from './components/SpecimenKanbanMini';
-import { useCustomersIndex, useProject } from './api';
+import { OwnerLoadSummary } from './components/OwnerLoadSummary';
+import {
+  useAllProjectsForLoad,
+  useCustomersIndex,
+  useProject,
+  useUsersIndex,
+} from './api';
 
 interface ProjectDetailPageProps {
   id: ID;
@@ -15,6 +21,8 @@ interface ProjectDetailPageProps {
 export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps) => {
   const { data: project, isLoading } = useProject(id);
   const { data: customerIndex } = useCustomersIndex();
+  const { data: usersIndex } = useUsersIndex();
+  const { data: allProjects } = useAllProjectsForLoad();
   const { specimens, tests } = useRepositories();
 
   const specimensQuery = useQuery({
@@ -85,6 +93,15 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
           <h2 className="font-semibold mb-2 text-[14px]">試験片ステータス</h2>
           {specimensQuery.data ? (
             <SpecimenKanbanMini specimens={specimensQuery.data.items} />
+          ) : (
+            <div className="text-[12px] text-[var(--text-lo)]">読み込み中…</div>
+          )}
+        </section>
+
+        <section className="mb-6">
+          <h2 className="font-semibold mb-2 text-[14px]">担当者の負荷</h2>
+          {allProjects && usersIndex ? (
+            <OwnerLoadSummary project={project} allProjects={allProjects} users={usersIndex} />
           ) : (
             <div className="text-[12px] text-[var(--text-lo)]">読み込み中…</div>
           )}
