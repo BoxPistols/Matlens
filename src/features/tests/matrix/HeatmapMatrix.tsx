@@ -4,16 +4,36 @@ import type { AbnormalCell } from './abnormalRatio';
 
 export type MatrixValueType = 'count' | 'abnormalRatio';
 
+/** 行の表示項目。material / customer 等を汎用的に受ける。 */
+export interface RowEntry {
+  id: ID;
+  primaryLabel: string; // 主表示（例: SUS304 / 株式会社 ABC）
+  secondaryLabel?: string; // 副表示（例: stainless / 業種タグ）
+  /** 行軸種別をアリアラベル組立に使う */
+  axisLabel: string; // 'material' | '顧客' 等
+}
+
 export interface HeatmapMatrixProps {
-  materials: Material[];
+  rows: RowEntry[];
   testTypes: TestType[];
   cells: MatrixCell[];
-  onCellClick?: (materialId: ID, testTypeId: ID) => void;
+  onCellClick?: (rowId: ID, testTypeId: ID) => void;
   /** セル値の表示モード。既定 'count'。 */
   valueType?: MatrixValueType;
   /** 異常率モード時の補助マップ。count モードでは不要。 */
   abnormalMap?: Map<string, AbnormalCell>;
+  /** 左上ヘッダセルのラベル（例: "材料 \ 試験種別" / "顧客 \ 試験種別"） */
+  rowHeaderLabel?: string;
 }
+
+/** Material 配列を RowEntry[] に変換するヘルパ。 */
+export const materialsToRows = (materials: Material[]): RowEntry[] =>
+  materials.map((m) => ({
+    id: m.id,
+    primaryLabel: m.designation,
+    secondaryLabel: m.category,
+    axisLabel: '材料',
+  }));
 
 const cellKey = (materialId: ID, testTypeId: ID) => `${materialId}__${testTypeId}`;
 
@@ -46,12 +66,13 @@ const textColorForRatio = (ratio: number): string => {
 const formatRatio = (ratio: number): string => `${(ratio * 100).toFixed(0)}%`;
 
 export const HeatmapMatrix = ({
-  materials,
+  rows,
   testTypes,
   cells,
   onCellClick,
   valueType = 'count',
   abnormalMap,
+  rowHeaderLabel = '材料 \\ 試験種別',
 }: HeatmapMatrixProps) => {
   const cellMap = new Map<string, MatrixCell>();
   cells.forEach((c) => cellMap.set(cellKey(c.materialId, c.testTypeId), c));
@@ -74,7 +95,7 @@ export const HeatmapMatrix = ({
               className="sticky left-0 top-0 z-20 bg-[var(--bg-raised)] border-b border-r border-[var(--border-faint)] px-3 py-2 text-left font-semibold"
               style={{ minWidth: 180 }}
             >
-              材料 \ 試験種別
+              {rowHeaderLabel}
             </th>
             {testTypes.map((tt) => (
               <th
@@ -97,22 +118,24 @@ export const HeatmapMatrix = ({
           </tr>
         </thead>
         <tbody>
-          {materials.map((mat) => (
-            <tr key={mat.id}>
+          {rows.map((row) => (
+            <tr key={row.id}>
               <th
                 scope="row"
                 className="sticky left-0 z-10 bg-[var(--bg-raised)] border-b border-r border-[var(--border-faint)] px-3 py-2 text-left font-medium whitespace-nowrap"
               >
                 <div className="flex flex-col">
-                  <span className="font-mono text-[12px]">{mat.designation}</span>
-                  <span className="text-[10px] text-[var(--text-lo)]">{mat.category}</span>
+                  <span className="font-mono text-[12px]">{row.primaryLabel}</span>
+                  {row.secondaryLabel && (
+                    <span className="text-[10px] text-[var(--text-lo)]">{row.secondaryLabel}</span>
+                  )}
                 </div>
               </th>
               {testTypes.map((tt) => {
-                const cell = cellMap.get(cellKey(mat.id, tt.id));
+                const cell = cellMap.get(cellKey(row.id, tt.id));
                 const count = cell?.count ?? 0;
                 const isEmpty = count === 0;
-                const abnormal = abnormalMap?.get(cellKey(mat.id, tt.id));
+                const abnormal = abnormalMap?.get(cellKey(row.id, tt.id));
                 const isAbnormalMode = valueType === 'abnormalRatio';
                 const ratio = abnormal?.ratio ?? 0;
 
@@ -133,10 +156,10 @@ export const HeatmapMatrix = ({
                   : textColorForCount(count, maxCount);
 
                 const ariaLabel = isEmpty
-                  ? `${mat.designation} × ${tt.name}: 未経験の組合せ（新規提案候補）`
+                  ? `${row.primaryLabel} × ${tt.name}: 未経験の組合せ（新規提案候補）`
                   : isAbnormalMode && abnormal
-                    ? `${mat.designation} × ${tt.name}: 異常率 ${formatRatio(ratio)}（${abnormal.abnormalCount} / ${abnormal.totalCount}）`
-                    : `${mat.designation} × ${tt.name}: ${count}件`;
+                    ? `${row.primaryLabel} × ${tt.name}: 異常率 ${formatRatio(ratio)}（${abnormal.abnormalCount} / ${abnormal.totalCount}）`
+                    : `${row.primaryLabel} × ${tt.name}: ${count}件`;
 
                 return (
                   <td
@@ -145,7 +168,7 @@ export const HeatmapMatrix = ({
                   >
                     <button
                       type="button"
-                      onClick={() => onCellClick?.(mat.id, tt.id)}
+                      onClick={() => onCellClick?.(row.id, tt.id)}
                       aria-label={ariaLabel}
                       data-empty-cell={isEmpty ? 'true' : undefined}
                       className={
@@ -165,7 +188,7 @@ export const HeatmapMatrix = ({
                 );
               })}
               <td className="sticky right-0 bg-[var(--bg-raised)] border-b border-l border-[var(--border-faint)] px-2 py-2 text-right font-mono tabular-nums font-semibold">
-                {rowTotals.get(mat.id) ?? 0}
+                {rowTotals.get(row.id) ?? 0}
               </td>
             </tr>
           ))}

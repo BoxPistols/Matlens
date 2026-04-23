@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-matrix-row-axis-switching',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '試験マトリクスに行軸切替（材料軸 / 顧客軸）を追加',
+    body: 'マトリクスのヘッダ左端に「材料軸 / 顧客軸」のトグルを追加しました。顧客軸を選ぶと、顧客 × 試験種別で過去完了試験を集計したヒートマップを表示します。PM が顧客ごとの試験実績の濃淡や未経験領域を把握し、次の提案機会を見つける支援になります。期間フィルタ・セル値切替（件数 / 異常率）・0 件ハイライトは両軸で共通動作します。',
+  },
+  {
     id: '2026-04-24-matrix-cell-value-switching',
     date: '2026-04-24',
     type: 'feature',
