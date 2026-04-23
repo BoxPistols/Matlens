@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-project-detail-density',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '案件詳細に納期タイムラインと試験片ステータスミニ Kanban を追加',
+    body: '案件詳細画面の情報密度を高める 2 ブロックを追加しました。納期タイムラインは開始日・今日・納期・完了日を横バーで可視化し、残日数 / 納期超過日数を色分けで表示します。試験片ステータスは 6 列の Kanban ミニで（受入 / 準備 / 試験中 / 試験済 / 保管 / 廃棄）、件数と比率バーを一目で把握できます。いずれも純 SVG / 純 CSS で実装。',
+  },
+  {
     id: '2026-04-24-matrix-row-axis-switching',
     date: '2026-04-24',
     type: 'feature',

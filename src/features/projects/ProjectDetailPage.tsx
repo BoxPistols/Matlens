@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useRepositories } from '@/app/providers';
 import type { ID } from '@/domain/types';
 import { ProjectStatusPill } from './components/ProjectStatusPill';
+import { DueTimeline } from './components/DueTimeline';
+import { SpecimenKanbanMini } from './components/SpecimenKanbanMini';
 import { useCustomersIndex, useProject } from './api';
 
 interface ProjectDetailPageProps {
@@ -68,6 +70,26 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
         </div>
       </header>
       <div className="flex-1 overflow-auto px-6 py-4">
+        <section className="mb-6">
+          <h2 className="font-semibold mb-2 text-[14px]">納期タイムライン</h2>
+          <div className="rounded-lg border border-[var(--border-faint)] bg-[var(--bg-raised)] p-3">
+            <DueTimeline
+              startedAt={project.startedAt}
+              dueAt={project.dueAt}
+              completedAt={project.completedAt}
+            />
+          </div>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="font-semibold mb-2 text-[14px]">試験片ステータス</h2>
+          {specimensQuery.data ? (
+            <SpecimenKanbanMini specimens={specimensQuery.data.items} />
+          ) : (
+            <div className="text-[12px] text-[var(--text-lo)]">読み込み中…</div>
+          )}
+        </section>
+
         <section className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <h2 className="font-semibold">試験片 ({project.specimenCount})</h2>
