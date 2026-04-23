@@ -9,7 +9,7 @@
 ## なぜ押さえるか
 
 - 航空系の試験業務を受ける試験所に**事実上必須**の認定が **NADCAP**
-- Boeing / Airbus / GE / P&W / Rolls-Royce / IHI / MHI など主要 OEM の **調達基準に NADCAP 認定を要求**
+- 海外大手 OEM（Boeing / Airbus / GE / P&W / Rolls-Royce 等）および国内大手の **調達基準に NADCAP 認定を要求**
 - ISO 17025 が「試験所の能力一般」を認定するのに対し、NADCAP は **航空宇宙特有の工程・試験** を監査
 - 日本のラボが海外 OEM の案件を取るには NADCAP を持っているか否かが効く
 

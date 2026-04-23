@@ -55,5 +55,6 @@ implementation details — those belong in commit messages.
 | [ADR-012](./ADR-012-machining-fundamentals-integration.md) | machining-fundamentals との親密化統合戦略 | Accepted |
 | [ADR-013](./ADR-013-url-contract-and-terminology-ownership.md) | URL 規約・用語 ownership・更新ポリシー（親密化の運用規約） | Accepted |
 | [ADR-014](./ADR-014-monorepo-integration-execution-plan.md) | monorepo 統合の実行計画（判断点 4 件の決定 + Phase 4 詳細） | Accepted |
+| [ADR-015](./ADR-015-confidentiality-and-naming-policy.md) | 守秘義務対応とリポジトリ命名ポリシー | Accepted |
 
 [nygard]: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions

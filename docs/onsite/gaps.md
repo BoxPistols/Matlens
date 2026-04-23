@@ -138,14 +138,14 @@
 - 🟡 PAM (Plasma Arc Melting) / VAR (Vacuum Arc Remelting) の溶解工程
 - 🔴 PQ (Premium Quality) の判定基準と試験項目
 - 🔴 NDE (Non-Destructive Examination) の航空業界特有の要件
-- 🔴 主要 OEM (GE / Pratt & Whitney / Rolls-Royce / IHI / 三菱重工) の調達基準
+- 🔴 主要 OEM（海外 GE / Pratt & Whitney / Rolls-Royce + 国内大手）の調達基準
 
 ### 自動車（次点）
 - 🟡 IATF 16949、PPAP、APQP の概要
 - 🔴 Tier 1 サプライヤーへの納入要件
 
 ### 学習計画
-- IHI / 三菱重工の公開技術論文を 2〜3 本読む
+- 国内航空宇宙 OEM の公開技術論文を 2〜3 本読む
 - PQ / NDE の入門記事を漁る
 - 「航空 / 自動車 / それ以外」のどれが主かを最初に確認
 
