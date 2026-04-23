@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-project-maiml-export',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '案件詳細から MaiML 形式で一括エクスポート可能に',
+    body: '案件詳細画面のヘッダに「MaiML エクスポート」ボタンを追加しました。対象案件の案件情報・試験片・試験（結果メトリクス含む）・損傷所見を 1 つの MaiML (JIS K 0200:2024) XML ドキュメントにまとめて書き出します。ダウンロード前にプレビューモーダルでファイルサイズ・行数・内容を確認できるため、配布前に中身を検証できます。',
+  },
+  {
     id: '2026-04-24-project-owner-load',
     date: '2026-04-24',
     type: 'feature',
