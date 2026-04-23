@@ -65,4 +65,25 @@ describe('HelpPage', () => {
     fireEvent.click(openButtons[0]!);
     expect(onNav).toHaveBeenCalledWith('dash');
   });
+
+  it('renders "詳しく学ぶ" section for guides with learnMore links', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    // PAGE_GUIDES に learnMore が設定されている画面（cutting-conditions / tools / mat-master / ops-dash）
+    // のいずれかで「詳しく学ぶ」セクションが表示される
+    expect(screen.getAllByText('詳しく学ぶ').length).toBeGreaterThan(0);
+  });
+
+  it('learn-more links open machining-fundamentals in a new tab with proper rel', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    // Vc / f / ap のリンク（切削条件エクスプローラの learnMore エントリ）は
+    // 必ず存在する — glossaryMapping で動作確認済み
+    const links = screen.getAllByRole('link', { name: /外部サイトで開きます/ });
+    expect(links.length).toBeGreaterThan(0);
+    const firstLink = links[0]!;
+    expect(firstLink.getAttribute('target')).toBe('_blank');
+    expect(firstLink.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(firstLink.getAttribute('href')).toContain('machining-fundamentals');
+  });
 });
