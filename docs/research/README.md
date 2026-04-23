@@ -10,7 +10,6 @@
 
 | # | タイトル | 領域 | 状態 |
 |---|---|---|---|
-| [0001](./0001-target-brief.md) | Target Brief（仮名ドメイン仮説） | ビジネス | Draft |
 | [0002](./0002-ams-sae-overview.md) | AMS (SAE) 航空宇宙材料規格の概観 | 規格体系 | Draft |
 | [0003](./0003-iso-17025-report-requirements.md) | ISO/IEC 17025 と試験報告書の法定要件 | 報告書 | Draft |
 | [0004](./0004-far-part-25-and-mmpds.md) | FAR Part 25 / MMPDS と材料データの統計要件 | 規格体系 | Draft |
