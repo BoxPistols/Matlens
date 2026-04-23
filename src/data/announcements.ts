@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-matrix-cell-value-switching',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '試験マトリクスのセル値を「件数」と「異常率」で切替可能に',
+    body: 'マトリクスのヘッダ右に「件数 / 異常率」のセル値切替を追加しました。異常率モードでは、各セル（材料 × 試験種別）の完了試験のうち、非 low 確信度の損傷所見が紐づく試験の割合を % 表示します。セルの色も異常率が高いほど赤が濃くなり、Xray 的に異常の多い組合せを一目で特定できます。選択中の期間フィルタと組み合わせられます。',
+  },
+  {
     id: '2026-04-24-matrix-period-filter',
     date: '2026-04-24',
     type: 'feature',

@@ -7,7 +7,16 @@ export const testMatrixKeys = {
   matrix: (query?: MatrixQuery) => [...testMatrixKeys.all, 'matrix', query] as const,
   testTypes: ['test-types'] as const,
   materials: (filter?: Record<string, unknown>) => ['materials', filter] as const,
+  tests: (query?: Record<string, unknown>) => [...testMatrixKeys.all, 'tests', query] as const,
+  damages: ['test-matrix', 'damages'] as const,
+  specimens: ['test-matrix', 'specimens'] as const,
 };
+
+// マトリクス画面で異常率計算に使う補助データ。
+// dateFrom 付きで tests を絞ることでフロント集計の計算量を減らす。
+const MATRIX_TEST_PAGE_SIZE = 3000;
+const MATRIX_DAMAGE_PAGE_SIZE = 500;
+const MATRIX_SPECIMEN_PAGE_SIZE = 1000;
 
 export const useTestMatrix = (query?: MatrixQuery) => {
   const { tests } = useRepositories();
@@ -33,5 +42,44 @@ export const useMaterials = () => {
     queryKey: testMatrixKeys.materials(),
     queryFn: () => materials.list(),
     staleTime: 5 * 60_000,
+  });
+};
+
+export const useMatrixTests = (dateFrom?: string) => {
+  const { tests } = useRepositories();
+  return useQuery({
+    queryKey: testMatrixKeys.tests({ dateFrom }),
+    queryFn: async () => {
+      const page = await tests.list({
+        filter: dateFrom ? { performedAfter: dateFrom } : undefined,
+        pageSize: MATRIX_TEST_PAGE_SIZE,
+      });
+      return page.items;
+    },
+    staleTime: 60_000,
+  });
+};
+
+export const useMatrixDamages = () => {
+  const { damage } = useRepositories();
+  return useQuery({
+    queryKey: testMatrixKeys.damages,
+    queryFn: async () => {
+      const page = await damage.list({ pageSize: MATRIX_DAMAGE_PAGE_SIZE });
+      return page.items;
+    },
+    staleTime: 60_000,
+  });
+};
+
+export const useMatrixSpecimens = () => {
+  const { specimens } = useRepositories();
+  return useQuery({
+    queryKey: testMatrixKeys.specimens,
+    queryFn: async () => {
+      const page = await specimens.list({ pageSize: MATRIX_SPECIMEN_PAGE_SIZE });
+      return page.items;
+    },
+    staleTime: 60_000,
   });
 };

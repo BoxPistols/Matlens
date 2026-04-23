@@ -1,11 +1,18 @@
 import type { Material, TestType, ID } from '@/domain/types';
 import type { MatrixCell } from '@/infra/repositories/interfaces';
+import type { AbnormalCell } from './abnormalRatio';
+
+export type MatrixValueType = 'count' | 'abnormalRatio';
 
 export interface HeatmapMatrixProps {
   materials: Material[];
   testTypes: TestType[];
   cells: MatrixCell[];
   onCellClick?: (materialId: ID, testTypeId: ID) => void;
+  /** セル値の表示モード。既定 'count'。 */
+  valueType?: MatrixValueType;
+  /** 異常率モード時の補助マップ。count モードでは不要。 */
+  abnormalMap?: Map<string, AbnormalCell>;
 }
 
 const cellKey = (materialId: ID, testTypeId: ID) => `${materialId}__${testTypeId}`;
@@ -24,11 +31,27 @@ const textColorForCount = (count: number, max: number): string => {
   return ratio > 0.5 ? '#ffffff' : 'var(--text-hi, #0f172a)';
 };
 
+// 異常率用: 0..1 を赤系のグラデーションで表現（低=透明、高=赤）
+const colorForRatio = (ratio: number): string => {
+  if (ratio <= 0) return 'transparent';
+  const alpha = 0.15 + ratio * 0.7;
+  return `rgba(220, 38, 38, ${alpha.toFixed(3)})`;
+};
+
+const textColorForRatio = (ratio: number): string => {
+  if (ratio <= 0) return 'var(--text-lo, #94a3b8)';
+  return ratio > 0.5 ? '#ffffff' : 'var(--text-hi, #0f172a)';
+};
+
+const formatRatio = (ratio: number): string => `${(ratio * 100).toFixed(0)}%`;
+
 export const HeatmapMatrix = ({
   materials,
   testTypes,
   cells,
   onCellClick,
+  valueType = 'count',
+  abnormalMap,
 }: HeatmapMatrixProps) => {
   const cellMap = new Map<string, MatrixCell>();
   cells.forEach((c) => cellMap.set(cellKey(c.materialId, c.testTypeId), c));
@@ -89,6 +112,32 @@ export const HeatmapMatrix = ({
                 const cell = cellMap.get(cellKey(mat.id, tt.id));
                 const count = cell?.count ?? 0;
                 const isEmpty = count === 0;
+                const abnormal = abnormalMap?.get(cellKey(mat.id, tt.id));
+                const isAbnormalMode = valueType === 'abnormalRatio';
+                const ratio = abnormal?.ratio ?? 0;
+
+                const displayText = isAbnormalMode
+                  ? isEmpty
+                    ? '·'
+                    : formatRatio(ratio)
+                  : count > 0
+                    ? String(count)
+                    : '·';
+
+                const background = isAbnormalMode && !isEmpty
+                  ? colorForRatio(ratio)
+                  : colorForCount(count, maxCount);
+
+                const textColor = isAbnormalMode && !isEmpty
+                  ? textColorForRatio(ratio)
+                  : textColorForCount(count, maxCount);
+
+                const ariaLabel = isEmpty
+                  ? `${mat.designation} × ${tt.name}: 未経験の組合せ（新規提案候補）`
+                  : isAbnormalMode && abnormal
+                    ? `${mat.designation} × ${tt.name}: 異常率 ${formatRatio(ratio)}（${abnormal.abnormalCount} / ${abnormal.totalCount}）`
+                    : `${mat.designation} × ${tt.name}: ${count}件`;
+
                 return (
                   <td
                     key={tt.id}
@@ -97,11 +146,7 @@ export const HeatmapMatrix = ({
                     <button
                       type="button"
                       onClick={() => onCellClick?.(mat.id, tt.id)}
-                      aria-label={
-                        isEmpty
-                          ? `${mat.designation} × ${tt.name}: 未経験の組合せ（新規提案候補）`
-                          : `${mat.designation} × ${tt.name}: ${count}件`
-                      }
+                      aria-label={ariaLabel}
                       data-empty-cell={isEmpty ? 'true' : undefined}
                       className={
                         'w-full h-full min-h-[34px] px-1 py-1 font-mono tabular-nums transition-colors hover:outline hover:outline-2 hover:outline-[var(--accent,#2563eb)]' +
@@ -110,11 +155,11 @@ export const HeatmapMatrix = ({
                           : '')
                       }
                       style={{
-                        background: colorForCount(count, maxCount),
-                        color: textColorForCount(count, maxCount),
+                        background,
+                        color: textColor,
                       }}
                     >
-                      {count > 0 ? count : '·'}
+                      {displayText}
                     </button>
                   </td>
                 );

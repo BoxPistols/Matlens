@@ -1,7 +1,15 @@
 import { useMemo, useState } from 'react';
 import type { ID } from '@/domain/types';
-import { HeatmapMatrix } from './HeatmapMatrix';
-import { useMaterials, useTestMatrix, useTestTypes } from './api';
+import { HeatmapMatrix, type MatrixValueType } from './HeatmapMatrix';
+import {
+  useMaterials,
+  useMatrixDamages,
+  useMatrixSpecimens,
+  useMatrixTests,
+  useTestMatrix,
+  useTestTypes,
+} from './api';
+import { computeAbnormalCellMap } from './abnormalRatio';
 
 interface SelectedCell {
   materialId: ID;
@@ -26,6 +34,7 @@ const dateFromForPreset = (preset: PeriodPreset, now: Date = new Date()): string
 
 export const TestMatrixPage = () => {
   const [period, setPeriod] = useState<PeriodPreset>('all');
+  const [valueType, setValueType] = useState<MatrixValueType>('count');
   const query = useMemo(() => {
     const dateFrom = dateFromForPreset(period);
     return dateFrom ? { dateFrom } : undefined;
@@ -42,6 +51,23 @@ export const TestMatrixPage = () => {
     isLoading: materialsLoading,
     isError: materialsError,
   } = useMaterials();
+
+  // 異常率モードのみで必要な補助データ。count モードではクエリ結果が揃っていなくても UI に影響しない。
+  const dateFrom = useMemo(() => dateFromForPreset(period), [period]);
+  const matrixTestsQ = useMatrixTests(dateFrom);
+  const matrixDamagesQ = useMatrixDamages();
+  const matrixSpecimensQ = useMatrixSpecimens();
+
+  const abnormalMap = useMemo(() => {
+    if (valueType !== 'abnormalRatio') return undefined;
+    if (!matrixTestsQ.data || !matrixDamagesQ.data || !matrixSpecimensQ.data) return undefined;
+    return computeAbnormalCellMap({
+      tests: matrixTestsQ.data,
+      damages: matrixDamagesQ.data,
+      specimens: matrixSpecimensQ.data,
+    });
+  }, [valueType, matrixTestsQ.data, matrixDamagesQ.data, matrixSpecimensQ.data]);
+
   const [selected, setSelected] = useState<SelectedCell | null>(null);
 
   if (matrixError || testTypesError || materialsError) {
@@ -86,30 +112,60 @@ export const TestMatrixPage = () => {
               0 件の組合せは新規提案の機会として破線で強調されます。
             </p>
           </div>
-          <div
-            role="radiogroup"
-            aria-label="集計期間"
-            className="flex gap-1 rounded-md border border-[var(--border-faint)] bg-[var(--bg-raised)] p-1"
-          >
-            {PERIOD_PRESETS.map((p) => {
-              const active = period === p.key;
-              return (
-                <button
-                  key={p.key}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => setPeriod(p.key)}
-                  className={`px-3 py-1 text-[12px] rounded transition-colors ${
-                    active
-                      ? 'bg-[var(--accent,#2563eb)] text-white font-semibold'
-                      : 'text-[var(--text-md)] hover:bg-[var(--hover)]'
-                  }`}
-                >
-                  {p.label}
-                </button>
-              );
-            })}
+          <div className="flex gap-3 flex-wrap">
+            <div
+              role="radiogroup"
+              aria-label="集計期間"
+              className="flex gap-1 rounded-md border border-[var(--border-faint)] bg-[var(--bg-raised)] p-1"
+            >
+              {PERIOD_PRESETS.map((p) => {
+                const active = period === p.key;
+                return (
+                  <button
+                    key={p.key}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setPeriod(p.key)}
+                    className={`px-3 py-1 text-[12px] rounded transition-colors ${
+                      active
+                        ? 'bg-[var(--accent,#2563eb)] text-white font-semibold'
+                        : 'text-[var(--text-md)] hover:bg-[var(--hover)]'
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div
+              role="radiogroup"
+              aria-label="セル値"
+              className="flex gap-1 rounded-md border border-[var(--border-faint)] bg-[var(--bg-raised)] p-1"
+            >
+              {([
+                { key: 'count' as const, label: '件数' },
+                { key: 'abnormalRatio' as const, label: '異常率' },
+              ]).map((v) => {
+                const active = valueType === v.key;
+                return (
+                  <button
+                    key={v.key}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => setValueType(v.key)}
+                    className={`px-3 py-1 text-[12px] rounded transition-colors ${
+                      active
+                        ? 'bg-[var(--accent,#2563eb)] text-white font-semibold'
+                        : 'text-[var(--text-md)] hover:bg-[var(--hover)]'
+                    }`}
+                  >
+                    {v.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </header>
@@ -119,6 +175,8 @@ export const TestMatrixPage = () => {
             materials={materials}
             testTypes={testTypes}
             cells={matrix.cells}
+            valueType={valueType}
+            abnormalMap={abnormalMap}
             onCellClick={(materialId, testTypeId) => setSelected({ materialId, testTypeId })}
           />
           <div className="mt-4 flex items-center gap-4 text-[11px] text-[var(--text-lo)]">
