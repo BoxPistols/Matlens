@@ -19,119 +19,129 @@ const PageGuideSection = ({
 }: {
   guides: PageGuide[];
   onNav?: (page: string) => void;
-}) => (
-  <div className="flex flex-col gap-5">
-    {guides.map(g => (
-      <div key={g.id} className="rounded-xl border border-[var(--border-default)] bg-surface overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 pt-4 pb-3">
-          <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-            <Icon name={g.icon as Parameters<typeof Icon>[0]['name']} size={18} className="text-accent" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-[15px] font-bold text-text-hi leading-snug truncate">
-              {g.title} <span className="text-text-lo font-normal">/ {g.titleEn}</span>
-            </h3>
-          </div>
-        </div>
-
-        <div className="border-t border-[var(--border-faint)] mx-5" />
-
-        <div className="px-5 py-4 flex flex-col gap-4 text-[13px] leading-relaxed text-text-md">
-          {/* 概要 */}
-          <div>
-            <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">概要</div>
-            <p>{g.summary}</p>
+}) => {
+  const { t } = useContext(AppCtx) as AppContextValue;
+  return (
+    <div className="flex flex-col gap-5">
+      {guides.map(g => (
+        <div key={g.id} className="rounded-xl border border-[var(--border-default)] bg-surface overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center gap-3 px-5 pt-4 pb-3">
+            <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <Icon name={g.icon as Parameters<typeof Icon>[0]['name']} size={18} className="text-accent" />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-[15px] font-bold text-text-hi leading-snug truncate">
+                {g.title} <span className="text-text-lo font-normal">/ {g.titleEn}</span>
+              </h3>
+            </div>
           </div>
 
-          {/* できること */}
-          <div>
-            <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">できること</div>
-            <ul className="list-disc list-inside space-y-0.5">
-              {g.features.map((f, i) => <li key={i}>{f}</li>)}
-            </ul>
-          </div>
+          <div className="border-t border-[var(--border-faint)] mx-5" />
 
-          {/* 操作のヒント */}
-          <div>
-            <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">操作のヒント</div>
-            <ul className="list-disc list-inside space-y-0.5">
-              {g.tips.map((tip, i) => <li key={i}>{tip}</li>)}
-            </ul>
-          </div>
-
-          {/* 詳しく学ぶ: 金属加工の基礎解説サイトへの外部リンク */}
-          {g.learnMore && g.learnMore.length > 0 && (
+          <div className="px-5 py-4 flex flex-col gap-4 text-[13px] leading-relaxed text-text-md">
+            {/* 概要 */}
             <div>
-              <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">
-                詳しく学ぶ
-              </div>
-              <p className="text-[12px] text-text-lo mb-1.5">
-                画面で扱う概念を金属加工の基礎解説サイトで学べます（外部リンク・新しいタブで開きます）。
-              </p>
-              <ul className="flex flex-col gap-1">
-                {g.learnMore.map((link, i) => {
-                  const href = link.termId
-                    ? urlForTerm(link.termId)
-                    : urlForChapter(link.chapterRef);
-                  const key = link.termId ?? `chapter-${link.chapterRef}-${i}`;
-                  return (
-                    <li key={key}>
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${link.label}（外部サイトで開きます）`}
-                        className="inline-flex items-center gap-1 text-accent hover:underline text-[13px]"
-                      >
-                        <Icon name="external" size={12} ariaHidden />
-                        <span>{link.label}</span>
-                      </a>
-                    </li>
-                  );
-                })}
+              <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">{t('概要', 'Overview')}</div>
+              <p>{t(g.summary, g.summaryEn)}</p>
+            </div>
+
+            {/* できること */}
+            <div>
+              <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">{t('できること', 'Features')}</div>
+              <ul className="list-disc list-inside space-y-0.5">
+                {g.features.map((f, i) => <li key={i}>{t(f, g.featuresEn[i] ?? f)}</li>)}
               </ul>
             </div>
-          )}
 
-          {/* Footer: 関連ページ + 遷移ボタン */}
-          <div className="flex items-center justify-between gap-4 pt-1 flex-wrap">
-            {g.related.length > 0 && (
-              <div className="text-[12px] text-text-lo">
-                関連ページ:{' '}
-                {g.related.map((rid, i) => {
-                  const label = GUIDE_TITLE_MAP[rid] ?? rid;
-                  return (
-                    <span key={rid}>
-                      {i > 0 && <span className="mx-1">|</span>}
-                      {onNav ? (
-                        <button
-                          className="text-accent hover:underline"
-                          onClick={() => onNav(rid)}
-                        >{label}</button>
-                      ) : (
-                        <span className="text-accent">{label}</span>
-                      )}
-                    </span>
-                  );
-                })}
+            {/* 操作のヒント */}
+            <div>
+              <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">{t('操作のヒント', 'Tips')}</div>
+              <ul className="list-disc list-inside space-y-0.5">
+                {g.tips.map((tip, i) => <li key={i}>{t(tip, g.tipsEn[i] ?? tip)}</li>)}
+              </ul>
+            </div>
+
+            {/* 詳しく学ぶ: 金属加工の基礎解説サイトへの外部リンク */}
+            {g.learnMore && g.learnMore.length > 0 && (
+              <div>
+                <div className="text-[12px] font-bold text-text-lo uppercase tracking-wider mb-1">
+                  {t('詳しく学ぶ', 'Learn More')}
+                </div>
+                <p className="text-[12px] text-text-lo mb-1.5">
+                  {t(
+                    '画面で扱う概念を金属加工の基礎解説サイトで学べます（外部リンク・新しいタブで開きます）。',
+                    'Learn the concepts in this page at the metal machining fundamentals site (external link, opens in a new tab).',
+                  )}
+                </p>
+                <ul className="flex flex-col gap-1">
+                  {g.learnMore.map((link, i) => {
+                    const href = link.termId
+                      ? urlForTerm(link.termId)
+                      : urlForChapter(link.chapterRef);
+                    const key = link.termId ?? `chapter-${link.chapterRef}-${i}`;
+                    const label = t(link.label, link.labelEn);
+                    return (
+                      <li key={key}>
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={t(
+                            `${link.label}（外部サイトで開きます）`,
+                            `${link.labelEn} (opens in a new tab)`,
+                          )}
+                          className="inline-flex items-center gap-1 text-accent hover:underline text-[13px]"
+                        >
+                          <Icon name="external" size={12} ariaHidden />
+                          <span>{label}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             )}
-            {onNav && g.id !== 'help' && (
-              <button
-                className="ml-auto text-[12px] font-bold text-accent hover:underline flex items-center gap-1 flex-shrink-0"
-                onClick={() => onNav(g.id)}
-              >
-                このページを開く
-                <Icon name="chevronRight" size={12} />
-              </button>
-            )}
+
+            {/* Footer: 関連ページ + 遷移ボタン */}
+            <div className="flex items-center justify-between gap-4 pt-1 flex-wrap">
+              {g.related.length > 0 && (
+                <div className="text-[12px] text-text-lo">
+                  {t('関連ページ:', 'Related:')}{' '}
+                  {g.related.map((rid, i) => {
+                    const label = GUIDE_TITLE_MAP[rid] ?? rid;
+                    return (
+                      <span key={rid}>
+                        {i > 0 && <span className="mx-1">|</span>}
+                        {onNav ? (
+                          <button
+                            className="text-accent hover:underline"
+                            onClick={() => onNav(rid)}
+                          >{label}</button>
+                        ) : (
+                          <span className="text-accent">{label}</span>
+                        )}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+              {onNav && g.id !== 'help' && (
+                <button
+                  className="ml-auto text-[12px] font-bold text-accent hover:underline flex items-center gap-1 flex-shrink-0"
+                  onClick={() => onNav(g.id)}
+                >
+                  {t('このページを開く', 'Open this page')}
+                  <Icon name="chevronRight" size={12} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    ))}
-  </div>
-);
+      ))}
+    </div>
+  );
+};
 
 /* ---------- HelpPage ---------- */
 

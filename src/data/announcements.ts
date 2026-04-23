@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-23-help-page-guide-i18n',
+    date: '2026-04-23',
+    type: 'feature',
+    title: 'ヘルプのページガイドを日英切替に対応',
+    body: 'トップバーの JP/EN 切替で、ヘルプ画面のページガイドタブ（概要・できること・操作のヒント・詳しく学ぶ・関連ページ・このページを開く）が日本語 / 英語で切り替わるようになりました。各画面の説明本文・機能一覧・操作ヒントも、登録済みの英語表現がある場合は英語で表示されます。海外メンバーとの共有時に活用できます。',
+  },
+  {
     id: '2026-04-23-help-learn-more-links',
     date: '2026-04-23',
     type: 'feature',
