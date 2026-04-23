@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { ID } from '@/domain/types';
 import { HeatmapMatrix } from './HeatmapMatrix';
 import { useMaterials, useTestMatrix, useTestTypes } from './api';
@@ -8,8 +8,30 @@ interface SelectedCell {
   testTypeId: ID;
 }
 
+type PeriodPreset = 'all' | 'last6m' | 'last1y';
+
+const PERIOD_PRESETS: { key: PeriodPreset; label: string; labelEn: string; months: number | null }[] = [
+  { key: 'all', label: '全期間', labelEn: 'All time', months: null },
+  { key: 'last1y', label: '直近 1 年', labelEn: 'Last year', months: 12 },
+  { key: 'last6m', label: '直近 6 ヶ月', labelEn: 'Last 6 months', months: 6 },
+];
+
+const dateFromForPreset = (preset: PeriodPreset, now: Date = new Date()): string | undefined => {
+  const entry = PERIOD_PRESETS.find((p) => p.key === preset);
+  if (!entry || entry.months === null) return undefined;
+  const from = new Date(now);
+  from.setMonth(from.getMonth() - entry.months);
+  return from.toISOString().slice(0, 10); // YYYY-MM-DD
+};
+
 export const TestMatrixPage = () => {
-  const { data: matrix, isLoading: matrixLoading, isError: matrixError } = useTestMatrix();
+  const [period, setPeriod] = useState<PeriodPreset>('all');
+  const query = useMemo(() => {
+    const dateFrom = dateFromForPreset(period);
+    return dateFrom ? { dateFrom } : undefined;
+  }, [period]);
+
+  const { data: matrix, isLoading: matrixLoading, isError: matrixError } = useTestMatrix(query);
   const {
     data: testTypes,
     isLoading: testTypesLoading,
@@ -56,10 +78,40 @@ export const TestMatrixPage = () => {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <header className="px-6 py-4 border-b border-[var(--border-faint)]">
-        <h1 className="text-xl font-bold">試験マトリクス</h1>
-        <p className="text-[13px] text-[var(--text-lo)] mt-1">
-          材料 × 試験種別ごとの実績件数を俯瞰し、過去試験の厚み薄さを可視化します。
-        </p>
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-xl font-bold">試験マトリクス</h1>
+            <p className="text-[13px] text-[var(--text-lo)] mt-1">
+              材料 × 試験種別ごとの実績件数を俯瞰し、過去試験の厚み薄さを可視化します。
+              0 件の組合せは新規提案の機会として破線で強調されます。
+            </p>
+          </div>
+          <div
+            role="radiogroup"
+            aria-label="集計期間"
+            className="flex gap-1 rounded-md border border-[var(--border-faint)] bg-[var(--bg-raised)] p-1"
+          >
+            {PERIOD_PRESETS.map((p) => {
+              const active = period === p.key;
+              return (
+                <button
+                  key={p.key}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setPeriod(p.key)}
+                  className={`px-3 py-1 text-[12px] rounded transition-colors ${
+                    active
+                      ? 'bg-[var(--accent,#2563eb)] text-white font-semibold'
+                      : 'text-[var(--text-md)] hover:bg-[var(--hover)]'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </header>
       <div className="flex-1 flex min-h-0">
         <div className="flex-1 p-6 overflow-auto">

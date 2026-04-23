@@ -73,7 +73,18 @@ describe('HeatmapMatrix', () => {
   it('件数が 0 のセルは中黒表示、件数ありは数値表示', () => {
     render(<HeatmapMatrix materials={materials} testTypes={testTypes} cells={cells} />);
     expect(screen.getByLabelText('SUS304 × 引張試験: 5件')).toHaveTextContent('5');
-    expect(screen.getByLabelText('SUS304 × 疲労試験: 0件')).toHaveTextContent('·');
+    // 0 件セルは新規提案候補として専用ラベルでアクセス可能
+    expect(
+      screen.getByLabelText('SUS304 × 疲労試験: 未経験の組合せ（新規提案候補）'),
+    ).toHaveTextContent('·');
+  });
+
+  it('0 件セルは data-empty-cell="true" で識別でき、視覚的強調用の破線が当たる', () => {
+    render(<HeatmapMatrix materials={materials} testTypes={testTypes} cells={cells} />);
+    const emptyCell = screen.getByLabelText('SUS304 × 疲労試験: 未経験の組合せ（新規提案候補）');
+    expect(emptyCell.getAttribute('data-empty-cell')).toBe('true');
+    // 破線強調 class
+    expect(emptyCell.className).toContain('outline-dashed');
   });
 
   it('セルクリックで onCellClick が呼ばれる', () => {
