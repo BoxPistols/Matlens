@@ -4,9 +4,12 @@
 import type {
   CuttingProcess,
   DamageFinding,
+  Material,
+  MaterialCategory,
   Project,
   Specimen,
   Test,
+  TestType,
   Tool,
 } from '@/domain/types';
 import { VB_CRITERIA } from '@/features/cutting/utils/standards';
@@ -198,6 +201,94 @@ export const collectDueRisk = (
   }
   // 残日数が少ない（＝リスク高）順に並べる。同値は stable order（元の順序）を保つ。
   return items.sort((a, b) => a.daysLeft - b.daysLeft);
+};
+
+export interface DistributionBucket {
+  key: string;
+  label: string;
+  value: number;
+}
+
+/**
+ * 過去 30 日の完了試験を testTypeId 別に集計してバケット化。
+ * テスト種別 index から日本語名を解決、未登録の id は id そのまま表示。
+ */
+export const computeTestTypeDistribution = (
+  tests: Test[],
+  testTypes: Map<string, TestType>,
+  now: Date = new Date(),
+  days = 30
+): DistributionBucket[] => {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const since = now.getTime() - days * msPerDay;
+
+  const counts = new Map<string, number>();
+  for (const t of tests) {
+    if (t.status !== 'completed') continue;
+    const ts = Date.parse(t.performedAt);
+    if (Number.isNaN(ts) || ts < since) continue;
+    counts.set(t.testTypeId, (counts.get(t.testTypeId) ?? 0) + 1);
+  }
+
+  const buckets: DistributionBucket[] = Array.from(counts.entries()).map(
+    ([id, value]) => ({
+      key: id,
+      label: testTypes.get(id)?.name ?? id,
+      value,
+    })
+  );
+  // 多い順にソート。同数は label で安定ソート。
+  buckets.sort((a, b) => b.value - a.value || a.label.localeCompare(b.label));
+  return buckets;
+};
+
+const MATERIAL_CATEGORY_LABEL: Record<MaterialCategory, string> = {
+  steel: '鋼',
+  stainless: 'ステンレス',
+  aluminum: 'アルミ合金',
+  titanium: 'Ti 合金',
+  nickel_alloy: 'Ni 基超合金',
+  copper: '銅合金',
+  polymer: 'ポリマー',
+  composite: '複合材',
+  ceramic: 'セラミクス',
+  other: 'その他',
+};
+
+/**
+ * 案件に紐づく試験片の母材カテゴリを集計。
+ * 進行中案件（computeOpsKpi の活性状態と同じ定義）に絞って、
+ * 「今動いている案件ではどのカテゴリの材料が扱われているか」を可視化する。
+ */
+export const computeMaterialCategoryDistribution = (input: {
+  projects: Project[];
+  specimens: Specimen[];
+  materials: Map<string, Material>;
+}): DistributionBucket[] => {
+  const { projects, specimens, materials } = input;
+  const activeProjectIds = new Set(
+    projects
+      .filter((p) => ACTIVE_STATUSES.includes(p.status))
+      .map((p) => p.id)
+  );
+
+  const counts = new Map<MaterialCategory, number>();
+  for (const s of specimens) {
+    if (!activeProjectIds.has(s.projectId)) continue;
+    const m = materials.get(s.materialId);
+    if (!m) continue;
+    counts.set(m.category, (counts.get(m.category) ?? 0) + 1);
+  }
+
+  const buckets: DistributionBucket[] = Array.from(counts.entries()).map(
+    ([cat, value]) => ({
+      key: cat,
+      label: MATERIAL_CATEGORY_LABEL[cat] ?? cat,
+      value,
+    })
+  );
+  buckets.sort((a, b) => b.value - a.value || a.label.localeCompare(b.label));
+  return buckets;
 };
 
 export type ActivityKind = 'test_completed' | 'damage_reported';

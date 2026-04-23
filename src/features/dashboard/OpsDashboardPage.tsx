@@ -11,13 +11,18 @@ import {
   useAllTests,
   useAllTools,
   useCustomersIndex,
+  useMaterialsIndex,
+  useTestTypesIndex,
 } from './api';
 import {
   buildActivityTimeline,
   collectDueRisk,
   computeCuttingKpi,
+  computeMaterialCategoryDistribution,
   computeOpsKpi,
+  computeTestTypeDistribution,
 } from './utils/opsMetrics';
+import { PieChart } from './components/PieChart';
 
 interface OpsDashboardPageProps {
   onNav?: (page: string) => void;
@@ -37,6 +42,9 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
   // 切削 KPI 用。取得失敗でも受託試験側 KPI / 納期リスク / タイムラインはブロックしない設計。
   const toolsQ = useAllTools();
   const cuttingProcessesQ = useAllCuttingProcesses();
+  // 分布チャート用。materialsIndex / testTypesIndex は副次情報、取得失敗時はチャート側を非表示にする。
+  const materialsIndexQ = useMaterialsIndex();
+  const testTypesIndexQ = useTestTypesIndex();
   // 顧客名はリスク行の表示のみに使う副次情報。取得失敗でもダッシュボード全体はブロックしない。
   const customersQ = useCustomersIndex();
 
@@ -76,6 +84,20 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
       now,
     });
   }, [toolsQ.data, cuttingProcessesQ.data, now]);
+
+  const testTypeDistribution = useMemo(() => {
+    if (!testsQ.data || !testTypesIndexQ.data) return null;
+    return computeTestTypeDistribution(testsQ.data, testTypesIndexQ.data, now, 30);
+  }, [testsQ.data, testTypesIndexQ.data, now]);
+
+  const materialDistribution = useMemo(() => {
+    if (!projectsQ.data || !specimensQ.data || !materialsIndexQ.data) return null;
+    return computeMaterialCategoryDistribution({
+      projects: projectsQ.data,
+      specimens: specimensQ.data,
+      materials: materialsIndexQ.data,
+    });
+  }, [projectsQ.data, specimensQ.data, materialsIndexQ.data]);
 
   const dueRisk = useMemo(() => {
     if (!projectsQ.data) return [];
@@ -179,6 +201,32 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
             )}
           </div>
         </section>
+
+        {/* 分布チャート */}
+        {(testTypeDistribution || materialDistribution) && (
+          <section
+            aria-label="分布"
+            className="grid gap-4"
+            style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}
+          >
+            {testTypeDistribution && (
+              <div className="rounded-lg border border-[var(--border-faint)] bg-[var(--bg-raised)] p-4">
+                <h2 className="text-[14px] font-semibold mb-3">
+                  試験種別分布（過去 30 日の完了試験）
+                </h2>
+                <PieChart slices={testTypeDistribution} title="試験種別分布" />
+              </div>
+            )}
+            {materialDistribution && (
+              <div className="rounded-lg border border-[var(--border-faint)] bg-[var(--bg-raised)] p-4">
+                <h2 className="text-[14px] font-semibold mb-3">
+                  材料カテゴリ分布（進行中案件の試験片）
+                </h2>
+                <PieChart slices={materialDistribution} title="材料カテゴリ分布" />
+              </div>
+            )}
+          </section>
+        )}
 
         {/* 納期リスク */}
         <section

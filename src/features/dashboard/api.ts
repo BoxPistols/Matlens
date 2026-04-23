@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRepositories } from '@/app/providers';
-import type { ID, Material, Project, Customer } from '@/domain/types';
+import type { ID, Material, Project, Customer, TestType } from '@/domain/types';
 
 export const dashboardKeys = {
   all: ['ops-dashboard'] as const,
@@ -13,6 +13,7 @@ export const dashboardKeys = {
   projectsIndex: ['ops-dashboard', 'projects-index'] as const,
   materialsIndex: ['ops-dashboard', 'materials-index'] as const,
   customersIndex: ['ops-dashboard', 'customers-index'] as const,
+  testTypesIndex: ['ops-dashboard', 'test-types-index'] as const,
 };
 
 /**
@@ -131,6 +132,18 @@ export const useCustomersIndex = () => {
     queryFn: async () => {
       const page = await customers.list();
       return new Map<ID, Customer>(page.items.map((c) => [c.id, c]));
+    },
+    staleTime: 5 * 60_000,
+  });
+};
+
+export const useTestTypesIndex = () => {
+  const { testTypes } = useRepositories();
+  return useQuery({
+    queryKey: dashboardKeys.testTypesIndex,
+    queryFn: async () => {
+      const all = await testTypes.list();
+      return new Map<ID, TestType>(all.map((t) => [t.id, t]));
     },
     staleTime: 5 * 60_000,
   });
