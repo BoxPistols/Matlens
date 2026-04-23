@@ -88,6 +88,7 @@ export const HeatmapMatrix = ({
               {testTypes.map((tt) => {
                 const cell = cellMap.get(cellKey(mat.id, tt.id));
                 const count = cell?.count ?? 0;
+                const isEmpty = count === 0;
                 return (
                   <td
                     key={tt.id}
@@ -96,8 +97,18 @@ export const HeatmapMatrix = ({
                     <button
                       type="button"
                       onClick={() => onCellClick?.(mat.id, tt.id)}
-                      aria-label={`${mat.designation} × ${tt.name}: ${count}件`}
-                      className="w-full h-full min-h-[34px] px-1 py-1 font-mono tabular-nums transition-colors hover:outline hover:outline-2 hover:outline-[var(--accent,#2563eb)]"
+                      aria-label={
+                        isEmpty
+                          ? `${mat.designation} × ${tt.name}: 未経験の組合せ（新規提案候補）`
+                          : `${mat.designation} × ${tt.name}: ${count}件`
+                      }
+                      data-empty-cell={isEmpty ? 'true' : undefined}
+                      className={
+                        'w-full h-full min-h-[34px] px-1 py-1 font-mono tabular-nums transition-colors hover:outline hover:outline-2 hover:outline-[var(--accent,#2563eb)]' +
+                        (isEmpty
+                          ? ' outline outline-1 outline-dashed outline-[var(--warn,#d97706)] -outline-offset-2'
+                          : '')
+                      }
                       style={{
                         background: colorForCount(count, maxCount),
                         color: textColorForCount(count, maxCount),

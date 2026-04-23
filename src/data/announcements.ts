@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-matrix-period-filter',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '試験マトリクスに集計期間フィルタと未経験セルのハイライトを追加',
+    body: 'ヘッダ右側に「全期間 / 直近 1 年 / 直近 6 ヶ月」の切替を追加し、期間ごとの実績件数を比較できるようになりました。実績 0 件の組合せ（材料 × 試験種別）は破線でハイライトし、新規提案候補として視覚的に識別できます。スクリーンリーダー向けラベルも専用文言に切り替わります。',
+  },
+  {
     id: '2026-04-24-dashboard-distribution-charts',
     date: '2026-04-24',
     type: 'feature',
