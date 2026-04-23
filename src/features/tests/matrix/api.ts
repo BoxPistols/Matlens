@@ -10,6 +10,8 @@ export const testMatrixKeys = {
   tests: (query?: Record<string, unknown>) => [...testMatrixKeys.all, 'tests', query] as const,
   damages: ['test-matrix', 'damages'] as const,
   specimens: ['test-matrix', 'specimens'] as const,
+  customers: ['test-matrix', 'customers'] as const,
+  projects: ['test-matrix', 'projects'] as const,
 };
 
 // マトリクス画面で異常率計算に使う補助データ。
@@ -78,6 +80,30 @@ export const useMatrixSpecimens = () => {
     queryKey: testMatrixKeys.specimens,
     queryFn: async () => {
       const page = await specimens.list({ pageSize: MATRIX_SPECIMEN_PAGE_SIZE });
+      return page.items;
+    },
+    staleTime: 60_000,
+  });
+};
+
+export const useMatrixCustomers = () => {
+  const { customers } = useRepositories();
+  return useQuery({
+    queryKey: testMatrixKeys.customers,
+    queryFn: async () => {
+      const page = await customers.list();
+      return page.items;
+    },
+    staleTime: 5 * 60_000,
+  });
+};
+
+export const useMatrixProjects = () => {
+  const { projects } = useRepositories();
+  return useQuery({
+    queryKey: testMatrixKeys.projects,
+    queryFn: async () => {
+      const page = await projects.list({ pageSize: 500 });
       return page.items;
     },
     staleTime: 60_000,

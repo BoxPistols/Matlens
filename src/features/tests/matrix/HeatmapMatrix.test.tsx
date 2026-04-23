@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { HeatmapMatrix } from './HeatmapMatrix';
+import { HeatmapMatrix, materialsToRows } from './HeatmapMatrix';
 import type { Material, TestType } from '@/domain/types';
 import type { MatrixCell } from '@/infra/repositories/interfaces';
 
@@ -63,7 +63,7 @@ const cells: MatrixCell[] = [
 
 describe('HeatmapMatrix', () => {
   it('材料行・試験種別列・合計列をレンダリングする', () => {
-    render(<HeatmapMatrix materials={materials} testTypes={testTypes} cells={cells} />);
+    render(<HeatmapMatrix rows={materialsToRows(materials)} testTypes={testTypes} cells={cells} />);
     expect(screen.getByText('SUS304')).toBeInTheDocument();
     expect(screen.getByText('S45C')).toBeInTheDocument();
     expect(screen.getByText('引張試験')).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('HeatmapMatrix', () => {
   });
 
   it('件数が 0 のセルは中黒表示、件数ありは数値表示', () => {
-    render(<HeatmapMatrix materials={materials} testTypes={testTypes} cells={cells} />);
+    render(<HeatmapMatrix rows={materialsToRows(materials)} testTypes={testTypes} cells={cells} />);
     expect(screen.getByLabelText('SUS304 × 引張試験: 5件')).toHaveTextContent('5');
     // 0 件セルは新規提案候補として専用ラベルでアクセス可能
     expect(
@@ -80,7 +80,7 @@ describe('HeatmapMatrix', () => {
   });
 
   it('0 件セルは data-empty-cell="true" で識別でき、視覚的強調用の破線が当たる', () => {
-    render(<HeatmapMatrix materials={materials} testTypes={testTypes} cells={cells} />);
+    render(<HeatmapMatrix rows={materialsToRows(materials)} testTypes={testTypes} cells={cells} />);
     const emptyCell = screen.getByLabelText('SUS304 × 疲労試験: 未経験の組合せ（新規提案候補）');
     expect(emptyCell.getAttribute('data-empty-cell')).toBe('true');
     // 破線強調 class
@@ -91,7 +91,7 @@ describe('HeatmapMatrix', () => {
     const handler = vi.fn();
     render(
       <HeatmapMatrix
-        materials={materials}
+        rows={materialsToRows(materials)}
         testTypes={testTypes}
         cells={cells}
         onCellClick={handler}

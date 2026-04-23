@@ -1,18 +1,23 @@
 import { useMemo, useState } from 'react';
 import type { ID } from '@/domain/types';
-import { HeatmapMatrix, type MatrixValueType } from './HeatmapMatrix';
+import { HeatmapMatrix, materialsToRows, type MatrixValueType, type RowEntry } from './HeatmapMatrix';
 import {
   useMaterials,
+  useMatrixCustomers,
   useMatrixDamages,
+  useMatrixProjects,
   useMatrixSpecimens,
   useMatrixTests,
   useTestMatrix,
   useTestTypes,
 } from './api';
 import { computeAbnormalCellMap } from './abnormalRatio';
+import { computeCustomerTestTypeCells } from './customerMatrix';
+
+type RowAxis = 'material' | 'customer';
 
 interface SelectedCell {
-  materialId: ID;
+  rowId: ID;
   testTypeId: ID;
 }
 
@@ -35,10 +40,12 @@ const dateFromForPreset = (preset: PeriodPreset, now: Date = new Date()): string
 export const TestMatrixPage = () => {
   const [period, setPeriod] = useState<PeriodPreset>('all');
   const [valueType, setValueType] = useState<MatrixValueType>('count');
+  const [rowAxis, setRowAxis] = useState<RowAxis>('material');
+
+  const dateFrom = useMemo(() => dateFromForPreset(period), [period]);
   const query = useMemo(() => {
-    const dateFrom = dateFromForPreset(period);
     return dateFrom ? { dateFrom } : undefined;
-  }, [period]);
+  }, [dateFrom]);
 
   const { data: matrix, isLoading: matrixLoading, isError: matrixError } = useTestMatrix(query);
   const {
@@ -52,11 +59,13 @@ export const TestMatrixPage = () => {
     isError: materialsError,
   } = useMaterials();
 
-  // 異常率モードのみで必要な補助データ。count モードではクエリ結果が揃っていなくても UI に影響しない。
-  const dateFrom = useMemo(() => dateFromForPreset(period), [period]);
+  // 異常率モード / 顧客行軸モード で共通して使う補助クエリ。
+  // count モードかつ material 行軸では UI をブロックしない設計。
   const matrixTestsQ = useMatrixTests(dateFrom);
   const matrixDamagesQ = useMatrixDamages();
   const matrixSpecimensQ = useMatrixSpecimens();
+  const matrixCustomersQ = useMatrixCustomers();
+  const matrixProjectsQ = useMatrixProjects();
 
   const abnormalMap = useMemo(() => {
     if (valueType !== 'abnormalRatio') return undefined;
@@ -68,6 +77,17 @@ export const TestMatrixPage = () => {
     });
   }, [valueType, matrixTestsQ.data, matrixDamagesQ.data, matrixSpecimensQ.data]);
 
+  // 顧客 × 試験種別のセル集計（顧客行軸モード時のみ使用）
+  const customerCells = useMemo(() => {
+    if (rowAxis !== 'customer') return undefined;
+    if (!matrixTestsQ.data || !matrixSpecimensQ.data || !matrixProjectsQ.data) return undefined;
+    return computeCustomerTestTypeCells({
+      tests: matrixTestsQ.data,
+      specimens: matrixSpecimensQ.data,
+      projects: matrixProjectsQ.data,
+    });
+  }, [rowAxis, matrixTestsQ.data, matrixSpecimensQ.data, matrixProjectsQ.data]);
+
   const [selected, setSelected] = useState<SelectedCell | null>(null);
 
   if (matrixError || testTypesError || materialsError) {
@@ -78,13 +98,18 @@ export const TestMatrixPage = () => {
     );
   }
 
+  // 材料行軸は materials + matrix() で描画可能。顧客行軸は customers + customerCells が揃う必要。
+  const isCustomerAxisReady =
+    rowAxis !== 'customer' || (matrixCustomersQ.data && customerCells);
+
   if (
     matrixLoading ||
     testTypesLoading ||
     materialsLoading ||
     !matrix ||
     !testTypes ||
-    !materials
+    !materials ||
+    !isCustomerAxisReady
   ) {
     return (
       <div className="p-6">
@@ -93,11 +118,26 @@ export const TestMatrixPage = () => {
     );
   }
 
-  const selectedMaterial = selected ? materials.find((m) => m.id === selected.materialId) : null;
+  // 行配列と表示用 cells を行軸で切替
+  const rows: RowEntry[] =
+    rowAxis === 'customer' && matrixCustomersQ.data
+      ? matrixCustomersQ.data.map((c) => ({
+          id: c.id,
+          primaryLabel: c.name,
+          secondaryLabel: undefined,
+          axisLabel: '顧客',
+        }))
+      : materialsToRows(materials);
+
+  const displayCells = rowAxis === 'customer' && customerCells ? customerCells : matrix.cells;
+  const rowHeaderLabel = rowAxis === 'customer' ? '顧客 \\ 試験種別' : '材料 \\ 試験種別';
+
+  // 選択セルの解決を行軸に応じて切替
+  const selectedRow = selected ? rows.find((r) => r.id === selected.rowId) : null;
   const selectedTestType = selected ? testTypes.find((t) => t.id === selected.testTypeId) : null;
   const selectedCell = selected
-    ? matrix.cells.find(
-        (c) => c.materialId === selected.materialId && c.testTypeId === selected.testTypeId
+    ? displayCells.find(
+        (c) => c.materialId === selected.rowId && c.testTypeId === selected.testTypeId
       )
     : null;
 
@@ -113,6 +153,37 @@ export const TestMatrixPage = () => {
             </p>
           </div>
           <div className="flex gap-3 flex-wrap">
+            <div
+              role="radiogroup"
+              aria-label="行軸"
+              className="flex gap-1 rounded-md border border-[var(--border-faint)] bg-[var(--bg-raised)] p-1"
+            >
+              {([
+                { key: 'material' as const, label: '材料軸' },
+                { key: 'customer' as const, label: '顧客軸' },
+              ]).map((a) => {
+                const active = rowAxis === a.key;
+                return (
+                  <button
+                    key={a.key}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => {
+                      setRowAxis(a.key);
+                      setSelected(null);
+                    }}
+                    className={`px-3 py-1 text-[12px] rounded transition-colors ${
+                      active
+                        ? 'bg-[var(--accent,#2563eb)] text-white font-semibold'
+                        : 'text-[var(--text-md)] hover:bg-[var(--hover)]'
+                    }`}
+                  >
+                    {a.label}
+                  </button>
+                );
+              })}
+            </div>
             <div
               role="radiogroup"
               aria-label="集計期間"
@@ -172,18 +243,20 @@ export const TestMatrixPage = () => {
       <div className="flex-1 flex min-h-0">
         <div className="flex-1 p-6 overflow-auto">
           <HeatmapMatrix
-            materials={materials}
+            rows={rows}
             testTypes={testTypes}
-            cells={matrix.cells}
+            cells={displayCells}
             valueType={valueType}
             abnormalMap={abnormalMap}
-            onCellClick={(materialId, testTypeId) => setSelected({ materialId, testTypeId })}
+            rowHeaderLabel={rowHeaderLabel}
+            onCellClick={(rowId, testTypeId) => setSelected({ rowId, testTypeId })}
           />
           <div className="mt-4 flex items-center gap-4 text-[11px] text-[var(--text-lo)]">
-            <span>件数の多寡を青の濃淡で表示。</span>
+            <span>件数の多寡を青の濃淡で表示。異常率モードは赤系。</span>
             <span>
-              合計 {matrix.cells.reduce((sum, c) => sum + c.count, 0)} 件 / 材料 {materials.length}{' '}
-              種 × 試験種別 {testTypes.length} 種
+              合計 {displayCells.reduce((sum, c) => sum + c.count, 0)} 件 /{' '}
+              {rowAxis === 'customer' ? '顧客' : '材料'} {rows.length} 種 × 試験種別{' '}
+              {testTypes.length} 種
             </span>
           </div>
         </div>
@@ -191,18 +264,18 @@ export const TestMatrixPage = () => {
           className="w-80 border-l border-[var(--border-faint)] p-4 overflow-auto bg-[var(--bg-raised)]"
           aria-label="選択セル詳細"
         >
-          {!selected || !selectedMaterial || !selectedTestType ? (
+          {!selected || !selectedRow || !selectedTestType ? (
             <div className="text-[13px] text-[var(--text-lo)]">
               セルをクリックすると、その組合せの実績詳細が表示されます。
             </div>
           ) : (
             <div className="flex flex-col gap-3 text-[13px]">
               <div>
-                <div className="text-[11px] text-[var(--text-lo)]">材料</div>
-                <div className="font-mono font-semibold">{selectedMaterial.designation}</div>
-                <div className="text-[11px] text-[var(--text-lo)]">
-                  {selectedMaterial.category}
-                </div>
+                <div className="text-[11px] text-[var(--text-lo)]">{selectedRow.axisLabel}</div>
+                <div className="font-mono font-semibold">{selectedRow.primaryLabel}</div>
+                {selectedRow.secondaryLabel && (
+                  <div className="text-[11px] text-[var(--text-lo)]">{selectedRow.secondaryLabel}</div>
+                )}
               </div>
               <div>
                 <div className="text-[11px] text-[var(--text-lo)]">試験種別</div>
