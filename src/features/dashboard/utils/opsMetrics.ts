@@ -2,11 +2,14 @@
 // 純関数で実装してテスト容易に。UI 側は結果を受け取って描画するだけに寄せる。
 
 import type {
+  CuttingProcess,
   DamageFinding,
   Project,
   Specimen,
   Test,
+  Tool,
 } from '@/domain/types';
+import { VB_CRITERIA } from '@/features/cutting/utils/standards';
 
 export interface OpsKpi {
   /** 進行中案件数（inquiry / quoting / in_progress / reviewing） */
@@ -88,6 +91,76 @@ export const computeOpsKpi = (input: {
     pendingSpecimens,
     completedTestsLast30Days,
     abnormalFindingRatio: ratio,
+  };
+};
+
+export interface CuttingKpi {
+  /**
+   * 工具寿命アラート: VB 限界値（ISO 3685 / 仕上げ 0.3 mm）を超過している工具の数。
+   * 判定: 各工具について最新 cuttingProcess の toolWearVB を見て、
+   * VB_CRITERIA.finishing.average 以上なら 1 としてカウント。
+   */
+  toolsOverWearLimit: number;
+  /** 工具総数（母数表示用） */
+  totalTools: number;
+  /**
+   * 過去 30 日のびびり検出率。
+   * 分母: performedAt が過去 30 日以内で chatterDetected が true / false の cuttingProcess 件数
+   * （null は「未評価」として分母から除外）。
+   * 分子: 上記のうち chatterDetected === true の件数。
+   */
+  chatterRatioLast30Days: number;
+  /** 過去 30 日の切削プロセスのうち chatter が評価済（true / false）の件数（母数表示用） */
+  evaluatedCuttingProcessesLast30Days: number;
+}
+
+export const computeCuttingKpi = (input: {
+  tools: Tool[];
+  cuttingProcesses: CuttingProcess[];
+  now?: Date;
+}): CuttingKpi => {
+  const { tools, cuttingProcesses } = input;
+  const now = input.now ?? new Date();
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const thirtyDaysAgo = now.getTime() - 30 * msPerDay;
+
+  // 各工具の最新 VB を収集（performedAt 降順で最初に見つかった値）。
+  // 工具ごとにソートして、先頭要素の toolWearVB を採用する。
+  const processByTool = new Map<string, CuttingProcess[]>();
+  for (const p of cuttingProcesses) {
+    const arr = processByTool.get(p.toolId) ?? [];
+    arr.push(p);
+    processByTool.set(p.toolId, arr);
+  }
+  const limit = VB_CRITERIA.finishing.average;
+  let toolsOverWearLimit = 0;
+  for (const tool of tools) {
+    const arr = processByTool.get(tool.id);
+    if (!arr || arr.length === 0) continue;
+    // 降順ソート（最新が先頭）
+    arr.sort((a, b) => Date.parse(b.performedAt) - Date.parse(a.performedAt));
+    const latest = arr.find((p) => p.toolWearVB !== null && p.toolWearVB !== undefined);
+    if (latest && latest.toolWearVB !== null && latest.toolWearVB >= limit) {
+      toolsOverWearLimit += 1;
+    }
+  }
+
+  // びびり検出率: 過去 30 日 + chatterDetected が評価済（非 null）のみ
+  const recentEvaluated = cuttingProcesses.filter((p) => {
+    if (p.chatterDetected === null || p.chatterDetected === undefined) return false;
+    const t = Date.parse(p.performedAt);
+    return !Number.isNaN(t) && t >= thirtyDaysAgo;
+  });
+  const chatterCount = recentEvaluated.filter((p) => p.chatterDetected === true).length;
+  const chatterRatio = recentEvaluated.length > 0
+    ? chatterCount / recentEvaluated.length
+    : 0;
+
+  return {
+    toolsOverWearLimit,
+    totalTools: tools.length,
+    chatterRatioLast30Days: chatterRatio,
+    evaluatedCuttingProcessesLast30Days: recentEvaluated.length,
   };
 };
 

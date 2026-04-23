@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type {
+  CuttingProcess,
   DamageFinding,
   Project,
   Specimen,
   Test,
+  Tool,
 } from '@/domain/types';
 import {
   buildActivityTimeline,
   collectDueRisk,
+  computeCuttingKpi,
   computeOpsKpi,
 } from './opsMetrics';
 
@@ -175,6 +178,137 @@ describe('collectDueRisk', () => {
       NOW
     );
     expect(risk).toHaveLength(0);
+  });
+});
+
+const makeTool = (p: Partial<Tool> & { id: string }): Tool => ({
+  id: p.id,
+  code: p.code ?? `TOOL-${p.id}`,
+  name: p.name ?? 'テスト工具',
+  nameEn: 'Test Tool',
+  type: p.type ?? 'end_mill',
+  material: p.material ?? 'coated_carbide',
+  coating: null,
+  diameter: 10,
+  fluteCount: 4,
+  rakeAngle: null,
+  reliefAngle: null,
+  helixAngle: null,
+  cornerRadius: null,
+  maxDepthOfCut: null,
+  applicableMaterials: [],
+  vendor: null,
+  description: null,
+  createdAt: '2026-03-01T00:00:00Z',
+  updatedAt: '2026-03-01T00:00:00Z',
+  createdBy: 'usr_op_001',
+  updatedBy: 'usr_op_001',
+});
+
+const makeCuttingProcess = (
+  p: Partial<CuttingProcess> & { id: string; toolId: string; performedAt: string }
+): CuttingProcess => ({
+  id: p.id,
+  code: p.code ?? `CUT-${p.id}`,
+  specimenId: p.specimenId ?? null,
+  materialId: p.materialId ?? 'mat_ti64',
+  toolId: p.toolId,
+  operation: p.operation ?? 'milling_face',
+  condition: {
+    cuttingSpeed: 80,
+    feed: 0.1,
+    feedUnit: 'mm/tooth',
+    depthOfCut: 1,
+    widthOfCut: null,
+    spindleSpeed: 2500,
+    coolant: 'flood',
+    notes: null,
+  },
+  machiningTimeSec: 300,
+  cuttingDistanceMm: 5000,
+  surfaceRoughnessRa: null,
+  toolWearVB: p.toolWearVB ?? null,
+  chatterDetected: p.chatterDetected ?? null,
+  cuttingForceFc: null,
+  cuttingTemperatureC: null,
+  waveformIds: [],
+  operatorId: 'usr_op_001',
+  machine: null,
+  performedAt: p.performedAt,
+  notes: null,
+  createdAt: '2026-03-01T00:00:00Z',
+  updatedAt: '2026-03-01T00:00:00Z',
+  createdBy: 'usr_op_001',
+  updatedBy: 'usr_op_001',
+});
+
+describe('computeCuttingKpi', () => {
+  it('VB >= 0.3 の最新プロセスを持つ工具を「限界超過」としてカウント', () => {
+    const tools = [makeTool({ id: 'tool_a' }), makeTool({ id: 'tool_b' }), makeTool({ id: 'tool_c' })];
+    const cuttingProcesses = [
+      // tool_a: 最新 VB=0.32 (超過)
+      makeCuttingProcess({ id: 'p1', toolId: 'tool_a', performedAt: '2026-04-18T10:00:00Z', toolWearVB: 0.20 }),
+      makeCuttingProcess({ id: 'p2', toolId: 'tool_a', performedAt: '2026-04-19T10:00:00Z', toolWearVB: 0.32 }),
+      // tool_b: 最新 VB=0.25 (未超過)
+      makeCuttingProcess({ id: 'p3', toolId: 'tool_b', performedAt: '2026-04-18T10:00:00Z', toolWearVB: 0.25 }),
+      // tool_c: プロセスなし（未使用工具）
+    ];
+    const kpi = computeCuttingKpi({ tools, cuttingProcesses, now: NOW });
+    expect(kpi.toolsOverWearLimit).toBe(1);
+    expect(kpi.totalTools).toBe(3);
+  });
+
+  it('最新プロセスで toolWearVB が null の場合は 1 つ前の評価済み値を採用', () => {
+    const tools = [makeTool({ id: 'tool_a' })];
+    const cuttingProcesses = [
+      makeCuttingProcess({ id: 'p1', toolId: 'tool_a', performedAt: '2026-04-18T10:00:00Z', toolWearVB: 0.35 }),
+      makeCuttingProcess({ id: 'p2', toolId: 'tool_a', performedAt: '2026-04-19T10:00:00Z', toolWearVB: null }),
+    ];
+    const kpi = computeCuttingKpi({ tools, cuttingProcesses, now: NOW });
+    expect(kpi.toolsOverWearLimit).toBe(1);
+  });
+
+  it('過去 30 日のびびり検出率を evaluated only で算出（null は分母から除外）', () => {
+    const tools = [makeTool({ id: 'tool_a' })];
+    const cuttingProcesses = [
+      makeCuttingProcess({ id: 'p1', toolId: 'tool_a', performedAt: '2026-04-18T10:00:00Z', chatterDetected: true }),
+      makeCuttingProcess({ id: 'p2', toolId: 'tool_a', performedAt: '2026-04-18T11:00:00Z', chatterDetected: false }),
+      makeCuttingProcess({ id: 'p3', toolId: 'tool_a', performedAt: '2026-04-18T12:00:00Z', chatterDetected: false }),
+      makeCuttingProcess({ id: 'p4', toolId: 'tool_a', performedAt: '2026-04-18T13:00:00Z', chatterDetected: null }),
+    ];
+    const kpi = computeCuttingKpi({ tools, cuttingProcesses, now: NOW });
+    // evaluated: 3 (p1 true, p2 false, p3 false)、chatter=1 → 1/3 ≈ 0.333
+    expect(kpi.evaluatedCuttingProcessesLast30Days).toBe(3);
+    expect(kpi.chatterRatioLast30Days).toBeCloseTo(1 / 3, 5);
+  });
+
+  it('過去 30 日より古いプロセスは分母から除外', () => {
+    const tools = [makeTool({ id: 'tool_a' })];
+    const cuttingProcesses = [
+      makeCuttingProcess({ id: 'p1', toolId: 'tool_a', performedAt: '2026-04-18T10:00:00Z', chatterDetected: true }),
+      // 60 日前
+      makeCuttingProcess({ id: 'p_old', toolId: 'tool_a', performedAt: '2026-02-18T10:00:00Z', chatterDetected: false }),
+    ];
+    const kpi = computeCuttingKpi({ tools, cuttingProcesses, now: NOW });
+    expect(kpi.evaluatedCuttingProcessesLast30Days).toBe(1);
+    expect(kpi.chatterRatioLast30Days).toBe(1);
+  });
+
+  it('評価済みデータがゼロなら chatter 率は 0', () => {
+    const tools = [makeTool({ id: 'tool_a' })];
+    const cuttingProcesses = [
+      makeCuttingProcess({ id: 'p1', toolId: 'tool_a', performedAt: '2026-04-18T10:00:00Z', chatterDetected: null }),
+    ];
+    const kpi = computeCuttingKpi({ tools, cuttingProcesses, now: NOW });
+    expect(kpi.evaluatedCuttingProcessesLast30Days).toBe(0);
+    expect(kpi.chatterRatioLast30Days).toBe(0);
+  });
+
+  it('tools が空なら toolsOverWearLimit=0', () => {
+    const kpi = computeCuttingKpi({ tools: [], cuttingProcesses: [], now: NOW });
+    expect(kpi.toolsOverWearLimit).toBe(0);
+    expect(kpi.totalTools).toBe(0);
+    expect(kpi.chatterRatioLast30Days).toBe(0);
   });
 });
 

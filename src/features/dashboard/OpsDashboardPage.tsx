@@ -4,15 +4,18 @@
 import { useMemo } from 'react';
 import { KpiCard } from '@/components/molecules';
 import {
+  useAllCuttingProcesses,
   useAllDamages,
   useAllProjects,
   useAllSpecimens,
   useAllTests,
+  useAllTools,
   useCustomersIndex,
 } from './api';
 import {
   buildActivityTimeline,
   collectDueRisk,
+  computeCuttingKpi,
   computeOpsKpi,
 } from './utils/opsMetrics';
 
@@ -31,6 +34,9 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
   const specimensQ = useAllSpecimens();
   const testsQ = useAllTests();
   const damagesQ = useAllDamages();
+  // 切削 KPI 用。取得失敗でも受託試験側 KPI / 納期リスク / タイムラインはブロックしない設計。
+  const toolsQ = useAllTools();
+  const cuttingProcessesQ = useAllCuttingProcesses();
   // 顧客名はリスク行の表示のみに使う副次情報。取得失敗でもダッシュボード全体はブロックしない。
   const customersQ = useCustomersIndex();
 
@@ -59,6 +65,17 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
       now,
     });
   }, [projectsQ.data, specimensQ.data, testsQ.data, damagesQ.data, now]);
+
+  // 切削 KPI は toolsQ / cuttingProcessesQ 両方揃ったときのみ算出。
+  // どちらか取得失敗でも null のままで、UI 側で「切削データなし」と表示する。
+  const cuttingKpi = useMemo(() => {
+    if (!toolsQ.data || !cuttingProcessesQ.data) return null;
+    return computeCuttingKpi({
+      tools: toolsQ.data,
+      cuttingProcesses: cuttingProcessesQ.data,
+      now,
+    });
+  }, [toolsQ.data, cuttingProcessesQ.data, now]);
 
   const dueRisk = useMemo(() => {
     if (!projectsQ.data) return [];
@@ -132,6 +149,34 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
                   : 'var(--ok, #22c55e)'
               }
             />
+            {cuttingKpi && (
+              <>
+                <KpiCard
+                  label="工具寿命アラート"
+                  value={cuttingKpi.toolsOverWearLimit}
+                  delta={`全 ${cuttingKpi.totalTools} 工具中・VB ≥ 0.3 mm`}
+                  color={
+                    cuttingKpi.toolsOverWearLimit > 0
+                      ? 'var(--warn, #d97706)'
+                      : 'var(--ok, #22c55e)'
+                  }
+                />
+                <KpiCard
+                  label="びびり検出率 (30日)"
+                  value={`${(cuttingKpi.chatterRatioLast30Days * 100).toFixed(1)}%`}
+                  delta={
+                    cuttingKpi.evaluatedCuttingProcessesLast30Days > 0
+                      ? `評価済 ${cuttingKpi.evaluatedCuttingProcessesLast30Days} 件の切削`
+                      : '評価済データなし'
+                  }
+                  color={
+                    cuttingKpi.chatterRatioLast30Days > 0.3
+                      ? 'var(--warn, #d97706)'
+                      : 'var(--ok, #22c55e)'
+                  }
+                />
+              </>
+            )}
           </div>
         </section>
 

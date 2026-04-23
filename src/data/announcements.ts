@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-dashboard-cutting-kpi',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '受託試験ダッシュボードに切削 KPI を追加（工具寿命アラート / びびり検出率）',
+    body: 'ダッシュボードに 2 種類の切削 KPI を追加しました。工具寿命アラートは VB ≥ 0.3 mm（ISO 3685 仕上げ基準）を超過している工具の数を表示します。びびり検出率は過去 30 日の切削プロセスのうち、びびりが評価済み（true / false）なもの中の発生割合を示します。いずれも切削データがないときは表示されません。',
+  },
+  {
     id: '2026-04-23-help-page-guide-i18n',
     date: '2026-04-23',
     type: 'feature',

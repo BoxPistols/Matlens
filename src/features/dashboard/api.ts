@@ -8,6 +8,8 @@ export const dashboardKeys = {
   specimens: ['ops-dashboard', 'specimens'] as const,
   tests: ['ops-dashboard', 'tests'] as const,
   damages: ['ops-dashboard', 'damages'] as const,
+  tools: ['ops-dashboard', 'tools'] as const,
+  cuttingProcesses: ['ops-dashboard', 'cutting-processes'] as const,
   projectsIndex: ['ops-dashboard', 'projects-index'] as const,
   materialsIndex: ['ops-dashboard', 'materials-index'] as const,
   customersIndex: ['ops-dashboard', 'customers-index'] as const,
@@ -47,6 +49,8 @@ const DASHBOARD_TEST_PAGE_SIZE = 3000;
 const DASHBOARD_SPECIMEN_PAGE_SIZE = 1000;
 const DASHBOARD_PROJECT_PAGE_SIZE = 500;
 const DASHBOARD_DAMAGE_PAGE_SIZE = 500;
+const DASHBOARD_TOOL_PAGE_SIZE = 200;
+const DASHBOARD_CUTTING_PAGE_SIZE = 2000;
 
 export const useAllTests = () => {
   const { tests } = useRepositories();
@@ -66,6 +70,30 @@ export const useAllDamages = () => {
     queryKey: dashboardKeys.damages,
     queryFn: async () => {
       const page = await damage.list({ pageSize: DASHBOARD_DAMAGE_PAGE_SIZE });
+      return page.items;
+    },
+    staleTime: 60_000,
+  });
+};
+
+export const useAllTools = () => {
+  const { tools } = useRepositories();
+  return useQuery({
+    queryKey: dashboardKeys.tools,
+    queryFn: async () => {
+      const page = await tools.list({ pageSize: DASHBOARD_TOOL_PAGE_SIZE });
+      return page.items;
+    },
+    staleTime: 60_000,
+  });
+};
+
+export const useAllCuttingProcesses = () => {
+  const { cuttingProcesses } = useRepositories();
+  return useQuery({
+    queryKey: dashboardKeys.cuttingProcesses,
+    queryFn: async () => {
+      const page = await cuttingProcesses.list({ pageSize: DASHBOARD_CUTTING_PAGE_SIZE });
       return page.items;
     },
     staleTime: 60_000,
