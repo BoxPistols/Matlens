@@ -1,4 +1,5 @@
 export * from './project.repo';
+export * from './user.repo';
 export * from './specimen.repo';
 export * from './test.repo';
 export * from './master.repo';

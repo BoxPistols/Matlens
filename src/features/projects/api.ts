@@ -40,3 +40,27 @@ export const useCustomersIndex = () => {
     staleTime: 5 * 60_000,
   });
 };
+
+export const useUsersIndex = () => {
+  const { users } = useRepositories();
+  return useQuery({
+    queryKey: ['users', 'index'],
+    queryFn: async () => {
+      const page = await users.list();
+      return new Map(page.items.map((u) => [u.id, u]));
+    },
+    staleTime: 5 * 60_000,
+  });
+};
+
+export const useAllProjectsForLoad = () => {
+  const { projects } = useRepositories();
+  return useQuery({
+    queryKey: ['projects', 'all-for-load'],
+    queryFn: async () => {
+      const page = await projects.list({ pageSize: 500 });
+      return page.items;
+    },
+    staleTime: 60_000,
+  });
+};

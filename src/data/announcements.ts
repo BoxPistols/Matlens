@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-project-owner-load',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '案件詳細に担当者の負荷サマリを追加',
+    body: '案件詳細画面に「担当者の負荷」セクションを追加しました。PM / リードエンジニアそれぞれが現在抱えている進行中案件数（本案件を含む）を表示し、負荷が高い担当者の案件には色分けで警告を出します（3 案件で warn、5 案件で err）。他案件への影響を踏まえた工数調整の判断材料になります。User Repository を新設して ADR-001 レイヤードアーキテクチャに整合させています。',
+  },
+  {
     id: '2026-04-24-project-detail-density',
     date: '2026-04-24',
     type: 'feature',
