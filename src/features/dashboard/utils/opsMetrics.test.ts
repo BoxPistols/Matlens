@@ -2,16 +2,20 @@ import { describe, expect, it } from 'vitest';
 import type {
   CuttingProcess,
   DamageFinding,
+  Material,
   Project,
   Specimen,
   Test,
+  TestType,
   Tool,
 } from '@/domain/types';
 import {
   buildActivityTimeline,
   collectDueRisk,
   computeCuttingKpi,
+  computeMaterialCategoryDistribution,
   computeOpsKpi,
+  computeTestTypeDistribution,
 } from './opsMetrics';
 
 const NOW = new Date('2026-04-20T00:00:00+09:00');
@@ -309,6 +313,121 @@ describe('computeCuttingKpi', () => {
     expect(kpi.toolsOverWearLimit).toBe(0);
     expect(kpi.totalTools).toBe(0);
     expect(kpi.chatterRatioLast30Days).toBe(0);
+  });
+});
+
+describe('computeTestTypeDistribution', () => {
+  const makeTestType = (id: string, name: string): TestType => ({
+    id,
+    name,
+    nameEn: name,
+    category: 'mechanical',
+    defaultStandardIds: [],
+    iconKey: 'test',
+    description: '',
+  });
+
+  it('完了試験を testTypeId 別に集計、多い順にソート', () => {
+    const tests = [
+      makeTest({ id: 't1', status: 'completed', performedAt: '2026-04-18T10:00:00Z' }),
+      makeTest({ id: 't2', status: 'completed', performedAt: '2026-04-18T11:00:00Z' }),
+      makeTest({ id: 't3', status: 'completed', performedAt: '2026-04-18T12:00:00Z' }),
+      makeTest({ id: 't4', status: 'completed', performedAt: '2026-04-18T13:00:00Z' }),
+    ];
+    // t1/t2/t3 は tt_tensile、t4 は tt_hardness とする
+    (tests[0] as Test).testTypeId = 'tt_tensile';
+    (tests[1] as Test).testTypeId = 'tt_tensile';
+    (tests[2] as Test).testTypeId = 'tt_tensile';
+    (tests[3] as Test).testTypeId = 'tt_hardness';
+
+    const types = new Map<string, TestType>([
+      ['tt_tensile', makeTestType('tt_tensile', '引張試験')],
+      ['tt_hardness', makeTestType('tt_hardness', '硬度試験')],
+    ]);
+
+    const dist = computeTestTypeDistribution(tests, types, NOW);
+    expect(dist).toHaveLength(2);
+    expect(dist[0]!.label).toBe('引張試験');
+    expect(dist[0]!.value).toBe(3);
+    expect(dist[1]!.label).toBe('硬度試験');
+    expect(dist[1]!.value).toBe(1);
+  });
+
+  it('過去 30 日より古い試験と未完了試験は除外', () => {
+    const tests = [
+      makeTest({ id: 't1', status: 'completed', performedAt: '2026-04-18T10:00:00Z' }),
+      makeTest({ id: 't_old', status: 'completed', performedAt: '2026-02-18T10:00:00Z' }),
+      makeTest({ id: 't_scheduled', status: 'scheduled', performedAt: '2026-04-19T10:00:00Z' }),
+    ];
+    (tests[0] as Test).testTypeId = 'tt_tensile';
+    (tests[1] as Test).testTypeId = 'tt_tensile';
+    (tests[2] as Test).testTypeId = 'tt_tensile';
+
+    const types = new Map<string, TestType>([['tt_tensile', makeTestType('tt_tensile', '引張試験')]]);
+    const dist = computeTestTypeDistribution(tests, types, NOW);
+    expect(dist).toHaveLength(1);
+    expect(dist[0]!.value).toBe(1);
+  });
+
+  it('testTypes index にない id は id そのままをラベルに使う', () => {
+    const tests = [makeTest({ id: 't1', status: 'completed', performedAt: '2026-04-18T10:00:00Z' })];
+    (tests[0] as Test).testTypeId = 'tt_unknown';
+    const dist = computeTestTypeDistribution(tests, new Map(), NOW);
+    expect(dist[0]!.label).toBe('tt_unknown');
+  });
+});
+
+describe('computeMaterialCategoryDistribution', () => {
+  const makeMaterial = (id: string, category: Material['category']): Material => ({
+    id,
+    designation: id,
+    category,
+    composition: [],
+    standardRefs: [],
+    properties: {},
+    description: null,
+    createdAt: '2026-03-01T00:00:00Z',
+    updatedAt: '2026-03-01T00:00:00Z',
+  });
+
+  it('進行中案件の試験片を母材カテゴリ別に集計', () => {
+    const projects = [
+      makeProject({ id: 'p_active', status: 'in_progress' }),
+      makeProject({ id: 'p_done', status: 'completed' }),
+    ];
+    const specimens = [
+      makeSpecimen({ id: 's1', projectId: 'p_active', status: 'received', receivedAt: '2026-04-18', materialId: 'mat_ti' }),
+      makeSpecimen({ id: 's2', projectId: 'p_active', status: 'testing', receivedAt: '2026-04-18', materialId: 'mat_ti' }),
+      makeSpecimen({ id: 's3', projectId: 'p_active', status: 'prepared', receivedAt: '2026-04-18', materialId: 'mat_ni' }),
+      // 完了案件の試験片は除外される
+      makeSpecimen({ id: 's4', projectId: 'p_done', status: 'stored', receivedAt: '2026-04-01', materialId: 'mat_ti' }),
+    ];
+    const materials = new Map<string, Material>([
+      ['mat_ti', makeMaterial('mat_ti', 'titanium')],
+      ['mat_ni', makeMaterial('mat_ni', 'nickel_alloy')],
+    ]);
+
+    const dist = computeMaterialCategoryDistribution({ projects, specimens, materials });
+    expect(dist).toHaveLength(2);
+    expect(dist[0]!.key).toBe('titanium');
+    expect(dist[0]!.label).toBe('Ti 合金');
+    expect(dist[0]!.value).toBe(2);
+    expect(dist[1]!.key).toBe('nickel_alloy');
+    expect(dist[1]!.label).toBe('Ni 基超合金');
+    expect(dist[1]!.value).toBe(1);
+  });
+
+  it('materials index にない materialId の試験片は除外', () => {
+    const projects = [makeProject({ id: 'p_active', status: 'in_progress' })];
+    const specimens = [
+      makeSpecimen({ id: 's1', projectId: 'p_active', status: 'received', receivedAt: '2026-04-18', materialId: 'mat_missing' }),
+    ];
+    const dist = computeMaterialCategoryDistribution({
+      projects,
+      specimens,
+      materials: new Map(),
+    });
+    expect(dist).toHaveLength(0);
   });
 });
 

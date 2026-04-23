@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-04-24-dashboard-distribution-charts',
+    date: '2026-04-24',
+    type: 'feature',
+    title: '受託試験ダッシュボードに分布チャートを追加（試験種別 / 材料カテゴリ）',
+    body: 'ダッシュボードに 2 つの円グラフを追加しました。試験種別分布は過去 30 日の完了試験を testType 別に、材料カテゴリ分布は進行中案件の試験片を母材カテゴリ（鋼 / ステンレス / Ti / Ni 基 / Al / セラミクス / 複合材 等）別に集計します。チャートは純 SVG で実装、凡例で件数と割合を併記します。',
+  },
+  {
     id: '2026-04-24-dashboard-cutting-kpi',
     date: '2026-04-24',
     type: 'feature',

@@ -669,6 +669,7 @@ export const PAGE_GUIDES: PageGuide[] = [
     features: [
       'KPI: 進行中案件数 / 期限 7 日以内の試験片 / 過去 30 日の完了試験 / 異常所見比率',
       '切削 KPI: 工具寿命アラート（VB ≥ 0.3 mm 超過数）/ 過去 30 日のびびり検出率',
+      '分布チャート: 過去 30 日の試験種別 / 進行中案件の材料カテゴリ（純 SVG 円グラフ）',
       '納期リスク一覧: dueAt <= +7 日 or 遅延 の進行中・レビュー中案件',
       '活動タイムライン: 完了試験と損傷所見登録を時系列降順で 20 件',
       '案件行クリックで案件詳細へ遷移',
@@ -676,6 +677,7 @@ export const PAGE_GUIDES: PageGuide[] = [
     featuresEn: [
       'KPIs: active projects / specimens due in 7 days / completed tests in last 30 days / abnormal finding ratio',
       'Cutting KPIs: tools over wear limit (VB ≥ 0.3 mm) / chatter detection ratio (last 30 days)',
+      'Distribution charts: test types (last 30 days) / material categories of active projects (pure SVG pie charts)',
       'Due-risk list: in-progress or reviewing projects with dueAt within 7 days or overdue',
       'Activity timeline: last 20 completed tests and damage findings in descending time order',
       'Click a project row to jump to its detail page',
