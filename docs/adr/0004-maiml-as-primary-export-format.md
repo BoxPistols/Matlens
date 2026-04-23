@@ -12,9 +12,9 @@ standardised as **JIS K 0200:2024** and used by labs to exchange sample
 metadata, analysis results, and their provenance.
 
 The first shipped version of Matlens offered CSV / JSON / Markdown / PDF
-export. Feedback from an anonymized reference deployment in the materials
-R&D sector was that for real lab integration, the thing that matters is
-whether we round-trip cleanly against MaiML — everything else is a bonus.
+export. Feedback from an anonymized reference deployment was that for
+real lab integration, the thing that matters is whether we round-trip
+cleanly against MaiML — everything else is a bonus.
 
 ## Decision
 
