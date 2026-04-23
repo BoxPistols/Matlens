@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useRepositories } from '@/app/providers';
 import type { ID } from '@/domain/types';
@@ -11,6 +12,13 @@ import {
   useProject,
   useUsersIndex,
 } from './api';
+import { DownloadPreviewModal } from '@/components/molecules';
+import { downloadMaimlFile } from '@/services/maiml';
+import {
+  defaultProjectMaimlFilename,
+  serializeProjectToMaiml,
+  type ProjectBundle,
+} from '@/services/maimlProject';
 
 interface ProjectDetailPageProps {
   id: ID;
@@ -35,6 +43,34 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
     queryFn: () => tests.list({ filter: { projectId: id }, pageSize: 100 }),
     enabled: !!project,
   });
+  const { damage } = useRepositories();
+  const damagesQuery = useQuery({
+    queryKey: ['project-damages', id],
+    queryFn: async () => {
+      const page = await damage.list({ pageSize: 200 });
+      // damage には projectId フィルタが無いため、test 経由で絞り込む
+      const testIds = new Set((testsQuery.data?.items ?? []).map((t) => t.id));
+      return page.items.filter((d) => d.testId && testIds.has(d.testId));
+    },
+    enabled: !!testsQuery.data,
+  });
+
+  const [maimlOpen, setMaimlOpen] = useState(false);
+
+  const maimlBundle: ProjectBundle | null = useMemo(() => {
+    if (!project || !specimensQuery.data || !testsQuery.data) return null;
+    return {
+      project,
+      specimens: specimensQuery.data.items,
+      tests: testsQuery.data.items,
+      damages: damagesQuery.data ?? [],
+    };
+  }, [project, specimensQuery.data, testsQuery.data, damagesQuery.data]);
+
+  const maimlXml = useMemo(() => {
+    if (!maimlOpen || !maimlBundle) return '';
+    return serializeProjectToMaiml(maimlBundle);
+  }, [maimlOpen, maimlBundle]);
 
   if (isLoading) {
     return <div className="p-6 text-[var(--text-lo)]">案件を読み込んでいます…</div>;
@@ -51,6 +87,7 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
   }
 
   const customer = customerIndex?.get(project.customerId);
+  const maimlFilename = defaultProjectMaimlFilename(project);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -66,7 +103,17 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
           <span className="font-mono text-[12px] text-[var(--text-lo)]">{project.code}</span>
           <ProjectStatusPill status={project.status} />
         </div>
-        <h1 className="text-xl font-bold mt-2">{project.title}</h1>
+        <div className="flex items-start justify-between gap-3 mt-2">
+          <h1 className="text-xl font-bold">{project.title}</h1>
+          <button
+            type="button"
+            onClick={() => setMaimlOpen(true)}
+            disabled={!specimensQuery.data || !testsQuery.data}
+            className="text-[12px] px-3 py-1 rounded border border-[var(--border-default)] hover:bg-[var(--hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            MaiML エクスポート
+          </button>
+        </div>
         <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-[13px]">
           <InfoCell label="顧客" value={customer?.name ?? project.customerId} />
           <InfoCell label="開始日" value={project.startedAt} />
@@ -200,6 +247,20 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
           )}
         </section>
       </div>
+      <DownloadPreviewModal
+        open={maimlOpen}
+        onClose={() => setMaimlOpen(false)}
+        onConfirm={() => {
+          if (!maimlBundle) return;
+          downloadMaimlFile(serializeProjectToMaiml(maimlBundle), maimlFilename);
+          setMaimlOpen(false);
+        }}
+        title="MaiML エクスポート プレビュー（案件）"
+        filename={maimlFilename}
+        content={maimlXml}
+        language="xml"
+        description={`案件「${project.title}」に紐づく試験片・試験・損傷を MaiML (JIS K 0200:2024) 形式で書き出します。`}
+      />
     </div>
   );
 };
