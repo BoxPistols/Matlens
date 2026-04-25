@@ -1,0 +1,2 @@
+# pnpm mocks:generate で自動生成するフィクスチャは GitHub 上で diff を折りたたむ
+src/mocks/fixtures/*.json linguist-generated=true

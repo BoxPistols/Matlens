@@ -65,6 +65,7 @@ export const SemanticSearchPage = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="例: SUS316L 高温疲労 粒界破壊"
+          aria-label="セマンティック検索クエリ"
           className="flex-1 px-3 py-1.5 rounded border border-[var(--border-faint)] bg-transparent text-[13px]"
         />
         <button

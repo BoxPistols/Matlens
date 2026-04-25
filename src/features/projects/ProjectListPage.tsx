@@ -66,6 +66,7 @@ export const ProjectListPage = ({ onNav }: ProjectListPageProps) => {
               setPage(1);
             }}
             placeholder="案件コード・タイトルで検索"
+            aria-label="案件検索"
             className="flex-1 min-w-[240px] px-3 py-1.5 rounded border border-[var(--border-faint)] bg-transparent text-[13px]"
           />
           <span className="text-[12px] text-[var(--text-lo)]">

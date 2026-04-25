@@ -56,6 +56,7 @@ export const DamageGalleryPage = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="キーワード検索（部位・原因仮説）"
+          aria-label="損傷所見 キーワード検索"
           className="w-full max-w-lg px-3 py-1.5 rounded border border-[var(--border-faint)] bg-transparent text-[13px]"
         />
         <div className="flex items-center gap-1.5 flex-wrap">
