@@ -43,7 +43,7 @@
     "chartjs-plugin-zoom": "^2.2.0",
     "date-fns": "^4.1.0",
     "fuse.js": "^7.3.0",
-    "isomorphic-dompurify": "^3.9.0",
+    "isomorphic-dompurify": "^3.10.0",
     "lucide-react": "^1.8.0",
     "marked": "^18.0.2",
     "nanoid": "^5.1.9",
