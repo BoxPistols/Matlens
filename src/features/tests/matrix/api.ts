@@ -2,15 +2,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useRepositories } from '@/app/providers';
 import type { MatrixQuery } from '@/infra/repositories/interfaces';
 
+// useMaterials / useTestTypes / useCustomers は shared/queries/master.ts に集約済。
+// マトリクス画面固有の集計用クエリだけ本ファイルで定義する。
+export {
+  useMaterials,
+  useTestTypes,
+  useCustomers as useMatrixCustomers,
+} from '@/shared/queries/master';
+
 export const testMatrixKeys = {
   all: ['test-matrix'] as const,
   matrix: (query?: MatrixQuery) => [...testMatrixKeys.all, 'matrix', query] as const,
-  testTypes: ['test-types'] as const,
-  materials: (filter?: Record<string, unknown>) => ['materials', filter] as const,
   tests: (query?: Record<string, unknown>) => [...testMatrixKeys.all, 'tests', query] as const,
   damages: ['test-matrix', 'damages'] as const,
   specimens: ['test-matrix', 'specimens'] as const,
-  customers: ['test-matrix', 'customers'] as const,
   projects: ['test-matrix', 'projects'] as const,
 };
 
@@ -26,24 +31,6 @@ export const useTestMatrix = (query?: MatrixQuery) => {
     queryKey: testMatrixKeys.matrix(query),
     queryFn: () => tests.matrix(query),
     staleTime: 60_000,
-  });
-};
-
-export const useTestTypes = () => {
-  const { testTypes } = useRepositories();
-  return useQuery({
-    queryKey: testMatrixKeys.testTypes,
-    queryFn: () => testTypes.list(),
-    staleTime: 5 * 60_000,
-  });
-};
-
-export const useMaterials = () => {
-  const { materials } = useRepositories();
-  return useQuery({
-    queryKey: testMatrixKeys.materials(),
-    queryFn: () => materials.list(),
-    staleTime: 5 * 60_000,
   });
 };
 
@@ -83,18 +70,6 @@ export const useMatrixSpecimens = () => {
       return page.items;
     },
     staleTime: 60_000,
-  });
-};
-
-export const useMatrixCustomers = () => {
-  const { customers } = useRepositories();
-  return useQuery({
-    queryKey: testMatrixKeys.customers,
-    queryFn: async () => {
-      const page = await customers.list();
-      return page.items;
-    },
-    staleTime: 5 * 60_000,
   });
 };
 

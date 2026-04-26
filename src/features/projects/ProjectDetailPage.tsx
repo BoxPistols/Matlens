@@ -12,6 +12,7 @@ import {
   useProject,
   useUsersIndex,
 } from './api';
+import { useMaterials, useTestTypes } from '@/shared/queries/master';
 import { DownloadPreviewModal } from '@/components/molecules';
 import { downloadMaimlFile } from '@/services/maiml';
 import {
@@ -31,7 +32,7 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
   const { data: customerIndex } = useCustomersIndex();
   const { data: usersIndex } = useUsersIndex();
   const { data: allProjects } = useAllProjectsForLoad();
-  const { specimens, tests } = useRepositories();
+  const { specimens, tests, damage } = useRepositories();
 
   const specimensQuery = useQuery({
     queryKey: ['project-specimens', id],
@@ -43,7 +44,6 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
     queryFn: () => tests.list({ filter: { projectId: id }, pageSize: 100 }),
     enabled: !!project,
   });
-  const { damage } = useRepositories();
   const damagesQuery = useQuery({
     queryKey: ['project-damages', id],
     queryFn: async () => {
@@ -54,6 +54,21 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
     },
     enabled: !!testsQuery.data,
   });
+  const materialsQuery = useMaterials();
+  const testTypesQuery = useTestTypes();
+
+  const materialById = useMemo(
+    () => new Map((materialsQuery.data ?? []).map((m) => [m.id, m])),
+    [materialsQuery.data]
+  );
+  const testTypeById = useMemo(
+    () => new Map((testTypesQuery.data ?? []).map((t) => [t.id, t])),
+    [testTypesQuery.data]
+  );
+  const specimenById = useMemo(
+    () => new Map((specimensQuery.data?.items ?? []).map((s) => [s.id, s])),
+    [specimensQuery.data]
+  );
 
   const [maimlOpen, setMaimlOpen] = useState(false);
 
@@ -183,17 +198,22 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
                 </tr>
               </thead>
               <tbody>
-                {specimensQuery.data.items.map((s) => (
-                  <tr key={s.id} className="border-b border-[var(--border-faint)]">
-                    <td className="px-2 py-1.5 font-mono">{s.code}</td>
-                    <td className="px-2 py-1.5 font-mono">{s.materialId}</td>
-                    <td className="px-2 py-1.5">{s.dimensions.shape}</td>
-                    <td className="px-2 py-1.5">{s.location}</td>
-                    <td className="px-2 py-1.5">
-                      <span className="text-[11px] text-[var(--text-md)]">{s.status}</span>
-                    </td>
-                  </tr>
-                ))}
+                {specimensQuery.data.items.map((s) => {
+                  const mat = materialById.get(s.materialId);
+                  return (
+                    <tr key={s.id} className="border-b border-[var(--border-faint)]">
+                      <td className="px-2 py-1.5 font-mono">{s.code}</td>
+                      <td className="px-2 py-1.5 font-mono" title={s.materialId}>
+                        {mat?.designation ?? s.materialId}
+                      </td>
+                      <td className="px-2 py-1.5">{s.dimensions.shape}</td>
+                      <td className="px-2 py-1.5">{s.location}</td>
+                      <td className="px-2 py-1.5">
+                        <span className="text-[11px] text-[var(--text-md)]">{s.status}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}
@@ -219,24 +239,32 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
                 </tr>
               </thead>
               <tbody>
-                {testsQuery.data.items.slice(0, 50).map((t) => (
-                  <tr key={t.id} className="border-b border-[var(--border-faint)]">
-                    <td className="px-2 py-1.5 font-mono">{t.id}</td>
-                    <td className="px-2 py-1.5 font-mono">{t.specimenId}</td>
-                    <td className="px-2 py-1.5 font-mono">{t.testTypeId}</td>
-                    <td className="px-2 py-1.5 font-mono text-right">
-                      {t.condition.temperature.value}
-                      {t.condition.temperature.unit === 'C' ? '℃' : 'K'}
-                    </td>
-                    <td className="px-2 py-1.5">{t.condition.atmosphere}</td>
-                    <td className="px-2 py-1.5">
-                      <span className="text-[11px] text-[var(--text-md)]">{t.status}</span>
-                    </td>
-                    <td className="px-2 py-1.5 font-mono text-[11px]">
-                      {t.performedAt.slice(0, 10)}
-                    </td>
-                  </tr>
-                ))}
+                {testsQuery.data.items.slice(0, 50).map((t) => {
+                  const spec = specimenById.get(t.specimenId);
+                  const tt = testTypeById.get(t.testTypeId);
+                  return (
+                    <tr key={t.id} className="border-b border-[var(--border-faint)]">
+                      <td className="px-2 py-1.5 font-mono">{t.id}</td>
+                      <td className="px-2 py-1.5 font-mono" title={t.specimenId}>
+                        {spec?.code ?? t.specimenId}
+                      </td>
+                      <td className="px-2 py-1.5" title={t.testTypeId}>
+                        {tt?.name ?? t.testTypeId}
+                      </td>
+                      <td className="px-2 py-1.5 font-mono text-right">
+                        {t.condition.temperature.value}
+                        {t.condition.temperature.unit === 'C' ? '℃' : 'K'}
+                      </td>
+                      <td className="px-2 py-1.5">{t.condition.atmosphere}</td>
+                      <td className="px-2 py-1.5">
+                        <span className="text-[11px] text-[var(--text-md)]">{t.status}</span>
+                      </td>
+                      <td className="px-2 py-1.5 font-mono text-[11px]">
+                        {t.performedAt.slice(0, 10)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}

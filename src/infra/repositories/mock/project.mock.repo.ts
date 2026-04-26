@@ -2,10 +2,8 @@ import type { ID, Project } from '@/domain/types';
 import { delay, paginate } from '@/shared/utils';
 import { getMockDatabase } from '@/mocks/database';
 import { nanoid } from 'nanoid';
-import type {
-  ProjectQuery,
-  ProjectRepository,
-} from '../interfaces/project.repo';
+import type { ProjectRepository } from '../interfaces/project.repo';
+import { applyProjectSort, matchProjectFilter } from './filters/project.filter';
 
 // 削除と再作成が交互に走っても採番が衝突しないよう単調増加カウンタを保持する。
 // 初期値は fixture 最大 seq（4 桁）を超えるところから開始。
@@ -22,52 +20,13 @@ const nextProjectSeq = (): number => {
   return projectCodeCounter;
 };
 
-const matchFilter = (project: Project, query?: ProjectQuery): boolean => {
-  const f = query?.filter;
-  if (!f) return true;
-  if (f.status && f.status.length > 0 && !f.status.includes(project.status)) return false;
-  if (f.customerId && project.customerId !== f.customerId) return false;
-  if (
-    f.industryTagIds &&
-    f.industryTagIds.length > 0 &&
-    !f.industryTagIds.some((t) => project.industryTagIds.includes(t))
-  ) {
-    return false;
-  }
-  if (f.dueBefore && project.dueAt && project.dueAt > f.dueBefore) return false;
-  if (f.search) {
-    const q = f.search.toLowerCase();
-    if (
-      !project.title.toLowerCase().includes(q) &&
-      !project.code.toLowerCase().includes(q)
-    ) {
-      return false;
-    }
-  }
-  return true;
-};
-
-const applySort = (items: Project[], query?: ProjectQuery): Project[] => {
-  if (!query?.sort) return items;
-  const { field, order } = query.sort;
-  const sign = order === 'asc' ? 1 : -1;
-  return [...items].sort((a, b) => {
-    const av = a[field];
-    const bv = b[field];
-    if (av === bv) return 0;
-    if (av === null || av === undefined) return 1;
-    if (bv === null || bv === undefined) return -1;
-    return av > bv ? sign : -sign;
-  });
-};
-
 export const createMockProjectRepository = (): ProjectRepository => ({
   async list(query) {
     await delay(150);
     const db = getMockDatabase();
     const all = db.projects.getAll();
-    const filtered = all.filter((p) => matchFilter(p, query));
-    const sorted = applySort(filtered, query);
+    const filtered = all.filter((p) => matchProjectFilter(p, query));
+    const sorted = applyProjectSort(filtered, query);
     return paginate(sorted, query?.page ?? 1, query?.pageSize ?? 20);
   },
 
