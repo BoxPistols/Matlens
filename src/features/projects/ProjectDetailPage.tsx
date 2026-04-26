@@ -12,6 +12,7 @@ import {
   useProject,
   useUsersIndex,
 } from './api';
+import { useMaterials, useTestTypes } from '@/shared/queries/master';
 import { DownloadPreviewModal } from '@/components/molecules';
 import { downloadMaimlFile } from '@/services/maiml';
 import {
@@ -31,7 +32,7 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
   const { data: customerIndex } = useCustomersIndex();
   const { data: usersIndex } = useUsersIndex();
   const { data: allProjects } = useAllProjectsForLoad();
-  const { specimens, tests, materials, testTypes, damage } = useRepositories();
+  const { specimens, tests, damage } = useRepositories();
 
   const specimensQuery = useQuery({
     queryKey: ['project-specimens', id],
@@ -53,16 +54,8 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
     },
     enabled: !!testsQuery.data,
   });
-  const materialsQuery = useQuery({
-    queryKey: ['materials', 'all'],
-    queryFn: () => materials.list(),
-    staleTime: 5 * 60_000,
-  });
-  const testTypesQuery = useQuery({
-    queryKey: ['test-types', 'all'],
-    queryFn: () => testTypes.list(),
-    staleTime: 5 * 60_000,
-  });
+  const materialsQuery = useMaterials();
+  const testTypesQuery = useTestTypes();
 
   const materialById = useMemo(
     () => new Map((materialsQuery.data ?? []).map((m) => [m.id, m])),

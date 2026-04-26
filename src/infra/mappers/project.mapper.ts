@@ -13,9 +13,9 @@ import type {
 } from '@/infra/api/types';
 import type { ProjectQuery } from '@/infra/repositories/interfaces/project.repo';
 
-// NOTE: 現状は DTO → Domain で型アサーションのみ。REST Repository 実装時に
-// src/domain/schemas/project.schema.ts の ProjectSchema を `safeParse` で
-// 境界検証させ、未知の status 値やサーバーバグを検出できるようにする。
+// NOTE: 現状は status のみ Zod で境界検証している。REST Repository 実装時に
+// src/domain/schemas/project.schema.ts の ProjectSchema 全体を `safeParse` で
+// 検証し、status 以外のフィールドもサーバーバグから守れるようにする。
 export const projectMapper = {
   fromDTO(dto: ProjectDTO): Project {
     return {

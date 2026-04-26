@@ -2,26 +2,30 @@ import { http, HttpResponse } from 'msw';
 import { getMockDatabase } from '../database';
 import { projectEndpoints } from '@/infra/api/endpoints';
 import { projectMapper } from '@/infra/mappers/project.mapper';
-import type { ProjectStatus } from '@/domain/types';
+import type { Project, ProjectStatus } from '@/domain/types';
 import type { ProjectQuery } from '@/infra/repositories/interfaces';
 import {
   applyProjectSort,
   matchProjectFilter,
 } from '@/infra/repositories/mock/filters/project.filter';
-import { paginate } from '@/shared/utils/pagination';
+import { paginate, parseCsvList, parsePositiveInt } from '@/shared/utils';
 
-const parsePositiveInt = (value: string | null, fallback: number): number => {
-  if (value === null) return fallback;
-  const n = Number(value);
-  return Number.isFinite(n) && n > 0 ? Math.floor(n) : fallback;
-};
+// 並び替え可能なフィールドのホワイトリスト。
+// URL から渡される任意の field 文字列をそのまま keyof Project にキャストすると、
+// __proto__ など想定外キーで applyProjectSort が undefined 比較の不正動作を起こす。
+const SORTABLE_FIELDS = ['code', 'title', 'startedAt', 'dueAt', 'status'] as const;
+type SortableField = (typeof SORTABLE_FIELDS)[number];
+const isSortableField = (v: string): v is SortableField =>
+  (SORTABLE_FIELDS as readonly string[]).includes(v);
 
 // クエリ文字列（snake_case）を ProjectQuery に逆変換する。
 // mapper.queryToParams と対のロジック。
 const queryFromSearchParams = (url: URL): ProjectQuery => {
-  const status = url.searchParams.get('status')?.split(',') as ProjectStatus[] | undefined;
+  const status = parseCsvList(url.searchParams.get('status')) as
+    | ProjectStatus[]
+    | undefined;
   const customerId = url.searchParams.get('customer_id') ?? undefined;
-  const industryTagIds = url.searchParams.get('industry_tag_ids')?.split(',') ?? undefined;
+  const industryTagIds = parseCsvList(url.searchParams.get('industry_tag_ids'));
   const dueBefore = url.searchParams.get('due_before') ?? undefined;
   const search = url.searchParams.get('search') ?? undefined;
   const sortRaw = url.searchParams.get('sort');
@@ -29,7 +33,8 @@ const queryFromSearchParams = (url: URL): ProjectQuery => {
     ? (() => {
         const [field, order] = sortRaw.split(':');
         if (!field || (order !== 'asc' && order !== 'desc')) return undefined;
-        return { field, order } as ProjectQuery['sort'];
+        if (!isSortableField(field)) return undefined;
+        return { field, order } satisfies { field: keyof Project & string; order: 'asc' | 'desc' };
       })()
     : undefined;
   return {
