@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-waveform-overlay-csv',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '波形ビューアに重ね描きモードと CSV ダウンロードを追加',
+    body: '波形ビューアの上部に「単独 / 重ね描き」のビューモード切替を追加しました。重ね描きモードでは切削抵抗 X / Y / Z や振動など複数チャネルを共通の縦軸で並べて見られるようになり、チャネル間の同期挙動を直感的に確認できます。さらに「CSV」ボタンで、選択チャネルの時間波形と FFT 振幅スペクトルを 1 つの CSV ファイルにまとめて書き出せます。外部解析ツール（Excel / Python 等）に取り込む導線です。',
+  },
+  {
     id: '2026-05-02-tool-life-prediction-and-compare',
     date: '2026-05-02',
     type: 'feature',
