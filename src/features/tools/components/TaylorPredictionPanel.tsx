@@ -1,13 +1,15 @@
 // Taylor 工具寿命予測パネル。
 // 工具ごとの過去プロセス (Vc, 到達 VB と累積距離) から V と T を復元し、
-// fitTaylor で (n, C) を推定。現行 Vc での予測寿命を表示する。
+// fitTaylor で (n, C) を推定。現行 Vc での予測寿命と ±1σ / ±2σ
+// 信頼区間 + 残寿命（現在の累積使用時間からの残り）を表示する。
 
 import { useMemo } from 'react';
 import type { CuttingProcess, Tool } from '@/domain/types';
 import {
   defaultParamsForTool,
+  estimateRemainingLife,
   fitTaylor,
-  toolLifeMin,
+  predictToolLifeWithBands,
 } from '../../cutting/utils/taylorTool';
 import { VB_CRITERIA } from '../../cutting/utils/standards';
 
@@ -81,9 +83,13 @@ export const TaylorPredictionPanel = ({
     };
   }, [tool, processes, targetVc]);
 
-  const usedParams = fit ?? { n: defaults.n, C: defaults.C, r2: 0, points: [] };
-  const predictedT = toolLifeMin(referenceVc, usedParams);
+  const usedParams = fit ?? { n: defaults.n, C: defaults.C, r2: 0, sigmaLogV: 0, points: [] };
+  const prediction = predictToolLifeWithBands(referenceVc, usedParams, usedParams.sigmaLogV);
+  const predictedT = prediction.T;
   const predictedDistanceMm = predictedT * referenceVc * 1000;
+  // 現在の累積使用時間 = samples の最終 T
+  const cumulativeMin = samples.length > 0 ? samples[samples.length - 1]!.T : 0;
+  const remaining = estimateRemainingLife(predictedT, cumulativeMin, referenceVc);
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -113,6 +119,38 @@ export const TaylorPredictionPanel = ({
         <dt className="text-[var(--text-lo)]">予測切削距離</dt>
         <dd className="font-mono text-right">
           {predictedDistanceMm.toLocaleString(undefined, {
+            maximumFractionDigits: 0,
+          })}{' '}
+          mm
+        </dd>
+        {usedParams.sigmaLogV > 0 && (
+          <>
+            <dt className="text-[var(--text-lo)]">±1σ 区間 T</dt>
+            <dd className="font-mono text-right">
+              {prediction.T_lower1.toFixed(1)} – {prediction.T_upper1.toFixed(1)} min
+            </dd>
+            <dt className="text-[var(--text-lo)]">±2σ 区間 T</dt>
+            <dd className="font-mono text-right">
+              {prediction.T_lower2.toFixed(1)} – {prediction.T_upper2.toFixed(1)} min
+            </dd>
+          </>
+        )}
+        <dt className="text-[var(--text-lo)]">累積使用時間</dt>
+        <dd className="font-mono text-right">{cumulativeMin.toFixed(1)} min</dd>
+        <dt className="text-[var(--text-lo)]">残寿命（推定）</dt>
+        <dd
+          className="font-mono text-right"
+          style={{
+            color:
+              remaining.usageRatio >= 1
+                ? 'var(--err, #dc2626)'
+                : remaining.usageRatio >= 0.8
+                  ? 'var(--warn, #d97706)'
+                  : undefined,
+          }}
+        >
+          {remaining.remainingMin.toFixed(1)} min ／{' '}
+          {remaining.remainingDistanceMm.toLocaleString(undefined, {
             maximumFractionDigits: 0,
           })}{' '}
           mm
