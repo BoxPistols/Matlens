@@ -111,6 +111,55 @@ export default [
     },
   },
 
+  // ----- Framework-agnostic boundary（ADR-0016 + ADR-0018 + Issue #108）-----
+  // src/domain/ と src/infra/repositories/interfaces/ は React / Vue 等の
+  // UI フレームワークに依存してはいけない。将来 Vue/Nuxt にそのまま移植
+  // できる状態を維持するためのガード。
+  {
+    files: [
+      'src/domain/**/*.{ts,tsx}',
+      'src/infra/repositories/interfaces/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'src/domain/ と src/infra/repositories/interfaces/ は framework-agnostic である必要があります（ADR-0016 / ADR-0018 / Issue #108）。' },
+            { name: 'react-dom', message: '同上' },
+            { name: 'vue', message: '同上' },
+            { name: 'nuxt', message: '同上' },
+            { name: '@tanstack/react-query', message: 'TanStack Query は features/ 層で使ってください' },
+            { name: '@tanstack/vue-query', message: '同上' },
+          ],
+          patterns: [
+            { group: ['react/*', 'react-dom/*'], message: 'framework-agnostic 境界の維持（Issue #108）' },
+            { group: ['@/components/*', '@/pages/*'], message: 'domain は UI コンポーネントに依存してはいけない' },
+          ],
+        },
+      ],
+    },
+  },
+
+  // ----- 純 TS サービス層 -----
+  // src/services/maiml.ts などは DOMParser を使うため React/Vue 直接 import 禁止のみ。
+  // ブラウザ API は許容する。
+  {
+    files: ['src/services/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'warn',
+        {
+          paths: [
+            { name: 'react', message: 'services/ は純 TS で書いてください（features/ で使う）' },
+            { name: 'react-dom', message: '同上' },
+            { name: 'vue', message: '同上' },
+          ],
+        },
+      ],
+    },
+  },
+
   // JS files (vite config, scripts, api routes) — relax TS-only rules.
   {
     files: ['**/*.{js,mjs,cjs}'],

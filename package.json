@@ -19,6 +19,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
+    "verify:agnostic": "bash scripts/verify-agnostic.sh",
     "tokens:build": "node design-tokens/scripts/build-plugin.ts && node design-tokens/scripts/generate-tokens-json.ts",
     "tokens:build:figma-plugin": "node design-tokens/scripts/build-plugin.ts",
     "tokens:build:json": "node design-tokens/scripts/generate-tokens-json.ts",

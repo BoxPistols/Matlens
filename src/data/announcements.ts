@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-phase-0-agnostic-boundary',
+    date: '2026-05-03',
+    type: 'info',
+    title: 'framework-agnostic 境界の契約を ESLint で確立 + 検証スクリプト追加',
+    body: 'Phase 0 抽出 (#108) の前段として、framework-agnostic 境界の契約を ESLint no-restricted-imports で確立しました。src/domain/ と src/infra/repositories/interfaces/ は React / Vue / Nuxt / TanStack Query / UI コンポーネントの import が error レベルで禁止され、src/services/ も React/Vue 直接 import を warn で抑止します。さらに pnpm verify:agnostic スクリプトで境界の自動検証 + 移植可能領域の SLOC 計測を実装。現在 約 6800 行が「Vue/React どちらでも変更なしで使える」純 TS 資産として可視化されています。物理切り出し（packages/ への移動）は docs/migration/phase-0-extraction-playbook.md に手順を整備、リプレイス採否確定後に実施します。',
+  },
+  {
     id: '2026-05-03-adr-0017-0018',
     date: '2026-05-03',
     type: 'info',
