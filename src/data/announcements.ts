@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-adr-0017-0018',
+    date: '2026-05-03',
+    type: 'info',
+    title: 'ADR-0017 (Tailwind v4 移行) と ADR-0018 (Vue→React リプレイス計画) を起草',
+    body: '5/18 現場入り後のフレームワーク判断・依存更新を計画的に進めるため、2 つの ADR を Proposed として起票しました。ADR-0017 は Dependabot PR #98 (Tailwind v4 bump) をそのままマージせず、計画的に v4 移行 + Phase 0 抽出と一体化する戦略を記述。ADR-0018 は Vue/Nuxt → React/Next 早期リプレイス計画で、6/30 までに Accepted/Rejected 判定を狙い、説得材料の数値実測から提案通過までの段取りを 4 軸（タイミング × 既存資産 × チーム × AI 連携）で整理しています。',
+  },
+  {
     id: '2026-05-03-maiml-validate-diff-full',
     date: '2026-05-03',
     type: 'feature',
