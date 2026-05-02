@@ -1,9 +1,10 @@
 // 工具ライフトラッカー (#/tools) — #48 Should
-// 工具一覧 + 選択工具の VB 推移 + 直近プロセス。
+// 工具一覧 + 選択工具の VB 推移 + 直近プロセス + 比較モード。
 
 import { useMemo, useState } from 'react';
 import type { ID, Tool, ToolType } from '@/domain/types';
 import { VBChart } from './components/VBChart';
+import { VBComparisonChart, type VBComparisonSeries } from './components/VBComparisonChart';
 import { TaylorPredictionPanel } from './components/TaylorPredictionPanel';
 import {
   buildWearSeries,
@@ -12,6 +13,7 @@ import {
   useMaterialsIndex,
   useTools,
 } from './api';
+import { classifyWearStatus, VB_WEAR_LIMIT } from './utils/wearStatus';
 
 const TOOL_TYPE_LABEL: Record<ToolType, string> = {
   end_mill: 'エンドミル',
@@ -35,7 +37,7 @@ const TOOL_TYPE_OPTIONS: ToolType[] = [
   'tap',
 ];
 
-const WEAR_LIMIT = 0.3;
+const WEAR_LIMIT = VB_WEAR_LIMIT;
 
 // TODO(stage2): 工具マスタが数百件に拡大したらページネーション UI または
 // 集計 API（/api/v1/tools/usage-summary）に切り出す。
@@ -45,6 +47,8 @@ export const ToolLifeTrackerPage = () => {
   const [search, setSearch] = useState('');
   const [typeSet, setTypeSet] = useState<Set<ToolType>>(new Set());
   const [selectedId, setSelectedId] = useState<ID | null>(null);
+  const [compareSet, setCompareSet] = useState<Set<ID>>(new Set());
+  const [compareOpen, setCompareOpen] = useState(false);
 
   // TODO(stage2): 工具マスタ全件取得は集計 API / ページネーション対応に置換予定。
   // 現状 fixture 12 件なので 500 でも十分だが、規模拡大時の制約を明示するための定数化。
@@ -105,6 +109,27 @@ export const ToolLifeTrackerPage = () => {
     setSelectedId(null);
   };
 
+  const toggleCompare = (id: ID) => {
+    setCompareSet((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const compareSeries: VBComparisonSeries[] = useMemo(() => {
+    if (!processesQ.data) return [];
+    return Array.from(compareSet).map((id) => {
+      const tool = toolsQ.data?.items.find((t) => t.id === id);
+      return {
+        toolId: id,
+        toolCode: tool?.code ?? id,
+        points: buildWearSeries(processesQ.data!, id),
+      };
+    });
+  }, [compareSet, processesQ.data, toolsQ.data]);
+
   if (toolsQ.isError || processesQ.isError) {
     return (
       <div className="p-6 text-[var(--err,#dc2626)]">
@@ -162,38 +187,70 @@ export const ToolLifeTrackerPage = () => {
                 </button>
               ))}
             </div>
+            {compareSet.size >= 2 && (
+              <button
+                type="button"
+                onClick={() => setCompareOpen(true)}
+                className="text-[12px] px-2 py-1 rounded bg-[var(--accent,#2563eb)] text-white"
+              >
+                比較ビューを開く ({compareSet.size} 工具)
+              </button>
+            )}
+            {compareSet.size > 0 && (
+              <button
+                type="button"
+                onClick={() => setCompareSet(new Set())}
+                className="text-[11px] underline text-[var(--text-lo)]"
+              >
+                比較選択を解除
+              </button>
+            )}
           </div>
           <ul className="flex flex-col">
             {toolsFiltered.map((t) => {
               const usage = usageByTool.get(t.id);
-              const overLimit =
-                usage && usage.maxVB !== null && usage.maxVB >= WEAR_LIMIT;
+              const wear = classifyWearStatus(usage?.maxVB ?? null);
               const active = selectedId === t.id;
+              const inCompare = compareSet.has(t.id);
               return (
-                <li key={t.id}>
+                <li
+                  key={t.id}
+                  className={`border-b border-[var(--border-faint)] flex items-stretch ${active ? 'bg-[var(--hover)]' : 'hover:bg-[var(--hover)]'}`}
+                >
+                  <label
+                    className="flex items-center px-2 cursor-pointer"
+                    title="比較対象に追加"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={inCompare}
+                      onChange={() => toggleCompare(t.id)}
+                      aria-label={`${t.code} を比較対象に切替`}
+                    />
+                  </label>
                   <button
                     type="button"
                     onClick={() => setSelectedId(t.id)}
                     aria-pressed={active}
-                    className={`w-full text-left px-3 py-2 border-b border-[var(--border-faint)] focus:outline focus:outline-2 focus:outline-[var(--accent,#2563eb)] ${
-                      active
-                        ? 'bg-[var(--hover)]'
-                        : 'hover:bg-[var(--hover)]'
-                    }`}
+                    className="flex-1 text-left px-2 py-2 focus:outline focus:outline-2 focus:outline-[var(--accent,#2563eb)]"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-mono text-[12px] font-semibold">
                         {t.code}
                       </span>
-                      {overLimit && (
+                      {wear.status !== 'ok' && wear.label !== '未測定' && (
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded font-mono"
                           style={{
-                            background: 'rgba(220,38,38,0.14)',
-                            color: 'var(--err, #dc2626)',
+                            background:
+                              wear.status === 'exceeded'
+                                ? 'rgba(220,38,38,0.14)'
+                                : 'rgba(217,119,6,0.14)',
+                            color: wear.color,
                           }}
+                          aria-label={`摩耗状態: ${wear.label}`}
                         >
-                          限界超
+                          {wear.label}
                         </span>
                       )}
                     </div>
@@ -397,6 +454,39 @@ export const ToolLifeTrackerPage = () => {
           )}
         </section>
       </div>
+
+      {compareOpen && compareSet.size >= 2 && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 flex items-center justify-center p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label="工具 VB 比較ビュー"
+        >
+          <button
+            type="button"
+            aria-label="閉じる"
+            onClick={() => setCompareOpen(false)}
+            className="absolute inset-0 w-full h-full cursor-default"
+            tabIndex={-1}
+          />
+          <div className="relative bg-[var(--bg-base,#0b0d11)] border border-[var(--border-faint)] rounded-xl max-w-5xl w-full max-h-[90vh] overflow-auto p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <h2 className="text-lg font-bold">工具 VB 比較ビュー</h2>
+              <span className="text-[11px] text-[var(--text-lo)]">
+                {compareSet.size} 工具を 1 枚に重ね描き
+              </span>
+              <button
+                type="button"
+                onClick={() => setCompareOpen(false)}
+                className="ml-auto text-[12px] underline"
+              >
+                閉じる
+              </button>
+            </div>
+            <VBComparisonChart series={compareSeries} limit={WEAR_LIMIT} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

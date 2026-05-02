@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   allowableCuttingSpeed,
   defaultParamsForTool,
+  estimateRemainingLife,
   fitTaylor,
   inferC,
+  predictToolLifeWithBands,
   toolLifeMin,
 } from './taylorTool';
 
@@ -76,6 +78,46 @@ describe('fitTaylor', () => {
     ]);
     expect(fit).not.toBeNull();
     expect(fit!.points).toHaveLength(2);
+  });
+});
+
+describe('predictToolLifeWithBands', () => {
+  it('returns equal bounds when sigma is 0', () => {
+    const r = predictToolLifeWithBands(100, { n: 0.25, C: 200 }, 0);
+    expect(r.T_lower1).toBe(r.T);
+    expect(r.T_upper1).toBe(r.T);
+    expect(r.T_lower2).toBe(r.T);
+    expect(r.T_upper2).toBe(r.T);
+  });
+
+  it('expands ±2σ bounds wider than ±1σ', () => {
+    const r = predictToolLifeWithBands(100, { n: 0.25, C: 200 }, 0.05);
+    expect(r.T_upper2).toBeGreaterThan(r.T_upper1);
+    expect(r.T_lower2).toBeLessThan(r.T_lower1);
+    expect(r.T_lower1).toBeLessThan(r.T);
+    expect(r.T_upper1).toBeGreaterThan(r.T);
+  });
+});
+
+describe('estimateRemainingLife', () => {
+  it('returns positive remaining when usage is below predicted', () => {
+    const r = estimateRemainingLife(60, 20, 100);
+    expect(r.remainingMin).toBe(40);
+    expect(r.remainingDistanceMm).toBe(40 * 100 * 1000);
+    expect(r.usageRatio).toBeCloseTo(20 / 60, 5);
+  });
+
+  it('clamps remaining to 0 when usage exceeds predicted', () => {
+    const r = estimateRemainingLife(60, 90, 100);
+    expect(r.remainingMin).toBe(0);
+    expect(r.remainingDistanceMm).toBe(0);
+    expect(r.usageRatio).toBe(1);
+  });
+
+  it('handles invalid predicted T gracefully', () => {
+    const r = estimateRemainingLife(0, 10, 100);
+    expect(r.remainingMin).toBe(0);
+    expect(r.usageRatio).toBe(0);
   });
 });
 

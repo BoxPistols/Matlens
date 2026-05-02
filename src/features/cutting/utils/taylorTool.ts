@@ -67,8 +67,75 @@ export interface TaylorFitResult {
   n: number;
   C: number;
   r2: number;
+  /**
+   * 対数 V の残差標準偏差 (log m/min)。
+   * 予測 T の信頼区間は T_pred · exp(±k · sigmaLogV / n) で求める
+   * （k=1: ≈68%、k=2: ≈95%）。サンプル数 < 3 のときは 0 になる。
+   */
+  sigmaLogV: number;
   points: Array<{ V: number; T: number }>;
 }
+
+export interface ToolLifePrediction {
+  /** 中央値（最尤推定）の寿命 T (min) */
+  T: number;
+  /** ±1σ の下/上限（min）。回帰不可の場合は T と同値 */
+  T_lower1: number;
+  T_upper1: number;
+  /** ±2σ の下/上限（min）。回帰不可の場合は T と同値 */
+  T_lower2: number;
+  T_upper2: number;
+}
+
+/**
+ * Taylor フィットから予測寿命 T と ±1σ / ±2σ の信頼区間を返す純関数。
+ * fit が null（サンプル不足）のときはデフォルトパラメータで点推定のみ返す。
+ */
+export const predictToolLifeWithBands = (
+  V: number,
+  params: TaylorParams,
+  sigmaLogV: number,
+): ToolLifePrediction => {
+  const T = toolLifeMin(V, params);
+  if (T === 0 || sigmaLogV === 0 || params.n <= 0) {
+    return { T, T_lower1: T, T_upper1: T, T_lower2: T, T_upper2: T };
+  }
+  const sigmaLogT = sigmaLogV / params.n;
+  return {
+    T,
+    T_lower1: T * Math.exp(-sigmaLogT),
+    T_upper1: T * Math.exp(sigmaLogT),
+    T_lower2: T * Math.exp(-2 * sigmaLogT),
+    T_upper2: T * Math.exp(2 * sigmaLogT),
+  };
+};
+
+/**
+ * 残寿命予測。Taylor 式の総予測寿命から、累積使用時間を引いて残時間を返す。
+ * 残時間と現在 Vc から残切削距離 (mm) も併せて返す。
+ */
+export interface RemainingLifeEstimate {
+  /** 残り時間 (min)。0 未満は寿命到達済とみなして 0 にクランプ */
+  remainingMin: number;
+  /** 残り切削距離 (mm) */
+  remainingDistanceMm: number;
+  /** 使用率 0..1 (cumulativeMin / predictedT) */
+  usageRatio: number;
+}
+
+export const estimateRemainingLife = (
+  predictedTotalT: number,
+  cumulativeMin: number,
+  V: number,
+): RemainingLifeEstimate => {
+  if (predictedTotalT <= 0) {
+    return { remainingMin: 0, remainingDistanceMm: 0, usageRatio: 0 };
+  }
+  const remainingMin = Math.max(predictedTotalT - cumulativeMin, 0);
+  const remainingDistanceMm = remainingMin * Math.max(V, 0) * 1000;
+  const usageRatio = Math.min(cumulativeMin / predictedTotalT, 1);
+  return { remainingMin, remainingDistanceMm, usageRatio };
+};
 
 export const fitTaylor = (
   points: Array<{ V: number; T: number }>
@@ -95,7 +162,7 @@ export const fitTaylor = (
   const n = -b;
   const C = Math.exp(a);
 
-  // R^2 (coefficient of determination)
+  // R^2 (coefficient of determination) と残差標準偏差 sigmaLogV を同時に計算
   let ssRes = 0;
   let ssTot = 0;
   for (let i = 0; i < n_size; i++) {
@@ -104,8 +171,10 @@ export const fitTaylor = (
     ssTot += (ys[i]! - yMean) ** 2;
   }
   const r2 = ssTot === 0 ? 1 : 1 - ssRes / ssTot;
+  // 自由度 n_size - 2 (傾き + 切片)。サンプル不足時は 0 とする。
+  const sigmaLogV = n_size > 2 ? Math.sqrt(ssRes / (n_size - 2)) : 0;
 
-  return { n, C, r2, points: valid };
+  return { n, C, r2, sigmaLogV, points: valid };
 };
 
 /**

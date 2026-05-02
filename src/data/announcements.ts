@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-tool-life-prediction-and-compare',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '工具ライフトラッカーに予測信頼区間・残寿命・比較モードを追加',
+    body: 'Taylor 工具寿命予測パネルに ±1σ / ±2σ の信頼区間と、累積使用時間に基づく残寿命（残り時間と残り切削距離）を表示するようにしました。工具リストの摩耗バッジは「余裕あり / 残20% / 残10% / 限界超過」の 4 段階に色分けされ、交換タイミングを早期に把握できます。各行のチェックボックスで複数工具を選択し「比較ビューを開く」を押すと、選択した工具の VB 進展を 1 枚のチャートに重ね描きできます。',
+  },
+  {
     id: '2026-05-02-cutting-explorer-axis-color',
     date: '2026-05-02',
     type: 'feature',
