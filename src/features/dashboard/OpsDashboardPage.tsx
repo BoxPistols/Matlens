@@ -150,16 +150,22 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
               label="進行中案件"
               value={kpi.activeProjects}
               delta={`全 ${kpi.totalProjects} 件中`}
+              onClick={onNav ? () => onNav('pjlist') : undefined}
+              ariaLabel="進行中案件の一覧へ移動"
             />
             <KpiCard
               label="要アクションの試験片"
               value={kpi.pendingSpecimens}
               delta="進行中案件の 受入 / 準備 中"
               color="var(--accent, #2563eb)"
+              onClick={onNav ? () => onNav('specimens') : undefined}
+              ariaLabel="試験片トラッカーへ移動"
             />
             <KpiCard
               label="過去 30 日の完了試験"
               value={kpi.completedTestsLast30Days}
+              onClick={onNav ? () => onNav('matrix') : undefined}
+              ariaLabel="試験マトリクスへ移動"
             />
             <KpiCard
               label="異常所見比率"
@@ -170,6 +176,8 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
                   ? 'var(--err, #dc2626)'
                   : 'var(--ok, #22c55e)'
               }
+              onClick={onNav ? () => onNav('damage') : undefined}
+              ariaLabel="損傷ギャラリーへ移動"
             />
             {cuttingKpi && (
               <>
@@ -182,6 +190,8 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
                       ? 'var(--warn, #d97706)'
                       : 'var(--ok, #22c55e)'
                   }
+                  onClick={onNav ? () => onNav('tools') : undefined}
+                  ariaLabel="工具ライフトラッカーへ移動"
                 />
                 <KpiCard
                   label="びびり検出率 (30日)"
@@ -196,6 +206,8 @@ export const OpsDashboardPage = ({ onNav, referenceNow }: OpsDashboardPageProps)
                       ? 'var(--warn, #d97706)'
                       : 'var(--ok, #22c55e)'
                   }
+                  onClick={onNav ? () => onNav('cutting-conditions') : undefined}
+                  ariaLabel="切削条件エクスプローラへ移動"
                 />
               </>
             )}
