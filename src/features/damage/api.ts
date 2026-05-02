@@ -33,7 +33,8 @@ export const useSimilarDamages = (id: ID | null) => {
   const { damage } = useRepositories();
   return useQuery({
     queryKey: id ? damageKeys.similar(id) : [...damageKeys.all, 'similar', 'none'],
-    queryFn: () => (id ? damage.findSimilar(id, 8) : Promise.resolve([])),
+    // Issue #82 で「類似事例 上位 5 件」が要件。サジェストの認知負荷を抑える。
+    queryFn: () => (id ? damage.findSimilar(id, 5) : Promise.resolve([])),
     enabled: !!id,
   });
 };

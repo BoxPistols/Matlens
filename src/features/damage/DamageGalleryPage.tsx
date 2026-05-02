@@ -55,8 +55,8 @@ export const DamageGalleryPage = () => {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="キーワード検索（部位・原因仮説）"
-          aria-label="損傷所見 キーワード検索"
+          placeholder="キーワード検索（部位・原因仮説・タグ）"
+          aria-label="損傷所見 キーワード検索（部位・原因仮説・タグを横断検索）"
           className="w-full max-w-lg px-3 py-1.5 rounded border border-[var(--border-faint)] bg-transparent text-[13px]"
         />
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -197,6 +197,18 @@ const DamageLightbox = ({ damages, id, onClose }: DamageLightboxProps) => {
             <span className="font-semibold">確信度: </span>
             {target.confidenceLevel}
           </div>
+          {target.tags.length > 0 && (
+            <div className="mt-2 flex gap-1 flex-wrap">
+              {target.tags.map((t) => (
+                <span
+                  key={t}
+                  className="px-2 py-0.5 text-[10px] rounded-full border border-[var(--border-faint)] text-[var(--text-md)]"
+                >
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
 
           {similar && similar.length > 0 && (
             <section className="mt-6">

@@ -1,6 +1,7 @@
 import type { DamageFinding, ID } from '@/domain/types';
 import { delay, paginate } from '@/shared/utils';
 import { getMockDatabase } from '@/mocks/database';
+import { rankSimilarDamages } from '@/features/damage/similarity';
 import type {
   DamageQuery,
   DamageRepository,
@@ -30,10 +31,12 @@ const matchFilter = (
   }
   if (f.search) {
     const q = f.search.toLowerCase();
-    if (
-      !damage.location.toLowerCase().includes(q) &&
-      !damage.rootCauseHypothesis.toLowerCase().includes(q)
-    ) {
+    const haystacks = [
+      damage.location,
+      damage.rootCauseHypothesis,
+      ...damage.tags,
+    ];
+    if (!haystacks.some((h) => h.toLowerCase().includes(q))) {
       return false;
     }
   }
@@ -73,15 +76,13 @@ export const createMockDamageRepository = (): DamageRepository => ({
     return getMockDatabase().damages.getById(id);
   },
 
-  async findSimilar(id, limit = 8) {
+  async findSimilar(id, limit = 5) {
     await delay(150);
     const db = getMockDatabase();
     const target = db.damages.getById(id);
     if (!target) return [];
-    // 単純に同一typeから近傍を返すモック
-    return db.damages
-      .getAll()
-      .filter((d) => d.id !== id && d.type === target.type)
-      .slice(0, limit);
+    // similarity.ts の純関数で重み付きスコアリング → 上位 N。
+    const ranked = rankSimilarDamages(target, db.damages.getAll(), limit);
+    return ranked.map((r) => r.damage);
   },
 });
