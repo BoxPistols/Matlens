@@ -1,13 +1,22 @@
 # Matlens
 
-金属試験データの管理プラットフォーム。**MaiML (JIS K 0200:2024) ネイティブ**の材料特性データ CRUD、
-**Petri net ワークフロー可視化**、**ベイズ最適化**（1D/2D ガウス過程回帰）、
-**経験式シミュレーション**（Hall-Petch / Larson-Miller / JMAK / ROM）、
-AI ベクトル検索と RAG チャット、**自然言語クエリ変換**、**言語切替 (JP/EN)**、
-**UI 密度トグル**を統合した研究支援システム。
+**Matlens は MaiML (JIS K 0200:2024) を中核に据えた、金属・物質研究の試験データ管理プラットフォームです。**
 
-対象ドメイン: 金属材料の組成・加工・試験・レポートのライフサイクル管理。
-類似サービス: IIC-HQ 等の試験ラボが提供する材料特性データ配信。
+最上位ナビには専用の **MaiML Studio**（Import / Export / Inspect / Validate / Diff）を配置し、計測データの取込・書き出し・検証・比較を 1 箇所に集約しています。MaiML は単なる「エクスポート形式」ではなく、ラボ計測器・LIMS・OEM との相互運用を担う**規格準拠の中間表現**として位置付けています。
+
+その上に、Petri net ワークフロー可視化、ベイズ最適化（1D/2D ガウス過程回帰）、経験式シミュレーション（Hall-Petch / Larson-Miller / JMAK / ROM）、AI 検索と RAG チャット、自然言語クエリ変換、言語切替 (JP/EN)、UI 密度トグル等の機能群を構築しています。
+
+対象ドメイン: 金属・物質研究データのライフサイクル管理（材料 → 試験片 → 試験 → 損傷所見 → レポート）。
+
+## 5 分でわかる Matlens
+
+1. **MaiML Studio → インポート** で `.maiml` / `.xml` ファイルを drop（preview → commit の 3 段階で事故を防ぎます）
+2. **データ → 材料データ一覧** で取り込んだ材料を確認
+3. **試験マトリクス** でセルを選択し、その組合せの試験を MaiML で書き出し
+4. **MaiML Studio → インスペクト** で書き出したファイルの構造を整形表示
+5. **検索（統合）** で Embedding / RAG / 類似 / 横断検索を 1 画面のタブで使い分け
+
+詳細は [`docs/demo/onboarding-5min.md`](docs/demo/onboarding-5min.md) を参照。
 
 ## Tech Stack
 
@@ -32,6 +41,18 @@ AI ベクトル検索と RAG チャット、**自然言語クエリ変換**、**
 | デプロイ | Vercel (Fluid Compute Functions + 静的ホスティング) |
 
 ## 主な機能
+
+### MaiML Studio（コア要素）
+
+| 機能 | 説明 |
+|------|------|
+| **MaiML インポート** | drop → preview → commit の 3 段階で `.maiml` / `.xml` ファイルを安全に取り込み。重複 ID は skip、警告は折り畳み表示 |
+| **MaiML エクスポートハブ** | 材料単体 / 一覧バルク / 案件バンドル / 試験集合（マトリクス選択）の 4 出口を 1 画面で誘導 |
+| **MaiML インスペクト** | XML を整形表示し、部分一致検索でハイライト。drop / 直接ペースト両対応 |
+| **MaiML バリデート (WIP)** | 現状は parser warning 表示。Phase 9 で XSD + provenance / uncertainty 必須項目チェックを追加予定 |
+| **MaiML Diff (WIP)** | 2 ファイルの行・byte・要素・property・result 数の差分テーブル。Phase 9 で構造比較に拡張 |
+
+### その他主要機能
 
 | 機能 | 説明 |
 |------|------|
