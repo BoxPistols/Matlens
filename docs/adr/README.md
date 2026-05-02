@@ -57,5 +57,7 @@ implementation details — those belong in commit messages.
 | [ADR-014](./ADR-014-monorepo-integration-execution-plan.md) | monorepo 統合の実行計画（判断点 4 件の決定 + Phase 4 詳細） | Accepted |
 | [ADR-015](./ADR-015-confidentiality-and-naming-policy.md) | 守秘義務対応とリポジトリ命名ポリシー | Accepted |
 | [0016](./0016-maiml-as-conceptual-core.md) | MaiML を「機能の 1 つ」ではなく「アプリのコア要素」として位置付ける | Accepted |
+| [0017](./0017-tailwind-v4-migration.md) | Tailwind CSS v3 → v4 移行戦略（PR #98 を計画的延期 + Phase 0 と一体化） | Proposed |
+| [0018](./0018-vue-to-react-replacement-proposal.md) | 本番アプリの Vue/Nuxt → React/Next 早期リプレイス計画 | Proposed |
 
 [nygard]: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
