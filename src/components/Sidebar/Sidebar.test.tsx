@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Sidebar } from './Sidebar';
@@ -16,47 +16,88 @@ const defaultProps = {
 const renderSidebar = (overrides = {}) =>
   render(<Sidebar {...defaultProps} {...overrides} />);
 
+// IA リファクタ後のテスト。
+// - 第 1 階層に直接出るリーフ項目（dash / list / catalog / new / pjlist / matrix 等）と
+// - 入れ子グループの親項目（MaiML Studio / 検索（統合）/ 可視化（統合））を区別してテストする。
+// - localStorage は各テスト前にクリアして展開状態の汚染を避ける。
 describe('Sidebar', () => {
-  it('renders as a nav landmark', () => {
-    renderSidebar();
-    expect(screen.getByRole('navigation', { name: 'メインナビゲーション' })).toBeInTheDocument();
+  beforeEach(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.clear();
+      } catch {
+        // jsdom 環境で localStorage が無いケースは無視
+      }
+    }
   });
 
-  it('renders the current NAV_ITEMS labels', () => {
+  it('renders as a nav landmark', () => {
     renderSidebar();
-    // Kept in sync with src/data/constants.ts NAV_ITEMS. Update this list
-    // when the nav schema changes rather than re-adding individual
-    // assertions scattered through the test file.
+    expect(
+      screen.getByRole('navigation', { name: 'メインナビゲーション' }),
+    ).toBeInTheDocument();
+  });
+
+  it('renders top-level leaf labels visible without expansion', () => {
+    renderSidebar();
     for (const label of [
       'ダッシュボード',
       '材料データ一覧',
       '材料カタログ',
       '新規登録',
-      '意味検索',
-      'AI チャット',
-      '類似材料を比較',
+      '案件',
+      '試験マトリクス',
+      '損傷ギャラリー',
+      'ベイズ最適化',
+      '経験式シミュレーション',
+      'ペトリネット可視化',
       'ヘルプ・用語集',
       '技術スタック',
-      'API テスト',
-      'テストスイート',
-      'UX設計ノート',
       'カテゴリ・バッチ管理',
     ]) {
       expect(screen.getByText(label)).toBeInTheDocument();
     }
   });
 
-  it('renders section headers from NAV_ITEMS', () => {
+  it('renders the MaiML Studio group as the core entry', () => {
+    renderSidebar();
+    // MaiML Studio は defaultOpen: true なので children も最初から見える
+    expect(screen.getByText('MaiML Studio')).toBeInTheDocument();
+    expect(screen.getByText('インポート')).toBeInTheDocument();
+    expect(screen.getByText('エクスポート')).toBeInTheDocument();
+    expect(screen.getByText('インスペクト')).toBeInTheDocument();
+  });
+
+  it('hides search hub children until the parent is expanded', async () => {
+    renderSidebar();
+    // search-hub は defaultOpen 指定なし → 初期は閉じた状態
+    expect(screen.queryByText('意味検索')).not.toBeInTheDocument();
+    expect(screen.queryByText('AI チャット')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByText('検索（統合）'));
+    expect(screen.getByText('意味検索')).toBeInTheDocument();
+    expect(screen.getByText('AI チャット')).toBeInTheDocument();
+  });
+
+  it('auto-expands a parent that contains the current page', () => {
+    renderSidebar({ currentPage: 'vsearch' });
+    // currentPage が search-hub の子なので親は自動展開され、子も即座に表示される
+    expect(screen.getByText('意味検索')).toBeInTheDocument();
+  });
+
+  it('renders the new section headers', () => {
     renderSidebar();
     for (const heading of [
-      '概要',
-      'データ入力',
-      'AI 分析・検索',
+      'ホーム',
+      'コア',
+      'データ',
+      '探索',
+      '解析',
+      '工程',
       'ヘルプ・情報',
-      '開発者向け',
       '設定',
     ]) {
-      expect(screen.getByText(heading)).toBeInTheDocument();
+      const hits = screen.getAllByText(heading);
+      expect(hits.length).toBeGreaterThanOrEqual(1);
     }
   });
 
@@ -79,21 +120,22 @@ describe('Sidebar', () => {
     expect(dashButton!.className).toContain('font-semibold');
   });
 
-  it('applies vec-nav active styling for 意味検索', () => {
+  it('applies vec-nav active styling for 意味検索 (after expansion)', async () => {
     renderSidebar({ currentPage: 'vsearch' });
+    // 自動展開される
     const vecButton = screen.getByText('意味検索').closest('button');
     expect(vecButton!.className).toContain('bg-vec-dim');
     expect(vecButton!.className).toContain('text-vec');
   });
 
-  it('applies ai-nav active styling for AI チャット', () => {
+  it('applies ai-nav active styling for AI チャット (after expansion)', async () => {
     renderSidebar({ currentPage: 'rag' });
     const ragButton = screen.getByText('AI チャット').closest('button');
     expect(ragButton!.className).toContain('bg-ai-dim');
     expect(ragButton!.className).toContain('text-ai');
   });
 
-  it('calls onNav when a nav item is clicked', async () => {
+  it('calls onNav when a top-level nav item is clicked', async () => {
     const onNav = vi.fn();
     renderSidebar({ onNav });
     await userEvent.click(screen.getByText('新規登録'));
@@ -107,11 +149,21 @@ describe('Sidebar', () => {
     await userEvent.click(screen.getByText('材料データ一覧'));
     expect(onNav).toHaveBeenCalledWith('list');
 
+    // search-hub を開いてから vsearch をクリック
+    await userEvent.click(screen.getByText('検索（統合）'));
     await userEvent.click(screen.getByText('意味検索'));
     expect(onNav).toHaveBeenCalledWith('vsearch');
 
     await userEvent.click(screen.getByText('カテゴリ・バッチ管理'));
     expect(onNav).toHaveBeenCalledWith('settings');
+  });
+
+  it('expanding/collapsing a group toggles aria-expanded', async () => {
+    renderSidebar();
+    const visualizeButton = screen.getByText('可視化（統合）').closest('button')!;
+    expect(visualizeButton).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(visualizeButton);
+    expect(visualizeButton).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('hides labels when collapsed', () => {
@@ -154,15 +206,16 @@ describe('Sidebar', () => {
     expect(screen.getByText('250')).toBeInTheDocument();
   });
 
-  it('shows the current badge labels for AI / Dev / 3D items', () => {
+  it('shows the AI / PoC / CORE badge labels', () => {
     renderSidebar();
-    // These mirror NAV_ITEMS[].badgeLabel values
-    const threeDbadges = screen.getAllByText('3D');
-    expect(threeDbadges.length).toBeGreaterThanOrEqual(1);
+    // CORE バッジ（MaiML Studio）
+    expect(screen.getByText('CORE')).toBeInTheDocument();
+    // AI バッジ（ベイズ最適化はトップレベルなので必ず見える）
     const aiBadges = screen.getAllByText('AI');
-    expect(aiBadges.length).toBeGreaterThanOrEqual(2); // 意味検索 + AI チャット
-    const devBadges = screen.getAllByText('Dev');
-    expect(devBadges.length).toBeGreaterThanOrEqual(2); // API テスト + テストスイート
+    expect(aiBadges.length).toBeGreaterThanOrEqual(1);
+    // PoC バッジ（pjlist / matrix 等で複数）
+    const pocBadges = screen.getAllByText('PoC');
+    expect(pocBadges.length).toBeGreaterThanOrEqual(2);
   });
 
   it('hides the db count badge when collapsed', () => {
