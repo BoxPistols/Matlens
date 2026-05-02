@@ -43,16 +43,14 @@ const CARDS: StudioCard[] = [
   {
     id: 'maiml-validate',
     title: 'バリデート',
-    subtitle: 'XSD + provenance / uncertainty 必須項目チェック',
+    subtitle: 'DOCTYPE 拒否・header メタ・provenance / uncertainty 必須項目を検証',
     icon: 'check',
-    badge: 'WIP',
   },
   {
     id: 'maiml-diff',
     title: 'Diff',
-    subtitle: '2 つの MaiML ファイルを構造比較',
+    subtitle: '2 つの MaiML / XML ファイルを行単位で差分表示（LCS ベース）',
     icon: 'similar',
-    badge: 'WIP',
   },
 ];
 
