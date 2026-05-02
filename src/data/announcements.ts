@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-cutting-explorer-axis-color',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '切削条件エクスプローラに軸切替・色分け切替・特殊冷却マーカーを追加',
+    body: '散布図の X / Y 軸を Vc / f / ap から自由に組合せられるようにしました。色分けは「びびり有無」「工具摩耗 VB」「表面粗さ Ra」の 3 モードで切替可能です。冷却方式が MQL の点は◇、cryogenic（極低温）の点は△ で表示し、特殊加工を一目で識別できます。Stability Lobe のオーバーレイ曲線は意味の通る Vc × f 軸時のみ表示します。',
+  },
+  {
     id: '2026-05-02-damage-gallery-search-similarity',
     date: '2026-05-02',
     type: 'feature',
