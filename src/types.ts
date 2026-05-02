@@ -79,6 +79,12 @@ export interface NavItem {
   badgeVariant?: string;
   cls?: string;
   disabled?: boolean;
+  /** 子ナビ項目。指定されると親はクリックで展開/折り畳みのトグルになる */
+  children?: NavItem[];
+  /** 入れ子親の初期表示状態。localStorage に永続化された値があればそちらが優先 */
+  defaultOpen?: boolean;
+  /** import.meta.env.DEV でのみ表示。本番ビルドではサイドバーから消える（直接 URL は生存） */
+  devOnly?: boolean;
 }
 
 export interface EmbeddingHook {

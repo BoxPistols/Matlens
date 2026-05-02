@@ -16,49 +16,81 @@ export const OWN_KEY_STORAGE = 'matlens_own_openai_key';
 
 export const STORYBOOK_URL = 'https://matlens-storybook.vercel.app';
 
+// IA を MaiML を中核要素として再構成。
+// - 第 1 階層: Home / MaiML Studio / Data / Explore / Analyze / Workflow / About / Settings / Dev
+// - 入れ子親はクリックで展開/折り畳み（Sidebar.tsx で再帰描画 + localStorage 永続化）
+// - Dev 系は import.meta.env.DEV のときだけ表示（直接 URL は生存）
+// - 既存ルート ID は破壊しない。検索 / 可視化のハブ画面 (search / visualize) は Phase 3-4 で実装するが
+//   先にナビ項目だけ用意して実装は当該 Phase で行う案 → 本 Phase 1 では既存 ID を入れ子に並べるだけにとどめる
 export const NAV_ITEMS: NavItem[] = [
-  { section: '概要', sectionEn: 'Overview' },
-  { id:'dash',    label:'ダッシュボード',    labelEn:'Dashboard',    icon:'dashboard' },
-  { id:'list',    label:'材料データ一覧',    labelEn:'Material List', icon:'list',    badge: true },
-  { id:'catalog', label:'材料カタログ',      labelEn:'Catalog',      icon:'embed' },
-  { section: 'データ入力', sectionEn: 'Data Entry' },
-  { id:'new',     label:'新規登録',         labelEn:'New Entry',    icon:'plus' },
-  { section: '加工実験', sectionEn: 'Experiment' },
-  { id:'experiment', label:'加工実験', labelEn:'Experiment', icon:'report', badgeLabel:'NEW', badgeVariant:'ai' },
-  { section: '受託試験 (PoC)', sectionEn: 'Contract Testing (PoC)' },
+  { section: 'ホーム', sectionEn: 'Home' },
+  { id:'dash', label:'ダッシュボード', labelEn:'Dashboard', icon:'dashboard' },
   { id:'ops-dash', label:'受託試験ダッシュボード', labelEn:'Ops Dashboard', icon:'dashboard', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'pjlist', label:'案件一覧', labelEn:'Projects', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'matrix', label:'試験マトリクス', labelEn:'Test Matrix', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'damage', label:'損傷ギャラリー', labelEn:'Damage Gallery', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'semsearch', label:'横断検索 (PoC)', labelEn:'Semantic Search (PoC)', icon:'vecSearch', badgeLabel:'PoC', badgeVariant:'vec' },
+
+  // MaiML Studio はコア要素なのでセクションヘッダを置かず、グループそのものを section 替わりに上位配置する。
+  { section: 'コア', sectionEn: 'Core' },
+  { id:'maiml-hub', label:'MaiML Studio', labelEn:'MaiML Studio', icon:'embed', badgeLabel:'CORE', badgeVariant:'ai',
+    defaultOpen: true,
+    children: [
+      { id:'maiml-import',   label:'インポート',   labelEn:'Import',   icon:'plus' },
+      { id:'maiml-export',   label:'エクスポート', labelEn:'Export',   icon:'embed' },
+      { id:'maiml-inspect',  label:'インスペクト', labelEn:'Inspect',  icon:'scan' },
+      { id:'maiml-validate', label:'バリデート',   labelEn:'Validate', icon:'check', badgeLabel:'WIP', badgeVariant:'gray' },
+      { id:'maiml-diff',     label:'Diff',         labelEn:'Diff',     icon:'similar', badgeLabel:'WIP', badgeVariant:'gray' },
+    ],
+  },
+
+  { section: 'データ', sectionEn: 'Data' },
+  { id:'list',    label:'材料データ一覧', labelEn:'Material List', icon:'list', badge: true },
+  { id:'catalog', label:'材料カタログ',   labelEn:'Catalog',       icon:'embed' },
+  { id:'new',     label:'新規登録',       labelEn:'New Entry',     icon:'plus' },
+  { id:'pjlist',     label:'案件',         labelEn:'Projects',         icon:'report', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'matrix',     label:'試験マトリクス', labelEn:'Test Matrix',      icon:'scan',   badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'specimens',  label:'試験片',       labelEn:'Specimens',        icon:'list',   badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'damage',     label:'損傷ギャラリー', labelEn:'Damage Gallery',   icon:'embed',  badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'reports',    label:'レポート',     labelEn:'Reports',          icon:'report', badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'mat-master', label:'材料マスタ',   labelEn:'Materials Master', icon:'embed',  badgeLabel:'PoC', badgeVariant:'vec' },
+  { id:'std-master', label:'規格マスタ',   labelEn:'Standards Master', icon:'list',   badgeLabel:'PoC', badgeVariant:'vec' },
+
+  { section: '探索', sectionEn: 'Explore' },
+  { id:'experiment', label:'加工実験',    labelEn:'Experiment',    icon:'report', badgeLabel:'NEW', badgeVariant:'ai' },
+  { id:'search-hub', label:'検索（統合）', labelEn:'Search',        icon:'vecSearch',
+    children: [
+      { id:'vsearch',   label:'意味検索',    labelEn:'Semantic Search', icon:'vecSearch', badgeLabel:'AI', badgeVariant:'vec', cls:'vec-nav' },
+      { id:'rag',       label:'AI チャット', labelEn:'AI Chat',         icon:'rag',       badgeLabel:'AI', badgeVariant:'ai',  cls:'ai-nav' },
+      { id:'sim',       label:'類似材料',    labelEn:'Similar',         icon:'similar' },
+      { id:'semsearch', label:'横断検索',    labelEn:'Cross-domain',    icon:'vecSearch', badgeLabel:'PoC', badgeVariant:'vec' },
+    ],
+  },
+  { id:'visualize-hub', label:'可視化（統合）', labelEn:'Visualize', icon:'embed',
+    children: [
+      { id:'timeline',   label:'加工タイムライン',       labelEn:'Process Timeline',     icon:'report' },
+      { id:'overlay',    label:'予測 vs 実績',           labelEn:'Prediction vs Actual', icon:'similar' },
+      { id:'crystal',    label:'結晶構造 3D',            labelEn:'Crystal 3D',           icon:'atom', badgeLabel:'3D', badgeVariant:'vec' },
+      { id:'multimodal', label:'マルチスケールビューア', labelEn:'Multiscale Viewer',    icon:'embed' },
+    ],
+  },
+
+  { section: '解析', sectionEn: 'Analyze' },
+  { id:'bayes',              label:'ベイズ最適化',         labelEn:'Bayesian Opt',     icon:'spark', badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
+  { id:'simulate',           label:'経験式シミュレーション', labelEn:'Simulation',     icon:'info' },
   { id:'cutting-conditions', label:'切削条件エクスプローラ', labelEn:'Cutting Conditions', icon:'scan', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'tools', label:'工具ライフトラッカー', labelEn:'Tool Life Tracker', icon:'settings', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'specimens', label:'試験片トラッカー', labelEn:'Specimen Tracker', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'mat-master', label:'材料マスタ', labelEn:'Materials Master', icon:'embed', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'std-master', label:'規格マスタ', labelEn:'Standards Master', icon:'list', badgeLabel:'PoC', badgeVariant:'vec' },
-  { id:'reports', label:'レポート', labelEn:'Reports', icon:'report', badgeLabel:'PoC', badgeVariant:'vec' },
-  { section: 'ワークフロー', sectionEn: 'Workflow' },
-  { id:'petri',   label:'試験フロー可視化', labelEn:'Workflow Viz', icon:'workflow' },
-  { id:'bayes',   label:'ベイズ最適化',    labelEn:'Bayesian Opt', icon:'spark',   badgeLabel:'AI', badgeVariant:'ai', cls:'ai-nav' },
-  { id:'simulate',label:'経験式シミュレーション', labelEn:'Simulation', icon:'info' },
-  { section: 'デジタル解析', sectionEn: 'Digital Analysis' },
-  { id:'crystal',    label:'結晶構造 3D',             labelEn:'Crystal 3D',       icon:'atom', badgeLabel:'3D', badgeVariant:'vec' },
-  { id:'timeline',   label:'加工タイムライン',       labelEn:'Process Timeline', icon:'report' },
-  { id:'overlay',    label:'予測 vs 実績',            labelEn:'Prediction vs Actual', icon:'similar' },
-  { id:'multimodal', label:'マルチスケールビューア',  labelEn:'Multiscale Viewer', icon:'embed' },
-  { section: 'AI 分析・検索', sectionEn: 'AI Analysis' },
-  { id:'vsearch', label:'意味検索',         labelEn:'Semantic Search', icon:'vecSearch', badgeLabel:'AI', badgeVariant:'vec', cls:'vec-nav' },
-  { id:'rag',     label:'AI チャット',      labelEn:'AI Chat',     icon:'rag',     badgeLabel:'AI',  badgeVariant:'ai',  cls:'ai-nav' },
-  { id:'sim',     label:'類似材料を比較',   labelEn:'Similar',     icon:'similar' },
+  { id:'tools',              label:'工具ライフトラッカー',  labelEn:'Tool Life Tracker', icon:'settings', badgeLabel:'PoC', badgeVariant:'vec' },
+
+  { section: '工程', sectionEn: 'Workflow' },
+  { id:'petri', label:'ペトリネット可視化', labelEn:'Petri Net', icon:'workflow' },
+
   { section: 'ヘルプ・情報', sectionEn: 'Help & Info' },
-  { id:'help',    label:'ヘルプ・用語集',   labelEn:'Help / Glossary', icon:'help' },
-  { id:'about',   label:'技術スタック',     labelEn:'Tech Stack',  icon:'about' },
-  { section: '開発者向け', sectionEn: 'Developer' },
-  { id:'api',     label:'API テスト',       labelEn:'API Test',    icon:'scan',    badgeLabel:'Dev', badgeVariant:'vec' },
-  { id:'tests',   label:'テストスイート',   labelEn:'Test Suite',  icon:'check',   badgeLabel:'Dev', badgeVariant:'green' },
-  { id:'uxdesign',label:'UX設計ノート',     labelEn:'UX Notes',    icon:'info' },
+  { id:'help',  label:'ヘルプ・用語集', labelEn:'Help / Glossary', icon:'help' },
+  { id:'about', label:'技術スタック',   labelEn:'Tech Stack',      icon:'about' },
+
   { section: '設定', sectionEn: 'Settings' },
-  { id:'settings',label:'カテゴリ・バッチ管理', labelEn:'Categories & Batches', icon:'settings' },
+  { id:'settings', label:'カテゴリ・バッチ管理', labelEn:'Categories & Batches', icon:'settings' },
+
+  { section: '開発者向け', sectionEn: 'Developer' },
+  { id:'api',      label:'API テスト',     labelEn:'API Test',   icon:'scan',  badgeLabel:'Dev', badgeVariant:'vec',   devOnly: true },
+  { id:'tests',    label:'テストスイート', labelEn:'Test Suite', icon:'check', badgeLabel:'Dev', badgeVariant:'green', devOnly: true },
+  { id:'uxdesign', label:'UX設計ノート',   labelEn:'UX Notes',   icon:'info',  badgeLabel:'Dev', badgeVariant:'gray',  devOnly: true },
 ];
 
 export const HELP_TERMS: { id: string; term: string; en: string; cat: string; catLabel: string; catVariant: string; body: string; related: string }[] = [

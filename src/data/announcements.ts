@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-sidebar-ia-restructure',
+    date: '2026-05-03',
+    type: 'feature',
+    title: 'サイドバーを再構成し MaiML Studio をコア要素として最上位に',
+    body: 'サイドバーのナビゲーション構造を「ホーム / コア (MaiML Studio) / データ / 探索 / 解析 / 工程 / ヘルプ / 設定 / 開発者向け」の入れ子構造に整理しました。MaiML Studio を最上位のコア要素として位置付け、CORE バッジ付きで一目で分かるようにしています（Phase 2 で 5 サブ画面を実装予定）。検索系 4 画面と可視化系 4 画面はそれぞれ「検索（統合）」「可視化（統合）」グループにまとめ、初回はクリックで展開します（Phase 3 / 4 で 1 タブ画面に統合予定）。展開状態は localStorage に永続化されます。Dev 系 (API テスト / テストスイート / UX 設計ノート) は本番ビルドで非表示。既存ルートはすべて生存しており、直接 URL アクセスは引き続き有効です。',
+  },
+  {
     id: '2026-05-02-waveform-overlay-csv',
     date: '2026-05-02',
     type: 'feature',
