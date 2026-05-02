@@ -11,6 +11,10 @@ import type {
 } from '@/domain/types';
 import type { CuttingProcessQuery } from '@/infra/repositories/interfaces';
 import { ConditionScatter } from './components/ConditionScatter';
+import type {
+  ScatterAxisKey,
+  ScatterColorMode,
+} from './components/scatterMappings';
 import { KcEstimatePanel } from './components/KcEstimatePanel';
 import { StabilityLobePanel } from './components/StabilityLobePanel';
 import { WaveformViewer } from './components/WaveformViewer';
@@ -40,12 +44,27 @@ const TOOL_TYPE_OPTIONS: { value: ToolType; label: string }[] = [
 
 type ChatterFilter = 'any' | 'chatter' | 'stable';
 
+const AXIS_OPTIONS: { value: ScatterAxisKey; label: string }[] = [
+  { value: 'cuttingSpeed', label: 'Vc' },
+  { value: 'feed', label: 'f' },
+  { value: 'depthOfCut', label: 'ap' },
+];
+
+const COLOR_MODE_OPTIONS: { value: ScatterColorMode; label: string }[] = [
+  { value: 'chatter', label: 'びびり有無' },
+  { value: 'toolWear', label: '工具摩耗 VB' },
+  { value: 'surfaceRoughness', label: '表面粗さ Ra' },
+];
+
 export const CuttingConditionsExplorerPage = () => {
   const [materialId, setMaterialId] = useState<string | ''>('');
   const [opSet, setOpSet] = useState<Set<MachiningOperation>>(new Set());
   const [toolTypeSet, setToolTypeSet] = useState<Set<ToolType>>(new Set());
   const [chatter, setChatter] = useState<ChatterFilter>('any');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [xAxisKey, setXAxisKey] = useState<ScatterAxisKey>('cuttingSpeed');
+  const [yAxisKey, setYAxisKey] = useState<ScatterAxisKey>('feed');
+  const [colorMode, setColorMode] = useState<ScatterColorMode>('chatter');
 
   const query = useMemo<CuttingProcessQuery>(() => {
     const filter: CuttingProcessQuery['filter'] = {};
@@ -252,10 +271,49 @@ export const CuttingConditionsExplorerPage = () => {
 
         {/* 中央: 散布図 */}
         <section className="flex-1 overflow-auto p-4" aria-label="散布図">
-          <div className="mb-2 flex items-center gap-4 text-[12px] text-[var(--text-lo)]">
+          <div className="mb-3 flex items-center gap-3 flex-wrap text-[12px] text-[var(--text-lo)]">
             <span>
               表示中 {filteredProcesses.length} 件 / びびり {chatterCount} 件
             </span>
+            <div className="flex items-center gap-1">
+              <span>X 軸:</span>
+              <select
+                value={xAxisKey}
+                onChange={(e) => setXAxisKey(e.target.value as ScatterAxisKey)}
+                aria-label="散布図 X 軸"
+                className="px-1.5 py-0.5 rounded border border-[var(--border-faint)] bg-transparent"
+              >
+                {AXIS_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>Y 軸:</span>
+              <select
+                value={yAxisKey}
+                onChange={(e) => setYAxisKey(e.target.value as ScatterAxisKey)}
+                aria-label="散布図 Y 軸"
+                className="px-1.5 py-0.5 rounded border border-[var(--border-faint)] bg-transparent"
+              >
+                {AXIS_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>色分け:</span>
+              <select
+                value={colorMode}
+                onChange={(e) => setColorMode(e.target.value as ScatterColorMode)}
+                aria-label="散布図 色分けモード"
+                className="px-1.5 py-0.5 rounded border border-[var(--border-faint)] bg-transparent"
+              >
+                {COLOR_MODE_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
             {selected && (
               <button
                 type="button"
@@ -275,6 +333,9 @@ export const CuttingConditionsExplorerPage = () => {
               processes={filteredProcesses}
               selectedId={selectedId}
               onSelect={setSelectedId}
+              xAxisKey={xAxisKey}
+              yAxisKey={yAxisKey}
+              colorMode={colorMode}
             />
           )}
         </section>

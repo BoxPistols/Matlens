@@ -1,17 +1,34 @@
-// Vc × f 散布図。純 SVG 自作 (依存ゼロ) で描画する。
-// - びびり検出ありは赤系 / なしは青系で色分け
+// 切削条件 散布図。純 SVG 自作 (依存ゼロ) で描画する。
+// - 軸: Vc / f / ap の組合せを切替可能（デフォルト Vc × f で互換維持）
+// - 色: びびり / 工具摩耗 VB / 表面粗さ Ra の 3 モードで切替
+// - 形状: 冷却方式 MQL → ◇、cryogenic → △、それ以外は ○
 // - 選択中の点は強調
-// - Stability Lobe の簡易プレースホルダ曲線をオーバーレイ（Tlusty 系の定性近似）
+// - Stability Lobe の簡易プレースホルダ曲線をオーバーレイ（Vc × f 軸時のみ）
 
 import { useMemo, useRef, useState } from 'react';
 import type { CuttingProcess } from '@/domain/types';
+import {
+  COLOR_MODE_LABEL,
+  SCATTER_AXES,
+  colorForProcess,
+  markerPathD,
+  markerShapeFor,
+  type ScatterAxisKey,
+  type ScatterColorMode,
+} from './scatterMappings';
 
 export interface ConditionScatterProps {
   processes: CuttingProcess[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
-  /** true のとき Stability Lobe プレースホルダ曲線を重ねる */
+  /** true のとき Stability Lobe プレースホルダ曲線を重ねる（Vc × f のときのみ有効） */
   showStabilityLobe?: boolean;
+  /** X 軸キー（デフォルト Vc）。cuttingSpeed / feed / depthOfCut */
+  xAxisKey?: ScatterAxisKey;
+  /** Y 軸キー（デフォルト f）。cuttingSpeed / feed / depthOfCut */
+  yAxisKey?: ScatterAxisKey;
+  /** 色分けモード（デフォルト chatter）。chatter / toolWear / surfaceRoughness */
+  colorMode?: ScatterColorMode;
 }
 
 const PADDING = { top: 16, right: 24, bottom: 40, left: 56 };
@@ -56,6 +73,9 @@ export const ConditionScatter = ({
   selectedId,
   onSelect,
   showStabilityLobe = true,
+  xAxisKey = 'cuttingSpeed',
+  yAxisKey = 'feed',
+  colorMode = 'chatter',
 }: ConditionScatterProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -66,28 +86,35 @@ export const ConditionScatter = ({
   const plotY0 = PADDING.top;
   const plotY1 = height - PADDING.bottom;
 
+  const xAxis = SCATTER_AXES[xAxisKey];
+  const yAxis = SCATTER_AXES[yAxisKey];
+
   const { xScale, yScale } = useMemo(() => {
     const x = makeScale(
-      processes.map((p) => p.condition.cuttingSpeed),
+      processes.map((p) => xAxis.get(p)),
       [plotX0, plotX1]
     );
     const y = makeScale(
-      processes.map((p) => p.condition.feed),
+      processes.map((p) => yAxis.get(p)),
       [plotY1, plotY0] // y は上下反転
     );
     return { xScale: x, yScale: y };
-  }, [processes, plotX0, plotX1, plotY0, plotY1]);
+  }, [processes, xAxis, yAxis, plotX0, plotX1, plotY0, plotY1]);
+
+  // Stability Lobe は Vc × f 平面でのみ意味があるため、それ以外の軸では描画しない。
+  const stabilityLobeApplicable =
+    xAxisKey === 'cuttingSpeed' && yAxisKey === 'feed';
 
   // Stability Lobe プレースホルダ: 送りが高いほど許容 Vc が下がる、
   // という定性的な曲線（log 近似）。実装は後続 PR で厳密化する。
   const lobePath = useMemo(() => {
-    if (!showStabilityLobe) return null;
+    if (!showStabilityLobe || !stabilityLobeApplicable) return null;
     const samples = 80;
     const vcMin = xScale.min;
     const vcMax = xScale.max;
     const fMin = yScale.min;
     const fMax = yScale.max;
-    if (vcMax <= vcMin || fMax <= fMin) return null;
+    if (vcMax <= vcMin || fMax <= fMin || !stabilityLobeApplicable) return null;
     const parts: string[] = [];
     for (let i = 0; i <= samples; i++) {
       const t = i / samples;
@@ -99,7 +126,7 @@ export const ConditionScatter = ({
       parts.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`);
     }
     return parts.join(' ');
-  }, [xScale, yScale, showStabilityLobe]);
+  }, [xScale, yScale, showStabilityLobe, stabilityLobeApplicable]);
 
   return (
     <div ref={containerRef} className="w-full overflow-auto">
@@ -181,7 +208,7 @@ export const ConditionScatter = ({
           fontSize={12}
           fill="var(--text-md, #cbd5e1)"
         >
-          切削速度 Vc (m/min)
+          {xAxis.label} ({xAxis.unit})
         </text>
         <text
           x={14}
@@ -191,7 +218,7 @@ export const ConditionScatter = ({
           fill="var(--text-md, #cbd5e1)"
           transform={`rotate(-90 14 ${(plotY0 + plotY1) / 2})`}
         >
-          送り f (mm/rev or mm/tooth)
+          {yAxis.label} ({yAxis.unit})
         </text>
 
         {/* Stability Lobe プレースホルダ曲線 */}
@@ -218,66 +245,106 @@ export const ConditionScatter = ({
           </g>
         )}
 
-        {/* 点群 */}
+        {/* 点群 — 形状（円 / ◇ / △）と色（colorMode）を分離して描画 */}
         {processes.map((p) => {
-          const cx = xScale.toPx(p.condition.cuttingSpeed);
-          const cy = yScale.toPx(p.condition.feed);
+          const cx = xScale.toPx(xAxis.get(p));
+          const cy = yScale.toPx(yAxis.get(p));
           const isSelected = p.id === selectedId;
           const isHovered = p.id === hoverId;
-          const chatter = p.chatterDetected === true;
-          const fill = chatter
-            ? 'rgba(239, 68, 68, 0.78)' // red-500
-            : 'rgba(37, 99, 235, 0.72)'; // blue-600
+          const fill = colorForProcess(p, colorMode);
           const stroke = isSelected
             ? 'var(--accent, #2563eb)'
             : isHovered
               ? 'rgba(148, 163, 184, 0.9)'
               : 'transparent';
           const r = isSelected ? 6 : isHovered ? 5 : 3.6;
+          const shape = markerShapeFor(p);
+          const eventHandlers = {
+            tabIndex: 0,
+            onMouseEnter: () => setHoverId(p.id),
+            onMouseLeave: () => setHoverId(null),
+            onFocus: () => setHoverId(p.id),
+            onBlur: () => setHoverId(null),
+            onClick: () => onSelect(isSelected ? null : p.id),
+            onKeyDown: (e: React.KeyboardEvent<SVGElement>) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelect(isSelected ? null : p.id);
+              }
+            },
+            style: { cursor: 'pointer', outline: 'none' },
+          };
+          const titleEl = (
+            <title>{`${p.code}\n${xAxis.label}=${xAxis.get(p).toFixed(3)} ${xAxis.unit}\n${yAxis.label}=${yAxis.get(p).toFixed(3)} ${yAxis.unit}\nap=${p.condition.depthOfCut.toFixed(2)} mm\n冷却=${p.condition.coolant}${p.chatterDetected === true ? '\nびびり検出' : ''}`}</title>
+          );
+          const ariaLabel = `プロセス ${p.code} ${xAxis.label}=${xAxis.get(p).toFixed(3)} ${yAxis.label}=${yAxis.get(p).toFixed(3)}`;
+          if (shape === 'circle') {
+            return (
+              <circle
+                key={p.id}
+                cx={cx}
+                cy={cy}
+                r={r}
+                fill={fill}
+                stroke={stroke}
+                strokeWidth={isSelected ? 2 : 1}
+                aria-label={ariaLabel}
+                {...eventHandlers}
+              >
+                {titleEl}
+              </circle>
+            );
+          }
           return (
-            <circle
+            <path
               key={p.id}
-              cx={cx}
-              cy={cy}
-              r={r}
+              d={markerPathD(shape, cx, cy, r + 0.5)}
               fill={fill}
               stroke={stroke}
               strokeWidth={isSelected ? 2 : 1}
-              tabIndex={0}
-              onMouseEnter={() => setHoverId(p.id)}
-              onMouseLeave={() => setHoverId(null)}
-              onFocus={() => setHoverId(p.id)}
-              onBlur={() => setHoverId(null)}
-              onClick={() => onSelect(isSelected ? null : p.id)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  onSelect(isSelected ? null : p.id);
-                }
-              }}
-              style={{ cursor: 'pointer', outline: 'none' }}
-              aria-label={`プロセス ${p.code} Vc=${p.condition.cuttingSpeed.toFixed(1)} f=${p.condition.feed.toFixed(3)}${chatter ? ' (びびり検出)' : ''}`}
+              aria-label={ariaLabel}
+              {...eventHandlers}
             >
-              <title>{`${p.code}\nVc=${p.condition.cuttingSpeed.toFixed(1)} m/min\nf=${p.condition.feed.toFixed(3)} ${p.condition.feedUnit}\nap=${p.condition.depthOfCut.toFixed(2)} mm\n${chatter ? 'びびり検出' : '安定'}`}</title>
-            </circle>
+              {titleEl}
+            </path>
           );
         })}
 
-        {/* 凡例 */}
-        <g transform={`translate(${plotX1 - 140}, ${plotY1 - 36})`}>
+        {/* 凡例 — 色モードに応じてラベルを切替、特殊冷却マーカーも併記 */}
+        <g transform={`translate(${plotX1 - 230}, ${plotY1 - 56})`}>
           <rect
-            width={132}
-            height={28}
+            width={222}
+            height={48}
             fill="var(--bg-raised, rgba(15, 23, 42, 0.7))"
             stroke="var(--border-faint, #334155)"
           />
-          <circle cx={12} cy={14} r={4} fill="rgba(37, 99, 235, 0.72)" />
-          <text x={22} y={17} fontSize={11} fill="var(--text-md, #cbd5e1)">
-            安定
+          <text x={8} y={14} fontSize={10} fill="var(--text-lo, #94a3b8)">
+            色: {COLOR_MODE_LABEL[colorMode]}
           </text>
-          <circle cx={66} cy={14} r={4} fill="rgba(239, 68, 68, 0.78)" />
-          <text x={76} y={17} fontSize={11} fill="var(--text-md, #cbd5e1)">
-            びびり
+          {colorMode === 'chatter' && (
+            <>
+              <circle cx={20} cy={28} r={4} fill="rgba(37, 99, 235, 0.72)" />
+              <text x={28} y={31} fontSize={11} fill="var(--text-md, #cbd5e1)">
+                安定
+              </text>
+              <circle cx={80} cy={28} r={4} fill="rgba(239, 68, 68, 0.78)" />
+              <text x={88} y={31} fontSize={11} fill="var(--text-md, #cbd5e1)">
+                びびり
+              </text>
+            </>
+          )}
+          {colorMode === 'toolWear' && (
+            <text x={8} y={31} fontSize={11} fill="var(--text-md, #cbd5e1)">
+              緑: VB&lt;0.3 / 黄: 0.3-0.6 / 赤: &gt;0.6
+            </text>
+          )}
+          {colorMode === 'surfaceRoughness' && (
+            <text x={8} y={31} fontSize={11} fill="var(--text-md, #cbd5e1)">
+              青: Ra&lt;1.6 / 紫: ~3.2 / 赤: &gt;3.2
+            </text>
+          )}
+          <text x={8} y={44} fontSize={10} fill="var(--text-lo, #94a3b8)">
+            形状: ○通常 / ◇MQL / △cryogenic
           </text>
         </g>
       </svg>
