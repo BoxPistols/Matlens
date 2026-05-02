@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-docs-refresh-maiml-core',
+    date: '2026-05-03',
+    type: 'info',
+    title: 'README / 5 分 demo / アーキテクチャ 1 枚絵 / ADR-016 を整備',
+    body: 'IA リファクタの締めとして、ドキュメント類を MaiML 中核思想に合わせて刷新しました。README 冒頭で MaiML を中核と位置付け、5 分でわかる Matlens セクションを追加。docs/demo/onboarding-5min.md にステップ 5 つの kickoff demo シナリオを記述。docs/architecture/overview.md には Mermaid 図で MaiML を中心に Data / Explore / Analyze / Workflow が連携する 1 枚絵を配置。判断根拠は ADR-0016「MaiML を機能の 1 つではなくアプリのコア要素として位置付ける」に集約しました。',
+  },
+  {
     id: '2026-05-03-search-visualize-hubs',
     date: '2026-05-03',
     type: 'feature',

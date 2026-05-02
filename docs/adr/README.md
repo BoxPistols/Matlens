@@ -56,5 +56,6 @@ implementation details — those belong in commit messages.
 | [ADR-013](./ADR-013-url-contract-and-terminology-ownership.md) | URL 規約・用語 ownership・更新ポリシー（親密化の運用規約） | Accepted |
 | [ADR-014](./ADR-014-monorepo-integration-execution-plan.md) | monorepo 統合の実行計画（判断点 4 件の決定 + Phase 4 詳細） | Accepted |
 | [ADR-015](./ADR-015-confidentiality-and-naming-policy.md) | 守秘義務対応とリポジトリ命名ポリシー | Accepted |
+| [0016](./0016-maiml-as-conceptual-core.md) | MaiML を「機能の 1 つ」ではなく「アプリのコア要素」として位置付ける | Accepted |
 
 [nygard]: https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions
