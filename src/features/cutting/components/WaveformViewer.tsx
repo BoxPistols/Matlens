@@ -1,13 +1,26 @@
 // 波形ビューア。時系列プロット + FFT スペクトル + 基本統計を純 SVG で描画する。
 // 依存ゼロ（自前 FFT を使用）。128 点規模の PoC 用途を想定。
+//
+// 表示モード:
+//   - single  (既定) — 選択チャネル 1 本を統計付きで表示
+//   - overlay        — 全チャネルを同一スケールで重ね描き
+//                       チャネル間の同期挙動（X / Y / Z 切削抵抗の相関等）を
+//                       直感的に確認するための比較ビュー
+//
+// CSV ダウンロード: 選択チャネルの時間波形 + FFT 振幅スペクトルをまとめて
+// CSV ファイルとして出力する（外部解析ツールで再利用可能）。
 
 import { useEffect, useMemo, useState } from 'react';
 import type { WaveformSample } from '@/domain/types';
 import { binFrequency, fft, magnitudeSpectrum } from '../utils/fft';
+import { buildWaveformCsv, defaultWaveformCsvFilename } from '../utils/waveformCsv';
+import { downloadTextFile } from '@/services/downloadFile';
 
 export interface WaveformViewerProps {
   samples: WaveformSample[];
 }
+
+type ViewMode = 'single' | 'overlay';
 
 interface WaveformStats {
   min: number;
@@ -59,6 +72,7 @@ const CHANNEL_LABEL: Record<WaveformSample['channel'], string> = {
 export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
   const firstSampleId = samples[0]?.id ?? '';
   const [activeId, setActiveId] = useState<string>(firstSampleId);
+  const [viewMode, setViewMode] = useState<ViewMode>('single');
 
   // samples が差し替わったら選択状態をリセットする（前回の activeId が新しい配列に
   // 含まれないと詳細表示と選択状態が乖離するため）
@@ -140,6 +154,12 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
     return { freq: freqs[peakIdx] ?? 0, mag: peakMag };
   }, [spectrum]);
 
+  const handleCsvDownload = () => {
+    if (!active) return;
+    const csv = buildWaveformCsv(active, spectrum);
+    downloadTextFile(csv, defaultWaveformCsvFilename(active), 'text/csv');
+  };
+
   if (!active) {
     return (
       <div className="text-[11px] text-[var(--text-lo)]">
@@ -152,8 +172,47 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
 
   return (
     <div className="flex flex-col gap-2">
-      {/* チャネルタブ */}
-      {samples.length > 1 && (
+      {/* 操作行: モード切替 + CSV */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {samples.length > 1 && (
+          <div
+            className="flex items-center gap-1"
+            role="radiogroup"
+            aria-label="波形ビューア表示モード"
+          >
+            {([
+              { v: 'single' as const, label: '単独' },
+              { v: 'overlay' as const, label: '重ね描き' },
+            ]).map((o) => (
+              <button
+                key={o.v}
+                type="button"
+                role="radio"
+                aria-checked={viewMode === o.v}
+                onClick={() => setViewMode(o.v)}
+                className={`px-2 py-0.5 text-[11px] rounded border transition-colors ${
+                  viewMode === o.v
+                    ? 'bg-[var(--accent,#2563eb)] text-white border-transparent'
+                    : 'text-[var(--text-md)] border-[var(--border-faint)] hover:bg-[var(--hover)]'
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={handleCsvDownload}
+          className="ml-auto text-[11px] px-2 py-0.5 rounded border border-[var(--border-default)] hover:bg-[var(--hover)]"
+          aria-label="選択波形を CSV ダウンロード"
+        >
+          CSV
+        </button>
+      </div>
+
+      {/* チャネルタブ（単独モードのみ） */}
+      {samples.length > 1 && viewMode === 'single' && (
         <div
           className="flex items-center gap-1 flex-wrap"
           role="tablist"
@@ -181,8 +240,13 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
         </div>
       )}
 
-      {/* 統計値 */}
-      {stats && (
+      {/* 重ね描き（overlay）モード — 全チャネルを共通スケールで描画 */}
+      {viewMode === 'overlay' && samples.length > 1 && (
+        <OverlayPlot samples={samples} />
+      )}
+
+      {/* 統計値（単独モードのみ） */}
+      {viewMode === 'single' && stats && (
         <dl className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[11px]">
           <dt className="text-[var(--text-lo)]">min</dt>
           <dd className="font-mono text-right">
@@ -215,7 +279,8 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
         </dl>
       )}
 
-      {/* 時間領域プロット */}
+      {/* 時間領域プロット（単独モード） */}
+      {viewMode === 'single' && (
       <div>
         <div className="text-[10px] text-[var(--text-lo)] mb-0.5">
           時間領域 ({active.values.length} 点 / {active.sampleRateHz} Hz)
@@ -238,8 +303,10 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
           <path d={timeDomainPath} stroke={color} strokeWidth={1.2} fill="none" />
         </svg>
       </div>
+      )}
 
-      {/* 周波数領域プロット */}
+      {/* 周波数領域プロット（単独モード） */}
+      {viewMode === 'single' && (
       <div>
         <div className="text-[10px] text-[var(--text-lo)] mb-0.5">
           周波数領域 (FFT 片側振幅スペクトル)
@@ -262,6 +329,84 @@ export const WaveformViewer = ({ samples }: WaveformViewerProps) => {
           <path d={spectrumPath} stroke={color} strokeWidth={1.2} fill="none" />
         </svg>
       </div>
+      )}
+    </div>
+  );
+};
+
+// ----- Overlay プロット（複数波形の同期表示） -----
+
+interface OverlayPlotProps {
+  samples: WaveformSample[];
+}
+
+const OverlayPlot = ({ samples }: OverlayPlotProps) => {
+  const allValues = samples.flatMap((s) => s.values);
+  if (allValues.length === 0) return null;
+  const yMin = Math.min(...allValues);
+  const yMax = Math.max(...allValues);
+  const yRange = yMax === yMin ? 1 : yMax - yMin;
+  const w = 560;
+  const h = 160;
+  const pad = 24;
+  const plotW = w - pad * 2;
+  const plotH = h - pad * 2;
+  const longestN = Math.max(...samples.map((s) => s.values.length), 1);
+
+  const buildPath = (values: readonly number[]) => {
+    if (values.length === 0) return '';
+    const parts: string[] = [];
+    for (let i = 0; i < values.length; i++) {
+      const x = pad + (plotW * i) / Math.max(1, longestN - 1);
+      const y = pad + plotH - ((values[i]! - yMin) / yRange) * plotH;
+      parts.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`);
+    }
+    return parts.join(' ');
+  };
+
+  return (
+    <div>
+      <div className="text-[10px] text-[var(--text-lo)] mb-0.5">
+        重ね描き（{samples.length} チャネル / 共通スケール）
+      </div>
+      <svg
+        viewBox={`0 0 ${w} ${h}`}
+        width="100%"
+        className="block"
+        role="img"
+        aria-label="複数チャネルの時間波形 重ね描き"
+      >
+        <rect
+          x={pad}
+          y={pad}
+          width={plotW}
+          height={plotH}
+          fill="var(--bg-base, transparent)"
+          stroke="var(--border-faint, #334155)"
+        />
+        {samples.map((s) => (
+          <path
+            key={s.id}
+            d={buildPath(s.values)}
+            stroke={CHANNEL_COLOR[s.channel]}
+            strokeWidth={1.1}
+            fill="none"
+            opacity={0.85}
+          />
+        ))}
+      </svg>
+      <ul className="flex gap-3 flex-wrap text-[11px] mt-1" aria-label="チャネル凡例">
+        {samples.map((s) => (
+          <li key={s.id} className="flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="inline-block w-3 h-3 rounded-sm"
+              style={{ background: CHANNEL_COLOR[s.channel] }}
+            />
+            {CHANNEL_LABEL[s.channel]}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
