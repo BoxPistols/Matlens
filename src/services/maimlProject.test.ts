@@ -7,8 +7,11 @@ import type {
 } from '@/domain/types';
 import {
   defaultProjectMaimlFilename,
+  defaultTestSetMaimlFilename,
   serializeProjectToMaiml,
+  serializeTestSetToMaiml,
   type ProjectBundle,
+  type TestSetBundle,
 } from './maimlProject';
 
 const audit = {
@@ -145,5 +148,58 @@ describe('defaultProjectMaimlFilename', () => {
   it('uses the project code as a prefix and .maiml extension', () => {
     const name = defaultProjectMaimlFilename(project);
     expect(name).toMatch(/^IIC-2026-0001_\d{4}-\d{2}-\d{2}\.maiml$/);
+  });
+});
+
+describe('serializeTestSetToMaiml', () => {
+  const setBundle: TestSetBundle = {
+    label: 'matrix-cell SUS304 引張',
+    specimens: [specimen],
+    tests: [test],
+    damages: [damage],
+  };
+
+  it('produces a test-set document without project block', () => {
+    const xml = serializeTestSetToMaiml(setBundle, {
+      generatedAt: new Date('2026-05-02T00:00:00.000Z'),
+    });
+    expect(xml).toContain('<property key="documentKind">test-set</property>');
+    expect(xml).toContain('<property key="label">matrix-cell SUS304 引張</property>');
+    expect(xml).toContain('<property key="testCount">1</property>');
+    // Project block must NOT appear
+    expect(xml).not.toContain('<project ');
+    // Same blocks as project bundle
+    expect(xml).toContain('<specimens count="1">');
+    expect(xml).toContain('<test id="test-1" specimenRef="spec-1">');
+    expect(xml).toContain('<damages count="1">');
+  });
+
+  it('handles single test with no damages or specimens', () => {
+    const xml = serializeTestSetToMaiml({
+      label: 'single test',
+      specimens: [],
+      tests: [test],
+      damages: [],
+    });
+    expect(xml).toContain('<specimens count="0">');
+    expect(xml).toContain('<tests count="1">');
+    expect(xml).toContain('<damages count="0">');
+  });
+});
+
+describe('defaultTestSetMaimlFilename', () => {
+  it('slugifies the label and adds the date and extension', () => {
+    const name = defaultTestSetMaimlFilename('SUS304 × 引張');
+    expect(name).toMatch(/^tests_SUS304_\d{4}-\d{2}-\d{2}\.maiml$/);
+  });
+
+  it('keeps inner ascii-safe segments separated by single dashes', () => {
+    const name = defaultTestSetMaimlFilename('part-A_B (test)');
+    expect(name).toMatch(/^tests_part-A_B-test_\d{4}-\d{2}-\d{2}\.maiml$/);
+  });
+
+  it('falls back to test-set when label has no ascii-safe chars', () => {
+    const name = defaultTestSetMaimlFilename('！？');
+    expect(name).toMatch(/^tests_test-set_\d{4}-\d{2}-\d{2}\.maiml$/);
   });
 });

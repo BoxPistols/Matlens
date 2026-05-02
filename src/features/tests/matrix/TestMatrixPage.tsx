@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { ID } from '@/domain/types';
+import type { ID, Test } from '@/domain/types';
 import { HeatmapMatrix, materialsToRows, type MatrixValueType, type RowEntry } from './HeatmapMatrix';
 import {
   useMaterials,
@@ -13,6 +13,8 @@ import {
 } from './api';
 import { computeAbnormalCellMap } from './abnormalRatio';
 import { computeCustomerTestTypeCells } from './customerMatrix';
+import { CellTestList } from './components/CellTestList';
+import { MaimlExportModal } from './components/MaimlExportModal';
 
 type RowAxis = 'material' | 'customer';
 
@@ -89,6 +91,31 @@ export const TestMatrixPage = () => {
   }, [rowAxis, matrixTestsQ.data, matrixSpecimensQ.data, matrixProjectsQ.data]);
 
   const [selected, setSelected] = useState<SelectedCell | null>(null);
+  const [exportTests, setExportTests] = useState<Test[] | null>(null);
+  const [exportLabel, setExportLabel] = useState('');
+
+  // 選択セルに含まれる試験を抽出（材料軸 / 顧客軸 共通の前計算）
+  // - 材料軸: specimen.materialId === selectedRowId
+  // - 顧客軸: specimen.projectId → project.customerId === selectedRowId
+  const selectedCellTests = useMemo<Test[]>(() => {
+    if (!selected) return [];
+    if (!matrixTestsQ.data || !matrixSpecimensQ.data) return [];
+    const specimensById = new Map(matrixSpecimensQ.data.map((s) => [s.id, s]));
+    const projectsById = matrixProjectsQ.data
+      ? new Map(matrixProjectsQ.data.map((p) => [p.id, p]))
+      : null;
+    return matrixTestsQ.data.filter((t) => {
+      if (t.testTypeId !== selected.testTypeId) return false;
+      const sp = specimensById.get(t.specimenId);
+      if (!sp) return false;
+      if (rowAxis === 'material') {
+        return sp.materialId === selected.rowId;
+      }
+      if (!projectsById) return false;
+      const project = projectsById.get(sp.projectId);
+      return project?.customerId === selected.rowId;
+    });
+  }, [selected, rowAxis, matrixTestsQ.data, matrixSpecimensQ.data, matrixProjectsQ.data]);
 
   if (matrixError || testTypesError || materialsError) {
     return (
@@ -326,10 +353,40 @@ export const TestMatrixPage = () => {
                   この組合せの過去試験はまだありません。新規提案の機会です。
                 </div>
               )}
+              {selectedCell && selectedCell.count > 0 && (
+                <div className="border-t border-[var(--border-faint)] pt-3">
+                  <CellTestList
+                    tests={selectedCellTests}
+                    specimens={matrixSpecimensQ.data ?? []}
+                    damages={matrixDamagesQ.data ?? []}
+                    onExportSingle={(testId) => {
+                      const t = selectedCellTests.find((x) => x.id === testId);
+                      if (!t) return;
+                      setExportTests([t]);
+                      setExportLabel(
+                        `${selectedRow.primaryLabel} × ${selectedTestType.name} / ${testId}`,
+                      );
+                    }}
+                    onExportAll={() => {
+                      setExportTests(selectedCellTests);
+                      setExportLabel(
+                        `${selectedRow.primaryLabel} × ${selectedTestType.name} (${selectedCellTests.length} 件)`,
+                      );
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
         </aside>
       </div>
+      <MaimlExportModal
+        tests={exportTests}
+        label={exportLabel}
+        allSpecimens={matrixSpecimensQ.data ?? []}
+        allDamages={matrixDamagesQ.data ?? []}
+        onClose={() => setExportTests(null)}
+      />
     </div>
   );
 };

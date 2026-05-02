@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-matrix-cell-maiml',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '試験マトリクスのセルから単一・一括 MaiML エクスポート可能に',
+    body: '試験マトリクスの右サイドバーで、選択したセルに含まれる試験の一覧を表示するようにしました。各試験の右に「MaiML」ボタンが付き、単一試験の MaiML エクスポートに対応します。一覧の上部「全件 MaiML」ボタンを押すと、選択セル内の全試験を 1 ファイルに束ねて書き出します。書き出しは MaiML (JIS K 0200:2024) で、案件単位の出力と共通スキーマです。マトリクスから試験を抜き出して外部 LIMS に渡す導線になります。',
+  },
+  {
     id: '2026-05-02-project-memo-markdown',
     date: '2026-05-02',
     type: 'feature',
