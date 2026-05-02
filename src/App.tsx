@@ -60,6 +60,12 @@ const ProjectListPage = lazy(() => import('./features/projects').then(m => ({ de
 const ProjectDetailPage = lazy(() => import('./features/projects').then(m => ({ default: m.ProjectDetailPage })));
 const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ default: m.DamageGalleryPage })));
 const SemanticSearchPage = lazy(() => import('./features/search').then(m => ({ default: m.SemanticSearchPage })));
+const MaimlStudioHubPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlStudioHubPage })));
+const MaimlImportPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlImportPage })));
+const MaimlExportHubPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlExportHubPage })));
+const MaimlInspectPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlInspectPage })));
+const MaimlValidatePage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlValidatePage })));
+const MaimlDiffPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlDiffPage })));
 
 const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
@@ -273,6 +279,12 @@ export function App() {
       case 'help':    return lazyPage(<HelpPage onNav={navTo} />);
       case 'settings': return lazyPage(<MasterSettingsPage db={db} />);
       case 'about':   return lazyPage(<AboutPage />);
+      case 'maiml-hub':      return lazyPage(<MaimlStudioHubPage onNav={navTo} />);
+      case 'maiml-import':   return lazyPage(<MaimlImportPage db={db} dispatch={dispatch} onNav={navTo} />);
+      case 'maiml-export':   return lazyPage(<MaimlExportHubPage onNav={navTo} />);
+      case 'maiml-inspect':  return lazyPage(<MaimlInspectPage onNav={navTo} />);
+      case 'maiml-validate': return lazyPage(<MaimlValidatePage onNav={navTo} />);
+      case 'maiml-diff':     return lazyPage(<MaimlDiffPage onNav={navTo} />);
       default:        return lazyPage(<DashboardPage {...commonProps} />);
     }
   };

@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-maiml-studio',
+    date: '2026-05-03',
+    type: 'feature',
+    title: 'MaiML Studio を新設しコア要素として最上位に位置付け',
+    body: 'MaiML (JIS K 0200:2024) を「エクスポート機能の 1 つ」から「アプリのコア要素」へ昇格させる MaiML Studio を新設しました。Hub ランディング + 5 サブ画面（インポート / エクスポート / インスペクト / バリデート / Diff）で構成され、サイドバーの最上位「コア」セクションから常時アクセスできます。インポートは drop → preview → commit の 3 段階で事故を防ぎ、インスペクトは XML を整形して構造ハイライトと部分一致検索を提供します。バリデートと Diff は暫定 (WIP) 表示で、Phase 9 で XSD 検証 + diff-match-patch ベース構造比較に拡張予定。',
+  },
+  {
     id: '2026-05-03-sidebar-ia-restructure',
     date: '2026-05-03',
     type: 'feature',
