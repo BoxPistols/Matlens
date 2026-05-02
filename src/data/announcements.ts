@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-project-memo-markdown',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '案件詳細に Markdown 対応の案件メモを追加',
+    body: '案件詳細画面の中段に「案件メモ」セクションを追加しました。Markdown（見出し / 表 / リスト / 太字 / 行内コード）で記述でき、編集モードでは左に編集領域・右にライブプレビューが並びます。「最終更新」のタイムスタンプも表示します。現状は端末のローカルストレージに保存され、Repository 経由の永続化と履歴管理は将来対応予定です。Reports 詳細と共通の Markdown レンダラを利用しています。',
+  },
+  {
     id: '2026-05-02-ops-dashboard-kpi-navigation',
     date: '2026-05-02',
     type: 'feature',
