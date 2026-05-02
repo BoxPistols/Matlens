@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-maiml-validate-diff-full',
+    date: '2026-05-03',
+    type: 'feature',
+    title: 'MaiML Studio のバリデートと Diff をフル実装',
+    body: 'MaiML Studio の「バリデート」と「Diff」を正式機能に格上げしました。バリデートは DOCTYPE 拒否・header メタ・provenance / uncertainty 必須項目を意味的に検証し、エラー / 警告 / 情報の 3 段階で報告します。Diff は LCS ベースの行差分を純 TS で実装し、A 側 / B 側の行番号とハイライトで変更を可視化、追加 / 削除 / 変更なしのサマリも表示します。両機能とも純関数（src/services/maimlValidate.ts / maimlDiff.ts）として実装されており、フレームワーク非依存で再利用可能です。',
+  },
+  {
     id: '2026-05-03-docs-refresh-maiml-core',
     date: '2026-05-03',
     type: 'info',

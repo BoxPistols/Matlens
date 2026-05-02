@@ -35,8 +35,8 @@ export const NAV_ITEMS: NavItem[] = [
       { id:'maiml-import',   label:'インポート',   labelEn:'Import',   icon:'plus' },
       { id:'maiml-export',   label:'エクスポート', labelEn:'Export',   icon:'embed' },
       { id:'maiml-inspect',  label:'インスペクト', labelEn:'Inspect',  icon:'scan' },
-      { id:'maiml-validate', label:'バリデート',   labelEn:'Validate', icon:'check', badgeLabel:'WIP', badgeVariant:'gray' },
-      { id:'maiml-diff',     label:'Diff',         labelEn:'Diff',     icon:'similar', badgeLabel:'WIP', badgeVariant:'gray' },
+      { id:'maiml-validate', label:'バリデート',   labelEn:'Validate', icon:'check' },
+      { id:'maiml-diff',     label:'Diff',         labelEn:'Diff',     icon:'similar' },
     ],
   },
 
