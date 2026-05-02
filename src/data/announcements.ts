@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-damage-gallery-search-similarity',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '損傷ギャラリーの検索とサジェスト精度を向上',
+    body: 'キーワード検索の対象に「タグ」を追加し、部位・原因仮説・タグを横断して引けるようにしました。類似事例サジェストも、これまでの「同じ損傷タイプから順に取得」から、損傷タイプ・タグ・部位・確信度の重み付きスコアで上位 5 件を返す方式に変更しています。スコア計算は純関数 `damageSimilarity` として独立しており、後から embedding ベースに差し替えやすい構造です。Lightbox にもタグ表示を追加しました。',
+  },
+  {
     id: '2026-05-02-matrix-cell-maiml',
     date: '2026-05-02',
     type: 'feature',
