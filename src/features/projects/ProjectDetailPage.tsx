@@ -6,6 +6,7 @@ import { ProjectStatusPill } from './components/ProjectStatusPill';
 import { DueTimeline } from './components/DueTimeline';
 import { SpecimenKanbanMini } from './components/SpecimenKanbanMini';
 import { OwnerLoadSummary } from './components/OwnerLoadSummary';
+import { ProjectMemo } from './components/ProjectMemo';
 import {
   useAllProjectsForLoad,
   useCustomersIndex,
@@ -168,6 +169,10 @@ export const ProjectDetailPage = ({ id, onBack, onNav }: ProjectDetailPageProps)
             <div className="text-[12px] text-[var(--text-lo)]">読み込み中…</div>
           )}
         </section>
+
+        <div className="mb-6">
+          <ProjectMemo projectId={project.id} />
+        </div>
 
         <section className="mb-8">
           <div className="flex items-center justify-between mb-2">

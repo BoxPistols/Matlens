@@ -9,7 +9,6 @@ import { OrbitControls } from '@react-three/drei'
 // three は @types/three を導入すると drei が依存する three-mesh-bvh の
 // augmentation 型と競合するため、本リポジトリでは公式型を入れていない。
 // 利用箇所は BufferGeometry / Float32BufferAttribute のみで、any 経由でも安全。
-// @ts-expect-error — 型定義不在のためモジュール解決を抑制する
 import * as THREE from 'three'
 import { useTheme } from '../../hooks/useTheme/useTheme'
 
