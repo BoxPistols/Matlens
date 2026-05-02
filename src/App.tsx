@@ -66,6 +66,8 @@ const MaimlExportHubPage = lazy(() => import('./features/maiml').then(m => ({ de
 const MaimlInspectPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlInspectPage })));
 const MaimlValidatePage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlValidatePage })));
 const MaimlDiffPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlDiffPage })));
+const SearchHubPage = lazy(() => import('./features/explore').then(m => ({ default: m.SearchHubPage })));
+const VisualizeHubPage = lazy(() => import('./features/explore').then(m => ({ default: m.VisualizeHubPage })));
 
 const LazyFallback = ({ label = 'ページを読み込み中...' }: { label?: string }) => (
   <div className="flex items-center justify-center h-64 text-text-lo">
@@ -285,6 +287,18 @@ export function App() {
       case 'maiml-inspect':  return lazyPage(<MaimlInspectPage onNav={navTo} />);
       case 'maiml-validate': return lazyPage(<MaimlValidatePage onNav={navTo} />);
       case 'maiml-diff':     return lazyPage(<MaimlDiffPage onNav={navTo} />);
+      case 'search-hub':
+        return lazyPage(
+          <SearchHubPage
+            {...commonProps}
+            ragInitialQuery={ragInitialQuery}
+            clearRagInitialQuery={() => setRagInitialQuery('')}
+            simInitialBase={simInitialBase}
+            clearSimInitialBase={() => setSimInitialBase('')}
+          />,
+        );
+      case 'visualize-hub':
+        return lazyPage(<VisualizeHubPage db={db} />);
       default:        return lazyPage(<DashboardPage {...commonProps} />);
     }
   };

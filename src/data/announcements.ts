@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-03-search-visualize-hubs',
+    date: '2026-05-03',
+    type: 'feature',
+    title: '検索 4 画面と可視化 4 画面をそれぞれ 1 タブ画面に統合',
+    body: 'サイドバーで散在していた検索系 4 画面（意味検索 / AI チャット / 類似材料 / 横断検索）を「検索（統合）」、可視化系 4 画面（タイムライン / 予測 vs 実績 / 結晶 3D / マルチスケール）を「可視化（統合）」に統合し、それぞれをタブ UI で 1 画面化しました。タブ選択は localStorage に永続化され、リロード後も同じタブが開きます。Crystal 3D は WebGL リソースを毎回再マウントしてリーク防止しています。旧ルート（/vsearch / /rag / /sim / /semsearch / /timeline / /overlay / /crystal / /multimodal）は引き続き直接 URL アクセス可能で、既存ブックマークは壊れません。',
+  },
+  {
     id: '2026-05-03-maiml-studio',
     date: '2026-05-03',
     type: 'feature',
