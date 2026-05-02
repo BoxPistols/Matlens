@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-02-ops-dashboard-kpi-navigation',
+    date: '2026-05-02',
+    type: 'feature',
+    title: '受託試験ダッシュボードの KPI カードがクリックで該当画面に遷移',
+    body: '受託試験ダッシュボードの 6 種類の KPI カード（進行中案件 / 要アクション試験片 / 過去 30 日完了試験 / 異常所見比率 / 工具寿命アラート / びびり検出率）にクリック遷移を追加しました。それぞれ案件一覧 / 試験片トラッカー / 試験マトリクス / 損傷ギャラリー / 工具ライフトラッカー / 切削条件エクスプローラへ移動します。KPI を見て気になった指標から、対応する詳細画面へ 1 クリックで降りられます。',
+  },
+  {
     id: '2026-04-24-project-maiml-export',
     date: '2026-04-24',
     type: 'feature',

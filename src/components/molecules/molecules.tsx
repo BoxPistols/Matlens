@@ -41,6 +41,9 @@ interface KpiCardProps {
   delta?: string;
   deltaUp?: boolean;
   color?: string;
+  onClick?: () => void;
+  /** クリック時に読み上げられる aria-label。省略時は label を使う */
+  ariaLabel?: string;
 }
 
 interface SearchBoxProps {
@@ -159,13 +162,32 @@ export const VecCard = ({ children, className = '' }: VecCardProps) => (
   </div>
 );
 
-export const KpiCard = ({ label, value, delta, deltaUp, color }: KpiCardProps) => (
-  <div className="bg-raised border border-[var(--border-faint)] rounded-md p-3.5">
-    <div className="text-[11px] font-semibold text-text-lo tracking-[.04em] uppercase mb-1">{label}</div>
-    <div className="text-2xl font-bold tracking-tight leading-none" style={color ? { color } : {}}>{value}</div>
-    {delta && <div className={`text-[12px] mt-1 ${deltaUp === false ? 'text-err' : deltaUp ? 'text-ok' : 'text-vec'}`}>{delta}</div>}
-  </div>
-);
+export const KpiCard = ({ label, value, delta, deltaUp, color, onClick, ariaLabel }: KpiCardProps) => {
+  const inner = (
+    <>
+      <div className="text-[11px] font-semibold text-text-lo tracking-[.04em] uppercase mb-1">{label}</div>
+      <div className="text-2xl font-bold tracking-tight leading-none" style={color ? { color } : {}}>{value}</div>
+      {delta && <div className={`text-[12px] mt-1 ${deltaUp === false ? 'text-err' : deltaUp ? 'text-ok' : 'text-vec'}`}>{delta}</div>}
+    </>
+  );
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={ariaLabel ?? `${label} の詳細へ`}
+        className="text-left bg-raised border border-[var(--border-faint)] rounded-md p-3.5 hover:bg-[var(--hover)] focus:outline focus:outline-2 focus:outline-[var(--accent,#2563eb)] transition-colors cursor-pointer"
+      >
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <div className="bg-raised border border-[var(--border-faint)] rounded-md p-3.5">
+      {inner}
+    </div>
+  );
+};
 
 export const SearchBox = ({ value, onChange, placeholder = '検索...', className = '' }: SearchBoxProps) => (
   <div className={`relative flex-1 ${className}`}>
