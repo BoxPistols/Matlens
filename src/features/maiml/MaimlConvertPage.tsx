@@ -12,7 +12,7 @@
 // xlsx は将来対応 (SheetJS は ~400KB のため遅延ロード前提)。
 // 現時点では Excel 「名前を付けて保存 → CSV (UTF-8)」運用を前提とする。
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { Material, DbAction } from '@/types';
 import {
   parseCsvWithHeader,
@@ -251,8 +251,19 @@ export const MaimlConvertPage = ({ db, dispatch, onNav }: MaimlConvertPageProps)
 
 const DropZone = ({ onFile }: { onFile: (file: File) => void }) => {
   const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <label
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label="CSV / TSV ファイルをドロップまたはクリックで選択"
+      onClick={() => inputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          inputRef.current?.click();
+        }
+      }}
       onDragOver={(e) => {
         e.preventDefault();
         setDragging(true);
@@ -275,6 +286,7 @@ const DropZone = ({ onFile }: { onFile: (file: File) => void }) => {
         Excel から「名前を付けて保存 → CSV (UTF-8)」で書き出したファイルが対象（最大 10 MB）
       </div>
       <input
+        ref={inputRef}
         type="file"
         accept=".csv,.tsv,.txt"
         className="hidden"
@@ -284,7 +296,7 @@ const DropZone = ({ onFile }: { onFile: (file: File) => void }) => {
           e.target.value = '';
         }}
       />
-    </label>
+    </div>
   );
 };
 
