@@ -33,6 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
     defaultOpen: true,
     children: [
       { id:'maiml-import',   label:'インポート',   labelEn:'Import',   icon:'plus' },
+      { id:'maiml-convert',  label:'CSV→MaiML 変換', labelEn:'CSV→MaiML', icon:'embed', badgeLabel:'NEW', badgeVariant:'ai' },
       { id:'maiml-export',   label:'エクスポート', labelEn:'Export',   icon:'embed' },
       { id:'maiml-inspect',  label:'インスペクト', labelEn:'Inspect',  icon:'scan' },
       { id:'maiml-validate', label:'バリデート',   labelEn:'Validate', icon:'check' },
@@ -916,6 +917,39 @@ export const PAGE_GUIDES: PageGuide[] = [
       { chapterRef: '6', termId: 'Kc', label: '比切削抵抗 Kc（Kienzle）', labelEn: 'Specific Cutting Force Kc' },
       { chapterRef: '10', termId: 'SLD', label: 'Stability Lobe Diagram', labelEn: 'Stability Lobe Diagram' },
     ],
+  },
+  {
+    id: 'maiml-convert', icon: 'embed',
+    title: 'CSV → MaiML 変換', titleEn: 'CSV → MaiML Convert',
+    summary: '現場の元データである Excel エクスポート (CSV / UTF-8) を MaiML XML に変換する画面です。Material のフィールドへのカラムマッピングを介して、Excel → MaiML → ラボ計測器 / OEM の経路を 1 画面で完結させます。',
+    summaryEn: 'Convert Excel-exported CSV (UTF-8) into MaiML XML. With column mapping to Material fields, you can bridge the on-site Excel reality to the MaiML round-trip flow in one screen.',
+    features: [
+      'CSV / TSV ファイルを drop → 自動でヘッダ検出 + 推測マッピング',
+      'カラムマッピング UI で Material フィールドに割当（id / name は必須）',
+      'プレビュー（取込件数 / 警告 / 先頭 10 件）で安全に確認',
+      '.maiml ダウンロード or アプリ内 (Studio Import) に commit を選べる',
+      '日本語 / 英語ヘッダ揺らぎ吸収（材料名 / SampleName / 引張強さ / Tensile Strength 等）',
+    ],
+    featuresEn: [
+      'Drop CSV / TSV → auto header detection + inferred mapping',
+      'Column mapping UI assigns CSV headers to Material fields (id / name required)',
+      'Preview pane shows row count / warnings / first 10 rows for safe review',
+      'Choose between .maiml download and in-app commit (Studio Import)',
+      'Japanese / English header variant absorption (e.g. 材料名 vs SampleName)',
+    ],
+    tips: [
+      'Excel は「名前を付けて保存 → CSV (UTF-8)」で出してください。Shift_JIS は文字化けします',
+      '必須フィールド (id / name) が無いとプレビューが出ません。マッピングを確認してください',
+      '数値列に文字が混じっている行は警告を出して 0 で継続します（silent failure 禁止）',
+      'xlsx 直読みは未対応。bundle size の都合で後追い（ADR で計画）',
+    ],
+    tipsEn: [
+      'Save Excel as "CSV (UTF-8)". Shift_JIS encoding will produce mojibake',
+      'Mapping must include id and name; otherwise the preview will not appear',
+      'Rows where a numeric column contains text fall back to 0 with a warning (no silent failures)',
+      'Direct .xlsx parsing is deferred to a follow-up ADR for bundle-size reasons',
+    ],
+    related: ['maiml-import', 'maiml-export', 'list'],
   },
 ];
 

@@ -62,6 +62,7 @@ const DamageGalleryPage = lazy(() => import('./features/damage').then(m => ({ de
 const SemanticSearchPage = lazy(() => import('./features/search').then(m => ({ default: m.SemanticSearchPage })));
 const MaimlStudioHubPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlStudioHubPage })));
 const MaimlImportPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlImportPage })));
+const MaimlConvertPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlConvertPage })));
 const MaimlExportHubPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlExportHubPage })));
 const MaimlInspectPage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlInspectPage })));
 const MaimlValidatePage = lazy(() => import('./features/maiml').then(m => ({ default: m.MaimlValidatePage })));
@@ -283,6 +284,7 @@ export function App() {
       case 'about':   return lazyPage(<AboutPage />);
       case 'maiml-hub':      return lazyPage(<MaimlStudioHubPage onNav={navTo} />);
       case 'maiml-import':   return lazyPage(<MaimlImportPage db={db} dispatch={dispatch} onNav={navTo} />);
+      case 'maiml-convert':  return lazyPage(<MaimlConvertPage db={db} dispatch={dispatch} onNav={navTo} />);
       case 'maiml-export':   return lazyPage(<MaimlExportHubPage onNav={navTo} />);
       case 'maiml-inspect':  return lazyPage(<MaimlInspectPage onNav={navTo} />);
       case 'maiml-validate': return lazyPage(<MaimlValidatePage onNav={navTo} />);
