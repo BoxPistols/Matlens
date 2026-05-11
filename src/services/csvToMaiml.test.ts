@@ -5,6 +5,8 @@ import {
   inferColumnMapping,
   buildMaterialsFromCsv,
   convertCsvToMaiml,
+  REQUIRED_FIELDS,
+  SAMPLE_CSV,
   type ColumnMapping,
 } from './csvToMaiml';
 
@@ -128,8 +130,59 @@ describe('buildMaterialsFromCsv', () => {
   it('カテゴリの英語表記を吸収する', () => {
     const data = parseCsvWithHeader('ID,Name,Cat\nM-001,Ti,metal alloy');
     const mapping: ColumnMapping = { id: 'ID', name: 'Name', cat: 'Cat' };
-    const { materials } = buildMaterialsFromCsv(data, mapping);
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
     expect(materials[0]?.cat).toBe('金属合金');
+    // 英語表記は「認識済み」扱いなのでカテゴリ起因の warning は出ない
+    expect(warnings.some((w) => w.includes('カテゴリ'))).toBe(false);
+  });
+
+  it('未認識カテゴリは "金属合金" にフォールバックしつつ warning を出す', () => {
+    const data = parseCsvWithHeader('ID,Name,Cat\nM-001,Ti,unobtanium');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', cat: 'Cat' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.cat).toBe('金属合金');
+    expect(warnings.some((w) => w.includes('カテゴリ') && w.includes('unobtanium'))).toBe(true);
+  });
+
+  it('未認識ステータスは "レビュー待" にフォールバックしつつ warning を出す', () => {
+    const data = parseCsvWithHeader('ID,Name,Status\nM-001,Ti,bogus-state');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', status: 'Status' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.status).toBe('レビュー待');
+    expect(warnings.some((w) => w.includes('ステータス') && w.includes('bogus-state'))).toBe(true);
+  });
+
+  it('CSV 内で重複している ID は 2 件目以降を skip して warning に落とす', () => {
+    const data = parseCsvWithHeader('ID,Name\nM-001,Ti A\nM-001,Ti A 再登録\nM-002,Ti B');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials).toHaveLength(2);
+    expect(materials[0]?.name).toBe('Ti A');
+    expect(materials[1]?.id).toBe('M-002');
+    expect(warnings.some((w) => w.includes('M-001') && w.includes('重複'))).toBe(true);
+  });
+});
+
+describe('REQUIRED_FIELDS', () => {
+  it('UI と service で共有する公開定数', () => {
+    expect(REQUIRED_FIELDS).toEqual(['id', 'name']);
+  });
+});
+
+describe('SAMPLE_CSV', () => {
+  it('そのまま convert に流して preview に出せる', () => {
+    const csv = parseCsvWithHeader(SAMPLE_CSV);
+    const mapping = inferColumnMapping(csv.headers);
+    // 必須 (id / name) と中核数値 (hv / ts) は自動推測で埋まる前提
+    expect(mapping.id).toBeDefined();
+    expect(mapping.name).toBeDefined();
+    expect(mapping.hv).toBeDefined();
+    expect(mapping.ts).toBeDefined();
+
+    const { materials, warnings } = buildMaterialsFromCsv(csv, mapping);
+    expect(materials.length).toBeGreaterThanOrEqual(5);
+    expect(warnings).toEqual([]);
+    expect(materials[0]?.id).toBe('M-101');
   });
 });
 

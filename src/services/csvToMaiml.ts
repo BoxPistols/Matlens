@@ -173,22 +173,37 @@ const CATEGORY_VALUES: MaterialCategory[] = ['金属合金', 'セラミクス', 
 const STATUS_VALUES: MaterialStatus[] = ['登録済', 'レビュー待', '承認済', '要修正'];
 const PROVENANCE_VALUES: Provenance[] = ['instrument', 'manual', 'ai', 'simulation'];
 
-function coerceCategory(value: string): MaterialCategory {
-  const trimmed = value.trim();
-  if ((CATEGORY_VALUES as string[]).includes(trimmed)) return trimmed as MaterialCategory;
-  // 英語表記の揺らぎ吸収
-  const lower = trimmed.toLowerCase();
-  if (lower.includes('metal') || lower.includes('alloy')) return '金属合金';
-  if (lower.includes('ceram')) return 'セラミクス';
-  if (lower.includes('polymer') || lower.includes('plastic')) return 'ポリマー';
-  if (lower.includes('composite') || lower.includes('cfrp') || lower.includes('cmc')) return '複合材料';
-  return '金属合金';
+// 列挙値の coerce は「空欄はサイレントに default」「非空だが未認識ならフォールバック + unknown=true」
+// に分け、silent failure 禁止ポリシーに揃える。caller は unknown を見て warnings に push する。
+interface CoercionResult<T> {
+  value: T;
+  unknown: boolean;
 }
 
-function coerceStatus(value: string): MaterialStatus {
+function coerceCategory(value: string): CoercionResult<MaterialCategory> {
   const trimmed = value.trim();
-  if ((STATUS_VALUES as string[]).includes(trimmed)) return trimmed as MaterialStatus;
-  return 'レビュー待';
+  if (trimmed === '') return { value: '金属合金', unknown: false };
+  if ((CATEGORY_VALUES as string[]).includes(trimmed)) {
+    return { value: trimmed as MaterialCategory, unknown: false };
+  }
+  // 英語表記の揺らぎ吸収
+  const lower = trimmed.toLowerCase();
+  if (lower.includes('metal') || lower.includes('alloy')) return { value: '金属合金', unknown: false };
+  if (lower.includes('ceram')) return { value: 'セラミクス', unknown: false };
+  if (lower.includes('polymer') || lower.includes('plastic')) return { value: 'ポリマー', unknown: false };
+  if (lower.includes('composite') || lower.includes('cfrp') || lower.includes('cmc')) {
+    return { value: '複合材料', unknown: false };
+  }
+  return { value: '金属合金', unknown: true };
+}
+
+function coerceStatus(value: string): CoercionResult<MaterialStatus> {
+  const trimmed = value.trim();
+  if (trimmed === '') return { value: 'レビュー待', unknown: false };
+  if ((STATUS_VALUES as string[]).includes(trimmed)) {
+    return { value: trimmed as MaterialStatus, unknown: false };
+  }
+  return { value: 'レビュー待', unknown: true };
 }
 
 function coerceProvenance(value: string): Provenance | undefined {
@@ -212,7 +227,9 @@ export interface BuildMaterialsResult {
   warnings: string[];
 }
 
-const REQUIRED_FIELDS: MaterialField[] = ['id', 'name'];
+// UI 側でも参照するため公開（旧版は MaimlConvertPage.tsx で再定義していたが
+// single source of truth に集約）。
+export const REQUIRED_FIELDS: MaterialField[] = ['id', 'name'];
 const REQUIRED_NUMERIC_FIELDS: MaterialField[] = ['hv', 'ts'];
 
 /**
@@ -252,6 +269,10 @@ export function buildMaterialsFromCsv(
     return row[idx];
   };
 
+  // CSV 内で同一 ID が複数行に現れたら 2 行目以降は warning に落として skip
+  // （IMPORT 時に上書きされて静かに 1 件消えるのを防ぐ）
+  const seenIds = new Set<string>();
+
   csv.rows.forEach((row, rowIdx) => {
     const lineNo = rowIdx + 2; // 1: header, 2-: data
 
@@ -261,6 +282,11 @@ export function buildMaterialsFromCsv(
       warnings.push(`行 ${lineNo}: id または name が空のためスキップしました`);
       return;
     }
+    if (seenIds.has(id)) {
+      warnings.push(`行 ${lineNo}: ID "${id}" が CSV 内で重複しているためスキップしました`);
+      return;
+    }
+    seenIds.add(id);
 
     const numericOrZero = (field: MaterialField): number => {
       const raw = get(row, field);
@@ -280,10 +306,22 @@ export function buildMaterialsFromCsv(
     const provenanceRaw = get(row, 'provenance');
     const provenance = provenanceRaw ? coerceProvenance(provenanceRaw) : undefined;
 
+    const catRaw = get(row, 'cat') ?? '';
+    const catCoerced = coerceCategory(catRaw);
+    if (catCoerced.unknown) {
+      warnings.push(`行 ${lineNo} (${id}): カテゴリ "${catRaw.trim()}" を認識できず "金属合金" にフォールバックしました`);
+    }
+
+    const statusRaw = get(row, 'status') ?? '';
+    const statusCoerced = coerceStatus(statusRaw);
+    if (statusCoerced.unknown) {
+      warnings.push(`行 ${lineNo} (${id}): ステータス "${statusRaw.trim()}" を認識できず "レビュー待" にフォールバックしました`);
+    }
+
     const material: Material = {
       id,
       name,
-      cat: coerceCategory(get(row, 'cat') ?? ''),
+      cat: catCoerced.value,
       hv: numericOrZero('hv'),
       ts: numericOrZero('ts'),
       el: numericOrZero('el'),
@@ -294,7 +332,7 @@ export function buildMaterialsFromCsv(
       batch: (get(row, 'batch') ?? '').trim(),
       date: (get(row, 'date') ?? new Date().toISOString().slice(0, 10)).trim(),
       author: (get(row, 'author') ?? '').trim(),
-      status: coerceStatus(get(row, 'status') ?? ''),
+      status: statusCoerced.value,
       ai: false,
       memo: (get(row, 'memo') ?? '').trim(),
     };
@@ -336,6 +374,22 @@ export function convertCsvToMaiml(
   });
   return { materials, warnings, maiml };
 }
+
+// ----- サンプル CSV -----
+//
+// 実ファイルを用意せずに動作確認できるよう「サンプルで試す」ボタンから読み込む。
+// 中身はアプリ初期データ (Ti-6Al-4V / SUS316L / Inconel718) と整合させ、
+// 既存 ID と重複する設計にして「IMPORT 時に skip される挙動」もそのまま見せる。
+// ヘッダは日英混在で揺らぎ吸収の効きも体感できるようにしてある。
+export const SAMPLE_CSV_FILENAME = 'matlens-sample.csv';
+export const SAMPLE_CSV = [
+  'ID,材料名,Category,HV,Tensile Strength,弾性率,伸び,密度,担当者,状態,組成,備考',
+  'M-101,Ti-6Al-4V (PoC),金属合金,340,950,113,14,4.43,a.ito,登録済,Ti-6Al-4V,航空機エンジン用',
+  'M-102,SUS316L (PoC),金属合金,180,520,193,40,8.0,a.ito,レビュー待,Fe-Cr-Ni-Mo,耐食用途',
+  'M-103,Inconel 718 (PoC),金属合金,420,1240,200,12,8.19,a.ito,承認済,Ni-Cr-Fe-Nb,高温強度',
+  'M-104,Al2O3 (PoC),セラミクス,1500,400,380,0,3.95,a.ito,登録済,Al2O3,セラミクスサンプル',
+  'M-105,CFRP T800 (PoC),複合材料,30,2900,165,1.8,1.6,a.ito,レビュー待,Carbon Fiber,軽量構造材',
+].join('\n');
 
 export const ALL_MATERIAL_FIELDS: { field: MaterialField; label: string; required?: boolean }[] = [
   { field: 'id', label: 'ID (材料 ID)', required: true },

@@ -19,6 +19,9 @@ import {
   inferColumnMapping,
   buildMaterialsFromCsv,
   ALL_MATERIAL_FIELDS,
+  REQUIRED_FIELDS,
+  SAMPLE_CSV,
+  SAMPLE_CSV_FILENAME,
   type ColumnMapping,
   type MaterialField,
   type CsvParseResult,
@@ -38,7 +41,7 @@ interface LoadedCsv {
   csv: CsvParseResult;
 }
 
-const REQUIRED_FIELDS: MaterialField[] = ['id', 'name'];
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 export const MaimlConvertPage = ({ db, dispatch, onNav }: MaimlConvertPageProps) => {
   const [loaded, setLoaded] = useState<LoadedCsv | null>(null);
@@ -53,22 +56,33 @@ export const MaimlConvertPage = ({ db, dispatch, onNav }: MaimlConvertPageProps)
       setError('対応拡張子は .csv / .tsv / .txt です（Excel は CSV エクスポートしてください）');
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > MAX_FILE_SIZE_BYTES) {
       setError('ファイルサイズが上限 (10 MB) を超えています');
       return;
     }
     try {
       const text = await file.text();
-      const csv = parseCsvWithHeader(text);
-      if (csv.headers.length === 0) {
-        setError('CSV のヘッダ行が読めませんでした');
-        return;
-      }
-      setLoaded({ filename: file.name, csv });
-      setMapping(inferColumnMapping(csv.headers));
+      loadText(file.name, text);
     } catch (e) {
       setError(`読み込みエラー: ${(e as Error).message}`);
     }
+  };
+
+  // ファイル経路と sample 経路で共有する CSV テキスト → state 反映
+  const loadText = (filename: string, text: string) => {
+    const csv = parseCsvWithHeader(text);
+    if (csv.headers.length === 0) {
+      setError('CSV のヘッダ行が読めませんでした');
+      return;
+    }
+    setLoaded({ filename, csv });
+    setMapping(inferColumnMapping(csv.headers));
+  };
+
+  const loadSample = () => {
+    setError(null);
+    setImported(null);
+    loadText(SAMPLE_CSV_FILENAME, SAMPLE_CSV);
   };
 
   const reset = () => {
@@ -127,7 +141,7 @@ export const MaimlConvertPage = ({ db, dispatch, onNav }: MaimlConvertPageProps)
     >
       <div className="flex flex-col gap-4 max-w-4xl">
         {!loaded && !imported && (
-          <DropZone onFile={handleFile} />
+          <DropZone onFile={handleFile} onSample={loadSample} />
         )}
 
         {error && (
@@ -249,53 +263,71 @@ export const MaimlConvertPage = ({ db, dispatch, onNav }: MaimlConvertPageProps)
 
 // ----- 内部コンポーネント -----
 
-const DropZone = ({ onFile }: { onFile: (file: File) => void }) => {
+interface DropZoneProps {
+  onFile: (file: File) => void;
+  onSample: () => void;
+}
+
+const DropZone = ({ onFile, onSample }: DropZoneProps) => {
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      aria-label="CSV / TSV ファイルをドロップまたはクリックで選択"
-      onClick={() => inputRef.current?.click()}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          inputRef.current?.click();
-        }
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDragging(true);
-      }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={(e) => {
-        e.preventDefault();
-        setDragging(false);
-        const file = e.dataTransfer.files[0];
-        if (file) onFile(file);
-      }}
-      className={`flex flex-col items-center justify-center gap-2 p-8 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
-        dragging
-          ? 'border-[var(--accent,#2563eb)] bg-[var(--accent-dim)]'
-          : 'border-[var(--border-faint)] bg-[var(--bg-raised)] hover:bg-[var(--hover)]'
-      }`}
-    >
-      <div className="text-[14px] font-semibold">CSV / TSV ファイルをドロップ、またはクリックで選択</div>
-      <div className="text-[12px] text-[var(--text-lo)]">
-        Excel から「名前を付けて保存 → CSV (UTF-8)」で書き出したファイルが対象（最大 10 MB）
-      </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".csv,.tsv,.txt"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) onFile(file);
-          e.target.value = '';
+    <div className="flex flex-col gap-3">
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="CSV / TSV ファイルをドロップまたはクリックで選択"
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
         }}
-      />
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          const file = e.dataTransfer.files[0];
+          if (file) onFile(file);
+        }}
+        className={`flex flex-col items-center justify-center gap-2 p-8 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+          dragging
+            ? 'border-[var(--accent,#2563eb)] bg-[var(--accent-dim)]'
+            : 'border-[var(--border-faint)] bg-[var(--bg-raised)] hover:bg-[var(--hover)]'
+        }`}
+      >
+        <div className="text-[14px] font-semibold">CSV / TSV ファイルをドロップ、またはクリックで選択</div>
+        <div className="text-[12px] text-[var(--text-lo)]">
+          Excel から「名前を付けて保存 → CSV (UTF-8)」で書き出したファイルが対象（最大 10 MB）
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept=".csv,.tsv,.txt"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) onFile(file);
+            e.target.value = '';
+          }}
+        />
+      </div>
+      <div className="flex items-center gap-3 text-[12px] text-[var(--text-lo)]">
+        <span>手元に CSV が無い場合は</span>
+        <button
+          type="button"
+          onClick={onSample}
+          className="px-3 py-1.5 rounded border border-[var(--border-default)] bg-[var(--bg-raised)] hover:bg-[var(--hover)] text-[var(--text-hi)] font-semibold"
+        >
+          サンプル CSV を読み込む
+        </button>
+        <span className="text-[var(--text-lo)]">で挙動を試せます（Ti-6Al-4V / SUS316L 等 5 件 / 日英ヘッダ混在）</span>
+      </div>
     </div>
   );
 };
