@@ -3,6 +3,7 @@
 
 export { MaimlStudioHubPage } from './MaimlStudioHubPage';
 export { MaimlImportPage } from './MaimlImportPage';
+export { MaimlConvertPage } from './MaimlConvertPage';
 export { MaimlExportHubPage } from './MaimlExportHubPage';
 export { MaimlInspectPage } from './MaimlInspectPage';
 export { MaimlValidatePage } from './MaimlValidatePage';

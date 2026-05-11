@@ -17,6 +17,13 @@ export interface Announcement {
 // 新しいお知らせは配列の先頭に追加する。
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-10-csv-to-maiml-convert',
+    date: '2026-05-10',
+    type: 'feature',
+    title: 'MaiML Studio に「CSV → MaiML 変換」を追加',
+    body: '現場の元データである Excel エクスポート (CSV / UTF-8) を MaiML XML に変換する画面を MaiML Studio に追加しました。CSV を drop すると自動でヘッダ検出と推測マッピングを行い、ユーザはカラムマッピング UI で Material フィールドへの割当を確認・修正できます。プレビューで安全に確認した後、.maiml ファイルとしてダウンロードするか、Studio Import 経由でアプリ内に取り込めます。日本語 / 英語ヘッダの揺らぎ（材料名 / SampleName 等）も吸収します。これにより「Excel 散在 → MaiML → ラボ計測器 / OEM」の経路が 1 画面で完結します。xlsx 直読みは bundle size の都合で後追い対応予定。',
+  },
+  {
     id: '2026-05-03-phase-0-agnostic-boundary',
     date: '2026-05-03',
     type: 'info',

@@ -29,6 +29,13 @@ const CARDS: StudioCard[] = [
     icon: 'plus',
   },
   {
+    id: 'maiml-convert',
+    title: 'CSV → MaiML 変換',
+    subtitle: 'Excel から CSV エクスポートしたデータをカラムマッピングで MaiML に変換',
+    icon: 'embed',
+    badge: 'NEW',
+  },
+  {
     id: 'maiml-export',
     title: 'エクスポート',
     subtitle: '材料・案件・試験集合の MaiML 書き出し導線をここに集約',

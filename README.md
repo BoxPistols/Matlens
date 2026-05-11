@@ -10,11 +10,11 @@
 
 ## 5 分でわかる Matlens
 
-1. **MaiML Studio → インポート** で `.maiml` / `.xml` ファイルを drop（preview → commit の 3 段階で事故を防ぎます）
-2. **データ → 材料データ一覧** で取り込んだ材料を確認
-3. **試験マトリクス** でセルを選択し、その組合せの試験を MaiML で書き出し
-4. **MaiML Studio → インスペクト** で書き出したファイルの構造を整形表示
-5. **検索（統合）** で Embedding / RAG / 類似 / 横断検索を 1 画面のタブで使い分け
+1. **MaiML Studio → CSV→MaiML 変換** で現場の Excel エクスポート (CSV) を drop し、カラムマッピングで MaiML に変換
+2. **MaiML Studio → インポート** で `.maiml` / `.xml` ファイルを drop（preview → commit の 3 段階で事故を防ぎます）
+3. **データ → 材料データ一覧** で取り込んだ材料を確認
+4. **試験マトリクス** でセルを選択し、その組合せの試験を MaiML で書き出し
+5. **MaiML Studio → インスペクト** で書き出したファイルの構造を整形表示
 
 詳細は [`docs/demo/onboarding-5min.md`](docs/demo/onboarding-5min.md) を参照。
 
@@ -47,6 +47,7 @@
 | 機能 | 説明 |
 |------|------|
 | **MaiML インポート** | drop → preview → commit の 3 段階で `.maiml` / `.xml` ファイルを安全に取り込み。重複 ID は skip、警告は折り畳み表示 |
+| **CSV → MaiML 変換** | 現場の元データである Excel エクスポート (CSV / UTF-8) を Material のフィールドマッピングを介して MaiML XML に変換。`.maiml` ダウンロード or アプリ内取込を選択 |
 | **MaiML エクスポートハブ** | 材料単体 / 一覧バルク / 案件バンドル / 試験集合（マトリクス選択）の 4 出口を 1 画面で誘導 |
 | **MaiML インスペクト** | XML を整形表示し、部分一致検索でハイライト。drop / 直接ペースト両対応 |
 | **MaiML バリデート (WIP)** | 現状は parser warning 表示。Phase 9 で XSD + provenance / uncertainty 必須項目チェックを追加予定 |
