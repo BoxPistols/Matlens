@@ -344,43 +344,85 @@ const MappingTable = ({ headers, mapping, onChange }: MappingTableProps) => (
     className="rounded-lg border border-[var(--border-faint)] overflow-hidden"
   >
     <div className="text-[12px] text-[var(--text-lo)] px-3 py-1.5 bg-[var(--bg-sunken)] border-b border-[var(--border-faint)]">
-      カラムマッピング — Material のフィールドに、CSV のどのヘッダを割り当てるか選択
+      カラムマッピング — 各 Material フィールドに、CSV のどのヘッダを割り当てるか選択（右側のセレクトをクリック）
     </div>
     <table className="w-full text-[12px]">
       <thead>
         <tr className="bg-[var(--bg-raised)] border-b border-[var(--border-faint)]">
           <th className="px-3 py-1.5 text-left font-semibold w-[40%]">Material フィールド</th>
-          <th className="px-3 py-1.5 text-left font-semibold">CSV ヘッダ</th>
+          <th className="px-2 py-1.5 text-center font-semibold w-[40px] text-[var(--text-lo)]" aria-hidden="true">←</th>
+          <th className="px-3 py-1.5 text-left font-semibold">CSV ヘッダ（クリックで変更）</th>
         </tr>
       </thead>
       <tbody>
-        {ALL_MATERIAL_FIELDS.map(({ field, label, required }) => (
-          <tr key={field} className="border-b border-[var(--border-faint)]">
-            <td className="px-3 py-1.5">
-              {label}
-              {required && (
-                <span className="ml-1 text-[var(--err,#dc2626)] font-bold">*</span>
-              )}
-            </td>
-            <td className="px-3 py-1">
-              <select
-                value={mapping[field] ?? ''}
-                onChange={(e) => onChange(field, e.target.value)}
-                className="text-[12px] px-2 py-1 rounded border border-[var(--border-default)] bg-[var(--bg-base)] min-w-[160px]"
-                aria-label={`${label} のカラム`}
-              >
-                <option value="">— 未割当 —</option>
-                {headers.map((h) => (
-                  <option key={h} value={h}>{h}</option>
-                ))}
-              </select>
-            </td>
-          </tr>
-        ))}
+        {ALL_MATERIAL_FIELDS.map(({ field, label, required }) => {
+          const selected = mapping[field];
+          return (
+            <tr key={field} className="border-b border-[var(--border-faint)]">
+              <td className="px-3 py-1.5">
+                {label}
+                {required && (
+                  <span className="ml-1 text-[var(--err,#dc2626)] font-bold">*</span>
+                )}
+              </td>
+              <td className="px-2 py-1 text-center text-[var(--text-lo)]" aria-hidden="true">←</td>
+              <td className="px-3 py-1.5">
+                <MappingSelect
+                  label={label}
+                  value={selected ?? ''}
+                  headers={headers}
+                  onChange={(v) => onChange(field, v)}
+                  required={required}
+                />
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   </section>
 );
+
+interface MappingSelectProps {
+  label: string;
+  value: string;
+  headers: string[];
+  onChange: (value: string) => void;
+  required?: boolean;
+}
+
+const MappingSelect = ({ label, value, headers, onChange, required }: MappingSelectProps) => {
+  const unassigned = value === '';
+  return (
+    <div
+      className={`relative inline-flex items-center min-w-[200px] rounded border-2 transition-colors ${
+        unassigned && required
+          ? 'border-[var(--err,#dc2626)] bg-[rgba(220,38,38,0.06)]'
+          : unassigned
+          ? 'border-dashed border-[var(--border-default)] bg-[var(--bg-sunken)]'
+          : 'border-[var(--accent,#2563eb)] bg-[var(--bg-raised)]'
+      } hover:bg-[var(--hover)]`}
+    >
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="appearance-none text-[12px] pl-2 pr-7 py-1 bg-transparent cursor-pointer focus:outline-none w-full"
+        aria-label={`${label} に割り当てる CSV ヘッダ`}
+      >
+        <option value="">— 未割当 —</option>
+        {headers.map((h) => (
+          <option key={h} value={h}>{h}</option>
+        ))}
+      </select>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute right-2 text-[10px] text-[var(--text-lo)]"
+      >
+        ▼
+      </span>
+    </div>
+  );
+};
 
 const PreviewTable = ({ materials }: { materials: Material[] }) => (
   <section
