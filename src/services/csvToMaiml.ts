@@ -125,51 +125,35 @@ export type ColumnMapping = Partial<Record<MaterialField, string>>;
 
 /** ヘッダ名（日本語 / 英語表記の代表的な揺らぎ）→ MaterialField */
 const HEADER_HINTS: Record<MaterialField, string[]> = {
-  id: ['id', 'sampleid', 'sample id', '材料id', '試料id', '管理番号', 'materialid'],
+  id: ['id', 'sampleid', 'sample id', '材料id', '試料id', '管理番号'],
   name: ['name', 'samplename', 'sample name', '材料名', '試料名', '名称'],
   cat: ['category', 'cat', '分類', 'カテゴリ', '材料分類'],
-  comp: ['composition', 'comp', '組成', '成分'],
-  batch: ['batch', 'lot', 'ロット', 'バッチ', 'batchno', 'lotno', 'バッチno'],
-  date: ['date', 'registeredon', '登録日', '日付', 'createdat'],
+  comp: ['composition', 'comp', '組成'],
+  batch: ['batch', 'lot', 'ロット', 'バッチ'],
+  date: ['date', 'registeredon', '登録日', '日付'],
   author: ['author', 'operator', '担当', '担当者', '作成者'],
   status: ['status', '状態', 'ステータス'],
-  memo: ['memo', 'note', 'notes', 'remarks', '備考', 'メモ'],
-  hv: ['hv', 'hardness', '硬度', '硬さ', 'hardnesshv'],
-  ts: ['ts', 'tensile', 'tensilestrength', '引張強さ', '引張強度', 'tensilempa'],
-  el: ['el', 'elastic', 'elasticmodulus', 'youngs', 'young', 'youngmodulus', 'ヤング率', '弾性率'],
+  memo: ['memo', 'note', 'remarks', '備考', 'メモ'],
+  hv: ['hv', 'hardness', '硬度', '硬さ'],
+  ts: ['ts', 'tensile', 'tensilestrength', '引張強さ', '引張強度'],
+  el: ['el', 'elastic', 'elasticmodulus', 'youngs', 'ヤング率', '弾性率'],
   el2: ['elongation', 'el2', '伸び', '伸び率'],
-  pf: ['pf', 'proof', 'proofstress', '耐力', '0.2%耐力', '02proof', 'proofmpa'],
+  pf: ['pf', 'proof', 'proofstress', '耐力', '0.2%耐力'],
   dn: ['dn', 'density', '密度'],
   provenance: ['provenance', 'source', '出所', 'データ出所'],
   microstructure: ['microstructure', 'micro', '組織', '金属組織'],
   testMethod: ['testmethod', 'method', '試験方法', '規格'],
 };
 
-// fallback の含有判定で使う最小 hint 長。
-// 2-3 文字の短い hint (hv / ts / cat 等) で誤爆させないため。
-const MIN_HINT_LENGTH_FOR_FALLBACK = 4;
-
 function normalizeHeader(h: string): string {
-  return h.toLowerCase().replace(/[\s_\-()（）]+/g, '');
+  return h.toLowerCase().replace(/[\s_-]+/g, '');
 }
 
-/**
- * ヘッダ一覧から推測でマッピングを埋める。
- *
- * 2 段階で推測する:
- *   パス 1: 正規化後の完全一致 (高信頼)
- *   パス 2: 残ったヘッダに対し、長い hint から順に「ヘッダが hint を含む」を許可
- *           (例: "Hardness (HV)" -> hv, "Tensile(MPa)" -> ts)
- *
- * 短い hint (2-3 文字) は含有判定だと誤爆しやすいので fallback では除外する。
- */
+/** ヘッダ一覧から推測でマッピングを埋める。確信が無い列は触らない。 */
 export function inferColumnMapping(headers: string[]): ColumnMapping {
   const mapping: ColumnMapping = {};
   const used = new Set<string>();
-  const fieldsAndHints = Object.entries(HEADER_HINTS) as [MaterialField, string[]][];
-
-  // パス 1: 正規化後の完全一致
-  for (const [field, hints] of fieldsAndHints) {
+  for (const [field, hints] of Object.entries(HEADER_HINTS) as [MaterialField, string[]][]) {
     for (const header of headers) {
       if (used.has(header)) continue;
       const norm = normalizeHeader(header);
@@ -180,29 +164,6 @@ export function inferColumnMapping(headers: string[]): ColumnMapping {
       }
     }
   }
-
-  // パス 2: ヘッダが hint を含む (長い hint から優先) — fallback
-  const sortedFields = fieldsAndHints.map(([field, hints]) => ({
-    field,
-    normalizedHints: hints
-      .map(normalizeHeader)
-      .filter((h) => h.length >= MIN_HINT_LENGTH_FOR_FALLBACK)
-      .sort((a, b) => b.length - a.length),
-  }));
-
-  for (const { field, normalizedHints } of sortedFields) {
-    if (mapping[field]) continue;
-    for (const header of headers) {
-      if (used.has(header)) continue;
-      const norm = normalizeHeader(header);
-      if (normalizedHints.some((h) => norm.includes(h))) {
-        mapping[field] = header;
-        used.add(header);
-        break;
-      }
-    }
-  }
-
   return mapping;
 }
 
@@ -417,22 +378,17 @@ export function convertCsvToMaiml(
 // ----- サンプル CSV -----
 //
 // 実ファイルを用意せずに動作確認できるよう「サンプルで試す」ボタンから読み込む。
-//
-// ヘッダはあえて「現場の Excel でありがち」な揺らぎを混ぜている:
-//   - 材料ID (Matlens 表示は "ID (材料 ID)")
-//   - Sample Name (空白 + 英語、Matlens 表示は "名前")
-//   - Hardness(HV) / Tensile(MPa) / Young(GPa) / Elongation(%) / 0.2%Proof(MPa) (単位入り)
-//   - バッチ No (空白) / Notes (英語)
-// これにより「CSV のヘッダ名と Matlens 内部フィールドが違う -> マッピングする意味がある」
-// ことが体感できる。
+// 中身はアプリ初期データ (Ti-6Al-4V / SUS316L / Inconel718) と整合させ、
+// 既存 ID と重複する設計にして「IMPORT 時に skip される挙動」もそのまま見せる。
+// ヘッダは日英混在で揺らぎ吸収の効きも体感できるようにしてある。
 export const SAMPLE_CSV_FILENAME = 'matlens-sample.csv';
 export const SAMPLE_CSV = [
-  '材料ID,Sample Name,分類,成分,バッチ No,登録日,担当,状態,Notes,Hardness(HV),Tensile(MPa),Young(GPa),Elongation(%),0.2%Proof(MPa),Density',
-  'M-101,Ti-6Al-4V,金属合金,Ti-6Al-4V,LOT-A23,2026-04-12,山田,登録済,航空機エンジン用,340,950,113,14,880,4.43',
-  'M-102,SUS316L,金属合金,Fe-Cr-Ni-Mo,LOT-B07,2026-04-18,鈴木,レビュー待,耐食用途,180,520,193,40,205,8.0',
-  'M-103,Inconel 718,金属合金,Ni-Cr-Fe-Nb,LOT-C11,2026-04-22,佐藤,承認済,高温強度,420,1240,200,12,1100,8.19',
-  'M-104,Al2O3 (alumina),セラミクス,Al2O3,LOT-D02,2026-04-25,田中,登録済,セラミクスサンプル,1500,400,380,0,,3.95',
-  'M-105,CFRP T800,複合材料,Carbon Fiber,LOT-E15,2026-04-28,a.ito,レビュー待,軽量構造材,30,2900,165,1.8,,1.6',
+  'ID,材料名,Category,HV,Tensile Strength,弾性率,伸び,密度,担当者,状態,組成,備考',
+  'M-101,Ti-6Al-4V (PoC),金属合金,340,950,113,14,4.43,a.ito,登録済,Ti-6Al-4V,航空機エンジン用',
+  'M-102,SUS316L (PoC),金属合金,180,520,193,40,8.0,a.ito,レビュー待,Fe-Cr-Ni-Mo,耐食用途',
+  'M-103,Inconel 718 (PoC),金属合金,420,1240,200,12,8.19,a.ito,承認済,Ni-Cr-Fe-Nb,高温強度',
+  'M-104,Al2O3 (PoC),セラミクス,1500,400,380,0,3.95,a.ito,登録済,Al2O3,セラミクスサンプル',
+  'M-105,CFRP T800 (PoC),複合材料,30,2900,165,1.8,1.6,a.ito,レビュー待,Carbon Fiber,軽量構造材',
 ].join('\n');
 
 export const ALL_MATERIAL_FIELDS: { field: MaterialField; label: string; required?: boolean }[] = [
