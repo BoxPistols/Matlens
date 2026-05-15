@@ -226,6 +226,22 @@ describe('buildMaterialsFromCsv', () => {
     expect(materials[1]?.date).toBe('2026-05-15T10:00:00Z');
     expect(warnings).toEqual([]);
   });
+
+  it('date が YYYY-MM-DD で始まっても末尾にゴミがあれば warning', () => {
+    const data = parseCsvWithHeader('ID,Name,登録日\nM-001,Ti,2026-05-15garbage');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', date: '登録日' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(warnings.some((w) => w.includes('2026-05-15garbage'))).toBe(true);
+  });
+
+  it('pf の不正値 warning は「未設定 (null)」と表現する', () => {
+    const data = parseCsvWithHeader('ID,Name,耐力\nM-001,Ti,abc');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', pf: '耐力' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.pf).toBe(null);
+    expect(warnings.some((w) => w.includes('未設定') && w.includes('null'))).toBe(true);
+  });
 });
 
 describe('REQUIRED_FIELDS', () => {

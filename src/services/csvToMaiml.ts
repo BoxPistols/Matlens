@@ -219,10 +219,11 @@ function coerceProvenance(value: string): CoercionResult<Provenance | undefined>
   return { value: undefined, unknown: true };
 }
 
-// date は YYYY-MM-DD もしくは ISO datetime を期待。形式違反のセルが MaiML に
-// 静かに混入するのを防ぐため、簡易バリデータで弾いて warning に落とす。
-// 仕様: 4桁年-2桁月-2桁日 で始まり、Date でパースして有効ならOK。
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}/;
+// date は YYYY-MM-DD もしくは ISO 8601 datetime を期待。形式違反のセルが MaiML に
+// 静かに混入するのを防ぐため、末尾までを $ で固定したパターンで弾く。
+// 接頭マッチだけだと "2026-05-15garbage" のような末尾ゴミ付きも Date.parse が
+// 通ってしまうため必ず末尾固定する。
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
 function isValidDateString(value: string): boolean {
   if (!DATE_PATTERN.test(value)) return false;
   const d = new Date(value);
@@ -339,7 +340,7 @@ export function buildMaterialsFromCsv(
       if (pfTrimmed !== '') {
         const parsed = coerceNumberOrNull(pfTrimmed);
         if (parsed === null) {
-          warnings.push(`行 ${lineNo} (${id}): pf "${pfTrimmed}" を数値として読めず null を入れました`);
+          warnings.push(`行 ${lineNo} (${id}): pf "${pfTrimmed}" を数値として読めず未設定 (null) にしました`);
         }
         pf = parsed;
       }
