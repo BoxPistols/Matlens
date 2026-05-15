@@ -27,10 +27,15 @@ Mermaid テキストで管理し、GitHub レンダリング・SVG export・Figm
 ## SVG export
 
 ```sh
-# 全 mmd を SVG に変換（要 @mermaid-js/mermaid-cli）
-pnpm dlx @mermaid-js/mermaid-cli -i docs/onsite/flows/01-experiment-lifecycle.mmd -o docs/onsite/flows/01-experiment-lifecycle.svg
-# まとめて
-for f in docs/onsite/flows/*.mmd; do pnpm dlx @mermaid-js/mermaid-cli -i "$f" -o "${f%.mmd}.svg"; done
+# 推奨: ラッパースクリプトで全 mmd を一括 SVG 化
+# (システム Chrome を流用、puppeteer の chrome-headless-shell DL を回避)
+pnpm flows:svg
+
+# フォールバック: mermaid-cli を直接呼ぶ場合
+for f in docs/onsite/flows/*.mmd; do
+  pnpm dlx @mermaid-js/mermaid-cli@latest -i "$f" -o "${f%.mmd}.svg" -b transparent
+done
 ```
 
 SVG ができれば Figma / FigJam にドラッグ&ドロップで取り込める（画像扱い、native オブジェクト化は別工程）。
+FigJam なら sticky note の `/mermaid` で `.mmd` テキスト直接埋込も可。
