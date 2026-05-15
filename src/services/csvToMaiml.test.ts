@@ -161,6 +161,87 @@ describe('buildMaterialsFromCsv', () => {
     expect(materials[1]?.id).toBe('M-002');
     expect(warnings.some((w) => w.includes('M-001') && w.includes('重複'))).toBe(true);
   });
+
+  it('任意数値の不正値 (—, abc 等) は 0 + warning に落とす', () => {
+    const data = parseCsvWithHeader('ID,Name,弾性率,密度\nM-001,Ti,—,3.95\nM-002,Al,abc,2.7');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', el: '弾性率', dn: '密度' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials).toHaveLength(2);
+    expect(materials[0]?.el).toBe(0);
+    expect(materials[0]?.dn).toBe(3.95);
+    expect(materials[1]?.el).toBe(0);
+    expect(warnings.some((w) => w.includes('M-001') && w.includes('el') && w.includes('—'))).toBe(true);
+    expect(warnings.some((w) => w.includes('M-002') && w.includes('el') && w.includes('abc'))).toBe(true);
+  });
+
+  it('任意数値の空欄は silent に 0 で通る（warning 出さない）', () => {
+    const data = parseCsvWithHeader('ID,Name,弾性率\nM-001,Ti,');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', el: '弾性率' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.el).toBe(0);
+    expect(warnings).toEqual([]);
+  });
+
+  it('pf の不正値は null + warning に落とす', () => {
+    const data = parseCsvWithHeader('ID,Name,耐力\nM-001,Ti,—');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', pf: '耐力' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.pf).toBe(null);
+    expect(warnings.some((w) => w.includes('pf') && w.includes('—'))).toBe(true);
+  });
+
+  it('未認識 provenance は warning + undefined にフォールバック', () => {
+    const data = parseCsvWithHeader('ID,Name,Provenance\nM-001,Ti,unknown-src');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', provenance: 'Provenance' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.provenance).toBeUndefined();
+    expect(warnings.some((w) => w.includes('provenance') && w.includes('unknown-src'))).toBe(true);
+  });
+
+  it('provenance 空欄は silent に undefined', () => {
+    const data = parseCsvWithHeader('ID,Name,Provenance\nM-001,Ti,');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', provenance: 'Provenance' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.provenance).toBeUndefined();
+    expect(warnings).toEqual([]);
+  });
+
+  it('date の形式違反は warning + 今日の日付にフォールバック', () => {
+    const data = parseCsvWithHeader('ID,Name,登録日\nM-001,Ti,2026/5/10\nM-002,Al,未定');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', date: '登録日' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials).toHaveLength(2);
+    // フォールバック値は今日の日付 (YYYY-MM-DD)
+    expect(materials[0]?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(materials[1]?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(warnings.some((w) => w.includes('M-001') && w.includes('2026/5/10'))).toBe(true);
+    expect(warnings.some((w) => w.includes('M-002') && w.includes('未定'))).toBe(true);
+  });
+
+  it('date が ISO datetime / YYYY-MM-DD ならそのまま通る', () => {
+    const data = parseCsvWithHeader('ID,Name,登録日\nM-001,Ti,2026-05-15\nM-002,Al,2026-05-15T10:00:00Z');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', date: '登録日' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.date).toBe('2026-05-15');
+    expect(materials[1]?.date).toBe('2026-05-15T10:00:00Z');
+    expect(warnings).toEqual([]);
+  });
+
+  it('date が YYYY-MM-DD で始まっても末尾にゴミがあれば warning', () => {
+    const data = parseCsvWithHeader('ID,Name,登録日\nM-001,Ti,2026-05-15garbage');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', date: '登録日' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(warnings.some((w) => w.includes('2026-05-15garbage'))).toBe(true);
+  });
+
+  it('pf の不正値 warning は「未設定 (null)」と表現する', () => {
+    const data = parseCsvWithHeader('ID,Name,耐力\nM-001,Ti,abc');
+    const mapping: ColumnMapping = { id: 'ID', name: 'Name', pf: '耐力' };
+    const { materials, warnings } = buildMaterialsFromCsv(data, mapping);
+    expect(materials[0]?.pf).toBe(null);
+    expect(warnings.some((w) => w.includes('未設定') && w.includes('null'))).toBe(true);
+  });
 });
 
 describe('REQUIRED_FIELDS', () => {

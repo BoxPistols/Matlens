@@ -206,10 +206,28 @@ function coerceStatus(value: string): CoercionResult<MaterialStatus> {
   return { value: 'レビュー待', unknown: true };
 }
 
-function coerceProvenance(value: string): Provenance | undefined {
-  const trimmed = value.trim().toLowerCase();
-  if ((PROVENANCE_VALUES as string[]).includes(trimmed)) return trimmed as Provenance;
-  return undefined;
+// provenance も cat / status と同じく「空欄は silent / 非空だが未認識は unknown=true」に揃え、
+// 4 種類 enum (instrument / manual / ai / simulation) のいずれにも当たらない値が
+// 静かに undefined になる silent failure を防ぐ。
+function coerceProvenance(value: string): CoercionResult<Provenance | undefined> {
+  const trimmed = value.trim();
+  if (trimmed === '') return { value: undefined, unknown: false };
+  const lower = trimmed.toLowerCase();
+  if ((PROVENANCE_VALUES as string[]).includes(lower)) {
+    return { value: lower as Provenance, unknown: false };
+  }
+  return { value: undefined, unknown: true };
+}
+
+// date は YYYY-MM-DD もしくは ISO 8601 datetime を期待。形式違反のセルが MaiML に
+// 静かに混入するのを防ぐため、末尾までを $ で固定したパターンで弾く。
+// 接頭マッチだけだと "2026-05-15garbage" のような末尾ゴミ付きも Date.parse が
+// 通ってしまうため必ず末尾固定する。
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?$/;
+function isValidDateString(value: string): boolean {
+  if (!DATE_PATTERN.test(value)) return false;
+  const d = new Date(value);
+  return Number.isFinite(d.getTime());
 }
 
 function coerceNumberOrNull(value: string): number | null {
@@ -288,23 +306,52 @@ export function buildMaterialsFromCsv(
     }
     seenIds.add(id);
 
+    // 数値フィールドは空欄は silent、「非空だが Number にできない」値（"—" "N/A" 等）は
+    // 必須/任意問わず warning に落として 0 フォールバックする。
+    // 現場の Excel では未測定が空欄でなく "—" / "未測定" 等で入る事例が多く、
+    // それを 0 と区別できないまま MaiML に混入させないようにする目的。
     const numericOrZero = (field: MaterialField): number => {
       const raw = get(row, field);
-      const n = coerceNumberOrNull(raw ?? '');
-      if (n === null) {
+      // mapping 自体が割り当てられていない場合は silent に 0
+      // （ユーザは「この列は使わない」と意図的に外した可能性）
+      if (raw === undefined) return 0;
+      const trimmed = raw.trim();
+      if (trimmed === '') {
+        // mapping あり / 値空欄: 必須なら警告、任意なら silent
         if (REQUIRED_NUMERIC_FIELDS.includes(field)) {
-          warnings.push(`行 ${lineNo} (${id}): ${field} が数値として読めず 0 を入れました`);
+          warnings.push(`行 ${lineNo} (${id}): 必須数値 ${field} が空のため 0 を入れました`);
         }
+        return 0;
+      }
+      const n = coerceNumberOrNull(trimmed);
+      if (n === null) {
+        warnings.push(`行 ${lineNo} (${id}): ${field} "${trimmed}" を数値として読めず 0 を入れました`);
         return 0;
       }
       return n;
     };
 
+    // pf は number | null なので unmapped / 空欄はどちらも silent に null。
+    // 「値があるが Number にできない」ケースだけ warning に落として null を入れる。
     const pfRaw = get(row, 'pf');
-    const pf = pfRaw === undefined || pfRaw.trim() === '' ? null : coerceNumberOrNull(pfRaw);
+    let pf: number | null = null;
+    if (pfRaw !== undefined) {
+      const pfTrimmed = pfRaw.trim();
+      if (pfTrimmed !== '') {
+        const parsed = coerceNumberOrNull(pfTrimmed);
+        if (parsed === null) {
+          warnings.push(`行 ${lineNo} (${id}): pf "${pfTrimmed}" を数値として読めず未設定 (null) にしました`);
+        }
+        pf = parsed;
+      }
+    }
 
-    const provenanceRaw = get(row, 'provenance');
-    const provenance = provenanceRaw ? coerceProvenance(provenanceRaw) : undefined;
+    const provenanceRaw = get(row, 'provenance') ?? '';
+    const provenanceCoerced = coerceProvenance(provenanceRaw);
+    if (provenanceCoerced.unknown) {
+      warnings.push(`行 ${lineNo} (${id}): provenance "${provenanceRaw.trim()}" を認識できず未設定にしました（instrument / manual / ai / simulation のいずれか）`);
+    }
+    const provenance = provenanceCoerced.value;
 
     const catRaw = get(row, 'cat') ?? '';
     const catCoerced = coerceCategory(catRaw);
@@ -330,12 +377,24 @@ export function buildMaterialsFromCsv(
       dn: numericOrZero('dn'),
       comp: (get(row, 'comp') ?? '').trim(),
       batch: (get(row, 'batch') ?? '').trim(),
-      date: (get(row, 'date') ?? new Date().toISOString().slice(0, 10)).trim(),
+      // date は下で改めて検証 + 警告込みで設定する。ここはプレースホルダ。
+      date: '',
       author: (get(row, 'author') ?? '').trim(),
       status: statusCoerced.value,
       ai: false,
       memo: (get(row, 'memo') ?? '').trim(),
     };
+
+    // date 検証: 空欄は silent に今日の日付、形式違反は warning に落として今日の日付。
+    const dateRaw = (get(row, 'date') ?? '').trim();
+    if (dateRaw === '') {
+      material.date = new Date().toISOString().slice(0, 10);
+    } else if (isValidDateString(dateRaw)) {
+      material.date = dateRaw;
+    } else {
+      warnings.push(`行 ${lineNo} (${id}): 日付 "${dateRaw}" を YYYY-MM-DD 形式として読めず本日の日付にフォールバックしました`);
+      material.date = new Date().toISOString().slice(0, 10);
+    }
 
     if (provenance) material.provenance = provenance;
     const micro = get(row, 'microstructure');
