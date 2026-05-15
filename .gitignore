@@ -18,3 +18,6 @@ coverage/
 .claude/settings.local.json
 .claude/
 .serena/
+
+# Wireframe captures (生成物、サイズ大、PR 毎差分回避)
+docs/onsite/wireframes/captures/

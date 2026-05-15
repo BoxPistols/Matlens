@@ -12,6 +12,8 @@
 | [tool-comparison.md](./tool-comparison.md) | 既存ツール比較マトリクス | 「今は何使ってますか？」を構造化して聞くため |
 | [pain-points.md](./pain-points.md) | pain-point 候補 30 件 | 「これって痛みになってます？」と仮説をぶつける |
 | [gaps.md](./gaps.md) | 弱点インベントリ | 自分が知らない領域の事前学習 / 質問リスト |
+| [flows/](./flows/) | 業務フロー叩き台図 (Mermaid 5 本) | キックオフで「想定→差分」議論を駆動 |
+| [wireframes/](./wireframes/) | 主要画面のラフワイヤー (dev server screenshot 起点) | 各画面を見せて UX 仮説を検証 |
 
 ## 想定した使い方
 

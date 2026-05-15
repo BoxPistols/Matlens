@@ -1,0 +1,27 @@
+%% Excel ベース → Matlens への段階的移行 UX
+%% 一気に Web 化すると現場が拒否する。段階的に「Excel と並走できる」設計が必須。
+%% 参考: Issue #110 の Excel→Web 移行 UX 必須 7 項目
+flowchart TD
+    S0[現状: Excel + 紙台帳 + LIMS の混在]
+
+    S0 --> S1[Phase 1: 閲覧のみ Web 化<br/>過去データを Matlens で 検索 / 横断可視化]
+    S1 --> S2[Phase 2: 結果入力を Web に<br/>Excel と並走、CSV import で乗換]
+    S2 --> S3[Phase 3: 計画 / 受入も Web に<br/>Excel テンプレを廃止 候補にする]
+    S3 --> S4[Phase 4: LIMS 連携 / API 化<br/>正の SoT を Matlens に移す]
+
+    subgraph PH1[Phase 1 で抑える Excel 互換 UX]
+        P11[Tab で右 / Enter で下]
+        P12[Ctrl+C/V で TSV クリップボード]
+        P13[Ctrl+Z 50 件以上]
+        P14[行頭 + ヘッダ固定]
+        P15[CSV/xlsx は preview→commit 2 段階]
+        P16[find &amp; replace + 正規表現]
+        P17[数値セル inputmode=decimal]
+    end
+
+    S1 -.必須.-> PH1
+
+    classDef cur fill:#ffe066,stroke:#f59f00;
+    classDef goal fill:#74c0fc,stroke:#1971c2;
+    class S0 cur;
+    class S4 goal;

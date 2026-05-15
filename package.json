@@ -24,6 +24,8 @@
     "tokens:build:figma-plugin": "node design-tokens/scripts/build-plugin.ts",
     "tokens:build:json": "node design-tokens/scripts/generate-tokens-json.ts",
     "mocks:generate": "tsx scripts/generate-mock-fixtures.ts",
+    "capture:wireframes": "node scripts/capture-wireframes.mjs",
+    "flows:svg": "node scripts/render-flows-svg.mjs",
     "commitlint": "commitlint --edit",
     "prepare": "husky"
   },
