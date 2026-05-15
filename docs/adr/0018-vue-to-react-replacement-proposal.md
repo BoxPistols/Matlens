@@ -79,6 +79,38 @@ Matlens は kickoff 用 PoC で React + Vite。現場の本番アプリは別リ
 - AI エージェント（#112）は `@ai-sdk/vue` で実装
 - リプレイス提案は「将来の選択肢」として ADR に残し、再提案の余地を残す
 
+## Matlens A ランク資産の実測 SLOC（2026-05-15 計測）
+
+`pnpm verify:agnostic` で計測した **そのまま流用可能な純 TS / data 資産**。
+React / Vue いずれを選んでも UI レイヤーだけ書き換えれば再利用できる領域。
+
+| モジュール | SLOC | 内容 |
+|---|---:|---|
+| `src/services/` | 2,458 | MaiML / nlQueryCompile / bayesianOpt / empiricalFormulas 等 純 TS |
+| `src/infra/repositories/mock/` | 1,029 | InMemoryTable / フィルタ / 純 TS Repository 実装 |
+| `src/features/tests/matrix/` | 1,007 | 異常率 / 顧客集計の純関数 |
+| `src/domain/` | 856 | 型 / Zod schema / 定数 |
+| `src/features/cutting/utils/` | 792 | FFT / Stability Lobe / Kienzle / Taylor 経験式 |
+| `design-tokens/src/` | 412 | CSS 変数 + Tailwind tokens（v4 移行先 / Vue でも流用可） |
+| `src/features/dashboard/utils/` | 345 | KPI 集計の純関数 |
+| `src/infra/repositories/interfaces/` | 334 | Repository 抽象（DI 境界） |
+| `src/features/tools/utils/` | 63 | 工具摩耗ステータス計算 |
+| `src/shared/utils/` | 51 | 汎用ユーティリティ |
+| **合計 (A ランク)** | **7,347** | テスト / Storybook 除く実装行数 |
+
+### この数値が説得力を持つ理由
+
+- **30-50 画面規模の新規 React/Next アプリ想定 SLOC を 20-30k 行**とすると、Matlens A ランク資産で **約 25-35% を即座に充足**できる
+- 「ゼロ起点ではない」の定量的裏付けとして ADR レビューに使用
+- 反対派の典型反論「移行コストが見えない」に対し「**UI 層 (Vue から書き直す層) のみ**」と境界が明示できる
+- Issue #113 のタスク 3 (Matlens 移植可能資産マッピング) は本セクションで充足済
+
+### 同時に確認した境界制約
+
+- `pnpm verify:agnostic` で domain / infra/interfaces / services から React / Vue / TanStack Query import がゼロであることを確認済 ✅
+- ESLint `no-restricted-imports` でも error レベルで禁止済
+- → 「うっかり Vue 専用 API が混入する」リスクは構造的に塞がっている
+
 ## 完全リライトのコスト感
 
 業務系 SPA で 30-50 画面規模を完全リライトする場合:
