@@ -164,4 +164,31 @@ describe('HelpPage', () => {
     fireEvent.click(screen.getByText('閉じる'));
     expect(screen.queryByText('概要')).not.toBeInTheDocument();
   });
+
+  it('opened card auto-closes when search filters it out (no ghost expand)', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    // ダッシュボードを開く
+    const dashButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('ダッシュボード'),
+    );
+    fireEvent.click(dashButton!);
+    expect(screen.getByText('概要')).toBeInTheDocument();
+    // ダッシュボードを含まない検索語に切り替え（複数件ヒットさせて自動展開を起こさない）
+    const search = screen.getByPlaceholderText('用語を検索...');
+    fireEvent.change(search, { target: { value: '切削' } });
+    // フィルタ外に出た開きっぱなしカードは閉じる
+    expect(screen.queryByText('概要')).not.toBeInTheDocument();
+  });
+
+  it('tab links to its panel via aria-controls (ARIA APG)', () => {
+    setup();
+    const allTab = screen.getByRole('tab', { name: 'すべて' });
+    const panelId = allTab.getAttribute('aria-controls');
+    expect(panelId).toBeTruthy();
+    const panel = document.getElementById(panelId!);
+    expect(panel).not.toBeNull();
+    expect(panel!.getAttribute('role')).toBe('tabpanel');
+    expect(panel!.getAttribute('aria-labelledby')).toBe(allTab.id);
+  });
 });

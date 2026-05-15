@@ -272,8 +272,9 @@ const PageGuideCatalog = ({
 }) => {
   const { t } = useContext(AppCtx) as AppContextValue;
 
-  // section ごとに分類
+  // section ごとに分類し、NAV_ITEMS 由来のセクション順で並べる（useMemo 戻り値を破壊的 mutate しない）
   const grouped = useMemo(() => {
+    const sectionOrderKey = allSectionsInOrder().map((s) => s.label);
     const map = new Map<string, { section: ReturnType<typeof sectionForGuideId>; items: PageGuide[] }>();
     for (const g of guides) {
       const sec = sectionForGuideId(g.id);
@@ -284,21 +285,12 @@ const PageGuideCatalog = ({
         map.set(sec.label, { section: sec, items: [g] });
       }
     }
-    return [...map.values()].sort((a, b) => a.section.order - b.section.order);
+    return [...map.values()].sort((a, b) => {
+      const ai = sectionOrderKey.indexOf(a.section.label);
+      const bi = sectionOrderKey.indexOf(b.section.label);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
   }, [guides]);
-
-  // セクション順序は NAV_ITEMS 由来で固定
-  const sectionOrder = allSectionsInOrder();
-  const sectionOrderKey = sectionOrder.map((s) => s.label);
-  grouped.sort(
-    (a, b) =>
-      (sectionOrderKey.indexOf(a.section.label) === -1
-        ? 999
-        : sectionOrderKey.indexOf(a.section.label)) -
-      (sectionOrderKey.indexOf(b.section.label) === -1
-        ? 999
-        : sectionOrderKey.indexOf(b.section.label)),
-  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -363,14 +355,18 @@ export const HelpPage = ({ onNav }: { onNav?: (page: string) => void }) => {
   // 旧版は派生値で expand を計算していたため「ユーザが閉じても直後に再展開される」
   // ループが発生していた。q の変化時のみ展開状態を上書きする useEffect で
   // 「閉じた状態」を尊重する。prevQ で q の変化を検知し、初回 mount では発火しない。
+  // 追加で、検索後に openGuideId がフィルタ外に外れた場合は閉じる（ゴースト展開防止）。
   const prevQRef = useRef(q);
   useEffect(() => {
     if (prevQRef.current === q) return;
     prevQRef.current = q;
-    if (q && filteredGuides.length === 1) {
+    if (!q) return;
+    if (filteredGuides.length === 1) {
       setOpenGuideId(filteredGuides[0]!.id);
+    } else if (openGuideId && !filteredGuides.some((g) => g.id === openGuideId)) {
+      setOpenGuideId(null);
     }
-  }, [q, filteredGuides]);
+  }, [q, filteredGuides, openGuideId]);
 
   const toggleGuide = (id: string) => {
     setOpenGuideId((prev) => (prev === id ? null : id));
@@ -380,23 +376,51 @@ export const HelpPage = ({ onNav }: { onNav?: (page: string) => void }) => {
     <div className="flex flex-col gap-4">
       <div className="flex items-start gap-3">
         <div className="flex-1">
-          <h1 className="ptitle text-[19px] font-bold tracking-tight">ヘルプ・用語集</h1>
+          <h1 className="ptitle text-[19px] font-bold tracking-tight">
+            {t('ヘルプ・用語集', 'Help & Glossary')}
+          </h1>
           <p className="text-[12px] text-text-lo mt-0.5">
-            Matlens で使われる専門用語・操作ガイドのリファレンス
+            {t(
+              'Matlens で使われる専門用語・操作ガイドのリファレンス',
+              'Reference for terms and page guides used in Matlens',
+            )}
           </p>
         </div>
         <div style={{ width: 220 }}>
-          <SearchBox value={q} onChange={setQ} placeholder="用語を検索..." />
+          <SearchBox
+            value={q}
+            onChange={setQ}
+            placeholder={t('用語を検索...', 'Search terms...')}
+          />
         </div>
       </div>
 
-      <div className="flex gap-1.5 flex-wrap" role="tablist">
+      {/* ARIA APG Tabs: aria-controls で tabpanel を紐付け、矢印キーで focus 移動 */}
+      <div
+        className="flex gap-1.5 flex-wrap"
+        role="tablist"
+        onKeyDown={(e) => {
+          if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+          const idx = CATS.findIndex((c) => c.id === cat);
+          if (idx === -1) return;
+          const next = e.key === 'ArrowRight' ? (idx + 1) % CATS.length : (idx - 1 + CATS.length) % CATS.length;
+          setCat(CATS[next]!.id);
+          // 次の tab ボタンへ focus を移す
+          requestAnimationFrame(() => {
+            const el = document.getElementById(`help-tab-${CATS[next]!.id}`);
+            el?.focus();
+          });
+        }}
+      >
         {CATS.map((c) => (
           <button
             key={c.id}
+            id={`help-tab-${c.id}`}
             onClick={() => setCat(c.id)}
             role="tab"
             aria-selected={cat === c.id}
+            aria-controls={`help-panel-${c.id}`}
+            tabIndex={cat === c.id ? 0 : -1}
             className={`px-4 py-1.5 rounded-full text-[13px] border transition-all font-ui ${
               cat === c.id
                 ? 'bg-accent text-white border-accent'
@@ -408,70 +432,77 @@ export const HelpPage = ({ onNav }: { onNav?: (page: string) => void }) => {
         ))}
       </div>
 
-      {cat === 'guide' ? (
-        filteredGuides.length > 0 ? (
-          <PageGuideCatalog
-            guides={filteredGuides}
-            openId={openGuideId}
-            onToggle={toggleGuide}
-            onNav={onNav}
-          />
-        ) : (
-          <div className="text-center py-10 text-text-lo">
-            <Icon name="search" size={24} className="mx-auto mb-2 opacity-30" />
-            <p>該当するガイドが見つかりません</p>
-          </div>
-        )
-      ) : (
-        <div
-          className="grid gap-2.5"
-          style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))' }}
-        >
-          {filtered.map((term) => (
-            <Card
-              key={term.id}
-              className={openId === term.id ? 'ring-2 ring-[var(--accent)]' : ''}
-            >
-              <button
-                className="w-full flex items-start justify-between gap-3 p-3.5 text-left hover:bg-hover transition-colors rounded-lg"
-                onClick={() => setOpenId(openId === term.id ? null : term.id)}
-                aria-expanded={openId === term.id}
-              >
-                <div>
-                  <div className="text-[14px] font-bold text-text-hi">{term.term}</div>
-                  {term.en && (
-                    <div className="text-[12px] text-text-lo font-mono mt-0.5">{term.en}</div>
-                  )}
-                </div>
-                <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <Badge variant={term.catVariant}>{term.catLabel}</Badge>
-                  <Icon
-                    name={openId === term.id ? 'chevronDown' : 'chevronRight'}
-                    size={12}
-                    className="text-text-lo"
-                  />
-                </div>
-              </button>
-              {openId === term.id && (
-                <div className="px-3.5 pb-3.5 pt-0 text-[13px] text-text-md leading-relaxed border-t border-[var(--border-faint)] mt-0">
-                  <div className="pt-3">{term.body}</div>
-                  {term.related && (
-                    <div className="mt-2 text-[12px] text-text-lo">
-                      関連: <strong className="text-accent">{term.related}</strong>
-                    </div>
-                  )}
-                </div>
-              )}
-            </Card>
-          ))}
-          {filtered.length === 0 && (
-            <div className="col-span-full text-center py-10 text-text-lo">
+      <div
+        role="tabpanel"
+        id={`help-panel-${cat}`}
+        aria-labelledby={`help-tab-${cat}`}
+      >
+        {cat === 'guide' ? (
+          filteredGuides.length > 0 ? (
+            <PageGuideCatalog
+              guides={filteredGuides}
+              openId={openGuideId}
+              onToggle={toggleGuide}
+              onNav={onNav}
+            />
+          ) : (
+            <div className="text-center py-10 text-text-lo">
               <Icon name="search" size={24} className="mx-auto mb-2 opacity-30" />
-              <p>該当する用語が見つかりません</p>
+              <p>{t('該当するガイドが見つかりません', 'No matching guides found')}</p>
             </div>
-          )}
-        </div>
-      )}
+          )
+        ) : (
+          <div
+            className="grid gap-2.5"
+            style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))' }}
+          >
+            {filtered.map((term) => (
+              <Card
+                key={term.id}
+                className={openId === term.id ? 'ring-2 ring-[var(--accent)]' : ''}
+              >
+                <button
+                  className="w-full flex items-start justify-between gap-3 p-3.5 text-left hover:bg-hover transition-colors rounded-lg"
+                  onClick={() => setOpenId(openId === term.id ? null : term.id)}
+                  aria-expanded={openId === term.id}
+                >
+                  <div>
+                    <div className="text-[14px] font-bold text-text-hi">{term.term}</div>
+                    {term.en && (
+                      <div className="text-[12px] text-text-lo font-mono mt-0.5">{term.en}</div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <Badge variant={term.catVariant}>{term.catLabel}</Badge>
+                    <Icon
+                      name={openId === term.id ? 'chevronDown' : 'chevronRight'}
+                      size={12}
+                      className="text-text-lo"
+                    />
+                  </div>
+                </button>
+                {openId === term.id && (
+                  <div className="px-3.5 pb-3.5 pt-0 text-[13px] text-text-md leading-relaxed border-t border-[var(--border-faint)] mt-0">
+                    <div className="pt-3">{term.body}</div>
+                    {term.related && (
+                      <div className="mt-2 text-[12px] text-text-lo">
+                        {t('関連:', 'Related:')}{' '}
+                        <strong className="text-accent">{term.related}</strong>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </Card>
+            ))}
+            {filtered.length === 0 && (
+              <div className="col-span-full text-center py-10 text-text-lo">
+                <Icon name="search" size={24} className="mx-auto mb-2 opacity-30" />
+                <p>{t('該当する用語が見つかりません', 'No matching terms found')}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
