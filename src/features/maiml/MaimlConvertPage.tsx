@@ -169,6 +169,17 @@ export const MaimlConvertPage = ({ db, dispatch, onNav }: MaimlConvertPageProps)
               </div>
             </header>
 
+            <CsvPreview csv={loaded.csv} mapping={mapping} />
+
+            <div className="rounded-lg border border-[var(--border-faint)] bg-[rgba(37,99,235,0.04)] p-3 text-[12px] text-[var(--text-md)]">
+              <div className="font-semibold mb-1">この後の手順</div>
+              <ol className="list-decimal list-inside flex flex-col gap-0.5 text-[var(--text-lo)]">
+                <li>下表で <strong>Matlens 内部フィールド（左）</strong> に <strong>CSV のヘッダ（右）</strong> を割り当てます</li>
+                <li>ヘッダ名が違っても紐づけられます（例: CSV の <code className="font-mono">材料ID</code> → Matlens の <code className="font-mono">ID</code>）</li>
+                <li>必須項目（<span className="text-[var(--err,#dc2626)]">*</span> 印）が埋まればプレビューが出ます</li>
+              </ol>
+            </div>
+
             <MappingTable
               headers={loaded.csv.headers}
               mapping={mapping}
@@ -329,6 +340,73 @@ const DropZone = ({ onFile, onSample }: DropZoneProps) => {
         <span className="text-[var(--text-lo)]">で挙動を試せます（Ti-6Al-4V / SUS316L 等 5 件 / 日英ヘッダ混在）</span>
       </div>
     </div>
+  );
+};
+
+// 取込元 CSV の先頭数行 + ヘッダを表示し、「これからこの中身を Material に
+// マッピングする」という視覚的アンカーをユーザに与える。
+// マッピング済みのヘッダは accent 色でハイライトされ、左右の対応が一目で分かる。
+interface CsvPreviewProps {
+  csv: CsvParseResult;
+  mapping: ColumnMapping;
+}
+
+const PREVIEW_ROW_LIMIT = 3;
+
+const CsvPreview = ({ csv, mapping }: CsvPreviewProps) => {
+  const mappedHeaderSet = useMemo(
+    () => new Set(Object.values(mapping).filter(Boolean) as string[]),
+    [mapping],
+  );
+  const previewRows = csv.rows.slice(0, PREVIEW_ROW_LIMIT);
+  return (
+    <section
+      aria-label="CSV 元データプレビュー"
+      className="rounded-lg border border-[var(--border-faint)] overflow-hidden"
+    >
+      <div className="text-[12px] text-[var(--text-lo)] px-3 py-1.5 bg-[var(--bg-sunken)] border-b border-[var(--border-faint)]">
+        CSV 元データ（先頭 {previewRows.length} 行）— 着色されたヘッダは下のマッピング表で割当済み
+      </div>
+      <div className="overflow-auto">
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr className="bg-[var(--bg-raised)] border-b border-[var(--border-faint)]">
+              {csv.headers.map((h) => {
+                const mapped = mappedHeaderSet.has(h);
+                return (
+                  <th
+                    key={h}
+                    className={`px-3 py-1.5 text-left font-semibold whitespace-nowrap ${
+                      mapped
+                        ? 'text-[var(--accent,#2563eb)] bg-[var(--accent-dim)]'
+                        : 'text-[var(--text-lo)]'
+                    }`}
+                  >
+                    {h}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {previewRows.map((row, ri) => (
+              <tr key={ri} className="border-b border-[var(--border-faint)]">
+                {csv.headers.map((h, ci) => (
+                  <td key={h} className="px-3 py-1 whitespace-nowrap font-mono">
+                    {row[ci] ?? ''}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {csv.rows.length > PREVIEW_ROW_LIMIT && (
+        <div className="px-3 py-1.5 text-[12px] text-[var(--text-lo)]">
+          他 {csv.rows.length - PREVIEW_ROW_LIMIT} 行
+        </div>
+      )}
+    </section>
   );
 };
 

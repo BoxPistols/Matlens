@@ -82,6 +82,30 @@ describe('inferColumnMapping', () => {
     const mapping = inferColumnMapping(['hardness', 'HV']);
     expect(mapping.hv).toBe('hardness');
   });
+
+  it('単位入りヘッダ (Hardness(HV) / Tensile(MPa) 等) を fallback で拾う', () => {
+    const mapping = inferColumnMapping([
+      'Hardness(HV)',
+      'Tensile(MPa)',
+      'Young(GPa)',
+      'Elongation(%)',
+      '0.2%Proof(MPa)',
+      'Density',
+    ]);
+    expect(mapping.hv).toBe('Hardness(HV)');
+    expect(mapping.ts).toBe('Tensile(MPa)');
+    expect(mapping.el).toBe('Young(GPa)');
+    expect(mapping.el2).toBe('Elongation(%)');
+    expect(mapping.pf).toBe('0.2%Proof(MPa)');
+    expect(mapping.dn).toBe('Density');
+  });
+
+  it('空白入りヘッダ (Sample Name / バッチ No 等) を吸収する', () => {
+    const mapping = inferColumnMapping(['Sample Name', 'バッチ No', '材料ID']);
+    expect(mapping.name).toBe('Sample Name');
+    expect(mapping.batch).toBe('バッチ No');
+    expect(mapping.id).toBe('材料ID');
+  });
 });
 
 describe('buildMaterialsFromCsv', () => {

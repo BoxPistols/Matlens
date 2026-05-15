@@ -46,40 +46,65 @@ describe('HelpPage', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows page guide doc view when guide tab selected', () => {
+  it('shows page guide catalog when guide tab selected', () => {
     setup();
     fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
-    // ドキュメント形式で複数ガイドが表示される
+    // カタログ表示で複数ガイドのタイトルが見える（折り畳まれた状態）
     expect(screen.getAllByText(/ダッシュボード/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/材料データ一覧/).length).toBeGreaterThan(0);
-    // セクション見出しが表示される
-    expect(screen.getAllByText('概要').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('できること').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('操作のヒント').length).toBeGreaterThan(0);
+    // セクションヘッダ（NAV_ITEMS 由来）が表示される
+    expect(screen.getAllByText(/ホーム/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText('データ').length).toBeGreaterThan(0);
   });
 
-  it('guide open-page button calls onNav', () => {
+  it('clicking a guide card expands the detail panel inline', () => {
     setup();
     fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
-    const openButtons = screen.getAllByText('このページを開く');
-    expect(openButtons.length).toBeGreaterThan(0);
-    fireEvent.click(openButtons[0]!);
+    // 折り畳み時は詳細見出しが見えない
+    expect(screen.queryByText('概要')).not.toBeInTheDocument();
+    // ダッシュボードカードを展開
+    const dashButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('ダッシュボード'),
+    );
+    expect(dashButton).toBeDefined();
+    fireEvent.click(dashButton!);
+    expect(screen.getByText('概要')).toBeInTheDocument();
+    expect(screen.getByText('できること')).toBeInTheDocument();
+    expect(screen.getByText('操作のヒント')).toBeInTheDocument();
+  });
+
+  it('guide open-page button calls onNav after expanding card', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    // 「このページを開く」ボタンは展開しないと出ない
+    const dashButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('ダッシュボード'),
+    );
+    fireEvent.click(dashButton!);
+    const openButton = screen.getByText('このページを開く');
+    fireEvent.click(openButton);
     expect(onNav).toHaveBeenCalledWith('dash');
   });
 
-  it('renders "詳しく学ぶ" section for guides with learnMore links', () => {
+  it('renders "詳しく学ぶ" section after expanding a guide with learnMore links', () => {
     setup();
     fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
-    // PAGE_GUIDES に learnMore が設定されている画面（cutting-conditions / tools / mat-master / ops-dash）
-    // のいずれかで「詳しく学ぶ」セクションが表示される
-    expect(screen.getAllByText('詳しく学ぶ').length).toBeGreaterThan(0);
+    // 切削条件エクスプローラには learnMore が設定されている
+    const cuttingButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('切削条件エクスプローラ'),
+    );
+    expect(cuttingButton).toBeDefined();
+    fireEvent.click(cuttingButton!);
+    expect(screen.getByText('詳しく学ぶ')).toBeInTheDocument();
   });
 
   it('learn-more links open machining-fundamentals in a new tab with proper rel', () => {
     setup();
     fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
-    // Vc / f / ap のリンク（切削条件エクスプローラの learnMore エントリ）は
-    // 必ず存在する — glossaryMapping で動作確認済み
+    const cuttingButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('切削条件エクスプローラ'),
+    );
+    fireEvent.click(cuttingButton!);
     const links = screen.getAllByRole('link', { name: /外部サイトで開きます/ });
     expect(links.length).toBeGreaterThan(0);
     const firstLink = links[0]!;
@@ -89,7 +114,6 @@ describe('HelpPage', () => {
   });
 
   it('renders English labels when lang is switched to en', () => {
-    // lang='en' のカスタムコンテキストで render
     const enContext = {
       ...mockContext,
       lang: 'en' as const,
@@ -101,11 +125,31 @@ describe('HelpPage', () => {
       </AppCtx.Provider>,
     );
     fireEvent.click(screen.getByRole('tab', { name: 'Page Guide' }));
-    // セクション見出しが英語になる
-    expect(screen.getAllByText('Overview').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Features').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Tips').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Learn More').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Open this page').length).toBeGreaterThan(0);
+    // 任意のカードを展開して詳細見出しが英語になることを確認
+    const dashButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('Dashboard'),
+    );
+    fireEvent.click(dashButton!);
+    expect(screen.getByText('Overview')).toBeInTheDocument();
+    expect(screen.getByText('Features')).toBeInTheDocument();
+    expect(screen.getByText('Tips')).toBeInTheDocument();
+    expect(screen.getByText('Open this page')).toBeInTheDocument();
+  });
+
+  it('searching narrows the guide list to matching cards', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    const search = screen.getByPlaceholderText('用語を検索...');
+    fireEvent.change(search, { target: { value: 'Hall-Petch' } });
+    // 検索でヒットするガイドのカードが残る（=ヒットゼロでは「該当するガイドが見つかりません」が出る）
+    expect(screen.queryByText('該当するガイドが見つかりません')).not.toBeInTheDocument();
+  });
+
+  it('shows "not found" message when search has no hits', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    const search = screen.getByPlaceholderText('用語を検索...');
+    fireEvent.change(search, { target: { value: 'zzz-no-such-keyword-zzz' } });
+    expect(screen.getByText('該当するガイドが見つかりません')).toBeInTheDocument();
   });
 });
