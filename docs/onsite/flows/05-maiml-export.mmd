@@ -1,0 +1,29 @@
+%% MaiML エクスポート → 外部 OEM 提出
+%% JIS K 0200:2024 準拠 + 海外 OEM の別フォーマット要求への対応
+%% 参考: ADR-0004 / ADR-0016 / Issue #110
+sequenceDiagram
+    autonumber
+    participant 研究員
+    participant Matlens
+    participant XSD as XSD バリデータ<br/>(xmllint)
+    participant 顧客 as 顧客 / 外部 OEM
+
+    研究員->>Matlens: 試験結果を一覧から選択
+    Matlens->>Matlens: provenance / uncertainty<br/>必須フィールド検査
+    alt 必須欠落あり
+        Matlens-->>研究員: 警告: 入力補完を要求
+        研究員->>Matlens: 補完入力
+    end
+    Matlens->>Matlens: MaiML XML 生成<br/>(fast-xml-parser, DOCTYPE 拒否)
+    Matlens->>XSD: スキーマ検証
+    alt 検証 NG
+        XSD-->>研究員: エラーレポート
+    else 検証 OK
+        XSD-->>Matlens: 検証済 XML
+    end
+    Matlens->>研究員: ダウンロード or プレビュー
+    研究員->>顧客: 提出 (MaiML / 変換 ASTM E2658 等)
+    顧客-->>研究員: 受領確認
+
+    Note over Matlens,XSD: SSR (Nuxt Nitro) でも<br/>同一コードで動作させる必要あり<br/>(DOMParser 不可)
+    Note over 研究員,Matlens: provenance を空で出している<br/>現場が typical な失敗ケース<br/>→ 必須化の運用ルールを確認
