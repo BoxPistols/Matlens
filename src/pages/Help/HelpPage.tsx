@@ -11,7 +11,7 @@
 //      自動展開して操作回数を減らす
 // 用語集 (HELP_TERMS) は既に grid + 展開で良い形なので維持。
 
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon, type IconName } from '../../components/Icon';
 import { Badge, Card } from '../../components/atoms';
 import { SearchBox } from '../../components/molecules';
@@ -359,11 +359,18 @@ export const HelpPage = ({ onNav }: { onNav?: (page: string) => void }) => {
     [q],
   );
 
-  // 検索ヒット時、結果が 1 件ならそれを自動展開（既に他が開いていたら尊重）
-  const effectiveOpenGuideId =
-    q && filteredGuides.length === 1 && !openGuideId
-      ? filteredGuides[0]!.id
-      : openGuideId;
+  // 検索ヒット時、結果が 1 件ならそれを自動展開する。
+  // 旧版は派生値で expand を計算していたため「ユーザが閉じても直後に再展開される」
+  // ループが発生していた。q の変化時のみ展開状態を上書きする useEffect で
+  // 「閉じた状態」を尊重する。prevQ で q の変化を検知し、初回 mount では発火しない。
+  const prevQRef = useRef(q);
+  useEffect(() => {
+    if (prevQRef.current === q) return;
+    prevQRef.current = q;
+    if (q && filteredGuides.length === 1) {
+      setOpenGuideId(filteredGuides[0]!.id);
+    }
+  }, [q, filteredGuides]);
 
   const toggleGuide = (id: string) => {
     setOpenGuideId((prev) => (prev === id ? null : id));
@@ -405,7 +412,7 @@ export const HelpPage = ({ onNav }: { onNav?: (page: string) => void }) => {
         filteredGuides.length > 0 ? (
           <PageGuideCatalog
             guides={filteredGuides}
-            openId={effectiveOpenGuideId}
+            openId={openGuideId}
             onToggle={toggleGuide}
             onNav={onNav}
           />

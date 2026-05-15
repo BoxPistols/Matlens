@@ -152,4 +152,16 @@ describe('HelpPage', () => {
     fireEvent.change(search, { target: { value: 'zzz-no-such-keyword-zzz' } });
     expect(screen.getByText('該当するガイドが見つかりません')).toBeInTheDocument();
   });
+
+  it('closing a manually-opened card stays closed (no reopen loop)', () => {
+    setup();
+    fireEvent.click(screen.getByRole('tab', { name: 'ページガイド' }));
+    const dashButton = screen.getAllByRole('button', { expanded: false }).find((b) =>
+      b.textContent?.includes('ダッシュボード'),
+    );
+    fireEvent.click(dashButton!);
+    expect(screen.getByText('概要')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('閉じる'));
+    expect(screen.queryByText('概要')).not.toBeInTheDocument();
+  });
 });
