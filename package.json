@@ -34,7 +34,7 @@
     "@ai-sdk/openai": "^3.0.63",
     "@react-three/drei": "^9.117.3",
     "@react-three/fiber": "^8.17.14",
-    "@tanstack/react-query": "^5.99.0",
+    "@tanstack/react-query": "^5.100.10",
     "@tensorflow-models/universal-sentence-encoder": "^1.3.3",
     "@tensorflow/tfjs": "^4.22.0",
     "@types/prismjs": "^1.26.6",
